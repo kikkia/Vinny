@@ -1,5 +1,8 @@
 package com.bot;
 
+import com.bot.commands.TestCommand;
+import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
+
 import java.awt.*;
 
 public class Main {
@@ -18,6 +21,10 @@ public class Main {
 		// Getting our bots name and avatar for no real reason
 		nickName = shardingManager.getJDA(0).getSelfUser().getName();
 		avatarURL = shardingManager.getJDA(0).getSelfUser().getAvatarUrl();
+
+		CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
+
+		commandClientBuilder.addCommands(new TestCommand());
 
 		System.out.println("Successfully started.");
 	}
