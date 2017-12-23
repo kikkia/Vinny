@@ -1,5 +1,6 @@
 package com.bot;
 
+import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -10,10 +11,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class MessageListener extends ListenerAdapter {
+public class Bot extends ListenerAdapter {
 	EventWaiter waiter;
+	public final static Command.Category VOICE = new Command.Category("Voice");
+	public final static Command.Category MEME = new Command.Category("Meme");
+	public final static Command.Category NSFW = new Command.Category("Nsfw");
+	public final static Command.Category MOD = new Command.Category("MODERATION");
 
-	MessageListener(EventWaiter waiter) {
+
+	Bot(EventWaiter waiter) {
 		this.waiter = waiter;
 	}
 
