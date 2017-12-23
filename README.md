@@ -22,16 +22,16 @@ Running Vinny-Redux locally requires Java 8+, Maven, and an internet connection.
 3. Create a file called tokens.txt at res/config/ 
 4. Make the file look like:
 ```
-\*\*\*Discord\*\*\*   
-\<Discord bot Oauth2 Token\>  (You need to register a bot on https://discordapp.com/developers/applications/me)  
-\*\*\*Bot API\*\*\*  
-\<bots.discord.pw Token\>   
-\*\*\*Bot ID\*\*\*  
-\<BotID\>  (This also comes from https://discordapp.com/developers/applications/me)  
-\*\*\*Reddit\*\*\*  
-\<Reddit client secret token\> (Retrieved from registering a bot with reddits API)  
-\*\*\*OwnerID\*\*\*  
-\<Discord ID for the owner of the bot\> (Your discord ID)
+***Discord***   
+<Discord bot Oauth2 Token>  (You need to register a bot on https://discordapp.com/developers/applications/me)  
+***Bot API***  
+<bots.discord.pw Token>   
+***Bot ID***  
+<BotID>  (This also comes from https://discordapp.com/developers/applications/me)  
+***Reddit***  
+<Reddit client secret token> (Retrieved from registering a bot with reddits API)  
+***OwnerID***  
+<Discord ID for the owner of the bot> (Your discord ID)
 ```
 
 The only mandatory fields in here are Discord, OwnerID and BotID. Leaving the others out will possibly disable some commands and spit out some non-fatal errors.
