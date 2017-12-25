@@ -22,10 +22,6 @@ public class Main {
 		nickName = shardingManager.getJDA(0).getSelfUser().getName();
 		avatarURL = shardingManager.getJDA(0).getSelfUser().getAvatarUrl();
 
-		CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
-
-		commandClientBuilder.addCommands(new TestCommand());
-
 		System.out.println("Successfully started.");
 	}
 
