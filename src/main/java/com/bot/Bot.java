@@ -2,6 +2,7 @@ package com.bot;
 
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -12,15 +13,17 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class Bot extends ListenerAdapter {
-	EventWaiter waiter;
+	private EventWaiter waiter;
+	private JDA jda;
 	public final static Command.Category VOICE = new Command.Category("Voice");
 	public final static Command.Category MEME = new Command.Category("Meme");
 	public final static Command.Category NSFW = new Command.Category("Nsfw");
 	public final static Command.Category MOD = new Command.Category("MODERATION");
 
 
-	Bot(EventWaiter waiter) {
+	Bot(EventWaiter waiter, JDA jda) {
 		this.waiter = waiter;
+		this.jda = jda;
 	}
 
 	// This code runs every time a message is received by the bot
@@ -58,6 +61,10 @@ public class Bot extends ListenerAdapter {
 		public void run() {
 			channel.sendMessage("oops out of time!").queue();
 		}
+	}
+
+	public JDA getJda() {
+		return jda;
 	}
 
 }
