@@ -1,6 +1,8 @@
 package com.bot;
 
+import com.bot.commands.PlayCommand;
 import com.bot.commands.TestCommand;
+import com.jagrosh.jdautilities.commandclient.CommandClient;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import net.dv8tion.jda.core.AccountType;
@@ -14,13 +16,17 @@ public class ShardingManager {
     // This adds a connection for each shard. Shards make it more efficient. ~1000 servers to shards is ideal
     public ShardingManager(int numShards, Config config) throws Exception{
         shards = new JDA[numShards];
+        Bot bot = new Bot(new EventWaiter());
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
         commandClientBuilder.useDefaultGame();
         commandClientBuilder.setPrefix("~");
         commandClientBuilder.setOwnerId(config.getToken("OwnerID"));
 
-        commandClientBuilder.addCommands(new TestCommand());
+        commandClientBuilder.addCommands(new TestCommand(),
+                new PlayCommand(bot));
+        commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
+        CommandClient client = commandClientBuilder.build();
 
         for (int i = 0; i < numShards; i++){
             shards[i] = new JDABuilder(AccountType.BOT)
@@ -31,8 +37,8 @@ public class ShardingManager {
             EventWaiter waiter = new EventWaiter();
 
             shards[i].addEventListener(waiter);
-            shards[i].addEventListener(commandClientBuilder.build());
-            shards[i].addEventListener(new Bot(waiter));
+            shards[i].addEventListener(client);
+            shards[i].addEventListener(bot);
             System.out.println("Shard " + i + " built.");
         }
     }

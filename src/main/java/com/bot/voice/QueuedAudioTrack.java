@@ -25,7 +25,7 @@ public class QueuedAudioTrack {
     }
 
     //Helper method for song that takes length in Milliseconds and outputs it in a more readable HH:MM:SS format
-    private String msToMinSec(long length) {
+    public static String msToMinSec(long length) {
         int totSeconds = (int)length/1000;
         String seconds = "";
         String minutes = "";
