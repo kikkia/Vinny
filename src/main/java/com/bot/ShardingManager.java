@@ -26,7 +26,9 @@ public class ShardingManager {
                 new PlayCommand(bot),
                 new PauseCommand(),
                 new RepeatCommand(),
-                new StopCommand());
+                new StopCommand(),
+                new ResumeCommand());
+
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         CommandClient client = commandClientBuilder.build();
 
