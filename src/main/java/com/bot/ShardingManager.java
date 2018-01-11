@@ -1,7 +1,6 @@
 package com.bot;
 
-import com.bot.commands.PlayCommand;
-import com.bot.commands.TestCommand;
+import com.bot.commands.*;
 import com.jagrosh.jdautilities.commandclient.CommandClient;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
@@ -24,7 +23,10 @@ public class ShardingManager {
         commandClientBuilder.setOwnerId(config.getToken("OwnerID"));
 
         commandClientBuilder.addCommands(new TestCommand(),
-                new PlayCommand(bot));
+                new PlayCommand(bot),
+                new PauseCommand(),
+                new RepeatCommand(),
+                new StopCommand());
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         CommandClient client = commandClientBuilder.build();
 

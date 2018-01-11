@@ -26,7 +26,6 @@ public class PlayCommand extends Command {
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
-		// TODO: Take command from old bot
 		if (commandEvent.getArgs().isEmpty()) {
 			VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 			
