@@ -10,7 +10,7 @@ import net.dv8tion.jda.core.JDABuilder;
 
 public class ShardingManager {
 
-    private static JDA[] shards;
+    private JDA[] shards;
 
     // This adds a connection for each shard. Shards make it more efficient. ~1000 servers to shards is ideal
     public ShardingManager(int numShards, Config config) throws Exception{
@@ -48,7 +48,7 @@ public class ShardingManager {
         }
     }
 
-    public static JDA[] getShards() {
+    public JDA[] getShards() {
         return shards;
     }
 

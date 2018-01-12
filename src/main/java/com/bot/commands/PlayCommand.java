@@ -10,7 +10,6 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.audio.AudioSendHandler;
 import net.dv8tion.jda.core.entities.Message;
 
 public class PlayCommand extends Command {
@@ -57,10 +56,10 @@ public class PlayCommand extends Command {
 	}
 
 	private class PlayHandler implements AudioLoadResultHandler {
-		final CommandEvent commandEvent;
-		final String source;
-		final Message message;
-		final boolean search;
+		private final CommandEvent commandEvent;
+		private final String source;
+		private final Message message;
+		private final boolean search;
 
 		private PlayHandler(Message message, String source, CommandEvent commandEvent, boolean search) {
 			this.message = message;
