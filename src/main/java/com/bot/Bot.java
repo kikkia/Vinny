@@ -16,7 +16,6 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.dv8tion.jda.core.managers.AudioManager;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -97,7 +96,7 @@ public class Bot extends ListenerAdapter {
 			return false;
 		}
 		else {
-			getHandler(event.getGuild()).queueTrack(track, event.getAuthor());
+			getHandler(event.getGuild()).queueTrack(track, event.getAuthor().getIdLong());
 			if (!event.getGuild().getAudioManager().isConnected()) {
 				event.getGuild().getAudioManager().openAudioConnection(event.getMember().getVoiceState().getChannel());
 			}

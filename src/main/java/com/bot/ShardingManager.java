@@ -27,7 +27,8 @@ public class ShardingManager {
                 new PauseCommand(),
                 new RepeatCommand(),
                 new StopCommand(),
-                new ResumeCommand());
+                new ResumeCommand(),
+                new ListTracksCommand());
 
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         CommandClient client = commandClientBuilder.build();

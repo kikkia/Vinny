@@ -19,6 +19,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
 
     private long guildID;
     private long requester;
+    private QueuedAudioTrack nowPlaying;
     private Set<String> skipVotes;
     private Queue<QueuedAudioTrack> tracks;
     private List<AudioTrack> trackList;
@@ -26,7 +27,6 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     private AudioFrame lastFrame;
     private Bot bot;
     private boolean repeat;
-    // TODO: Maybe go with the track scheduler approach for cleanliness
 
     public VoiceSendHandler(long guildID, AudioPlayer player, Bot bot) {
         this.player = player;
@@ -35,22 +35,26 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         skipVotes = new HashSet<>();
         tracks = new LinkedBlockingQueue<>();
         trackList = new LinkedList<>();
+        nowPlaying = null;
         repeat = false;
     }
 
-    public void queueTrack(AudioTrack track, User user) {
+    public void queueTrack(AudioTrack track, long user) {
         if (player.getPlayingTrack() == null) {
             player.playTrack(track);
-            requester = user.getIdLong();
+            requester = user;
+            nowPlaying = new QueuedAudioTrack(track, user);
         }
         else {
-            tracks.add(new QueuedAudioTrack(track, user.getIdLong()));
+            tracks.add(new QueuedAudioTrack(track, user));
         }
     }
 
     public void stop() {
         tracks.clear();
         player.stopTrack();
+        player.destroy();
+        nowPlaying = null;
     }
 
     public AudioPlayer getPlayer()  {
@@ -76,13 +80,13 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason == AudioTrackEndReason.FINISHED && repeat) {
-            queueTrack(track.makeClone(), bot.getJda().getSelfUser());
+            queueTrack(track.makeClone(), requester);
         }
-        else if (endReason == AudioTrackEndReason.FINISHED && !repeat){
-            QueuedAudioTrack nextTrack = tracks.poll();
-            requester = nextTrack.getRequesterID();
-            player.playTrack(nextTrack.getTrack());
-        }
+        QueuedAudioTrack nextTrack = tracks.poll();
+        trackList.remove(0);
+        requester = nextTrack.getRequesterID();
+        player.playTrack(nextTrack.getTrack());
+        nowPlaying = nextTrack;
     }
 
     public boolean isRepeat() {
@@ -95,5 +99,17 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
 
     public static boolean isSongTooLong(AudioTrack track) {
         return track.getDuration() >= MAX_DURATION * 1000;
+    }
+
+    public QueuedAudioTrack getNowPlaying() {
+        return nowPlaying;
+    }
+
+    public boolean isPlaying() {
+        return nowPlaying != null;
+    }
+
+    public Queue<QueuedAudioTrack> getTracks() {
+        return tracks;
     }
 }
