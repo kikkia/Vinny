@@ -40,7 +40,7 @@ public class Bot extends ListenerAdapter {
 	// This code runs every time a message is received by the bot
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		String[] command = event.getMessage().getContent().split(" ", 2);
+		String[] command = event.getMessage().getContentRaw().split(" ", 2);
 		Guild guild = event.getGuild();
 
 		if ("hi".equals(command[0])){
@@ -52,7 +52,7 @@ public class Bot extends ListenerAdapter {
 	// Predicate defines the condition we need to fulfill
 	private Predicate<MessageReceivedEvent> getResponseFromSender(MessageReceivedEvent original) {
 		System.out.println("here");
-		return p -> p.getAuthor() == original.getAuthor() && p.getMessage().getContent().equals("sup");
+		return p -> p.getAuthor() == original.getAuthor() && p.getMessage().getContentRaw().equals("sup");
 	}
 
 	// This code will run when the predicate is met

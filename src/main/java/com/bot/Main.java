@@ -1,6 +1,5 @@
 package com.bot;
 
-
 import java.awt.*;
 
 public class Main {
