@@ -13,8 +13,8 @@ public class Config {
     private HashMap<String, String> configs;
 
     public Config() {
-        this.tokenFile = new File("res/configs/tokens.txt");
-        this.configFile = new File("res/configs/configs.txt");
+        this.tokenFile = new File("res/config/tokens.txt");
+        this.configFile = new File("res/config/config.txt");
         tokens = new HashMap<>();
         configs = new HashMap<>();
         setTokens();
@@ -43,7 +43,7 @@ public class Config {
                 String line = scanner.nextLine();
                 if (line.startsWith("***")){
                     String key = line.substring(3, line.length()-3);
-                    tokens.put(key, scanner.nextLine());
+                    configs.put(key, scanner.nextLine());
                 }
             }
         } catch (FileNotFoundException e) {

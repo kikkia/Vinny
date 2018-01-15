@@ -18,7 +18,6 @@ public class ShardingManager {
         Bot bot = new Bot(new EventWaiter());
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
-        commandClientBuilder.useDefaultGame();
         commandClientBuilder.setPrefix("~");
         commandClientBuilder.setOwnerId(config.getToken("OwnerID"));
 
