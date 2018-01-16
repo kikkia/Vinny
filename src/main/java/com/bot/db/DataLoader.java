@@ -3,14 +3,11 @@ package com.bot.db;
 import com.bot.Config;
 import com.bot.ShardingManager;
 import com.bot.voice.QueuedAudioTrack;
-import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
-import java.security.spec.ECField;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,19 +52,17 @@ public class DataLoader {
 			System.out.println(e);
 		}
 
-		long endTime = System.currentTimeMillis();
-
 	}
 
 	private static class LoadThread extends Thread {
 
 		private JDA bot;
-		Connection connection = null;
-		long startTime = 0;
-		String guildInsertQuery = "INSERT INTO guild (id, name) VALUES (?, ?)";
-		String textChannelInsertQuery = "INSERT INTO text_channel (id, guild, name) VALUES (?, ?, ?)";
-		String userInsertQuery = "INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
-		String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild) VALUES (?, ?)";
+		private Connection connection = null;
+		private long startTime = 0;
+		private String guildInsertQuery = "INSERT INTO guild (id, name) VALUES (?, ?)";
+		private String textChannelInsertQuery = "INSERT INTO text_channel (id, guild, name) VALUES (?, ?, ?)";
+		private String userInsertQuery = "INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
+		private String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild) VALUES (?, ?)";
 
 		public LoadThread(JDA bot, Config config, long startTime) throws SQLException, ClassNotFoundException {
 			this.bot = bot;
