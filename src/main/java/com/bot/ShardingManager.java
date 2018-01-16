@@ -22,12 +22,12 @@ public class ShardingManager {
 
         if (config.getConfig(Config.OWNER_ID) == null) {
             System.out.println("Owner_Id has not been set. Exiting... ");
-            System.exit(1);
+            return;
         }
 
         if (config.getConfig(Config.DISCORD_TOKEN) == null){
             System.out.println("Discord token not set in config. Exiting...");
-            System.exit(1);
+            return;
         }
 
         if (!supportScript) {
