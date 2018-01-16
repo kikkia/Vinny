@@ -11,7 +11,7 @@ public class Main {
 		// Config gets tokens
 		Config config = new Config();
 		// Sharding manager connects to the Discord API
-		shardingManager = new ShardingManager(NUM_SHARDS, config);
+		shardingManager = new ShardingManager(NUM_SHARDS, config, false);
 
 		System.out.println("Successfully started.");
 	}
