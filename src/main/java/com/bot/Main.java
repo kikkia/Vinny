@@ -8,10 +8,8 @@ public class Main {
 	private static final int NUM_SHARDS = 1;
 
 	public static void main(String[] args) throws Exception {
-		// Config gets tokens
-		Config config = new Config();
 		// Sharding manager connects to the Discord API
-		shardingManager = new ShardingManager(NUM_SHARDS, config, false);
+		shardingManager = new ShardingManager(NUM_SHARDS, false);
 
 		System.out.println("Successfully started.");
 	}

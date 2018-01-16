@@ -19,23 +19,28 @@ public class DataLoader {
 
 	public static void main(String[] args) throws Exception {
 		// Config gets tokens
-		Config config = new Config();
+		Config config = Config.getInstance();
 		long startTime = System.currentTimeMillis();
 
-		shardingManager = new ShardingManager(NUM_SHARDS, config, true);
+		shardingManager = new ShardingManager(NUM_SHARDS, true);
 
-		if (config.getConfig("USE_DB").equals("False")) {
-			System.out.println("USE_DB Set to False in the config file. Exiting...");
+		if (config.getConfig(Config.USE_DB).equals("False")) {
+			System.out.println("Use_DB Set to False in the config file. Exiting...");
 			return;
 		}
 
-		if (config.getConfig("DB_USERNAME") == null) {
-			System.out.println("DB_USERNAME not set in the config file. Exiting...");
+		if (config.getConfig(Config.DB_URI) == null) {
+			System.out.println("DB_URI not set in the config file. Exiting...");
 			return;
 		}
 
-		if (config.getConfig("DB_PASSWORD") == null) {
-			System.out.println("DB_PASSWORD not set in the config file. Exiting...");
+		if (config.getConfig(Config.DB_USERNAME) == null) {
+			System.out.println("DB_Username not set in the config file. Exiting...");
+			return;
+		}
+
+		if (config.getConfig(Config.DB_PASSWORD) == null) {
+			System.out.println("DB_Password not set in the config file. Exiting...");
 			return;
 		}
 
@@ -69,8 +74,8 @@ public class DataLoader {
 			this.startTime = startTime;
 			Class.forName("com.mysql.jdbc.Driver");
 			this.connection = DriverManager
-					.getConnection("jdbc:mysql://" + config.getConfig("DB_URI") + "/test?"
-							+ "user=" + config.getConfig("DB_USERNAME") + "&password=" + config.getConfig("DB_PASSWORD"));
+					.getConnection("jdbc:mysql://" + config.getConfig(Config.DB_URI) + "/" + config.getConfig(Config.DB_SCHEMA) + "?"
+							+ "user=" + config.getConfig(Config.DB_USERNAME) + "&password=" + config.getConfig(Config.DB_PASSWORD));
 
 		}
 
