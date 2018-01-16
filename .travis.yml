@@ -1,0 +1,7 @@
+notifications:
+  email: false
+
+language: java
+
+script:
+  - mvn compile
