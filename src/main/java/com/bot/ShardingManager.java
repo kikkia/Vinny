@@ -20,16 +20,6 @@ public class ShardingManager {
         Bot bot = null;
         CommandClient client = null;
 
-        if (config.getConfig(Config.OWNER_ID) == null) {
-            System.out.println("Owner_Id has not been set. Exiting... ");
-            return;
-        }
-
-        if (config.getConfig(Config.DISCORD_TOKEN) == null){
-            System.out.println("Discord token not set in config. Exiting...");
-            return;
-        }
-
         if (!supportScript) {
             bot = new Bot(new EventWaiter());
             CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
