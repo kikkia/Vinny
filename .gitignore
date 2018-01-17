@@ -23,6 +23,5 @@ hs_err_pid*
 
 # IDEA files maven builds and config files. 
 *.iml
-config.txt
-tokens.txt
+*.conf
 .idea/

@@ -14,7 +14,8 @@ public class ShardingManager {
 
     // This adds a connection for each shard. Shards make it more efficient. ~1000 servers to shards is ideal
     // supportScript disables commands. Useful for running a supportScript simultaneously while the bot is going on prod
-    public ShardingManager(int numShards, Config config, boolean supportScript) throws Exception{
+    public ShardingManager(int numShards, boolean supportScript) throws Exception {
+        Config config = Config.getInstance();
         shards = new JDA[numShards];
         Bot bot = null;
         CommandClient client = null;
@@ -23,7 +24,7 @@ public class ShardingManager {
             bot = new Bot(new EventWaiter());
             CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
             commandClientBuilder.setPrefix("~");
-            commandClientBuilder.setOwnerId(config.getToken("OwnerID"));
+            commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
 
             commandClientBuilder.addCommands(new TestCommand(),
                     new PlayCommand(bot),
@@ -39,7 +40,7 @@ public class ShardingManager {
 
         for (int i = 0; i < numShards; i++){
             shards[i] = new JDABuilder(AccountType.BOT)
-                    .setToken(config.getToken("Discord"))
+                    .setToken(config.getConfig(Config.DISCORD_TOKEN))
                     .useSharding(i, numShards)
                     .buildBlocking();
             if (!supportScript) {

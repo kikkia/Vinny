@@ -5,13 +5,27 @@ import java.awt.*;
 public class Main {
 	private static ShardingManager shardingManager;
 	private static final Color vinnyColor = new Color(0, 140, 186);
-	private static final int NUM_SHARDS = 1;
 
 	public static void main(String[] args) throws Exception {
-		// Config gets tokens
-		Config config = new Config();
 		// Sharding manager connects to the Discord API
-		shardingManager = new ShardingManager(NUM_SHARDS, config, false);
+		Config config = Config.getInstance();
+
+		if (config.getConfig(Config.NUM_SHARDS) == null) {
+			System.out.println("Num_Shards not set, exiting");
+		}
+
+		if (config.getConfig(Config.OWNER_ID) == null) {
+			System.out.println("Owner_Id has not been set. Exiting... ");
+			return;
+		}
+
+		if (config.getConfig(Config.DISCORD_TOKEN) == null){
+			System.out.println("Discord token not set in config. Exiting...");
+			return;
+		}
+
+		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));
+		shardingManager = new ShardingManager(numShards, false);
 
 		System.out.println("Successfully started.");
 	}
