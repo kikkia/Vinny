@@ -13,8 +13,12 @@ public class Config {
 
     public static final String DISCORD_TOKEN = "Discord";
     public static final String REDDIT_TOKEN = "Reddit";
-    public static final String OWNER_ID = "Owner";
+    public static final String OWNER_ID = "Owner_Id";
     public static final String DISCORD_BOT_ID = "Bot_Id";
+    public static final String BOT_ID = "Bot_Id";
+    public static final String BOTLIST_API_TOKEN = "BotList_API";
+    public static final String BOT_API_TOKEN = "Bot_API";
+
 
     public static final String USE_DB = "Use_DB";
     public static final String DB_URI = "DB_URI";

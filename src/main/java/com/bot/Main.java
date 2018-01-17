@@ -5,11 +5,11 @@ import java.awt.*;
 public class Main {
 	private static ShardingManager shardingManager;
 	private static final Color vinnyColor = new Color(0, 140, 186);
-	private static final int NUM_SHARDS = 1;
 
 	public static void main(String[] args) throws Exception {
 		// Sharding manager connects to the Discord API
-		shardingManager = new ShardingManager(NUM_SHARDS, false);
+		int numShards = Integer.parseInt(Config.getInstance().getConfig(Config.NUM_SHARDS));
+		shardingManager = new ShardingManager(numShards, false);
 
 		System.out.println("Successfully started.");
 	}
