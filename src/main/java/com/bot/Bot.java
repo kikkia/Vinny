@@ -41,7 +41,6 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		String[] command = event.getMessage().getContentRaw().split(" ", 2);
-		Guild guild = event.getGuild();
 
 		if ("hi".equals(command[0])){
 			event.getTextChannel().sendMessage("yo").queue();

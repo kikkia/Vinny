@@ -7,7 +7,6 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 public class ListTracksCommand extends Command{
 

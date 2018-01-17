@@ -75,10 +75,8 @@ public class PlayCommand extends Command {
 				return;
 			}
 			// If the queue track was successfull go on, if not return.
-			if (bot.queueTrack(track, commandEvent, message)) {
-				if (playlist == null || !commandEvent.getSelfMember().hasPermission(commandEvent.getTextChannel(), Permission.MESSAGE_ADD_REACTION)) {
-					message.editMessage(commandEvent.getClient().getSuccess() + " Successfully added track to queue.").queue();
-				}
+			if (bot.queueTrack(track, commandEvent, message) && (playlist == null || !commandEvent.getSelfMember().hasPermission(commandEvent.getTextChannel(), Permission.MESSAGE_ADD_REACTION))) {
+				message.editMessage(commandEvent.getClient().getSuccess() + " Successfully added track to queue.").queue();
 			}
 		}
 
@@ -96,6 +94,7 @@ public class PlayCommand extends Command {
 				loadTracks(audioPlaylist.getSelectedTrack(), null);
 			}
 			else {
+				loadTracks(audioPlaylist.getTracks().get(0), null);
 				// TODO: Playlists
 			}
  		}

@@ -7,14 +7,13 @@ import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.DataSource;
 
 public class ConnectionPool {
-	private HikariConfig hikariConfig;
 	private HikariDataSource dataSource;
 	private static ConnectionPool connectionPool;
 
 	private ConnectionPool() {
 		Config config = Config.getInstance();
 
-		hikariConfig = new HikariConfig();
+		HikariConfig hikariConfig = new HikariConfig();
 		hikariConfig.setJdbcUrl(config.getConfig("jdbc:mysql://" + Config.DB_URI + "/" + config.getConfig(Config.DB_SCHEMA)));
 		hikariConfig.setUsername(config.getConfig(Config.DB_USERNAME));
 		hikariConfig.setPassword(config.getConfig(Config.DB_PASSWORD));

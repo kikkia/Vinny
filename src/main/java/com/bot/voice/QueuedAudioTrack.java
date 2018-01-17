@@ -45,7 +45,7 @@ public class QueuedAudioTrack {
         else
             hours += (totSeconds/60)/60;
 
-        if (hours.equals("00"))
+        if ("00".equals(hours))
             return minutes + ":" + seconds;
         else {
             if (minutes.length() == 1)
