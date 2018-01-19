@@ -4,6 +4,7 @@
 CREATE TABLE IF NOT EXISTS `guild` (
     `id` VARCHAR(255) NOT NULL,
     `name` VARCHAR(255) NULL DEFAULT NULL,
+    `default_volume` INT(11),
     `min_base_role_id` VARCHAR(255) NULL DEFAULT NULL,
     `min_mod_role_id` VARCHAR(255) NULL DEFAULT NULL,
     `min_voice_role_id` VARCHAR(255) NULL DEFAULT NULL,

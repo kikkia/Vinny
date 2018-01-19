@@ -14,7 +14,7 @@ public class ConnectionPool {
 		Config config = Config.getInstance();
 
 		HikariConfig hikariConfig = new HikariConfig();
-		hikariConfig.setJdbcUrl(config.getConfig("jdbc:mysql://" + Config.DB_URI + "/" + config.getConfig(Config.DB_SCHEMA)));
+		hikariConfig.setJdbcUrl("jdbc:mysql://" + config.getConfig(Config.DB_URI) + "/" + config.getConfig(Config.DB_SCHEMA));
 		hikariConfig.setUsername(config.getConfig(Config.DB_USERNAME));
 		hikariConfig.setPassword(config.getConfig(Config.DB_PASSWORD));
 		hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
