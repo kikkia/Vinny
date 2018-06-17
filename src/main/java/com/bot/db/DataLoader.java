@@ -83,7 +83,7 @@ public class DataLoader {
 		public void run() {
 			try {
 				System.out.println("Starting shard: " + bot.getShardInfo().getShardId() + " for " + bot.getGuilds().size() + " guilds");
-				PreparedStatement statement = null;
+				PreparedStatement statement;
 				List<User> users = bot.getUsers();
 				List<Guild> guilds = bot.getGuilds();
 				int guildCount = 0;
