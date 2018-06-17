@@ -29,7 +29,6 @@ public class Main {
 		PlaylistRepository repository = new PlaylistRepository();
 		repository.initialize();
 		System.out.println(repository.healthCheck());
-		System.out.println(repository.getPlaylistsForUser("124988914472583168").get(0).getName());
 
 		System.out.println("Successfully started.");
 	}

@@ -68,7 +68,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
 
     @Override
     public byte[] provide20MsAudio() {
-        return lastFrame.data;
+        return lastFrame.getData();
     }
 
     @Override
