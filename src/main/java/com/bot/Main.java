@@ -25,11 +25,6 @@ public class Main {
 		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));
 		ShardingManager shardingManager = new ShardingManager(numShards, false);
 
-		// Test the connection pool
-		PlaylistRepository repository = new PlaylistRepository();
-		repository.initialize();
-		System.out.println(repository.healthCheck());
-
 		System.out.println("Successfully started.");
 	}
 

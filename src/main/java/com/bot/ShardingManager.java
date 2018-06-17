@@ -35,6 +35,8 @@ public class ShardingManager {
                     new StopCommand(),
                     new ResumeCommand(),
                     new ListTracksCommand(),
+                    new SaveMyPlaylistCommand(bot),
+                    new MyPlaylistCommand(bot),
 
                     // Battle Royale
                     new BattleRoyaleCommand());

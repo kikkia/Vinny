@@ -17,9 +17,23 @@ public class PlaylistRepository {
 	private Connection read;
 	private Connection write;
 	private Logger LOG = Logger.getInstance(this.getClass().getSimpleName());
+	private static PlaylistRepository instance;
 
+	private PlaylistRepository() {
+		try {
+			initialize();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
-	public void initialize() throws SQLException {
+	public static PlaylistRepository getInstance() {
+		if (instance == null)
+			instance = new PlaylistRepository();
+		return instance;
+	}
+
+	private void initialize() throws SQLException {
 		ConnectionPool connectionPool = ConnectionPool.getInstance();
 		ReadConnectionPool readConnectionPool = ReadConnectionPool.getInstance();
 
@@ -204,7 +218,7 @@ public class PlaylistRepository {
 			statement = write.prepareStatement(playlistQuery, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, ownerId);
 			statement.setString(2, name);
-			statement.executeQuery();
+			statement.execute();
 			// Get the generated ID for the playlist since we need it for the join table
 			set = statement.getGeneratedKeys();
 			if (!set.next()) {
