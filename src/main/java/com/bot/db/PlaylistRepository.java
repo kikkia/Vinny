@@ -1,5 +1,6 @@
 package com.bot.db;
 
+import com.bot.Logger;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
 import com.bot.voice.QueuedAudioTrack;
@@ -15,6 +16,7 @@ public class PlaylistRepository {
 
 	private Connection read;
 	private Connection write;
+	private Logger LOG = Logger.getInstance(this.getClass().getSimpleName());
 
 
 	public void initialize() throws SQLException {
@@ -205,7 +207,10 @@ public class PlaylistRepository {
 			statement.executeQuery();
 			// Get the generated ID for the playlist since we need it for the join table
 			set = statement.getGeneratedKeys();
-			set.next();
+			if (!set.next()) {
+				LOG.WARNING("Failed to add playlist, result set had no next");
+				return false;
+			}
 			int playlistId = set.getInt(1);
 
 			for (int i = 0; i < tracks.size(); i++) {
