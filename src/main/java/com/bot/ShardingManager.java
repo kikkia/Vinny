@@ -1,6 +1,7 @@
 package com.bot;
 
 import com.bot.commands.*;
+import com.bot.commands.battleroyale.BattleRoyaleCommand;
 import com.jagrosh.jdautilities.commandclient.CommandClient;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
@@ -27,12 +28,16 @@ public class ShardingManager {
             commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
 
             commandClientBuilder.addCommands(new TestCommand(),
+                    // Voice Commands
                     new PlayCommand(bot),
                     new PauseCommand(),
                     new RepeatCommand(),
                     new StopCommand(),
                     new ResumeCommand(),
-                    new ListTracksCommand());
+                    new ListTracksCommand(),
+
+                    // Battle Royale
+                    new BattleRoyaleCommand());
 
             commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
             client = commandClientBuilder.build();
