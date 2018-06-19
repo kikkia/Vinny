@@ -11,8 +11,11 @@ import net.dv8tion.jda.core.entities.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class DataLoader {
+	private static final Logger LOGGER = Logger.getLogger(DataLoader.class.getName());
+
 	private static ShardingManager shardingManager;
 	// Needs shards for when running on PROD
 	private static final int NUM_SHARDS = 12;

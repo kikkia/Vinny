@@ -12,7 +12,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 
+import java.util.logging.Logger;
+
 public class PlayCommand extends Command {
+	private static final Logger LOGGER = Logger.getLogger(PlayCommand.class.getName());
 
 	private Bot bot;
 

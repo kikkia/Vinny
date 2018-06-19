@@ -5,8 +5,11 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.DataSource;
+import java.util.logging.Logger;
 
 public class ConnectionPool {
+	private static final Logger LOGGER = Logger.getLogger(ConnectionPool.class.getName());
+
 	private HikariDataSource dataSource;
 	private static ConnectionPool connectionPool;
 

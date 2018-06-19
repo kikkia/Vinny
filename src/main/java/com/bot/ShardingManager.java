@@ -9,7 +9,11 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 
+import java.util.logging.Logger;
+
 public class ShardingManager {
+
+    private static final Logger LOGGER = Logger.getLogger(ShardingManager.class.getName());
 
     private JDA[] shards;
 

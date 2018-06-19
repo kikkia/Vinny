@@ -4,7 +4,10 @@ import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
+import java.util.logging.Logger;
+
 public class ResumeCommand extends Command {
+	private static final Logger LOGGER = Logger.getLogger(ResumeCommand.class.getName());
 
 	public ResumeCommand() {
 		this.name = "resume";

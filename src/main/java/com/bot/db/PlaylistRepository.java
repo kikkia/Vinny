@@ -1,6 +1,6 @@
 package com.bot.db;
 
-import com.bot.Logger;
+import com.bot.Bot;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
 import com.bot.voice.QueuedAudioTrack;
@@ -11,12 +11,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PlaylistRepository {
+    private static final Logger LOGGER = Logger.getLogger(PlaylistRepository.class.getName());
 
-	private Connection read;
+    private Connection read;
 	private Connection write;
-	private Logger LOG = Logger.getInstance(this.getClass().getSimpleName());
 	private static PlaylistRepository instance;
 
 	private PlaylistRepository() {
@@ -222,7 +224,7 @@ public class PlaylistRepository {
 			// Get the generated ID for the playlist since we need it for the join table
 			set = statement.getGeneratedKeys();
 			if (!set.next()) {
-				LOG.WARNING("Failed to add playlist, result set had no next");
+				LOGGER.log(Level.WARNING, "Failed to add playlist, result set had no next");
 				return false;
 			}
 			int playlistId = set.getInt(1);
