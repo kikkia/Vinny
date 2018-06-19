@@ -1,6 +1,5 @@
 package com.bot.voice;
 
-import com.bot.Bot;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import java.util.logging.Logger;

@@ -3,8 +3,10 @@ package com.bot.commands.battleroyale;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
-public class BattleRoyaleCommand extends Command {
+import java.util.logging.Logger;
 
+public class BattleRoyaleCommand extends Command {
+    private static final Logger LOGGER = Logger.getLogger(BattleRoyaleCommand.class.getName());
 
     public BattleRoyaleCommand() {
         this.name = "battleroyale";

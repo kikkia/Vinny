@@ -25,7 +25,6 @@ public class MyPlaylistCommand extends Command {
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
-		// TODO: Get playlists from db for the user
 		List<Playlist> playlistList = playlistRepository.getPlaylistsForUser(commandEvent.getAuthor().getId());
 		StringBuilder reply = new StringBuilder();
 		for (Playlist p: playlistList) {

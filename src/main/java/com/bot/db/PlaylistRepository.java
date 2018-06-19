@@ -21,6 +21,8 @@ public class PlaylistRepository {
 	private Connection write;
 	private static PlaylistRepository instance;
 
+	private final String playlistInsertQuery = "INSERT INTO playlist (user_id, name) VALUES(?,?) ON DUPLICATE KEY UPDATE name = name";
+
 	private PlaylistRepository() {
 		try {
 			initialize();
@@ -107,14 +109,12 @@ public class PlaylistRepository {
 	}
 
 	public boolean createPlaylistForUser(String userId, String name, List<QueuedAudioTrack> tracks) {
-		String playlistInsertQuery = "INSERT INTO playlist (user_id, name) VALUES(?,?)";
 		String trackInsertQuery = "INSERT INTO track (url, title) VALUES (?, ?) ON DUPLICATE KEY UPDATE title = title";
 		String playlistTrackQuery = "INSERT INTO playlist_track (track, playlist, position) VALUES (?, ?, ?)";
 		return addPlaylist(userId, name, tracks, playlistInsertQuery, trackInsertQuery, playlistTrackQuery);
 	}
 
 	public boolean createPlaylistForGuild(String guildId, String name, List<QueuedAudioTrack> tracks) {
-		String playlistInsertQuery = "INSERT INTO playlist (guild_id, name) VALUES(?,?)";
 		String trackInsertQuery = "INSERT INTO track (url, title) VALUES (?, ?)";
 		String playlistTrackQuery = "INSERT INTO playlist_track (track, playlist, position) VALUES (?, ?, ?)";
 		return addPlaylist(guildId, name, tracks, playlistInsertQuery, trackInsertQuery, playlistTrackQuery);
@@ -237,8 +237,21 @@ public class PlaylistRepository {
 				statement.execute();
 				set = statement.getGeneratedKeys();
 				set.next();
-				int trackId = set.getInt(1);
+				int trackId;
+				// We need to check the value returned. If the track is present no generated key returned
+				// then we can just look up the id
+				try {
+					trackId = set.getInt(1);
+				} catch (SQLException e) {
+					// if we hit an error writing the track then we can get the id another way
+					statement = read.prepareStatement("SELECT * FROM track t WHERE t.url = \"" + t.getTrack().getInfo().uri + "\"");
+					statement.execute();
+					set = statement.getResultSet();
+					set.next();
+					trackId = set.getInt(1);
+				}
 
+				// Write the track -> playlist joins
 				statement = write.prepareStatement(playlistTrackQuery);
 				statement.setInt(1, trackId);
 				statement.setInt(2, playlistId);

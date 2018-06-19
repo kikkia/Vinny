@@ -77,7 +77,7 @@ public class PlayCommand extends Command {
 						QueuedAudioTrack.msToMinSec(VoiceSendHandler.MAX_DURATION * 1000)).queue();
 				return;
 			}
-			// If the queue track was successfull go on, if not return.
+			// If the queue track was successful go on, if not return.
 			if (bot.queueTrack(track, commandEvent, message) && (playlist == null || !commandEvent.getSelfMember().hasPermission(commandEvent.getTextChannel(), Permission.MESSAGE_ADD_REACTION))) {
 				message.editMessage(commandEvent.getClient().getSuccess() + " Successfully added track to queue.").queue();
 			}
