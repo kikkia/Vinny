@@ -57,7 +57,7 @@
                                     <manifest>
                                              <addClasspath>true</addClasspath>
                                              <classpathPrefix>lib/</classpathPrefix>
-                                             <mainClass>com.mypackage.Main</mainClass>
+                                             <mainClass>com.bot.Main</mainClass>
                                     </manifest>
                            </archive>
                   </configuration>
