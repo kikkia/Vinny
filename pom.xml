@@ -26,7 +26,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.bot.DiscordBot</mainClass>
+                            <mainClass>com.bot.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
