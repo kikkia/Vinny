@@ -18,7 +18,7 @@ public class DataLoader {
 
 	private static ShardingManager shardingManager;
 	// Needs shards for when running on PROD
-	private static final int NUM_SHARDS = 12;
+	private static final int NUM_SHARDS = 24;
 
 	public static void main(String[] args) throws Exception {
 		// Config gets tokens
