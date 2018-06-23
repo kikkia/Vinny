@@ -4,4 +4,4 @@ notifications:
 language: java
 
 script:
-  - mvn compile
+  - mvn verify
