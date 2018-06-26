@@ -3,7 +3,9 @@ package com.bot;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Config {
@@ -12,7 +14,8 @@ public class Config {
 
     private static Config config = null;
     private final File configFile;
-    private HashMap<String, String> configs;
+    private Map<String, String> configs;
+    private boolean useEnvVar = false;
 
     public static final String DISCORD_TOKEN = "DISCORD_TOKEN";
     public static final String REDDIT_TOKEN = "REDDIT_TOKEN";
@@ -35,7 +38,16 @@ public class Config {
     private Config() {
         this.configFile = new File("res/config/config.conf");
         configs = new HashMap<>();
-        setConfig();
+
+        try {
+            setConfig();
+        }
+        catch (FileNotFoundException f) {
+            // If config file is gone we can try using env vars
+            useEnvVar = true;
+            configs = System.getenv();
+            LOGGER.log(Level.WARNING, "Config file not found, defaulting to env vars");
+        }
     }
 
     public static Config getInstance() {
@@ -45,23 +57,19 @@ public class Config {
         return config;
     }
 
-    private void setConfig() {
-        try {
-            Scanner scanner = new Scanner(configFile);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if (line.startsWith("***")){
-                    String key = line.substring(3, line.length()-3);
-                    configs.put(key, scanner.nextLine());
-                }
+    private void setConfig() throws FileNotFoundException {
+        Scanner scanner = new Scanner(configFile);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            if (line.startsWith("***")){
+                String key = line.substring(3, line.length()-3);
+                configs.put(key, scanner.nextLine());
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
 
     public String getConfig(String key) {
-        return  configs.get(key);
+            return configs.get(key);
     }
 }
