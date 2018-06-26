@@ -9,8 +9,11 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class SaveMyPlaylistCommand extends Command {
+	private static final Logger LOGGER = Logger.getLogger(SaveMyPlaylistCommand.class.getName());
+
 	private PlaylistRepository playlistRepository;
 	private Bot bot;
 

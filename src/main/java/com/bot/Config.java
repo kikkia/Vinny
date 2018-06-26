@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class Config {
+
+    private static final Logger LOGGER = Logger.getLogger(Config.class.getName());
 
     private static Config config = null;
     private final File configFile;

@@ -3,7 +3,10 @@ package com.bot.commands;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
+import java.util.logging.Logger;
+
 public class TestCommand extends Command{
+    private static final Logger LOGGER = Logger.getLogger(TestCommand.class.getName());
 
     public TestCommand() {
         this.name = "choose";

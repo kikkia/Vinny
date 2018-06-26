@@ -8,9 +8,12 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 public class MyPlaylistCommand extends Command {
-	private Bot bot;
+    private static final Logger LOGGER = Logger.getLogger(MyPlaylistCommand.class.getName());
+
+    private Bot bot;
 	private PlaylistRepository playlistRepository;
 
 	public MyPlaylistCommand(Bot bot) {
@@ -22,7 +25,6 @@ public class MyPlaylistCommand extends Command {
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
-		// TODO: Get playlists from db for the user
 		List<Playlist> playlistList = playlistRepository.getPlaylistsForUser(commandEvent.getAuthor().getId());
 		StringBuilder reply = new StringBuilder();
 		for (Playlist p: playlistList) {

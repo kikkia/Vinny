@@ -1,7 +1,5 @@
 package com.bot;
 
-import com.bot.db.PlaylistRepository;
-
 public class Main {
 
 	public static void main(String[] args) throws Exception {

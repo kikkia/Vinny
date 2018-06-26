@@ -12,7 +12,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 
+import java.util.logging.Logger;
+
 public class PlayCommand extends Command {
+	private static final Logger LOGGER = Logger.getLogger(PlayCommand.class.getName());
 
 	private Bot bot;
 
@@ -74,7 +77,7 @@ public class PlayCommand extends Command {
 						QueuedAudioTrack.msToMinSec(VoiceSendHandler.MAX_DURATION * 1000)).queue();
 				return;
 			}
-			// If the queue track was successfull go on, if not return.
+			// If the queue track was successful go on, if not return.
 			if (bot.queueTrack(track, commandEvent, message) && (playlist == null || !commandEvent.getSelfMember().hasPermission(commandEvent.getTextChannel(), Permission.MESSAGE_ADD_REACTION))) {
 				message.editMessage(commandEvent.getClient().getSuccess() + " Successfully added track to queue.").queue();
 			}
