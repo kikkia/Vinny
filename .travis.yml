@@ -1,7 +1,12 @@
-notifications:
-  email: false
+sudo: required
 
 language: java
 
+services:
+  - docker
+
+notifications:
+  email: false
+
 script:
-  - mvn verify
+  - docker-compose build
