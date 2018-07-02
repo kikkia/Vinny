@@ -1,5 +1,6 @@
 # Vinny-Redux
 [![Discord](https://img.shields.io/badge/Discord-Support-blue.svg)](https://discord.gg/XMwyzxZ)
+![Build](https://travis-ci.org/JessWalters/Vinny-Redux.svg?branch=master)
 
 A complete rewrite and overhaul of VinnyBot.
 
@@ -16,7 +17,11 @@ If you want to help by suggesting a feature or update to Vinny the best way is t
 5. Push to the branch: `git push origin my-new-feature`
 6. Submit a pull request :D
 
-Running Vinny-Redux locally requires Java 8+, Maven, and an internet connection.
+### Running locally with docker-compose.
+1. Complete the docker-compose file with the appropriate denvironment variables. 
+2. `docker-compose up`
+
+### Running Vinny-Redux locally without docker requires Java 8+ and Maven.
 1. Clone repo
 2. CD into the directory made by cloning. 
 3. Create a file called tokens.txt at res/config/ 
@@ -33,5 +38,6 @@ Running Vinny-Redux locally requires Java 8+, Maven, and an internet connection.
 ***OwnerID***  
 <Discord ID for the owner of the bot> (Your discord ID)
 ```
+Alternatively you can use ENV variables with the same field names (without *)
 
 The only mandatory fields in here are Discord, OwnerID and BotID. Leaving the others out will possibly disable some commands and spit out some non-fatal errors.
