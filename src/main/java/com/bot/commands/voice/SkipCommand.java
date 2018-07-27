@@ -1,16 +1,16 @@
-package com.bot.commands;
+package com.bot.commands.voice;
 
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
-public class SavePlaylistCommand extends Command {
+public class SkipCommand extends Command {
 
-	public SavePlaylistCommand() {
+	public SkipCommand() {
 		// TODO: init
 	}
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
-		// TODO: Take current playlist/range and save it to DB
+		// TODO: Find stream and start skip reaction to end it
 	}
 }

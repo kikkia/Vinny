@@ -1,16 +1,16 @@
-package com.bot.commands;
+package com.bot.commands.voice;
 
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
-public class MyPlaylistCommand extends Command {
+public class RemovePlaylistCommand extends Command {
 
-	public MyPlaylistCommand() {
-		// TODO: init
+	public RemovePlaylistCommand() {
+		// TODO: Init
 	}
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
-		// TODO: Get playlists from db for the user/guild?
+		// TODO: Remove from DB for user/guild?
 	}
 }
