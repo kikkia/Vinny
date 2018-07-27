@@ -46,6 +46,7 @@ ENGINE = InnoDB;
 -- ----------------------------------------
 CREATE TABLE IF NOT EXISTS `playlist` (
     `id` INT(32) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NULL DEFAULT NULL,
     `user_id` VARCHAR(255) NULL DEFAULT NULL,
     `guild` VARCHAR(255) NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
@@ -62,9 +63,10 @@ ENGINE = InnoDB;
 -- Table `track`
 -- ----------------------------------------
 CREATE TABLE IF NOT EXISTS `track` (
-    `url` VARCHAR(255) NOT NULL,
+    `id` INT(32) NOT NULL AUTO_INCREMENT,
+    `url` VARCHAR(255) UNIQUE NOT NULL,
     `title` VARCHAR(255) NULL DEFAULT NULL,
-    PRIMARY KEY (`url`))
+    PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
@@ -72,12 +74,12 @@ ENGINE = InnoDB;
 -- Table `playlist_track`
 -- ----------------------------------------
 CREATE TABLE IF NOT EXISTS `playlist_track` (
-    `track` VARCHAR(255) NOT NULL,
+    `track` INT(32) NOT NULL,
     `playlist` INT(32) NOT NULL,
     `position` INT(10) NOT NULL,
-    CONSTRAINT `track_url_fk`
+    CONSTRAINT `track_id_fk`
         FOREIGN KEY (`track`)
-        REFERENCES `track` (`url`),
+        REFERENCES `track` (`id`),
     CONSTRAINT `playlist_id_fk`
         FOREIGN KEY (`playlist`)
         REFERENCES `playlist` (`id`))

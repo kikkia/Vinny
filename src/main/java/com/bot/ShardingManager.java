@@ -1,6 +1,7 @@
 package com.bot;
 
 import com.bot.commands.*;
+import com.bot.commands.battleroyale.BattleRoyaleCommand;
 import com.jagrosh.jdautilities.commandclient.CommandClient;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
@@ -8,7 +9,11 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 
+import java.util.logging.Logger;
+
 public class ShardingManager {
+
+    private static final Logger LOGGER = Logger.getLogger(ShardingManager.class.getName());
 
     private JDA[] shards;
 
@@ -27,12 +32,19 @@ public class ShardingManager {
             commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
 
             commandClientBuilder.addCommands(new TestCommand(),
+                    // Voice Commands
                     new PlayCommand(bot),
                     new PauseCommand(),
                     new RepeatCommand(),
                     new StopCommand(),
                     new ResumeCommand(),
-                    new ListTracksCommand());
+                    new ListTracksCommand(),
+                    new SaveMyPlaylistCommand(bot),
+                    new MyPlaylistCommand(bot),
+                    new LoadMyPlaylistCommand(bot),
+
+                    // Battle Royale
+                    new BattleRoyaleCommand());
 
             commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
             client = commandClientBuilder.build();

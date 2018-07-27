@@ -3,7 +3,10 @@ package com.bot.commands.voice;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
+import java.util.logging.Logger;
+
 public class VolumeCommand extends Command{
+	private static final Logger LOGGER = Logger.getLogger(VolumeCommand.class.getName());
 
 	public VolumeCommand() {
 		// TODO: init

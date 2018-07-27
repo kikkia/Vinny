@@ -4,7 +4,10 @@ import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
+import java.util.logging.Logger;
+
 public class RepeatCommand extends Command {
+	private static final Logger LOGGER = Logger.getLogger(RepeatCommand.class.getName());
 
 	public RepeatCommand() {
 		this.name = "repeat";

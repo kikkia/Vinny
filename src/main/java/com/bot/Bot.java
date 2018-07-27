@@ -20,8 +20,10 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 public class Bot extends ListenerAdapter {
+	private static final Logger LOGGER = Logger.getLogger(Bot.class.getName());
 	private EventWaiter waiter;
 	private JDA jda;
 	private final AudioPlayerManager manager;

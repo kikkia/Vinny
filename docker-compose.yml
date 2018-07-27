@@ -1,0 +1,15 @@
+version: '2'
+services:
+  vinny:
+    build: .
+    restart: always
+    environment:
+            - BOT_ID=<BOT ID HERE>
+            - USE_DB=<'True' or 'False'>
+            - DB_PASSWORD=<DATABASE PASSWORD>
+            - DB_SCHEMA=<DEFAULT DATABASE SCHEMA>
+            - DB_URI=<DATABASE URI>
+            - DB_USERNAME=<DATABASE USERNAME>
+            - DISCORD_TOKEN=<DISCORD BOT TOKEN>
+            - NUM_SHARDS=<NUMBER OF SHARDS FOR BOT (reccomend 1 per 1000 servers)>
+            - OWNER_ID=<ID OF BOT OWNER>

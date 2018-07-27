@@ -4,7 +4,10 @@ import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
+import java.util.logging.Logger;
+
 public class PauseCommand extends Command {
+	private static final Logger LOGGER = Logger.getLogger(PauseCommand.class.getName());
 
 	public PauseCommand() {
 		this.name = "pause";
