@@ -114,15 +114,14 @@
             <version>2.7.6</version>
         </dependency>
         <dependency>
-<<<<<<< HEAD
             <groupId>net.dean.jraw</groupId>
             <artifactId>JRAW</artifactId>
             <version>1.0.0</version>
-=======
+        </dependency>
+        <dependency>
             <groupId>biz.paluch.logging</groupId>
             <artifactId>logstash-gelf</artifactId>
             <version>1.11.2</version>
->>>>>>> c94ac1dc4a2ff5e549f0d84ed8c8864bee026b39
         </dependency>
     </dependencies>
 
