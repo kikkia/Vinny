@@ -1,4 +1,4 @@
-package com.bot.commands;
+package com.bot.commands.voice;
 
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;

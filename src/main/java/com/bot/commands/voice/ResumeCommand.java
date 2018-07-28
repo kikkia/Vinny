@@ -1,4 +1,4 @@
-package com.bot.commands;
+package com.bot.commands.voice;
 
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.commandclient.Command;
@@ -6,13 +6,13 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
 import java.util.logging.Logger;
 
-public class PauseCommand extends Command {
-	private static final Logger LOGGER = Logger.getLogger(PauseCommand.class.getName());
+public class ResumeCommand extends Command {
+	private static final Logger LOGGER = Logger.getLogger(ResumeCommand.class.getName());
 
-	public PauseCommand() {
-		this.name = "pause";
+	public ResumeCommand() {
+		this.name = "resume";
 		this.arguments = "";
-		this.help = "Pauses or resumes the stream";
+		this.help = "Resumes a paused Stream";
 	}
 
 	@Override
@@ -27,8 +27,7 @@ public class PauseCommand extends Command {
 				commandEvent.reply(commandEvent.getClient().getSuccess() + " Resumed stream.");
 			}
 			else {
-				handler.getPlayer().setPaused(true);
-				commandEvent.reply(commandEvent.getClient().getSuccess() + " Paused stream.");
+				commandEvent.reply(commandEvent.getClient().getWarning() + " The stream is not paused.");
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-package com.bot.commands;
+package com.bot.commands.voice;
 
 import com.bot.Bot;
 import com.bot.db.PlaylistRepository;
@@ -6,7 +6,6 @@ import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
