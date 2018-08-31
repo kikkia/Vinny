@@ -1,6 +1,5 @@
 package com.bot;
 
-import com.bot.commands.LoadMyPlaylistCommand;
 import com.bot.db.ConnectionPool;
 import org.flywaydb.core.Flyway;
 
