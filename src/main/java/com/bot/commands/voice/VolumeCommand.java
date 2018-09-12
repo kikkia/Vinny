@@ -1,5 +1,6 @@
 package com.bot.commands.voice;
 
+import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
@@ -9,11 +10,31 @@ public class VolumeCommand extends Command{
 	private static final Logger LOGGER = Logger.getLogger(VolumeCommand.class.getName());
 
 	public VolumeCommand() {
-		// TODO: init
+		this.name = "volume";
+		this.arguments = "<Volume 1-200>";
+		this.help = "Sets the players volume";
 	}
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
-		// TODO: Find the Audio player from the map and then change to the given volume
+		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
+		int newVolume;
+		try{
+			newVolume = Integer.parseInt(commandEvent.getArgs().split(" ")[0]);
+			if (newVolume > 200 || newVolume < 0) {
+				throw new NumberFormatException();
+			}
+		}
+		catch (NumberFormatException e) {
+			commandEvent.reply(commandEvent.getClient().getError() + " You must enter a volume between 0 and 200");
+			return;
+		}
+
+		if (handler == null) {
+			commandEvent.reply(commandEvent.getClient().getWarning() + " I am not connected to a voice channel.");
+		}
+		else {
+			handler.getPlayer().setVolume(newVolume);
+		}
 	}
 }

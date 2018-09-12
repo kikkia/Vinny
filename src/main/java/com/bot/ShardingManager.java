@@ -38,6 +38,7 @@ public class ShardingManager {
                     new RepeatCommand(),
                     new StopCommand(),
                     new ResumeCommand(),
+                    new VolumeCommand(),
                     new ListTracksCommand(),
                     new SaveMyPlaylistCommand(bot),
                     new MyPlaylistCommand(bot),
