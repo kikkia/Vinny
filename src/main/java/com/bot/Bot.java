@@ -14,8 +14,13 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
+import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.managers.AudioManager;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -48,6 +53,26 @@ public class Bot extends ListenerAdapter {
 			event.getTextChannel().sendMessage("yo").queue();
 			waiter.waitForEvent(MessageReceivedEvent.class, getResponseFromSender(event), responseConsumer(event), 10, TimeUnit.SECONDS, new exampleTimeout(event));
 		}
+	}
+
+	@Override
+	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
+		checkVoiceLobby(event.getGuild());
+	}
+
+	@Override
+	public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
+		checkVoiceLobby(event.getGuild());
+	}
+
+	@Override
+	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+
+	}
+
+	@Override
+	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+
 	}
 
 	// Predicate defines the condition we need to fulfill
@@ -118,6 +143,17 @@ public class Bot extends ListenerAdapter {
 			handler = (VoiceSendHandler) guild.getAudioManager().getSendingHandler();
 		}
 		return handler;
+	}
+
+	private void checkVoiceLobby(Guild guild) {
+		VoiceSendHandler handler = getHandler(guild);
+		AudioManager manager = guild.getAudioManager();
+		if (manager.isConnected()) {
+			if (manager.getConnectedChannel().getMembers().size() == 1) {
+				handler.stop();
+				manager.closeAudioConnection();
+			}
+		}
 	}
 
 }

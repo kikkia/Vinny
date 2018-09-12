@@ -10,14 +10,12 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class MyPlaylistCommand extends Command {
-    private static final Logger LOGGER = Logger.getLogger(MyPlaylistCommand.class.getName());
+public class ListMyPlaylistCommand extends Command {
+    private static final Logger LOGGER = Logger.getLogger(ListMyPlaylistCommand.class.getName());
 
-    private Bot bot;
 	private PlaylistRepository playlistRepository;
 
-	public MyPlaylistCommand(Bot bot) {
-		this.bot = bot;
+	public ListMyPlaylistCommand() {
 		this.playlistRepository = PlaylistRepository.getInstance();
 		this.name = "myplaylists";
 		this.help = "Returns all of the playlists you have";
@@ -26,6 +24,12 @@ public class MyPlaylistCommand extends Command {
 	@Override
 	protected void execute(CommandEvent commandEvent) {
 		List<Playlist> playlistList = playlistRepository.getPlaylistsForUser(commandEvent.getAuthor().getId());
+
+		if (playlistList.size() == 0) {
+			commandEvent.reply("You don't have any playlists. :cry:");
+			return;
+		}
+
 		StringBuilder reply = new StringBuilder();
 		for (Playlist p: playlistList) {
 			reply.append(p.getId()).append(": ");

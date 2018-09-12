@@ -1,16 +1,12 @@
 package com.bot.db;
 
-import com.bot.Bot;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
 import com.bot.voice.QueuedAudioTrack;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +17,6 @@ public class PlaylistRepository {
 	private Connection write;
 	private static PlaylistRepository instance;
 
-	private final String playlistInsertQuery = "INSERT INTO playlist (user_id, name) VALUES(?,?) ON DUPLICATE KEY UPDATE name = name";
 
 	private PlaylistRepository() {
 		try {
@@ -55,13 +50,13 @@ public class PlaylistRepository {
 		return getPlaylistsFromQuery(userId, query);
 	}
 	public List<Playlist> getPlaylistsForGuild(String guildId) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild_id = " + guildId;
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild = " + guildId;
 		// User helper method to get playlists
 		return getPlaylistsFromQuery(guildId, query);
 	}
 
 	public Playlist getPlaylistForUserByName(String userId, String playlistName) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.user_id = " + userId + " AND p.name = " + playlistName;
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.user_id = " + userId + " AND p.name = \"" + playlistName + "\"";
 		// Kind of a hack, since only one playlist should be returned by the search we just take the first.
 		try {
 			return getPlaylistsFromQuery(userId, query).get(0);
@@ -85,7 +80,7 @@ public class PlaylistRepository {
 	}
 
 	public Playlist getPlaylistForGuildByName(String guildId, String playlistName) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild_id = " + guildId + " AND p.name = " + playlistName;
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild = " + guildId + " AND p.name = \"" + playlistName + "\"";
 		// Kind of a hack, since only one playlist should be returned by the search we just take the first.
 		try {
 			return getPlaylistsFromQuery(guildId, query).get(0);
@@ -97,7 +92,7 @@ public class PlaylistRepository {
 	}
 
 	public Playlist getPlaylistForGuildById(String guildId, int playlistId) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild_id = " + guildId + " AND p.id = " + playlistId;
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild = " + guildId + " AND p.id = " + playlistId;
 		// Kind of a hack, since only one playlist should be returned by the search we just take the first.
 		try {
 			return getPlaylistsFromQuery(guildId, query).get(0);
@@ -109,43 +104,45 @@ public class PlaylistRepository {
 	}
 
 	public boolean createPlaylistForUser(String userId, String name, List<QueuedAudioTrack> tracks) {
+		String playlistInsertQuery = "INSERT INTO playlist (user_id, name) VALUES(?,?) ON DUPLICATE KEY UPDATE name = name";
 		String trackInsertQuery = "INSERT INTO track (url, title) VALUES (?, ?) ON DUPLICATE KEY UPDATE title = title";
 		String playlistTrackQuery = "INSERT INTO playlist_track (track, playlist, position) VALUES (?, ?, ?)";
 		return addPlaylist(userId, name, tracks, playlistInsertQuery, trackInsertQuery, playlistTrackQuery);
 	}
 
 	public boolean createPlaylistForGuild(String guildId, String name, List<QueuedAudioTrack> tracks) {
-		String trackInsertQuery = "INSERT INTO track (url, title) VALUES (?, ?)";
+		String playlistInsertQuery = "INSERT INTO playlist (guild, name) VALUES(?,?) ON DUPLICATE KEY UPDATE name = name";
+		String trackInsertQuery = "INSERT INTO track (url, title) VALUES (?, ?) ON DUPLICATE KEY UPDATE title = title";
 		String playlistTrackQuery = "INSERT INTO playlist_track (track, playlist, position) VALUES (?, ?, ?)";
 		return addPlaylist(guildId, name, tracks, playlistInsertQuery, trackInsertQuery, playlistTrackQuery);
 	}
 
 	public boolean addTrackToPlaylistForUserById(String userId, int playlistId, QueuedAudioTrack track) {
-		String addTrackQuery = "INSERT INTO track (url, title) VALUES (?, ?)";
+		String addTrackQuery = "INSERT INTO track (url, title) VALUES (?, ?) ON DUPLICATE KEY UPDATE title = title";
 		String insertPlaylistTrackQuery = "INSERT INTO playlist_track (playlist, track, position) VALUES (?, ?, ?)";
 		String getNumTracksQuery = "SELECT COUNT(*) FROM playlist_track WHERE playlist = " + playlistId + " AND p.user_id = " + userId;
 		return addTrackToPlayList(userId, null, playlistId, track, addTrackQuery, insertPlaylistTrackQuery, getNumTracksQuery);
 	}
 
 	public boolean addTrackToPlaylistForUserByName(String userId, String name, QueuedAudioTrack track) {
-		String addTrackQuery = "INSERT INTO track (url, title) VALUES (?, ?)";
+		String addTrackQuery = "INSERT INTO track (url, title) VALUES (?, ?) ON DUPLICATE KEY UPDATE title = title";
 		String insertPlaylistTrackQuery = "INSERT INTO playlist_track (playlist, track, position) VALUES (?, ?, ?)";
-		String getNumTracksQuery = "SELECT COUNT(*) FROM playlist_track pt LEFT JOIN playlist p ON p.id = pt.playlist WHERE p.name = " + name + " AND p.user_id = " + userId;
+		String getNumTracksQuery = "SELECT COUNT(*) FROM playlist_track pt LEFT JOIN playlist p ON p.id = pt.playlist WHERE p.name = \"" + name + "\" AND p.user_id = " + userId;
 		// TODO: Implement later
 		return false;
 	}
 
 	public boolean addTrackToPlaylistForGuildById(String guildId, int playlistId, QueuedAudioTrack track) {
-		String addTrackQuery = "INSERT INTO track (url, title) VALUES (?, ?)";
+		String addTrackQuery = "INSERT INTO track (url, title) VALUES (?, ?) ON DUPLICATE KEY UPDATE title = title";
 		String insertPlaylistTrackQuery = "INSERT INTO playlist_track (playlist, track, position) VALUES (?, ?, ?)";
 		String getNumTracksQuery = "SELECT COUNT(*) FROM playlist_track WHERE playlist = " + playlistId + " AND p.guild_id = " + guildId;
 		return addTrackToPlayList(guildId, null, playlistId, track, addTrackQuery, insertPlaylistTrackQuery, getNumTracksQuery);
 	}
 
 	public boolean addTrackToPlaylistForGuildByName(String guildId, String name, QueuedAudioTrack track) {
-		String addTrackQuery = "INSERT INTO track (url, title) VALUES (?, ?)";
+		String addTrackQuery = "INSERT INTO track (url, title) VALUES (?, ?) ON DUPLICATE KEY UPDATE title = title\"";
 		String insertPlaylistTrackQuery = "INSERT INTO playlist_track (playlist, track, position) VALUES (?, ?, ?)";
-		String getNumTracksQuery = "SELECT COUNT(*) FROM playlist_track pt LEFT JOIN playlist p ON p.id = pt.playlist WHERE p.name = " + name + " AND p.user_id = " + guildId;
+		String getNumTracksQuery = "SELECT COUNT(*) FROM playlist_track pt LEFT JOIN playlist p ON p.id = pt.playlist WHERE p.name = \"" + name + "\" AND p.user_id = " + guildId;
 		// TODO: Implement later
 		return false;
 	}
@@ -203,10 +200,6 @@ public class PlaylistRepository {
 			e.printStackTrace();
 		} finally {
 			close(statement, set);
-		}
-
-		if (playlists.values().isEmpty()) {
-			return null;
 		}
 
 		return new ArrayList<>(playlists.values());

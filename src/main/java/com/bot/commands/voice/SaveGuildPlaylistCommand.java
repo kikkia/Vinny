@@ -10,18 +10,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class SaveMyPlaylistCommand extends Command {
-	private static final Logger LOGGER = Logger.getLogger(SaveMyPlaylistCommand.class.getName());
-
+public class SaveGuildPlaylistCommand extends Command {
+	private static final Logger LOGGER = Logger.getLogger(SaveGuildPlaylistCommand.class.getName());
 	private PlaylistRepository playlistRepository;
 	private Bot bot;
 
-	public SaveMyPlaylistCommand(Bot bot) {
+	public SaveGuildPlaylistCommand(Bot bot) {
+		this.name = "savegplaylist";
+		this.arguments = "<playlist name>";
+		this.help = "Saves all of the currently queued tracks into a playlist tied to your guild.";
+		this.playlistRepository = PlaylistRepository.getInstance();
 		this.bot = bot;
-		playlistRepository = PlaylistRepository.getInstance();
-		this.name = "savemyplaylist";
-		this.arguments = "Name";
-		this.help = "Saves the current audio playlist as a playlist accessible for any server you are on.";
 	}
 
 	@Override
@@ -39,7 +38,7 @@ public class SaveMyPlaylistCommand extends Command {
 		trackList.add(nowPlaying);
 		trackList.addAll(tracks);
 
-		if (playlistRepository.createPlaylistForUser(commandEvent.getAuthor().getId(), args, trackList)) {
+		if (playlistRepository.createPlaylistForGuild(commandEvent.getGuild().getId(), args, trackList)) {
 			commandEvent.reply("Playlist successfully created.");
 		} else {
 			commandEvent.reply("Something went wrong! Failed to create playlist.");
