@@ -26,6 +26,12 @@ public class MyPlaylistCommand extends Command {
 	@Override
 	protected void execute(CommandEvent commandEvent) {
 		List<Playlist> playlistList = playlistRepository.getPlaylistsForUser(commandEvent.getAuthor().getId());
+
+		if (playlistList.size() == 0) {
+			commandEvent.reply("You don't have any playlists. :cry:");
+			return;
+		}
+
 		StringBuilder reply = new StringBuilder();
 		for (Playlist p: playlistList) {
 			reply.append(p.getId()).append(": ");

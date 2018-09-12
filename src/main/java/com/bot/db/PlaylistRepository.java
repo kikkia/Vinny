@@ -7,10 +7,7 @@ import com.bot.voice.QueuedAudioTrack;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,7 +58,7 @@ public class PlaylistRepository {
 	}
 
 	public Playlist getPlaylistForUserByName(String userId, String playlistName) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.user_id = " + userId + " AND p.name = " + playlistName;
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.user_id = " + userId + " AND p.name = \"" + playlistName + "\"";
 		// Kind of a hack, since only one playlist should be returned by the search we just take the first.
 		try {
 			return getPlaylistsFromQuery(userId, query).get(0);
@@ -85,7 +82,7 @@ public class PlaylistRepository {
 	}
 
 	public Playlist getPlaylistForGuildByName(String guildId, String playlistName) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild_id = " + guildId + " AND p.name = " + playlistName;
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild_id = " + guildId + " AND p.name = \"" + playlistName + "\"";
 		// Kind of a hack, since only one playlist should be returned by the search we just take the first.
 		try {
 			return getPlaylistsFromQuery(guildId, query).get(0);
@@ -130,7 +127,7 @@ public class PlaylistRepository {
 	public boolean addTrackToPlaylistForUserByName(String userId, String name, QueuedAudioTrack track) {
 		String addTrackQuery = "INSERT INTO track (url, title) VALUES (?, ?)";
 		String insertPlaylistTrackQuery = "INSERT INTO playlist_track (playlist, track, position) VALUES (?, ?, ?)";
-		String getNumTracksQuery = "SELECT COUNT(*) FROM playlist_track pt LEFT JOIN playlist p ON p.id = pt.playlist WHERE p.name = " + name + " AND p.user_id = " + userId;
+		String getNumTracksQuery = "SELECT COUNT(*) FROM playlist_track pt LEFT JOIN playlist p ON p.id = pt.playlist WHERE p.name = \"" + name + "\" AND p.user_id = " + userId;
 		// TODO: Implement later
 		return false;
 	}
@@ -145,7 +142,7 @@ public class PlaylistRepository {
 	public boolean addTrackToPlaylistForGuildByName(String guildId, String name, QueuedAudioTrack track) {
 		String addTrackQuery = "INSERT INTO track (url, title) VALUES (?, ?)";
 		String insertPlaylistTrackQuery = "INSERT INTO playlist_track (playlist, track, position) VALUES (?, ?, ?)";
-		String getNumTracksQuery = "SELECT COUNT(*) FROM playlist_track pt LEFT JOIN playlist p ON p.id = pt.playlist WHERE p.name = " + name + " AND p.user_id = " + guildId;
+		String getNumTracksQuery = "SELECT COUNT(*) FROM playlist_track pt LEFT JOIN playlist p ON p.id = pt.playlist WHERE p.name = \"" + name + "\" AND p.user_id = " + guildId;
 		// TODO: Implement later
 		return false;
 	}
@@ -203,10 +200,6 @@ public class PlaylistRepository {
 			e.printStackTrace();
 		} finally {
 			close(statement, set);
-		}
-
-		if (playlists.values().isEmpty()) {
-			return null;
 		}
 
 		return new ArrayList<>(playlists.values());
