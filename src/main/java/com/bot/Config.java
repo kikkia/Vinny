@@ -15,7 +15,6 @@ public class Config {
     private static Config config = null;
     private final File configFile;
     private Map<String, String> configs;
-    private boolean useEnvVar = false;
 
     public static final String DISCORD_TOKEN = "DISCORD_TOKEN";
     public static final String REDDIT_TOKEN = "REDDIT_TOKEN";
@@ -44,7 +43,6 @@ public class Config {
         }
         catch (FileNotFoundException f) {
             // If config file is gone we can try using env vars
-            useEnvVar = true;
             configs = System.getenv();
             LOGGER.log(Level.WARNING, "Config file not found, defaulting to env vars");
         }

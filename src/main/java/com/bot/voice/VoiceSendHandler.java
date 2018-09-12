@@ -53,8 +53,11 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
 
     public void stop() {
         tracks.clear();
+        player.setPaused(false);
+        player.setVolume(50);
         player.stopTrack();
         player.destroy();
+        repeat = false;
         nowPlaying = null;
     }
 
@@ -84,10 +87,15 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             queueTrack(track.makeClone(), requester);
         }
         QueuedAudioTrack nextTrack = tracks.poll();
-        trackList.remove(0);
-        requester = nextTrack.getRequesterID();
-        player.playTrack(nextTrack.getTrack());
-        nowPlaying = nextTrack;
+        // If nextTrack is null then we are dont
+        if (nextTrack == null) {
+            stop();
+        }
+        else {
+            requester = nextTrack.getRequesterID();
+            player.playTrack(nextTrack.getTrack());
+            nowPlaying = nextTrack;
+        }
     }
 
     public boolean isRepeat() {
