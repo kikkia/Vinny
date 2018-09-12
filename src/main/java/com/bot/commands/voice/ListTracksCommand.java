@@ -1,4 +1,4 @@
-package com.bot.commands;
+package com.bot.commands.voice;
 
 import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;

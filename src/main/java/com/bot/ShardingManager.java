@@ -1,6 +1,6 @@
 package com.bot;
 
-import com.bot.commands.*;
+import com.bot.commands.voice.*;
 import com.bot.commands.battleroyale.BattleRoyaleCommand;
 import com.jagrosh.jdautilities.commandclient.CommandClient;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
@@ -31,7 +31,7 @@ public class ShardingManager {
             commandClientBuilder.setPrefix("~");
             commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
 
-            commandClientBuilder.addCommands(new TestCommand(),
+            commandClientBuilder.addCommands(
                     // Voice Commands
                     new PlayCommand(bot),
                     new PauseCommand(),

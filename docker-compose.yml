@@ -4,12 +4,21 @@ services:
     build: .
     restart: always
     environment:
-            - BOT_ID=<BOT ID HERE>
-            - USE_DB=<'True' or 'False'>
+            - BOT_ID=<Bot ID here>
+            - USE_DB=<True or False>
             - DB_PASSWORD=<DATABASE PASSWORD>
             - DB_SCHEMA=<DEFAULT DATABASE SCHEMA>
             - DB_URI=<DATABASE URI>
             - DB_USERNAME=<DATABASE USERNAME>
-            - DISCORD_TOKEN=<DISCORD BOT TOKEN>
-            - NUM_SHARDS=<NUMBER OF SHARDS FOR BOT (reccomend 1 per 1000 servers)>
-            - OWNER_ID=<ID OF BOT OWNER>
+            - DISCORD_TOKEN=<Discord bot token>
+            - NUM_SHARDS=<Number of shards (reccomended 1 per 1000 servers)>
+            - OWNER_ID=<Owner ID>
+  database:
+    image: mysql:5.7
+    ports:
+            - "3306:3306"
+    environment:
+            MYSQL_ROOT_PASSWORD: <Root Password>
+            MYSQL_DATABASE: vinny
+            MYSQL_USER: <user>
+            MYSQL_PASSWORD: <password>
