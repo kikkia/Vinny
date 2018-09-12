@@ -41,11 +41,11 @@ public class ShardingManager {
                     new VolumeCommand(),
                     new ListTracksCommand(),
                     new SaveMyPlaylistCommand(bot),
-                    new ListMyPlaylistCommand(bot),
+                    new ListMyPlaylistCommand(),
                     new LoadMyPlaylistCommand(bot),
                     new LoadGuildPlaylistCommand(bot),
                     new SaveGuildPlaylistCommand(bot),
-                    new ListGuildPlaylistCommand(bot),
+                    new ListGuildPlaylistCommand(),
 
                     // Battle Royale
                     new BattleRoyaleCommand());

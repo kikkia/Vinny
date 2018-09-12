@@ -13,11 +13,9 @@ import java.util.logging.Logger;
 public class ListMyPlaylistCommand extends Command {
     private static final Logger LOGGER = Logger.getLogger(ListMyPlaylistCommand.class.getName());
 
-    private Bot bot;
 	private PlaylistRepository playlistRepository;
 
-	public ListMyPlaylistCommand(Bot bot) {
-		this.bot = bot;
+	public ListMyPlaylistCommand() {
 		this.playlistRepository = PlaylistRepository.getInstance();
 		this.name = "myplaylists";
 		this.help = "Returns all of the playlists you have";

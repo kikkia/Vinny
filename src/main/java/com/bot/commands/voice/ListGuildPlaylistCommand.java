@@ -13,11 +13,9 @@ import java.util.logging.Logger;
 public class ListGuildPlaylistCommand extends Command {
     private static final Logger LOGGER = Logger.getLogger(ListGuildPlaylistCommand.class.getName());
 
-    private Bot bot;
     private PlaylistRepository playlistRepository;
 
-    public ListGuildPlaylistCommand(Bot bot) {
-        this.bot = bot;
+    public ListGuildPlaylistCommand() {
         this.playlistRepository = PlaylistRepository.getInstance();
         this.name = "gplaylists";
         this.help = "Returns all of the playlists the guild has.";
