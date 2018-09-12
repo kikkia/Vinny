@@ -10,13 +10,13 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class MyPlaylistCommand extends Command {
-    private static final Logger LOGGER = Logger.getLogger(MyPlaylistCommand.class.getName());
+public class ListMyPlaylistCommand extends Command {
+    private static final Logger LOGGER = Logger.getLogger(ListMyPlaylistCommand.class.getName());
 
     private Bot bot;
 	private PlaylistRepository playlistRepository;
 
-	public MyPlaylistCommand(Bot bot) {
+	public ListMyPlaylistCommand(Bot bot) {
 		this.bot = bot;
 		this.playlistRepository = PlaylistRepository.getInstance();
 		this.name = "myplaylists";
