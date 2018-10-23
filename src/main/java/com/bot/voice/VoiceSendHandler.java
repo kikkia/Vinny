@@ -33,11 +33,11 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         this.player = player;
         this.guildID = guildID;
         this.bot = bot;
-        skipVotes = new HashSet<>();
-        tracks = new LinkedBlockingQueue<>();
-        trackList = new LinkedList<>();
-        nowPlaying = null;
-        repeat = false;
+        this.skipVotes = new HashSet<>();
+        this.tracks = new LinkedBlockingQueue<>();
+        this.trackList = new LinkedList<>();
+        this.nowPlaying = null;
+        this.repeat = false;
     }
 
     public void queueTrack(AudioTrack track, long user) {
