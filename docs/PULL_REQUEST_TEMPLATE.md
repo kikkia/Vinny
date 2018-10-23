@@ -1,10 +1,7 @@
 [//]: # (Please try to use this template, feel free to remove sections or add more you may think are relevant.)
 
 ## Problem
-- TODO: What was the problem?
-
-## Issue
-- TODO: Is this related to any open issues? If so, link them here. If not, put none or remove.
+- TODO: What was the problem? (If there is an issue ticket, please link it)
 
 ## Solution
 - TODO: High level explination of how you fixed the problem.
@@ -18,8 +15,6 @@
 ### Questions
 #### Does this use the database?
 TODO: Yes or no, why?
-#### Does this use an EventWaiter?
-TODO: Yes or no, why?
 #### Does this store user data?
 TODO: Yes or no, why?
 #### Does this talk to a 3rd party API or Service?
@@ -28,4 +23,3 @@ TODO: Yes or no, why?
 ## Reviewers
 - [ ] @JessWalters
 - [ ]
-- # TODO: Add any other users you want to help review this pr.
