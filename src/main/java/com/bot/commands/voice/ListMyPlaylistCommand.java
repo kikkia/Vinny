@@ -1,6 +1,5 @@
 package com.bot.commands.voice;
 
-import com.bot.Bot;
 import com.bot.db.PlaylistRepository;
 import com.bot.models.Playlist;
 import com.jagrosh.jdautilities.commandclient.Command;
