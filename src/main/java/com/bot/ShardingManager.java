@@ -1,5 +1,6 @@
 package com.bot;
 
+import com.bot.commands.general.InviteCommand;
 import com.bot.commands.voice.*;
 import com.bot.commands.battleroyale.BattleRoyaleCommand;
 import com.jagrosh.jdautilities.commandclient.CommandClient;
@@ -49,6 +50,9 @@ public class ShardingManager {
 
                     // Battle Royale
                     new BattleRoyaleCommand());
+
+                    // General Commands
+                    new InviteCommand();
 
             commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
             client = commandClientBuilder.build();
