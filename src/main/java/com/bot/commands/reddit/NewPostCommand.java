@@ -10,26 +10,27 @@ import net.dean.jraw.models.TimePeriod;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+public class NewPostCommand extends Command {
+    private static final Logger LOGGER = Logger.getLogger(NewPostCommand.class.getName());
 
-public class TopPostCommand extends Command{
-    private static final Logger LOGGER = Logger.getLogger(TopPostCommand.class.getName());
     private RedditConnection redditConnection;
 
-    public TopPostCommand() {
-        this.name = "tr";
-        this.help = "Grabs a random post from the top all time posts on a given subreddit";
+    public NewPostCommand() {
+        this.name = "nr";
+        this.help = "Grabs a random new post from the newest 100 posts in a given subreddit";
         this.arguments = "<subreddit name>";
+
         redditConnection = RedditConnection.getInstance();
     }
 
     @Override
     protected void execute(CommandEvent commandEvent) {
-        try {
+        try{
             RedditHelper.getRandomSubmissionAndSend(redditConnection,
                     commandEvent,
-                    SubredditSort.TOP,
+                    SubredditSort.NEW,
                     TimePeriod.ALL,
-                    200);
+                    100);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error thrown:" + e);
             commandEvent.reply(commandEvent.getClient().getError() + " Sorry, something went wrong getting a reddit post.");

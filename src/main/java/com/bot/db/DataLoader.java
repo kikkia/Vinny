@@ -25,7 +25,7 @@ public class DataLoader {
 		Config config = Config.getInstance();
 		long startTime = System.currentTimeMillis();
 
-		shardingManager = new ShardingManager(NUM_SHARDS, true);
+		shardingManager = new ShardingManager(NUM_SHARDS, true, true);
 
 		if (config.getConfig(Config.USE_DB).equals("False")) {
 			System.out.println("Use_DB Set to False in the config file. Exiting...");

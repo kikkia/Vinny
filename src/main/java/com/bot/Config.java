@@ -18,6 +18,7 @@ public class Config {
 
     public static final String DISCORD_TOKEN = "DISCORD_TOKEN";
     public static final String REDDIT_TOKEN = "REDDIT_TOKEN";
+    public static final String REDDIT_CLIENT_ID = "REDDIT_CLIENT_ID";
     public static final String OWNER_ID = "OWNER_ID";
     public static final String DISCORD_BOT_ID = "BOT_ID";
     public static final String BOTLIST_API_TOKEN = "BOTLIST_API";
