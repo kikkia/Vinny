@@ -15,7 +15,6 @@ public class RedditConnection {
     private static RedditConnection instance;
     private RedditClient client;
 
-    private final String REDIRECT_URL = "https://discordapp.com/oauth2/authorize?client_id=276855867796881408&scope=bot";
 
     /**
      * Generates a new connection to reddit API.

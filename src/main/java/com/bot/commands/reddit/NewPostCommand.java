@@ -1,7 +1,7 @@
 package com.bot.commands.reddit;
 
 import com.bot.RedditConnection;
-import com.bot.Utils.RedditHelper;
+import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import net.dean.jraw.models.SubredditSort;

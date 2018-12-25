@@ -1,4 +1,4 @@
-package com.bot.Utils;
+package com.bot.utils;
 
 import com.bot.RedditConnection;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
@@ -9,13 +9,11 @@ import net.dean.jraw.models.TimePeriod;
 import net.dean.jraw.pagination.DefaultPaginator;
 import net.dean.jraw.references.SubredditReference;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RedditHelper {
 
@@ -51,25 +49,47 @@ public class RedditHelper {
 
         List<Listing<Submission>> submissions = paginator.accumulate(1);
         Listing<Submission> page = submissions.get(0); // Get the only page
-        Submission submission = page.getChildren().get(random.nextInt(page.getChildren().size())); // Get random child post from the page
-
-        // We dont want a pinned post so if we got a pinned one keep trying
-        int tries = 1;
-        while (submission.isStickied()) {
-            if (tries > 10) {
-                // Screw it
-                break;
-            }
-
-            submission = page.getChildren().get(random.nextInt(page.getChildren().size()));
-            tries++;
-        }
+        Submission submission =  getRandomSubmission(page, false);// Get random child post from the page
 
 
         if (submission.isNsfw()) {
             // TODO Check if the channel has NSFW enabled (Use Channel cache?)
         }
 
+        // Send the embed, content will be sent separatly below
+        commandEvent.reply(buildEmbedForSubmission(submission));
+
+        if (submission.isSelfPost() && !Objects.requireNonNull(submission.getSelfText()).isEmpty()) {
+            // Since discord only allows us to send 2000 characters we need to break long posts down
+            if (submission.getSelfText().length() > 1900) {
+                // Split message into parts and send them all separately
+                for (String part: FormattingUtils.splitTextIntoChunksByWords(submission.getSelfText(), 1500)) {
+                    commandEvent.reply("```" + part + "```");
+                }
+            } else {
+                // Its short enough so just send it
+                commandEvent.reply("```" + submission.getSelfText() + " ```");
+            }
+        } else {
+            commandEvent.reply(submission.getUrl());
+        }
+    }
+
+    private static Submission getRandomSubmission(Listing<Submission> submissions, boolean stickyAllowed) {
+        Submission toReturn = submissions.getChildren().get(random.nextInt(submissions.getChildren().size()));
+
+        if (!stickyAllowed && toReturn.isStickied()) {
+            int tries = 1;
+            while (toReturn.isStickied() && tries < 10) {
+                toReturn = submissions.getChildren().get(random.nextInt(submissions.getChildren().size()));
+                tries++;
+            }
+        }
+
+        return toReturn;
+    }
+
+    private static MessageEmbed buildEmbedForSubmission(Submission submission) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setAuthor(submission.getAuthor());
         builder.addField("Score", submission.getScore()+"", true);
@@ -85,22 +105,6 @@ public class RedditHelper {
             builder.setImage(submission.getThumbnail());
         }
 
-        // Send the embed, content will be sent separatly below
-        commandEvent.reply(builder.build());
-
-        if (submission.isSelfPost() && !Objects.requireNonNull(submission.getSelfText()).isEmpty()) {
-            // Since discord only allows us to send 2000 characters we need to break long posts down
-            if (submission.getSelfText().length() > 1900) {
-                // Split message into parts and send them all separately
-                for (String part: FormattingUtils.splitTextIntoChunksByWords(submission.getSelfText())) {
-                    commandEvent.reply("```" + part + "```");
-                }
-            } else {
-                // Its short enough so just send it
-                commandEvent.reply("```" + submission.getSelfText() + " ```");
-            }
-        } else {
-            commandEvent.reply(submission.getUrl());
-        }
+        return builder.build();
     }
 }

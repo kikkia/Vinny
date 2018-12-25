@@ -1,4 +1,4 @@
-package com.bot.Utils;
+package com.bot.utils;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -6,10 +6,10 @@ import java.util.regex.Pattern;
 
 public class FormattingUtils {
 
-    public static ArrayList<String> splitTextIntoChunksByWords(String input) {
+    public static ArrayList<String> splitTextIntoChunksByWords(String input, int chunkLength) {
         ArrayList<String> stringList = new ArrayList<>();
 
-        String regex = "\\s*(.{1800}[^.]*\\.|.+$)";
+        String regex = "\\s*(.{" + chunkLength + "}[^.]*\\.|.+$)";
         Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
         Matcher matcher = pattern.matcher(input);
 
