@@ -1,6 +1,5 @@
 package com.bot.db;
 
-import com.bot.models.InternalChannel;
 import com.bot.models.InternalTextChannel;
 import com.bot.models.InternalVoiceChannel;
 
@@ -10,9 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
