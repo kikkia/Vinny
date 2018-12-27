@@ -1,6 +1,9 @@
 package com.bot;
 
 import com.bot.commands.general.InviteCommand;
+import com.bot.commands.reddit.NewPostCommand;
+import com.bot.commands.reddit.RandomPostCommand;
+import com.bot.commands.reddit.TopPostCommand;
 import com.bot.commands.voice.*;
 import com.bot.commands.battleroyale.BattleRoyaleCommand;
 import com.jagrosh.jdautilities.commandclient.CommandClient;
@@ -20,7 +23,7 @@ public class ShardingManager {
 
     // This adds a connection for each shard. Shards make it more efficient. ~1000 servers to shards is ideal
     // supportScript disables commands. Useful for running a supportScript simultaneously while the bot is going on prod
-    public ShardingManager(int numShards, boolean supportScript) throws Exception {
+    public ShardingManager(int numShards, boolean supportScript, boolean useDB) throws Exception {
         Config config = Config.getInstance();
         shards = new JDA[numShards];
         Bot bot = null;
@@ -41,18 +44,32 @@ public class ShardingManager {
                     new ResumeCommand(),
                     new VolumeCommand(),
                     new ListTracksCommand(),
-                    new SaveMyPlaylistCommand(bot),
-                    new ListMyPlaylistCommand(),
-                    new LoadMyPlaylistCommand(bot),
-                    new LoadGuildPlaylistCommand(bot),
-                    new SaveGuildPlaylistCommand(bot),
-                    new ListGuildPlaylistCommand(),
 
                     // Battle Royale
-                    new BattleRoyaleCommand());
+                    new BattleRoyaleCommand(),
 
                     // General Commands
-                    new InviteCommand();
+                    new InviteCommand(),
+
+                    // Reddit Commands
+                    new RandomPostCommand(),
+                    new TopPostCommand(),
+                    new NewPostCommand()
+            );
+
+            // Commands that rely on the DB (usually only turned off to test)
+            // TODO: Make DB Mandatory
+            if (useDB) {
+                commandClientBuilder.addCommands(
+                        new ListTracksCommand(),
+                        new SaveMyPlaylistCommand(bot),
+                        new ListMyPlaylistCommand(),
+                        new LoadMyPlaylistCommand(bot),
+                        new LoadGuildPlaylistCommand(bot),
+                        new SaveGuildPlaylistCommand(bot),
+                        new ListGuildPlaylistCommand()
+                );
+            }
 
             commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
             client = commandClientBuilder.build();

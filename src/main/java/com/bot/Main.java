@@ -29,7 +29,8 @@ public class Main {
 			return;
 		}
 
-		if (Boolean.parseBoolean(config.getConfig(Config.USE_DB))) {
+		boolean useDB = Boolean.parseBoolean(config.getConfig(Config.USE_DB));
+		if (useDB) {
 			ConnectionPool connectionPool = ConnectionPool.getInstance();
 			LOGGER.log(Level.INFO, "Hikari pool successfully initialized");
 			Flyway flyway = new Flyway();
@@ -39,7 +40,7 @@ public class Main {
 		}
 
 		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));
-		ShardingManager shardingManager = new ShardingManager(numShards, false);
+		ShardingManager shardingManager = new ShardingManager(numShards, false, useDB);
 
 		System.out.println("Successfully started.");
 	}

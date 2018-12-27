@@ -10,6 +10,7 @@ public class InviteCommand extends Command {
     public InviteCommand() {
         this.name = "invite";
         this.help = "Sends a link to invite the bot to your server";
+        this.arguments = "";
     }
 
     @Override
