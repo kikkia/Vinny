@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `text_channel` (
     `id` VARCHAR(255) NOT NULL,
     `guild` VARCHAR(255) NOT NULL,
     `name` VARCHAR(255) NOT NULL,
-    `announcment` TINYINT(1) NULL DEFAULT 0,
+    `announcement` TINYINT(1) NULL DEFAULT 0,
     `commands_enabled` TINYINT(1) NULL DEFAULT 1,
     `voice_enabled` TINYINT(1) NULL DEFAULT 1,
     `nsfw_enabled` TINYINT(1) NULL DEFAULT 0,
