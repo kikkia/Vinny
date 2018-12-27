@@ -33,11 +33,8 @@ public class PlaylistRepository {
 	}
 
 	private void initialize() throws SQLException {
-		ConnectionPool connectionPool = ConnectionPool.getInstance();
-		ReadConnectionPool readConnectionPool = ReadConnectionPool.getInstance();
-
-		DataSource dataSource = connectionPool.getDataSource();
-		DataSource readDataSource = readConnectionPool.getDataSource();
+		DataSource dataSource = ConnectionPool.getDataSource();
+		DataSource readDataSource = ReadConnectionPool.getDataSource();
 
 		this.read = readDataSource.getConnection();
 		this.write = dataSource.getConnection();

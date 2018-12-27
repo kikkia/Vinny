@@ -37,7 +37,7 @@ public class RedditHelper {
                 .subreddit(subredditName);
 
         if (subreddit.about().isNsfw()) {
-            // TODO Check if the channel has NSFW enabled (Use Channel cache?)
+            // TODO Check if the channel has NSFW enabled (Use InternalChannel cache?)
         }
 
         DefaultPaginator<Submission> paginator = subreddit
@@ -53,7 +53,7 @@ public class RedditHelper {
 
 
         if (submission.isNsfw()) {
-            // TODO Check if the channel has NSFW enabled (Use Channel cache?)
+            // TODO Check if the channel has NSFW enabled (Use InternalChannel cache?)
         }
 
         // Send the embed, content will be sent separatly below

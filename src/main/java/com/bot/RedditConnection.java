@@ -15,7 +15,6 @@ public class RedditConnection {
     private static RedditConnection instance;
     private RedditClient client;
 
-
     /**
      * Generates a new connection to reddit API.
      */
