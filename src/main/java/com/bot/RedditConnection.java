@@ -1,6 +1,12 @@
 package com.bot;
 
 import net.dean.jraw.RedditClient;
+import net.dean.jraw.http.OkHttpNetworkAdapter;
+import net.dean.jraw.http.UserAgent;
+import net.dean.jraw.oauth.Credentials;
+import net.dean.jraw.oauth.OAuthHelper;
+
+import java.util.UUID;
 
 /**
  * Class that handles the generation and managment of the connection to the Reddit API
@@ -13,7 +19,18 @@ public class RedditConnection {
      * Generates a new connection to reddit API.
      */
     private RedditConnection() {
-        // TODO: Generate new client to connect to reddit
+        Config config = Config.getInstance();
+        String clientID = config.getConfig(Config.REDDIT_CLIENT_ID);
+        String redditSecret = config.getConfig(Config.REDDIT_TOKEN);
+        // Load Credentials
+        Credentials oauthCreds = Credentials.userless(clientID, redditSecret, UUID.randomUUID());
+
+        // Create a unique User-Agent
+        UserAgent userAgent = new UserAgent("bot", "kikkia.vinny", "1.0.0", "Kikkia");
+
+        // Authenticate
+        client = OAuthHelper.automatic(new OkHttpNetworkAdapter(userAgent), oauthCreds);
+        client.setLogHttp(false);
     }
 
     public static RedditConnection getInstance() {

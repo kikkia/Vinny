@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,14 +19,14 @@ public class DataLoader {
 
 	private static ShardingManager shardingManager;
 	// Needs shards for when running on PROD
-	private static final int NUM_SHARDS = 1;
+	private static final int NUM_SHARDS = 25;
 
 	public static void main(String[] args) throws Exception {
 		// Config gets tokens
 		Config config = Config.getInstance();
 		long startTime = System.currentTimeMillis();
 
-		shardingManager = new ShardingManager(NUM_SHARDS, true);
+		shardingManager = new ShardingManager(NUM_SHARDS, true, true);
 
 		if (config.getConfig(Config.USE_DB).equals("False")) {
 			System.out.println("Use_DB Set to False in the config file. Exiting...");
@@ -71,6 +72,7 @@ public class DataLoader {
 		private String textChannelInsertQuery = "INSERT INTO text_channel (id, guild, name) VALUES (?, ?, ?)";
 		private String userInsertQuery = "INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild) VALUES (?, ?)";
+		private String voiceChannelInsertQuery = "INSERT INTO voice_channel (id, guild, name) VALUES (?, ?, ?)";
 
 		public LoadThread(JDA bot, Config config, long startTime) throws SQLException, ClassNotFoundException {
 			this.bot = bot;
@@ -91,6 +93,7 @@ public class DataLoader {
 				List<Guild> guilds = bot.getGuilds();
 				int guildCount = 0;
 				int textChannelCount = 0;
+				int voiceChannelCount = 0;
 
 				// Loads guilds into db
 				for (Guild g : guilds) {
@@ -117,8 +120,17 @@ public class DataLoader {
 							System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + textChannelCount + " textChannels");
 						}
 					}
+
+					for (VoiceChannel v : g.getVoiceChannels()) {
+						statement = connection.prepareStatement(voiceChannelInsertQuery);
+						statement.setString(1, v.getId());
+						statement.setString(2, g.getId());
+						statement.setString(3, v.getName());
+						statement.execute();
+						voiceChannelCount++;
+					}
 				}
-				System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + guildCount + " guilds and " + textChannelCount + " channels.");
+				System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + guildCount + " guilds and " + textChannelCount + " channels and " + voiceChannelCount + " voice channels.");
 
 
 				System.out.println("Starting user and membership migration");

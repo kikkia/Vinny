@@ -37,8 +37,11 @@ public class ReadConnectionPool {
 		return connectionPool;
 	}
 
-	public DataSource getDataSource() {
-		return this.dataSource;
+	public static DataSource getDataSource() {
+		if (connectionPool == null) {
+			connectionPool = new ReadConnectionPool();
+		}
+		return connectionPool.dataSource;
 	}
 }
 
