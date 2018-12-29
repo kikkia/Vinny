@@ -44,12 +44,16 @@ public class MembershipDAO {
     public UserMembership getUserMembershipByIdInGuild(String userId, String guildId) throws SQLException {
         // TODO: IS there a better way to close these in case of error
         String query = "SELECT u.id, u.can_use_bot, u.name, g.id FROM users u JOIN guild_membership gm ON gm.user_id = u.id JOIN guild g ON g.id = gm.guild WHERE g.id = ? AND u.id = ?";
+        UserMembership membership = null;
+
         PreparedStatement statement = read.prepareStatement(query);
         statement.setString(1, guildId);
         statement.setString(2, userId);
         ResultSet set = statement.executeQuery();
-        set.next();
-        UserMembership membership = mapUserMembership(set);
+        if (set.next()) {
+            membership = mapUserMembership(set);
+        }
+
         close(statement, set);
         return membership;
     }
@@ -120,7 +124,7 @@ public class MembershipDAO {
     private ResultSet executeGetQuery(String query) throws SQLException {
         PreparedStatement statement = read.prepareStatement(query);
         ResultSet set = statement.executeQuery();
-        statement.close();
+        close(statement, null);
         return set;
     }
 

@@ -5,19 +5,19 @@ public class InternalGuild {
     private String id;
     private String name;
     private int volume;
-    private String min_base_role;
-    private String min_mod_role;
-    private String min_nsfw_role;
-    private String min_voice_role;
+    private String minBaseRole;
+    private String minModRole;
+    private String minNsfwRole;
+    private String minVoiceRole;
 
-    public InternalGuild(String id, String name, int minVolume, String min_base_role, String min_mod_role, String min_nsfw_role, String min_voice_role) {
+    public InternalGuild(String id, String name, int minVolume, String minBaseRole, String minModRole, String minNsfwRole, String minVoiceRole) {
         this.id = id;
         this.name = name;
         this.volume = minVolume;
-        this.min_base_role = min_base_role;
-        this.min_mod_role = min_mod_role;
-        this.min_nsfw_role = min_nsfw_role;
-        this.min_voice_role = min_voice_role;
+        this.minBaseRole = minBaseRole;
+        this.minModRole = minModRole;
+        this.minNsfwRole = minNsfwRole;
+        this.minVoiceRole = minVoiceRole;
     }
 
     public String getId() {
@@ -44,35 +44,35 @@ public class InternalGuild {
         this.volume = minVolume;
     }
 
-    public String getMin_base_role() {
-        return min_base_role;
+    public String getMinBaseRole() {
+        return minBaseRole;
     }
 
-    public void setMin_base_role(String min_base_role) {
-        this.min_base_role = min_base_role;
+    public void setMinBaseRole(String minBaseRole) {
+        this.minBaseRole = minBaseRole;
     }
 
-    public String getMin_mod_role() {
-        return min_mod_role;
+    public String getMinModRole() {
+        return minModRole;
     }
 
-    public void setMin_mod_role(String min_mod_role) {
-        this.min_mod_role = min_mod_role;
+    public void setMinModRole(String minModRole) {
+        this.minModRole = minModRole;
     }
 
-    public String getMin_nsfw_role() {
-        return min_nsfw_role;
+    public String getMinNsfwRole() {
+        return minNsfwRole;
     }
 
-    public void setMin_nsfw_role(String min_nsfw_role) {
-        this.min_nsfw_role = min_nsfw_role;
+    public void setMinNsfwRole(String minNsfwRole) {
+        this.minNsfwRole = minNsfwRole;
     }
 
-    public String getMin_voice_role() {
-        return min_voice_role;
+    public String getMinVoiceRole() {
+        return minVoiceRole;
     }
 
-    public void setMin_voice_role(String min_voice_role) {
-        this.min_voice_role = min_voice_role;
+    public void setMinVoiceRole(String minVoiceRole) {
+        this.minVoiceRole = minVoiceRole;
     }
 }

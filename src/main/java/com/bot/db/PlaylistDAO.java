@@ -38,12 +38,12 @@ public class PlaylistDAO {
 
 	public List<Playlist> getPlaylistsForUser(String userId) {
 		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.user_id = ?";
-		// UserMembership helper method to get playlists
+		// User helper method to get playlists
 		return getPlaylistsFromQuery(userId, query);
 	}
 	public List<Playlist> getPlaylistsForGuild(String guildId) {
 		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild = ?";
-		// UserMembership helper method to get playlists
+		// User helper method to get playlists
 		return getPlaylistsFromQuery(guildId, query);
 	}
 

@@ -40,9 +40,11 @@ public class GuildDAO {
     public InternalGuild getGuildById(String guildId) throws SQLException {
         String query = "SELECT id, name, default_volume, min_base_role, min_mod_role, min_nsfw_role, min_voice_role FROM guild WHERE id = ?";
         ResultSet set = executeGetQuery(query, guildId);
-        set.next();
-        InternalGuild returned = mapSetToGuild(set);
-        set.close();
+        InternalGuild returned = null;
+        if (set.next()) {
+            returned = mapSetToGuild(set);
+        }
+        close(null, set);
         return returned;
     }
 
@@ -59,7 +61,7 @@ public class GuildDAO {
         statement.setString(6, guild.getId());
         statement.setString(7, guild.getId());
         statement.execute();
-        statement.close();
+        close(statement, null);
     }
 
     public void updateGuildVolume(String guildId, int newVolume) throws SQLException {
@@ -68,7 +70,7 @@ public class GuildDAO {
         statement.setInt(1, newVolume);
         statement.setString(2, guildId);
         statement.execute();
-        statement.close();
+        close(statement, null);
     }
 
     public void updateMinBaseRole(String guildId, String newRoleId) throws SQLException {
@@ -77,7 +79,7 @@ public class GuildDAO {
         statement.setString(1, newRoleId);
         statement.setString(2, guildId);
         statement.execute();
-        statement.close();
+        close(statement, null);
     }
 
     public void updateMinNSFWRole(String guildId, String newRoleId) throws SQLException {
@@ -86,7 +88,7 @@ public class GuildDAO {
         statement.setString(1, newRoleId);
         statement.setString(2, guildId);
         statement.execute();
-        statement.close();
+        close(statement, null);
     }
 
     public void updateMinVoiceRole(String guildId, String newRoleId) throws SQLException {
@@ -95,7 +97,7 @@ public class GuildDAO {
         statement.setString(1, newRoleId);
         statement.setString(2, guildId);
         statement.execute();
-        statement.close();
+        close(statement, null);
     }
 
     public void updateMinModRole(String guildId, String newRoleId) throws SQLException {
@@ -104,14 +106,14 @@ public class GuildDAO {
         statement.setString(1, newRoleId);
         statement.setString(2, guildId);
         statement.execute();
-        statement.close();
+        close(statement, null);
     }
 
     private ResultSet executeGetQuery(String query, String guildId) throws SQLException {
         PreparedStatement statement = read.prepareStatement(query);
         statement.setString(1, guildId);
         ResultSet set = statement.executeQuery();
-        statement.close();
+        close(statement, null);
         return set;
     }
 
