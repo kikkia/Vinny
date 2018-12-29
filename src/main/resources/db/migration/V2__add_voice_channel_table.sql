@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `voice_channel` (
     `name` VARCHAR(255) NOT NULL,
     `voice_enabled` TINYINT(1) NULL DEFAULT 1,
     PRIMARY KEY (`id`),
-    CONSTRAINT `guild_id_fk`
+    CONSTRAINT `vc_guild_id_fk`
         FOREIGN KEY (`guild`)
         REFERENCES `guild` (`id`))
 ENGINE = InnoDB;

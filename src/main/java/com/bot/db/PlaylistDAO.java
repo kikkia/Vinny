@@ -4,21 +4,20 @@ import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
 import com.bot.voice.QueuedAudioTrack;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PlaylistRepository {
-    private static final Logger LOGGER = Logger.getLogger(PlaylistRepository.class.getName());
+public class PlaylistDAO {
+    private static final Logger LOGGER = Logger.getLogger(PlaylistDAO.class.getName());
 
     private Connection read;
 	private Connection write;
-	private static PlaylistRepository instance;
+	private static PlaylistDAO instance;
 
 
-	private PlaylistRepository() {
+	private PlaylistDAO() {
 		try {
 			initialize();
 		} catch (SQLException e) {
@@ -26,46 +25,42 @@ public class PlaylistRepository {
 		}
 	}
 
-	public static PlaylistRepository getInstance() {
+	public static PlaylistDAO getInstance() {
 		if (instance == null)
-			instance = new PlaylistRepository();
+			instance = new PlaylistDAO();
 		return instance;
 	}
 
 	private void initialize() throws SQLException {
-		DataSource dataSource = ConnectionPool.getDataSource();
-		DataSource readDataSource = ReadConnectionPool.getDataSource();
-
-		this.read = readDataSource.getConnection();
-		this.write = dataSource.getConnection();
-
+		this.read = ReadConnectionPool.getDataSource().getConnection();
+		this.write = ConnectionPool.getDataSource().getConnection();
 	}
 
 	public List<Playlist> getPlaylistsForUser(String userId) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.user_id = " + userId;
-		// User helper method to get playlists
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.user_id = ?";
+		// UserMembership helper method to get playlists
 		return getPlaylistsFromQuery(userId, query);
 	}
 	public List<Playlist> getPlaylistsForGuild(String guildId) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild = " + guildId;
-		// User helper method to get playlists
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild = ?";
+		// UserMembership helper method to get playlists
 		return getPlaylistsFromQuery(guildId, query);
 	}
 
 	public Playlist getPlaylistForUserByName(String userId, String playlistName) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.user_id = " + userId + " AND p.name = \"" + playlistName + "\"";
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.user_id = ? AND p.name = ?";
 		// Kind of a hack, since only one playlist should be returned by the search we just take the first.
 		try {
-			return getPlaylistsFromQuery(userId, query).get(0);
+			return getPlaylistFromQueryWithName(userId, query, playlistName);
 		}
 		// Catches if no results returned then the list will be null, nullpointer will be caught and passed up.
-		catch (NullPointerException e) {
+		catch (SQLException e) {
 			return null;
 		}
 	}
 
 	public Playlist getPlaylistForUserById(String userId, int playlistId) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.user_id = " + userId + " AND p.id = " + playlistId;
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.user_id = ? AND p.id = " + playlistId;
 		// Kind of a hack, since only one playlist should be returned by the search we just take the first.
 		try {
 			return getPlaylistsFromQuery(userId, query).get(0);
@@ -77,19 +72,19 @@ public class PlaylistRepository {
 	}
 
 	public Playlist getPlaylistForGuildByName(String guildId, String playlistName) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild = " + guildId + " AND p.name = \"" + playlistName + "\"";
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild = ? AND p.name = ?";
 		// Kind of a hack, since only one playlist should be returned by the search we just take the first.
 		try {
-			return getPlaylistsFromQuery(guildId, query).get(0);
+			return getPlaylistFromQueryWithName(guildId, query, playlistName);
 		}
 		// Catches if no results returned then the list will be null, nullpointer will be caught and passed up.
-		catch (NullPointerException e) {
+		catch (SQLException e) {
 			return null;
 		}
 	}
 
 	public Playlist getPlaylistForGuildById(String guildId, int playlistId) {
-		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild = " + guildId + " AND p.id = " + playlistId;
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.guild = ? AND p.id = " + playlistId;
 		// Kind of a hack, since only one playlist should be returned by the search we just take the first.
 		try {
 			return getPlaylistsFromQuery(guildId, query).get(0);
@@ -171,6 +166,7 @@ public class PlaylistRepository {
 
 		try {
 			statement = read.prepareStatement(query);
+			statement.setString(1, ownerId);
 			set = statement.executeQuery();
 			playlists = new HashMap<>();
 			while (set.next()) {
@@ -200,6 +196,39 @@ public class PlaylistRepository {
 		}
 
 		return new ArrayList<>(playlists.values());
+	}
+
+	private Playlist getPlaylistFromQueryWithName(String ownerId, String query, String name) throws SQLException {
+		PreparedStatement statement = null;
+		ResultSet set = null;
+
+		int playlistId = 0;
+		String playlistName = null;
+		List<AudioTrack> tracks = new ArrayList<>();
+
+		try {
+			statement = read.prepareStatement(query);
+			statement.setString(1, ownerId);
+			statement.setString(2, name);
+			set = statement.executeQuery();
+
+			while (set.next()) {
+				playlistId = set.getInt("id");
+				int trackPosition = set.getInt("position");
+				playlistName = set.getString("name");
+				String trackUrl = set.getString("url");
+				String trackTitle = set.getString("title");
+
+
+				tracks.add(new AudioTrack(trackUrl, trackTitle, trackPosition));
+			}
+
+
+		} finally {
+			close(statement, set);
+		}
+
+		return new Playlist(playlistId, ownerId, playlistName, tracks);
 	}
 
 	private boolean addPlaylist(String ownerId, String name, List<QueuedAudioTrack> tracks, String playlistQuery, String trackQuery, String playlistTrackQuery) {
@@ -292,6 +321,7 @@ public class PlaylistRepository {
 			close(statement, set);
 		}
 	}
+
 	private void close(PreparedStatement preparedStatement, ResultSet resultSet) {
 		try {
 			if (preparedStatement != null)

@@ -1,6 +1,6 @@
 package com.bot.commands.voice;
 
-import com.bot.db.PlaylistRepository;
+import com.bot.db.PlaylistDAO;
 import com.bot.models.Playlist;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
@@ -12,17 +12,17 @@ import java.util.logging.Logger;
 public class ListMyPlaylistCommand extends Command {
     private static final Logger LOGGER = Logger.getLogger(ListMyPlaylistCommand.class.getName());
 
-	private PlaylistRepository playlistRepository;
+	private PlaylistDAO playlistDAO;
 
 	public ListMyPlaylistCommand() {
-		this.playlistRepository = PlaylistRepository.getInstance();
+		this.playlistDAO = PlaylistDAO.getInstance();
 		this.name = "myplaylists";
 		this.help = "Returns all of the playlists you have";
 	}
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
-		List<Playlist> playlistList = playlistRepository.getPlaylistsForUser(commandEvent.getAuthor().getId());
+		List<Playlist> playlistList = playlistDAO.getPlaylistsForUser(commandEvent.getAuthor().getId());
 
 		if (playlistList.size() == 0) {
 			commandEvent.reply("You don't have any playlists. :cry:");

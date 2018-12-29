@@ -1,5 +1,8 @@
 package com.bot;
 
+import com.bot.db.ChannelDAO;
+import com.bot.db.GuildDAO;
+import com.bot.db.MembershipDAO;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
@@ -11,9 +14,15 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.channel.text.TextChannelCreateEvent;
+import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
+import net.dv8tion.jda.core.events.channel.text.update.TextChannelUpdateNameEvent;
+import net.dv8tion.jda.core.events.channel.voice.VoiceChannelCreateEvent;
+import net.dv8tion.jda.core.events.channel.voice.VoiceChannelDeleteEvent;
+import net.dv8tion.jda.core.events.channel.voice.update.VoiceChannelUpdateNameEvent;
+import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
@@ -22,9 +31,11 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
 
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Bot extends ListenerAdapter {
@@ -32,6 +43,11 @@ public class Bot extends ListenerAdapter {
 	private EventWaiter waiter;
 	private JDA jda;
 	private final AudioPlayerManager manager;
+
+	private GuildDAO guildDAO;
+	private MembershipDAO membershipDAO;
+	private ChannelDAO channelDAO;
+
 	public final static Command.Category VOICE = new Command.Category("Voice");
 	public final static Command.Category MEME = new Command.Category("Meme");
 	public final static Command.Category NSFW = new Command.Category("Nsfw");
@@ -42,6 +58,10 @@ public class Bot extends ListenerAdapter {
 		this.waiter = waiter;
 		this.manager = new DefaultAudioPlayerManager();
 		AudioSourceManagers.registerRemoteSources(manager);
+
+		guildDAO = GuildDAO.getInstance();
+		membershipDAO = MembershipDAO.getInstance();
+		channelDAO = ChannelDAO.getInstance();
 	}
 
 	// This code runs every time a message is received by the bot
@@ -67,13 +87,74 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-
+		membershipDAO.addUserToGuild(event.getUser(), event.getGuild());
 	}
 
 	@Override
 	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
-
+		membershipDAO.removeUserMembershipToGuild(event.getUser().getId(), event.getGuild().getId());
 	}
+
+	@Override
+	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
+		try {
+			guildDAO.addGuild(guildJoinEvent.getGuild());
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Failed to add guild " + guildJoinEvent.getGuild().getId() +  " to db. Leaving the guild.");
+			guildJoinEvent.getGuild().leave().queue();
+			return;
+		}
+		for (Member m : guildJoinEvent.getGuild().getMembers()) {
+			membershipDAO.addUserToGuild(m.getUser(), guildJoinEvent.getGuild());
+		}
+		for (TextChannel t : guildJoinEvent.getGuild().getTextChannels()) {
+			channelDAO.addTextChannel(t);
+		}
+		for (VoiceChannel v : guildJoinEvent.getGuild().getVoiceChannels()) {
+			channelDAO.addVoiceChannel(v);
+		}
+	}
+
+	@Override
+	public void onGuildLeave(GuildLeaveEvent guildLeaveEvent) {
+		for (Member m : guildLeaveEvent.getGuild().getMembers()) {
+			membershipDAO.removeUserMembershipToGuild(m.getUser().getId(), guildLeaveEvent.getGuild().getId());
+		}
+	}
+
+
+	@Override
+	public void onTextChannelCreate(TextChannelCreateEvent event) {
+		channelDAO.addTextChannel(event.getChannel());
+	}
+
+	@Override
+	public void onVoiceChannelCreate(VoiceChannelCreateEvent event) {
+		channelDAO.addVoiceChannel(event.getChannel());
+	}
+
+	@Override
+	public void onTextChannelDelete(TextChannelDeleteEvent event) {
+		channelDAO.removeTextChannel(event.getChannel());
+	}
+
+	@Override
+	public void onVoiceChannelDelete(VoiceChannelDeleteEvent event) {
+		channelDAO.removeVoiceChannel(event.getChannel());
+	}
+
+	@Override
+	public void onTextChannelUpdateName(TextChannelUpdateNameEvent event) {
+		// This should trip the on duplicate sync the names
+		channelDAO.addTextChannel(event.getChannel());
+	}
+
+	@Override
+	public void onVoiceChannelUpdateName(VoiceChannelUpdateNameEvent event) {
+		// This should trip the on duplicate sync the names
+		channelDAO.addVoiceChannel(event.getChannel());
+	}
+
 
 	// Predicate defines the condition we need to fulfill
 	private Predicate<MessageReceivedEvent> getResponseFromSender(MessageReceivedEvent original) {
