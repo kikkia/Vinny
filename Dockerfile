@@ -1,7 +1,7 @@
 FROM maven:3.5-jdk-8-alpine AS build
 WORKDIR /app
 COPY . /app/
-RUN mvn clean install -DskipTests=false -B
+RUN mvn clean package
 
 MAINTAINER jess<jesswalters53@gmail.com>
 
