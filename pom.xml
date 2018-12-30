@@ -134,7 +134,7 @@
                                     <MYSQL_PASSWORD>mysql</MYSQL_PASSWORD>
                                 </env>
                                 <ports>
-                                    <port>3306:3306</port>
+                                    <port>1337:3306</port>
                                 </ports>
                             </run>
                         </image>

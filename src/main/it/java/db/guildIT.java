@@ -44,7 +44,7 @@ public class guildIT {
     @BeforeClass
     public static void setUpConnections() throws SQLException, InterruptedException {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/testdb");
+        hikariConfig.setJdbcUrl("jdbc:mysql://localhost:1337/testdb");
         hikariConfig.setUsername("mysql");
         hikariConfig.setPassword("mysql");
         hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
