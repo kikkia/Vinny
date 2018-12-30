@@ -8,10 +8,12 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
+import org.flywaydb.core.Flyway;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DataLoader {
@@ -19,14 +21,14 @@ public class DataLoader {
 
 	private static ShardingManager shardingManager;
 	// Needs shards for when running on PROD
-	private static final int NUM_SHARDS = 25;
 
 	public static void main(String[] args) throws Exception {
 		// Config gets tokens
 		Config config = Config.getInstance();
 		long startTime = System.currentTimeMillis();
+		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));
 
-		shardingManager = new ShardingManager(NUM_SHARDS, true, true);
+		shardingManager = new ShardingManager(numShards, true, true);
 
 		if (config.getConfig(Config.USE_DB).equals("False")) {
 			System.out.println("Use_DB Set to False in the config file. Exiting...");
@@ -48,6 +50,12 @@ public class DataLoader {
 			return;
 		}
 
+		LOGGER.log(Level.INFO, "Hikari pool successfully initialized");
+		Flyway flyway = new Flyway();
+		flyway.setDataSource(ConnectionPool.getDataSource());
+		flyway.migrate();
+		LOGGER.log(Level.INFO, "Flyway migrations completed");
+
 		List<LoadThread> loadThreads = new ArrayList<>();
 		try {
 			for (JDA bot: shardingManager.getShards()){
@@ -68,20 +76,17 @@ public class DataLoader {
 		private JDA bot;
 		private Connection connection = null;
 		private long startTime = 0;
-		private String guildInsertQuery = "INSERT INTO guild (id, name) VALUES (?, ?)";
-		private String textChannelInsertQuery = "INSERT INTO text_channel (id, guild, name) VALUES (?, ?, ?)";
+		private String guildInsertQuery = "INSERT INTO guild (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
+		private String textChannelInsertQuery = "INSERT INTO text_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private String userInsertQuery = "INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
-		private String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild) VALUES (?, ?)";
-		private String voiceChannelInsertQuery = "INSERT INTO voice_channel (id, guild, name) VALUES (?, ?, ?)";
+		private String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild) VALUES (?, ?) ON DUPLICATE KEY UPDATE guild = guild";
+		private String voiceChannelInsertQuery = "INSERT INTO voice_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
 
 		public LoadThread(JDA bot, Config config, long startTime) throws SQLException, ClassNotFoundException {
 			this.bot = bot;
 			this.startTime = startTime;
 			Class.forName("com.mysql.jdbc.Driver");
-			this.connection = DriverManager
-					.getConnection("jdbc:mysql://" + config.getConfig(Config.DB_URI) + "/" + config.getConfig(Config.DB_SCHEMA) + "?"
-							+ "user=" + config.getConfig(Config.DB_USERNAME) + "&password=" + config.getConfig(Config.DB_PASSWORD));
-
+			this.connection = ConnectionPool.getDataSource().getConnection();
 		}
 
 		@Override

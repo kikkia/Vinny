@@ -1,7 +1,7 @@
 package com.bot.commands.voice;
 
 import com.bot.Bot;
-import com.bot.db.PlaylistRepository;
+import com.bot.db.PlaylistDAO;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
 import com.bot.voice.LoadHandler;
@@ -14,14 +14,14 @@ import java.util.logging.Logger;
 
 public class LoadMyPlaylistCommand extends Command {
     private static final Logger LOGGER = Logger.getLogger(LoadMyPlaylistCommand.class.getName());
-    private PlaylistRepository playlistRepository;
+    private PlaylistDAO playlistDAO;
     private Bot bot;
 
     public LoadMyPlaylistCommand(Bot bot) {
         this.name = "loadmyplaylist";
         this.arguments = "<playlist id|playlist name>";
         this.help = "Loads one of your playlists. You must either specify the id or the name of the playlist.";
-        this.playlistRepository = PlaylistRepository.getInstance();
+        this.playlistDAO = PlaylistDAO.getInstance();
         this.bot = bot;
     }
 
@@ -38,8 +38,8 @@ public class LoadMyPlaylistCommand extends Command {
             playlistName = commandEvent.getArgs();
         }
         String userId = commandEvent.getAuthor().getId();
-        playlist = playlistName != null ? playlistRepository.getPlaylistForUserByName(userId, playlistName) :
-                playlistRepository.getPlaylistForUserById(userId, playlistId);
+        playlist = playlistName != null ? playlistDAO.getPlaylistForUserByName(userId, playlistName) :
+                playlistDAO.getPlaylistForUserById(userId, playlistId);
 
         // If no playlist found then return
         // TODO: Custom exception classes for this stuff.

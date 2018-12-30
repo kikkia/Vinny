@@ -92,6 +92,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `guild_membership` (
     `guild` VARCHAR(255) NOT NULL,
     `user_id` VARCHAR(255) NOT NULL,
+    `can_use_bot` TINYINT(1) NULL,
     CONSTRAINT `guild_membership_id_fk`
         FOREIGN KEY (`guild`)
         REFERENCES `guild` (`id`),

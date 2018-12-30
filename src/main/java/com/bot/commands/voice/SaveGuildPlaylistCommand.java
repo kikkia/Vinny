@@ -1,7 +1,7 @@
 package com.bot.commands.voice;
 
 import com.bot.Bot;
-import com.bot.db.PlaylistRepository;
+import com.bot.db.PlaylistDAO;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
@@ -12,14 +12,14 @@ import java.util.logging.Logger;
 
 public class SaveGuildPlaylistCommand extends Command {
 	private static final Logger LOGGER = Logger.getLogger(SaveGuildPlaylistCommand.class.getName());
-	private PlaylistRepository playlistRepository;
+	private PlaylistDAO playlistDAO;
 	private Bot bot;
 
 	public SaveGuildPlaylistCommand(Bot bot) {
 		this.name = "savegplaylist";
 		this.arguments = "<playlist name>";
 		this.help = "Saves all of the currently queued tracks into a playlist tied to your guild.";
-		this.playlistRepository = PlaylistRepository.getInstance();
+		this.playlistDAO = PlaylistDAO.getInstance();
 		this.bot = bot;
 	}
 
@@ -38,7 +38,7 @@ public class SaveGuildPlaylistCommand extends Command {
 		trackList.add(nowPlaying);
 		trackList.addAll(tracks);
 
-		if (playlistRepository.createPlaylistForGuild(commandEvent.getGuild().getId(), args, trackList)) {
+		if (playlistDAO.createPlaylistForGuild(commandEvent.getGuild().getId(), args, trackList)) {
 			commandEvent.reply("Playlist successfully created.");
 		} else {
 			commandEvent.reply("Something went wrong! Failed to create playlist.");

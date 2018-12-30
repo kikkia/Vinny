@@ -1,7 +1,6 @@
 package com.bot.commands.voice;
 
-import com.bot.Bot;
-import com.bot.db.PlaylistRepository;
+import com.bot.db.PlaylistDAO;
 import com.bot.models.Playlist;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
@@ -13,17 +12,17 @@ import java.util.logging.Logger;
 public class ListGuildPlaylistCommand extends Command {
     private static final Logger LOGGER = Logger.getLogger(ListGuildPlaylistCommand.class.getName());
 
-    private PlaylistRepository playlistRepository;
+    private PlaylistDAO playlistDAO;
 
     public ListGuildPlaylistCommand() {
-        this.playlistRepository = PlaylistRepository.getInstance();
+        this.playlistDAO = PlaylistDAO.getInstance();
         this.name = "gplaylists";
         this.help = "Returns all of the playlists the guild has.";
     }
 
     @Override
     protected void execute(CommandEvent commandEvent) {
-        List<Playlist> playlistList = playlistRepository.getPlaylistsForGuild(commandEvent.getGuild().getId());
+        List<Playlist> playlistList = playlistDAO.getPlaylistsForGuild(commandEvent.getGuild().getId());
 
         if (playlistList.size() == 0) {
             commandEvent.reply("Your guild doesn't have any playlists. :cry:");

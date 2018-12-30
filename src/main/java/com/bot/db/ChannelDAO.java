@@ -2,6 +2,9 @@ package com.bot.db;
 
 import com.bot.models.InternalTextChannel;
 import com.bot.models.InternalVoiceChannel;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -13,14 +16,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ChannelRespository {
-    private static final Logger LOGGER = Logger.getLogger(ChannelRespository.class.getName());
+public class ChannelDAO {
+    private static final Logger LOGGER = Logger.getLogger(ChannelDAO.class.getName());
 
     private Connection read;
     private Connection write;
-    private static ChannelRespository instance;
+    private static ChannelDAO instance;
 
-    private ChannelRespository() {
+    private ChannelDAO() {
         try {
             initialize();
         } catch (SQLException e) {
@@ -28,9 +31,9 @@ public class ChannelRespository {
         }
     }
 
-    public static ChannelRespository getInstance() {
+    public static ChannelDAO getInstance() {
         if (instance == null) {
-            instance = new ChannelRespository();
+            instance = new ChannelDAO();
         }
         return instance;
     }
@@ -41,6 +44,74 @@ public class ChannelRespository {
 
         this.read = readDataSource.getConnection();
         this.write = dataSource.getConnection();
+    }
+
+    public void addVoiceChannel(VoiceChannel voiceChannel) {
+        String query = "INSERT INTO voice_channel(id, guild, name) VALUES (?,?,?) ON DUPLICATE KEY UPDATE name=VALUES(name)";
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = write.prepareStatement(query);
+            preparedStatement.setString(1, voiceChannel.getId());
+            preparedStatement.setString(2, voiceChannel.getGuild().getId());
+            preparedStatement.setString(3, voiceChannel.getName());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to add voice channel to the db " +e.getSQLState());
+        } finally {
+            close(preparedStatement, null);
+        }
+    }
+
+    public void addTextChannel(TextChannel textChannel) {
+        String query = "INSERT INTO text_channel(id, guild, name) VALUES (?,?,?) ON DUPLICATE KEY UPDATE name=VALUES(name)";
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = write.prepareStatement(query);
+            preparedStatement.setString(1, textChannel.getId());
+            preparedStatement.setString(2, textChannel.getGuild().getId());
+            preparedStatement.setString(3, textChannel.getName());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to add text channel to the db: " + e.getSQLState());
+        } finally {
+            close(preparedStatement, null);
+        }
+    }
+
+    public void removeVoiceChannel(VoiceChannel channel) {
+        String query = "DELETE FROM voice_channel WHERE id = ?";
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = write.prepareStatement(query);
+            preparedStatement.setString(1, channel.getId());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to remove a voice channel from db: " +e.getSQLState());
+        } finally {
+            close(preparedStatement, null);
+        }
+    }
+
+    public void removeTextChannel(TextChannel channel) {
+        String query = "DELETE FROM text_channel WHERE id = ?";
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = write.prepareStatement(query);
+            preparedStatement.setString(1, channel.getId());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to remove a text channel from db: " +e.getSQLState());
+        } finally {
+            close(preparedStatement, null);
+        }
+    }
+
+    public boolean setVoiceChannelEnabled(Guild guild, String id, boolean enabled) {
+        return false;
     }
 
     public List<InternalVoiceChannel> getVoiceChannelsForGuild(String guildId) {
@@ -65,10 +136,10 @@ public class ChannelRespository {
             while (set.next()) {
                 String name = set.getString("name");
                 String id = set.getString("id");
-                Boolean voice_enabled = set.getBoolean("voice_enabled");
-                Boolean nsfw_enabled = set.getBoolean("nsfw_enabled");
-                Boolean announcement = set.getBoolean("announcement");
-                Boolean command_enabled = set.getBoolean("commands_enabled");
+                boolean voice_enabled = set.getBoolean("voice_enabled");
+                boolean nsfw_enabled = set.getBoolean("nsfw_enabled");
+                boolean announcement = set.getBoolean("announcement");
+                boolean command_enabled = set.getBoolean("commands_enabled");
                 channels.add(new InternalTextChannel(id,
                         guildId,
                         name,
@@ -98,7 +169,7 @@ public class ChannelRespository {
             while (set.next()) {
                 String name = set.getString("name");
                 String id = set.getString("id");
-                Boolean voice_enabled = set.getBoolean("voice_enabled");
+                boolean voice_enabled = set.getBoolean("voice_enabled");
                 channels.add(new InternalVoiceChannel(id, guildId, name, voice_enabled));
             }
         } catch (SQLException e) {

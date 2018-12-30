@@ -61,7 +61,6 @@ public class ShardingManager {
             // TODO: Make DB Mandatory
             if (useDB) {
                 commandClientBuilder.addCommands(
-                        new ListTracksCommand(),
                         new SaveMyPlaylistCommand(bot),
                         new ListMyPlaylistCommand(),
                         new LoadMyPlaylistCommand(bot),
