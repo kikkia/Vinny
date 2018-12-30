@@ -26,6 +26,12 @@ public class GuildDAO {
         }
     }
 
+    // This endpoint is only to be used by integration tests so we can pass in a connection to the integration-db
+    public GuildDAO(Connection connection) {
+        read = connection;
+        write = connection;
+    }
+
     public static GuildDAO getInstance() {
         if (instance == null)
             instance = new GuildDAO();
@@ -38,7 +44,7 @@ public class GuildDAO {
     }
 
     public InternalGuild getGuildById(String guildId) throws SQLException {
-        String query = "SELECT id, name, default_volume, min_base_role, min_mod_role, min_nsfw_role, min_voice_role FROM guild WHERE id = ?";
+        String query = "SELECT id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id FROM guild WHERE id = ?";
         ResultSet set = executeGetQuery(query, guildId);
         InternalGuild returned = null;
         if (set.next()) {
@@ -50,7 +56,7 @@ public class GuildDAO {
 
     // We throw on this one so if we cant add a guild to the db we just leave the guild to avoid greater problems
     public void addGuild(Guild guild) throws SQLException {
-        String query = "INSERT INTO guild(id, name, default_volume, min_base_role, min_mod_role, min_nsfw_role, min_voice_role VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE name=name";
+        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE name=name";
         PreparedStatement statement = write.prepareStatement(query);
         statement.setString(1, guild.getId());
         statement.setString(2, guild.getName());
@@ -121,10 +127,10 @@ public class GuildDAO {
         return new InternalGuild(set.getString("id"),
                 set.getString("name"),
                 set.getInt("default_volume"),
-                set.getString("min_base_role"),
-                set.getString("min_mod_role"),
-                set.getString("min_nsfw_role"),
-                set.getString("min_voice_role"));
+                set.getString("min_base_role_id"),
+                set.getString("min_mod_role_id"),
+                set.getString("min_nsfw_role_id"),
+                set.getString("min_voice_role_id"));
     }
 
     private void close(PreparedStatement preparedStatement, ResultSet resultSet) {
