@@ -117,18 +117,64 @@ public class ChannelDAO {
         }
     }
 
-    public boolean setVoiceChannelEnabled(Guild guild, String id, boolean enabled) {
-        return false;
+    // Updates a voice channels enabled status, creates the channel as a failsafe
+    public boolean setVoiceChannelEnabled(VoiceChannel channel, boolean enabled) {
+        String query = "INSERT INTO voice_channel(id, name, guild, voice_enabled) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE voice_enabled = VALUES(voice_enabled)";
+        PreparedStatement statement = null;
+        try {
+            statement = write.prepareStatement(query);
+            statement.setString(1, channel.getId());
+            statement.setString(2, channel.getName());
+            statement.setString(3, channel.getGuild().getId());
+            statement.setBoolean(4, enabled);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update channel en");
+            return false;
+        } finally {
+            close(statement, null);
+        }
+        return true;
     }
 
     public List<InternalVoiceChannel> getVoiceChannelsForGuild(String guildId) {
-        String query = "Select c.id, c.name, c.voice_enabled FROM voice_channel c WHERE c.guild = " + guildId;
+        String query = "Select c.id, c.name, c.guild, c.voice_enabled FROM voice_channel c WHERE c.guild = ?";
         return getVoiceChannelsForQuery(guildId, query);
     }
 
     public List<InternalTextChannel> getTextChannelsForGuild(String guildId) {
-        String query = "Select c.id, c.name, c.voice_enabled, c.announcement, c.nsfw_enabled, c.commands_enabled FROM text_channel c WHERE c.guild = " + guildId;
+        String query = "Select c.id, c.name, c.guild, c.voice_enabled, c.announcement, c.nsfw_enabled, c.commands_enabled FROM text_channel c WHERE c.guild = ?";
         return getTextChannelsForQuery(guildId, query);
+    }
+
+    public InternalTextChannel getTextChannelForId(String channelId) throws SQLException {
+        String query = "SELECT c.id, c.name, c.guild, c.voice_enabled, c.announcement, c.nsfw_enabled, c.commands_enabled FROM text_channel c WHERE c.id = ?";
+        PreparedStatement statement = read.prepareStatement(query);
+        statement.setString(1, channelId);
+        ResultSet set = statement.executeQuery();
+
+        InternalTextChannel toReturn = null;
+        if (set.next()) {
+            toReturn = mapSetToInternalTextChannel(set);
+        }
+
+        close(statement, set);
+        return toReturn;
+    }
+
+    public InternalVoiceChannel getVoiceChannelForId(String channelId) throws SQLException {
+        String query = "SELECT c.id, c.name, c.voice_enabled, c.guild FROM voice_channel c WHERE c.id = ?";
+        PreparedStatement statement = read.prepareStatement(query);
+        statement.setString(1, channelId);
+        ResultSet set = statement.executeQuery();
+
+        InternalVoiceChannel toReturn = null;
+        if (set.next()) {
+            toReturn = mapSetToInternalVoiceChannel(set);
+        }
+
+        close(statement, set);
+        return toReturn;
     }
 
     private List<InternalTextChannel> getTextChannelsForQuery(String guildId, String query) {
@@ -138,22 +184,11 @@ public class ChannelDAO {
 
         try {
             statement = read.prepareStatement(query);
+            statement.setString(1, guildId);
             set = statement.executeQuery();
             channels = new ArrayList<>();
             while (set.next()) {
-                String name = set.getString("name");
-                String id = set.getString("id");
-                boolean voice_enabled = set.getBoolean("voice_enabled");
-                boolean nsfw_enabled = set.getBoolean("nsfw_enabled");
-                boolean announcement = set.getBoolean("announcement");
-                boolean command_enabled = set.getBoolean("commands_enabled");
-                channels.add(new InternalTextChannel(id,
-                        guildId,
-                        name,
-                        announcement,
-                        nsfw_enabled,
-                        command_enabled,
-                        voice_enabled));
+                channels.add(mapSetToInternalTextChannel(set));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
@@ -164,6 +199,18 @@ public class ChannelDAO {
         return channels;
     }
 
+    private InternalTextChannel mapSetToInternalTextChannel(ResultSet set) throws SQLException {
+        return new InternalTextChannel(
+                set.getString("id"),
+                set.getString("guild"),
+                set.getString("name"),
+                set.getBoolean("announcement"),
+                set.getBoolean("nsfw_enabled"),
+                set.getBoolean("commands_enabled"),
+                set.getBoolean("voice_enabled")
+        );
+    }
+
     private List<InternalVoiceChannel> getVoiceChannelsForQuery(String guildId, String query) {
         List<InternalVoiceChannel> channels = null;
         PreparedStatement statement = null;
@@ -171,13 +218,11 @@ public class ChannelDAO {
 
         try {
             statement = read.prepareStatement(query);
+            statement.setString(1, guildId);
             set = statement.executeQuery();
             channels = new ArrayList<>();
             while (set.next()) {
-                String name = set.getString("name");
-                String id = set.getString("id");
-                boolean voice_enabled = set.getBoolean("voice_enabled");
-                channels.add(new InternalVoiceChannel(id, guildId, name, voice_enabled));
+                channels.add(mapSetToInternalVoiceChannel(set));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
@@ -186,6 +231,15 @@ public class ChannelDAO {
         }
 
         return channels;
+    }
+
+    private InternalVoiceChannel mapSetToInternalVoiceChannel(ResultSet set) throws SQLException {
+        return new InternalVoiceChannel(
+                set.getString("id"),
+                set.getString("guild"),
+                set.getString("name"),
+                set.getBoolean("voice_enabled")
+        );
     }
 
     private void close(PreparedStatement preparedStatement, ResultSet resultSet) {
