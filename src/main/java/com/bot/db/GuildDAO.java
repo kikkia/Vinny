@@ -1,6 +1,7 @@
 package com.bot.db;
 
 import com.bot.models.InternalGuild;
+import com.bot.utils.GuildUtils;
 import net.dv8tion.jda.core.entities.Guild;
 
 import java.sql.Connection;
@@ -26,7 +27,7 @@ public class GuildDAO {
         }
     }
 
-    // This endpoint is only to be used by integration tests so we can pass in a connection to the integration-db
+    // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
     public GuildDAO(Connection connection) {
         read = connection;
         write = connection;
@@ -56,16 +57,16 @@ public class GuildDAO {
 
     // We throw on this one so if we cant add a guild to the db we just leave the guild to avoid greater problems
     public void addGuild(Guild guild) throws SQLException {
-        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE name=name";
+        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE name=name";
         PreparedStatement statement = write.prepareStatement(query);
         statement.setString(1, guild.getId());
         statement.setString(2, guild.getName());
         statement.setInt(3, DEFAULT_VOLUME);
-        // Set the default roles to the @everyone role which shares id with guild
-        statement.setString(4, guild.getId());
-        statement.setString(5, guild.getId());
-        statement.setString(6, guild.getId());
-        statement.setString(7, guild.getId());
+
+        statement.setString(4, guild.getPublicRole().getId());
+        statement.setString(5, GuildUtils.getHighestRole(guild).getId());
+        statement.setString(6, guild.getPublicRole().getId());
+        statement.setString(7, guild.getPublicRole().getId());
         statement.execute();
         close(statement, null);
     }
@@ -80,7 +81,7 @@ public class GuildDAO {
     }
 
     public void updateMinBaseRole(String guildId, String newRoleId) throws SQLException {
-        String query = "UPDATE guild SET min_base_role = ? WHERE id = ?";
+        String query = "UPDATE guild SET min_base_role_id = ? WHERE id = ?";
         PreparedStatement statement = write.prepareStatement(query);
         statement.setString(1, newRoleId);
         statement.setString(2, guildId);
@@ -89,7 +90,7 @@ public class GuildDAO {
     }
 
     public void updateMinNSFWRole(String guildId, String newRoleId) throws SQLException {
-        String query = "UPDATE guild SET min_nsfw_role = ? WHERE id = ?";
+        String query = "UPDATE guild SET min_nsfw_role_id = ? WHERE id = ?";
         PreparedStatement statement = write.prepareStatement(query);
         statement.setString(1, newRoleId);
         statement.setString(2, guildId);
@@ -98,7 +99,7 @@ public class GuildDAO {
     }
 
     public void updateMinVoiceRole(String guildId, String newRoleId) throws SQLException {
-        String query = "UPDATE guild SET min_voice_role = ? WHERE id = ?";
+        String query = "UPDATE guild SET min_voice_role_id = ? WHERE id = ?";
         PreparedStatement statement = write.prepareStatement(query);
         statement.setString(1, newRoleId);
         statement.setString(2, guildId);
@@ -107,7 +108,7 @@ public class GuildDAO {
     }
 
     public void updateMinModRole(String guildId, String newRoleId) throws SQLException {
-        String query = "UPDATE guild SET min_mod_role = ? WHERE id = ?";
+        String query = "UPDATE guild SET min_mod_role_id = ? WHERE id = ?";
         PreparedStatement statement = write.prepareStatement(query);
         statement.setString(1, newRoleId);
         statement.setString(2, guildId);

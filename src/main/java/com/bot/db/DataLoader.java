@@ -2,6 +2,7 @@ package com.bot.db;
 
 import com.bot.Config;
 import com.bot.ShardingManager;
+import com.bot.utils.GuildUtils;
 import com.bot.voice.QueuedAudioTrack;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
@@ -76,7 +77,7 @@ public class DataLoader {
 		private JDA bot;
 		private Connection connection = null;
 		private long startTime = 0;
-		private String guildInsertQuery = "INSERT INTO guild (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
+		private String guildInsertQuery = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE name=name";
 		private String textChannelInsertQuery = "INSERT INTO text_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private String userInsertQuery = "INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild) VALUES (?, ?) ON DUPLICATE KEY UPDATE guild = guild";
@@ -105,6 +106,12 @@ public class DataLoader {
 					statement = connection.prepareStatement(guildInsertQuery);
 					statement.setString(1, g.getId());
 					statement.setString(2, g.getName());
+					statement.setInt(3, 100); // default all guilds to 100
+					statement.setString(4, g.getPublicRole().getId()); // Guild id and @everyone role id are shared
+					statement.setString(5, GuildUtils.getHighestRole(g).getId());
+					statement.setString(6, g.getPublicRole().getId());
+					statement.setString(7, g.getPublicRole().getId());
+
 					statement.execute();
 					guildCount++;
 

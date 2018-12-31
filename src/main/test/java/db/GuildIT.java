@@ -6,6 +6,8 @@ import com.bot.models.UserMembership;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Role;
 import org.flywaydb.core.Flyway;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -20,13 +22,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
-public class guildIT {
+public class GuildIT {
 
     private static Connection connection;
     private static Flyway flyway;
     private static GuildDAO guildDAO;
-    private static final Logger LOGGER = Logger.getLogger(guildIT.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GuildIT.class.getName());
 
     private List<UserMembership> memberships = Arrays.asList(
             new UserMembership("1", "user-1", "101", true),
@@ -133,11 +136,7 @@ public class guildIT {
         membershipStatement.close();
     }
 
-    @Test
-    public void testGetGuildById() throws SQLException {
-        InternalGuild expected = guilds.get(1); // Guild 102
-        InternalGuild returned = guildDAO.getGuildById(expected.getId());
-
+    private void assertGuildEquals(InternalGuild expected, InternalGuild returned) {
         assertEquals(expected.getId(), returned.getId());
         assertEquals(expected.getName(), returned.getName());
         assertEquals(expected.getVolume(), returned.getVolume());
@@ -146,4 +145,79 @@ public class guildIT {
         assertEquals(expected.getMinNsfwRole(), returned.getMinNsfwRole());
         assertEquals(expected.getMinVoiceRole(), returned.getMinVoiceRole());
     }
+
+    @Test
+    public void testGetGuildById() throws SQLException {
+        InternalGuild expected = guilds.get(1); // Guild 102
+        InternalGuild returned = guildDAO.getGuildById(expected.getId());
+
+        assertGuildEquals(expected, returned);
+    }
+
+    @Test
+    public void testAddGuild() throws SQLException {
+        InternalGuild expected = new InternalGuild("999", "test-added", 100, "999", "12345", "999", "999");
+        Role lowRole = mock(Role.class);
+        Role highRole = mock(Role.class);
+        List<Role> roles = Arrays.asList(lowRole, highRole);
+        Guild guildToAdd = mock(Guild.class);
+        doReturn(roles).when(guildToAdd).getRoles();
+        doReturn(lowRole).when(guildToAdd).getPublicRole();
+        doReturn("999").when(guildToAdd).getId();
+        doReturn("test-added").when(guildToAdd).getName();
+        doReturn(-1).when(lowRole).getPosition();
+        doReturn(1).when(highRole).getPosition();
+        doReturn("12345").when(highRole).getId();
+        doReturn("999").when(lowRole).getId();
+
+        // Add the guild
+        guildDAO.addGuild(guildToAdd);
+
+        // Check that its added
+        InternalGuild returned = guildDAO.getGuildById(expected.getId());
+
+        assertGuildEquals(expected, returned);
+    }
+
+    @Test
+    public void testUpdateGuildVolume() throws SQLException {
+        int vol = 60;
+        guildDAO.updateGuildVolume(guilds.get(1).getId(), vol);
+        InternalGuild returned = guildDAO.getGuildById(guilds.get(1).getId());
+        assertEquals(returned.getVolume(), 60);
+    }
+
+    @Test
+    public void testUpdateMinBaseRole() throws SQLException {
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "50", "2", "2", "1");
+        guildDAO.updateMinBaseRole("101", "50");
+        InternalGuild returned = guildDAO.getGuildById(expected.getId());
+        assertGuildEquals(expected, returned);
+    }
+
+    @Test
+    public void testUpdateMinModRole() throws SQLException {
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "50", "2", "1");
+        guildDAO.updateMinModRole("101", "50");
+        InternalGuild returned = guildDAO.getGuildById(expected.getId());
+        assertGuildEquals(expected, returned);
+    }
+
+
+    @Test
+    public void testUpdateMinNSFWRole() throws SQLException {
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "2", "50", "1");
+        guildDAO.updateMinNSFWRole("101", "50");
+        InternalGuild returned = guildDAO.getGuildById(expected.getId());
+        assertGuildEquals(expected, returned);
+    }
+
+    @Test
+    public void testUpdateMinVoiceRole() throws SQLException {
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "2", "2", "50");
+        guildDAO.updateMinVoiceRole("101", "50");
+        InternalGuild returned = guildDAO.getGuildById(expected.getId());
+        assertGuildEquals(expected, returned);
+    }
+
 }

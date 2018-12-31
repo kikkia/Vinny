@@ -31,6 +31,13 @@ public class ChannelDAO {
         }
     }
 
+    // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
+    public ChannelDAO(Connection connection) {
+        read = connection;
+        write = connection;
+    }
+
+
     public static ChannelDAO getInstance() {
         if (instance == null) {
             instance = new ChannelDAO();
