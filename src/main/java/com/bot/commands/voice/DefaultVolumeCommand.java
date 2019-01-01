@@ -1,11 +1,8 @@
 package com.bot.commands.voice;
 
 import com.bot.db.GuildDAO;
-import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
-import net.dv8tion.jda.core.entities.Emote;
-import net.dv8tion.jda.core.entities.impl.EmoteImpl;
 
 import java.sql.SQLException;
 import java.util.logging.Level;

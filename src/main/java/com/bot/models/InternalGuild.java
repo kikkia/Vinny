@@ -1,7 +1,5 @@
 package com.bot.models;
 
-import net.dv8tion.jda.core.entities.Guild;
-
 public class InternalGuild {
 
     private String id;

@@ -1,7 +1,5 @@
 package com.bot.models;
 
-import java.util.Objects;
-
 public class InternalVoiceChannel extends InternalChannel {
     private boolean isVoiceEnabled;
 

@@ -1,6 +1,5 @@
 package com.bot.models;
 
-import java.util.Objects;
 
 public class InternalTextChannel extends InternalChannel {
     private boolean isAnnouncmentChannel;

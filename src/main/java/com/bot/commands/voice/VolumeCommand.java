@@ -1,12 +1,9 @@
 package com.bot.commands.voice;
 
-import com.bot.db.GuildDAO;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.commandclient.Command;
-import com.jagrosh.jdautilities.commandclient.CommandClient;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
-import java.sql.SQLException;
 import java.util.logging.Logger;
 
 public class VolumeCommand extends Command{
