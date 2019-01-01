@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 public class VolumeCommand extends Command{
 	private static final Logger LOGGER = Logger.getLogger(VolumeCommand.class.getName());
 
+
 	public VolumeCommand() {
 		this.name = "volume";
 		this.arguments = "<Volume 1-200>";

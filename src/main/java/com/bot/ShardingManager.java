@@ -66,7 +66,8 @@ public class ShardingManager {
                         new LoadMyPlaylistCommand(bot),
                         new LoadGuildPlaylistCommand(bot),
                         new SaveGuildPlaylistCommand(bot),
-                        new ListGuildPlaylistCommand()
+                        new ListGuildPlaylistCommand(),
+                        new DefaultVolumeCommand()
                 );
             }
 

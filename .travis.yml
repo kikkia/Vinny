@@ -9,4 +9,5 @@ notifications:
   email: false
 
 script:
+  - mvn clean verify
   - docker-compose build

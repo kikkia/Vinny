@@ -1,5 +1,6 @@
 package com.bot.models;
 
+
 public class InternalTextChannel extends InternalChannel {
     private boolean isAnnouncmentChannel;
     private boolean isNSFWEnabled;
@@ -53,4 +54,20 @@ public class InternalTextChannel extends InternalChannel {
     public void setVoiceEnabled(boolean voiceEnabled) {
         isVoiceEnabled = voiceEnabled;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InternalTextChannel that = (InternalTextChannel) o;
+        return isAnnouncmentChannel == that.isAnnouncmentChannel &&
+                isNSFWEnabled == that.isNSFWEnabled &&
+                isCommandsEnabled == that.isCommandsEnabled &&
+                isVoiceEnabled == that.isVoiceEnabled &&
+                id.equals(that.getId()) &&
+                guildId.equals(that.guildId) &&
+                name.equals(that.name);
+    }
+
+
 }

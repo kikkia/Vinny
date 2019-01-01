@@ -25,6 +25,13 @@ public class PlaylistDAO {
 		}
 	}
 
+	// This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
+	public PlaylistDAO(Connection connection) {
+		read = connection;
+		write = connection;
+	}
+
+
 	public static PlaylistDAO getInstance() {
 		if (instance == null)
 			instance = new PlaylistDAO();

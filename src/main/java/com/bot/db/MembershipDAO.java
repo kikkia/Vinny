@@ -29,6 +29,13 @@ public class MembershipDAO {
         }
     }
 
+    // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
+    public MembershipDAO(Connection connection) {
+        read = connection;
+        write = connection;
+    }
+
+
     public static MembershipDAO getInstance() {
         if (instance == null) {
             instance = new MembershipDAO();
