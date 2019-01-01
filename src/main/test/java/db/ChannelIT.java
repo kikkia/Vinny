@@ -20,10 +20,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.booleanThat;
-import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -252,5 +251,42 @@ public class ChannelIT {
 
         returnedChannel = channelDAO.getVoiceChannelForId("2");
         assertFalse(returnedChannel.isVoiceEnabled());
+
+        assertTrue(channelDAO.setVoiceChannelEnabled(channel, true));
+
+        returnedChannel = channelDAO.getVoiceChannelForId("2");
+        assertTrue(returnedChannel.isVoiceEnabled());
+    }
+
+    @Test
+    public void testGetVoiceChannelsForGuild() {
+        List<InternalVoiceChannel> expectedChannels = voiceChannels.stream()
+                .filter(k -> k.getGuildId().equals("101"))
+                .collect(Collectors.toList());
+        List<InternalVoiceChannel> returnedChannels = channelDAO.getVoiceChannelsForGuild("101");
+        assertEquals(expectedChannels.size(), returnedChannels.size());
+
+        assertTrue(returnedChannels.containsAll(expectedChannels));
+    }
+
+    @Test
+    public void testGetTextChannelsForGuild() {
+        List<InternalTextChannel> expectedChannels = textChannels.stream()
+                .filter(c -> c.getGuildId().equals("102"))
+                .collect(Collectors.toList());
+        List<InternalTextChannel> returnedChannels = channelDAO.getTextChannelsForGuild("102");
+        assertEquals(expectedChannels.size(), returnedChannels.size());
+
+        assertTrue(returnedChannels.containsAll(expectedChannels));
+    }
+
+    @Test
+    public void testGetVoiceChannelsForGuildDoesNotExist() {
+        assertEquals(0, channelDAO.getVoiceChannelsForGuild("thisIsNotReal").size());
+    }
+
+    @Test
+    public void testGetTextChannelsForGuildDoesNotExist() {
+        assertEquals(0, channelDAO.getTextChannelsForGuild("thisIsNotReal").size());
     }
 }
