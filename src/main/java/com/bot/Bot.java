@@ -53,6 +53,8 @@ public class Bot extends ListenerAdapter {
 	public final static Command.Category NSFW = new Command.Category("Nsfw");
 	public final static Command.Category MOD = new Command.Category("MODERATION");
 
+	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
+
 
 	Bot(EventWaiter waiter) {
 		this.waiter = waiter;
