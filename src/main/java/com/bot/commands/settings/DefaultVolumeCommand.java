@@ -1,4 +1,4 @@
-package com.bot.commands.voice;
+package com.bot.commands.settings;
 
 import com.bot.db.GuildDAO;
 import com.jagrosh.jdautilities.command.Command;
@@ -17,6 +17,7 @@ public class DefaultVolumeCommand extends Command {
         this.name = "dvolume";
         this.arguments = "<Volume 1-200>";
         this.help = "Sets the default volume for the server";
+        this.guildOnly = true;
         this.guildDAO = GuildDAO.getInstance();
     }
 
@@ -29,7 +30,7 @@ public class DefaultVolumeCommand extends Command {
                 throw new NumberFormatException();
             }
             guildDAO.updateGuildVolume(commandEvent.getGuild().getId(), newVolume);
-            commandEvent.getMessage().addReaction("U+2714").queue();
+            commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
         }
         catch (NumberFormatException e) {
             commandEvent.reply(commandEvent.getClient().getError() + " You must enter a volume between 0 and 200");

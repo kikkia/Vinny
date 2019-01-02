@@ -4,6 +4,7 @@ import com.bot.commands.general.InviteCommand;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
 import com.bot.commands.reddit.TopPostCommand;
+import com.bot.commands.settings.*;
 import com.bot.commands.voice.*;
 import com.bot.commands.battleroyale.BattleRoyaleCommand;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -67,7 +68,14 @@ public class ShardingManager {
                         new LoadGuildPlaylistCommand(bot),
                         new SaveGuildPlaylistCommand(bot),
                         new ListGuildPlaylistCommand(),
-                        new DefaultVolumeCommand()
+
+                        // Guild Settings Commands
+                        new DefaultVolumeCommand(),
+                        new GetSettingsCommand(),
+                        new SetBaseRoleCommand(),
+                        new SetModRoleCommand(),
+                        new SetNSFWCommand(),
+                        new SetVoiceRoleCommand()
                 );
             }
 
