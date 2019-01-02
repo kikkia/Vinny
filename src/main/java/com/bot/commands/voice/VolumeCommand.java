@@ -1,12 +1,12 @@
 package com.bot.commands.voice;
 
 import com.bot.voice.VoiceSendHandler;
-import com.jagrosh.jdautilities.commandclient.Command;
-import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.logging.Logger;
 
-public class VolumeCommand extends Command{
+public class VolumeCommand extends Command {
 	private static final Logger LOGGER = Logger.getLogger(VolumeCommand.class.getName());
 
 

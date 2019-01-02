@@ -6,9 +6,9 @@ import com.bot.commands.reddit.RandomPostCommand;
 import com.bot.commands.reddit.TopPostCommand;
 import com.bot.commands.voice.*;
 import com.bot.commands.battleroyale.BattleRoyaleCommand;
-import com.jagrosh.jdautilities.commandclient.CommandClient;
-import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
-import com.jagrosh.jdautilities.waiter.EventWaiter;
+import com.jagrosh.jdautilities.command.CommandClient;
+import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -72,6 +72,8 @@ public class ShardingManager {
             }
 
             commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
+
+
             client = commandClientBuilder.build();
         }
 

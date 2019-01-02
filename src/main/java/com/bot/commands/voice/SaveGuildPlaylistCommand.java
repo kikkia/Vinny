@@ -3,8 +3,8 @@ package com.bot.commands.voice;
 import com.bot.Bot;
 import com.bot.db.PlaylistDAO;
 import com.bot.voice.QueuedAudioTrack;
-import com.jagrosh.jdautilities.commandclient.Command;
-import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -5,8 +5,8 @@ import com.bot.db.PlaylistDAO;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
 import com.bot.voice.LoadHandler;
-import com.jagrosh.jdautilities.commandclient.Command;
-import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.logging.Level;
