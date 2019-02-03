@@ -30,13 +30,13 @@ public class ShardingManager {
         shards = new JDA[numShards];
         Bot bot = null;
         CommandClient client = null;
+        bot = new Bot(new EventWaiter());
+
+        CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
+        commandClientBuilder.setPrefix("~");
+        commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
 
         if (!supportScript) {
-            bot = new Bot(new EventWaiter());
-            CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
-            commandClientBuilder.setPrefix("~");
-            commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
-
             commandClientBuilder.addCommands(
                     // Voice Commands
                     new PlayCommand(bot),
@@ -79,12 +79,9 @@ public class ShardingManager {
                         new SetVoiceRoleCommand()
                 );
             }
-
-            commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
-
-
-            client = commandClientBuilder.build();
         }
+        commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
+        client = commandClientBuilder.build();
 
         for (int i = 0; i < numShards; i++){
             shards[i] = new JDABuilder(AccountType.BOT)
@@ -94,13 +91,11 @@ public class ShardingManager {
 
             shards[i].awaitReady();
 
-            if (!supportScript) {
-                EventWaiter waiter = new EventWaiter();
+            EventWaiter waiter = new EventWaiter();
 
-                shards[i].addEventListener(waiter);
-                shards[i].addEventListener(client);
-                shards[i].addEventListener(bot);
-            }
+            shards[i].addEventListener(waiter);
+            shards[i].addEventListener(client);
+            shards[i].addEventListener(bot);
 
             System.out.println("Shard " + i + " built.");
         }
