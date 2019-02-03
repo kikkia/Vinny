@@ -6,12 +6,10 @@ import com.bot.utils.GuildUtils;
 import com.bot.voice.QueuedAudioTrack;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
-import org.flywaydb.core.Flyway;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DataLoader {
@@ -47,16 +45,11 @@ public class DataLoader {
 			return;
 		}
 
-		LOGGER.log(Level.INFO, "Hikari pool successfully initialized");
-		Flyway flyway = new Flyway();
-		flyway.setDataSource(ConnectionPool.getDataSource());
-		flyway.migrate();
-		LOGGER.log(Level.INFO, "Flyway migrations completed");
-
 		List<LoadThread> loadThreads = new ArrayList<>();
 		try {
 			for (JDA bot: shardingManager.getShards()){
 				loadThreads.add(new LoadThread(bot, config, startTime));
+				bot.awaitReady();
 			}
 			for (LoadThread thread : loadThreads) {
 				thread.start();
