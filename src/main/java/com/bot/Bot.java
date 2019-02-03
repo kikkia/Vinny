@@ -3,6 +3,7 @@ package com.bot;
 import com.bot.db.ChannelDAO;
 import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
+import com.bot.models.InternalGuild;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -15,12 +16,16 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.Event;
+import net.dv8tion.jda.core.events.channel.text.GenericTextChannelEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelCreateEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.core.events.channel.text.update.TextChannelUpdateNameEvent;
+import net.dv8tion.jda.core.events.channel.voice.GenericVoiceChannelEvent;
 import net.dv8tion.jda.core.events.channel.voice.VoiceChannelCreateEvent;
 import net.dv8tion.jda.core.events.channel.voice.VoiceChannelDeleteEvent;
 import net.dv8tion.jda.core.events.channel.voice.update.VoiceChannelUpdateNameEvent;
+import net.dv8tion.jda.core.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
@@ -89,6 +94,10 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+		if (!addGuildIfNotPresent(event)) {
+			LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add membership.");
+			return;
+		}
 		membershipDAO.addUserToGuild(event.getUser(), event.getGuild());
 	}
 
@@ -99,13 +108,11 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
-		try {
-			guildDAO.addGuild(guildJoinEvent.getGuild());
-		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Failed to add guild " + guildJoinEvent.getGuild().getId() +  " to db. Leaving the guild.");
+		if (!guildDAO.addGuild(guildJoinEvent.getGuild())) {
+			// Failed to add guild to db. So leave the guild to avoid issues
 			guildJoinEvent.getGuild().leave().queue();
-			return;
 		}
+
 		for (Member m : guildJoinEvent.getGuild().getMembers()) {
 			membershipDAO.addUserToGuild(m.getUser(), guildJoinEvent.getGuild());
 		}
@@ -127,11 +134,19 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onTextChannelCreate(TextChannelCreateEvent event) {
+		if (!addGuildIfNotPresent(event)) {
+			LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add text channel.");
+			return;
+		}
 		channelDAO.addTextChannel(event.getChannel());
 	}
 
 	@Override
 	public void onVoiceChannelCreate(VoiceChannelCreateEvent event) {
+		if (!addGuildIfNotPresent(event)) {
+			LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add voice channel.");
+			return;
+		}
 		channelDAO.addVoiceChannel(event.getChannel());
 	}
 
@@ -237,6 +252,39 @@ public class Bot extends ListenerAdapter {
 				manager.closeAudioConnection();
 			}
 		}
+	}
+
+	private boolean addGuildIfNotPresent(GenericGuildEvent event) {
+		InternalGuild guild = null;
+		guild = guildDAO.getGuildById(event.getGuild().getId());
+
+		if (guild == null) {
+			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild {}", event.getGuild().getId());
+			return guildDAO.addGuild(event.getGuild());
+		}
+		return true;
+	}
+
+	private boolean addGuildIfNotPresent(GenericTextChannelEvent event) {
+		InternalGuild guild = null;
+		guild = guildDAO.getGuildById(event.getGuild().getId());
+
+		if (guild == null) {
+			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild {}", event.getGuild().getId());
+			return guildDAO.addGuild(event.getGuild());
+		}
+		return true;
+	}
+
+	private boolean addGuildIfNotPresent(GenericVoiceChannelEvent event) {
+		InternalGuild guild = null;
+		guild = guildDAO.getGuildById(event.getGuild().getId());
+
+		if (guild == null) {
+			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild {}", event.getGuild().getId());
+			return guildDAO.addGuild(event.getGuild());
+		}
+		return true;
 	}
 
 }
