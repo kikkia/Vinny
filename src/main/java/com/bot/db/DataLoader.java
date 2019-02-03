@@ -1,14 +1,11 @@
 package com.bot.db;
 
-import com.bot.Config;
+import com.bot.utils.Config;
 import com.bot.ShardingManager;
 import com.bot.utils.GuildUtils;
 import com.bot.voice.QueuedAudioTrack;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.entities.*;
 import org.flywaydb.core.Flyway;
 
 import java.sql.*;
@@ -18,18 +15,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DataLoader {
-	private static final Logger LOGGER = Logger.getLogger(DataLoader.class.getName());
+	private final Logger LOGGER = Logger.getLogger(DataLoader.class.getName());
 
-	private static ShardingManager shardingManager;
+	private ShardingManager shardingManager;
 	// Needs shards for when running on PROD
 
-	public static void main(String[] args) throws Exception {
+	public DataLoader(ShardingManager shardingManager) throws Exception {
+		this.shardingManager = shardingManager;
+
 		// Config gets tokens
 		Config config = Config.getInstance();
 		long startTime = System.currentTimeMillis();
-		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));
-
-		shardingManager = new ShardingManager(numShards, true, true);
 
 		if (config.getConfig(Config.USE_DB).equals("False")) {
 			System.out.println("Use_DB Set to False in the config file. Exiting...");
@@ -100,6 +96,8 @@ public class DataLoader {
 				int guildCount = 0;
 				int textChannelCount = 0;
 				int voiceChannelCount = 0;
+				int userCount = 0;
+				int membershipCount = 0;
 
 				// Loads guilds into db
 				for (Guild g : guilds) {
@@ -141,33 +139,21 @@ public class DataLoader {
 						statement.execute();
 						voiceChannelCount++;
 					}
-				}
-				System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + guildCount + " guilds and " + textChannelCount + " channels and " + voiceChannelCount + " voice channels.");
 
+					for (Member m : g.getMembers()) {
+						statement = connection.prepareStatement(userInsertQuery);
+						statement.setString(1, m.getUser().getId());
+						statement.setString(2, m.getUser().getName());
+						statement.execute();
+						userCount++;
 
-				System.out.println("Starting user and membership migration");
-				// Users must be added after ALL guilds to ensure no sharding discrepancies.
-				System.out.println("Starting shard: " + bot.getShardInfo().getShardId() + " for " + bot.getUsers().size() + " users");
-				int userCount = 0;
-				int membershipCount = 0;
+						if (userCount % 2500 == 0) {
+							System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + userCount + " users");
+						}
 
-				// Populate users
-				for (User u : users) {
-					statement = connection.prepareStatement(userInsertQuery);
-					statement.setString(1, u.getId());
-					statement.setString(2, u.getName());
-					statement.execute();
-					userCount++;
-
-					if (userCount % 2500 == 0) {
-						System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + userCount + " users");
-					}
-
-					// Populate Mutual guild memberships
-					for (Guild mg : u.getMutualGuilds()) {
 						statement = connection.prepareStatement(guildMembershipInsertQuery);
-						statement.setString(1, u.getId());
-						statement.setString(2, mg.getId());
+						statement.setString(1, m.getUser().getId());
+						statement.setString(2, g.getId());
 						statement.execute();
 						membershipCount++;
 
@@ -176,6 +162,10 @@ public class DataLoader {
 						}
 					}
 				}
+				System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + guildCount + " guilds and " + textChannelCount + " channels and " + voiceChannelCount + " voice channels.");
+
+
+				System.out.println("Starting user and membership migration");
 				System.out.println("FINISHED: Shard: " + bot.getShardInfo().getShardId() + " Added " + userCount + " users and " + membershipCount + " memberships.");
 			}
 			catch (Exception e) {

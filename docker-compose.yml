@@ -13,6 +13,7 @@ services:
             - DISCORD_TOKEN=<Discord bot token>
             - NUM_SHARDS=<Number of shards (reccomended 1 per 1000 servers)>
             - OWNER_ID=<Owner ID>
+            - DATA_LOADER=<True or false>
   database:
     image: mysql:5.7
     ports:

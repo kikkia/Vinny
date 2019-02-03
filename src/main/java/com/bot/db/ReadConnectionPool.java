@@ -1,7 +1,7 @@
 package com.bot.db;
 
 
-import com.bot.Config;
+import com.bot.utils.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
