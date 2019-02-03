@@ -90,7 +90,7 @@ public class ShardingManager {
             shards[i] = new JDABuilder(AccountType.BOT)
                     .setToken(config.getConfig(Config.DISCORD_TOKEN))
                     .useSharding(i, numShards)
-                    .buildBlocking();
+                    .build();
             if (!supportScript) {
                 EventWaiter waiter = new EventWaiter();
 

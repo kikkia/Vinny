@@ -84,7 +84,7 @@ public class GuildDAO {
         }
     }
 
-    public void updateGuildVolume(String guildId, int newVolume) {
+    public boolean updateGuildVolume(String guildId, int newVolume) {
         try {
             String query = "UPDATE guild SET default_volume = ? WHERE id = ?";
             PreparedStatement statement = write.prepareStatement(query);
@@ -92,12 +92,14 @@ public class GuildDAO {
             statement.setString(2, guildId);
             statement.execute();
             close(statement, null);
+            return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to update volume for guild: " + guildId, e.getSQLState());
+            return false;
         }
     }
 
-    public void updateMinBaseRole(String guildId, String newRoleId) {
+    public boolean updateMinBaseRole(String guildId, String newRoleId) {
         try {
             String query = "UPDATE guild SET min_base_role_id = ? WHERE id = ?";
             PreparedStatement statement = write.prepareStatement(query);
@@ -105,12 +107,14 @@ public class GuildDAO {
             statement.setString(2, guildId);
             statement.execute();
             close(statement, null);
+            return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to update base role for guild: " + guildId, e.getSQLState());
+            return false;
         }
     }
 
-    public void updateMinNSFWRole(String guildId, String newRoleId) {
+    public boolean updateMinNSFWRole(String guildId, String newRoleId) {
         try {
             String query = "UPDATE guild SET min_nsfw_role_id = ? WHERE id = ?";
             PreparedStatement statement = write.prepareStatement(query);
@@ -118,12 +122,14 @@ public class GuildDAO {
             statement.setString(2, guildId);
             statement.execute();
             close(statement, null);
+            return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to update nsfw role for: " + guildId, e.getSQLState());
+            return false;
         }
     }
 
-    public void updateMinVoiceRole(String guildId, String newRoleId) {
+    public boolean updateMinVoiceRole(String guildId, String newRoleId) {
         try {
             String query = "UPDATE guild SET min_voice_role_id = ? WHERE id = ?";
             PreparedStatement statement = write.prepareStatement(query);
@@ -131,12 +137,14 @@ public class GuildDAO {
             statement.setString(2, guildId);
             statement.execute();
             close(statement, null);
+            return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to update voice role for guild: " + guildId, e.getSQLState());
+            return false;
         }
     }
 
-    public void updateMinModRole(String guildId, String newRoleId) {
+    public boolean updateMinModRole(String guildId, String newRoleId) {
         try {
             String query = "UPDATE guild SET min_mod_role_id = ? WHERE id = ?";
             PreparedStatement statement = write.prepareStatement(query);
@@ -144,8 +152,10 @@ public class GuildDAO {
             statement.setString(2, guildId);
             statement.execute();
             close(statement, null);
+            return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to update min mod role for guild: " + guildId, e.getSQLState());
+            return false;
         }
     }
 

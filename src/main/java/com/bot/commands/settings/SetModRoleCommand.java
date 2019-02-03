@@ -44,16 +44,15 @@ public class SetModRoleCommand extends Command {
         if (guild == null) {
             LOGGER.log(Level.WARNING, "Guild not found in db, attempting to add: " + commandGuild.getId());
             commandEvent.reply(commandEvent.getClient().getWarning() + " This guild was not found in my database. I am going to try to add it. Please standby.");
-            try {
-                guildDAO.addGuild(commandGuild);
-                commandEvent.reply(commandEvent.getClient().getSuccess() + " Added the guild to the database. Retrying");
-                execute(commandEvent);
-                return;
-            } catch (SQLException e) {
+
+            if(!guildDAO.addGuild(commandGuild)) {
                 LOGGER.log(Level.SEVERE, "Failed to add the guild to the db");
                 commandEvent.reply(commandEvent.getClient().getError() + " Error adding the guild to the db. Please contact the developer on the support server." + Bot.SUPPORT_INVITE_LINK);
                 return;
             }
+            commandEvent.reply(commandEvent.getClient().getSuccess() + " Added the guild to the database. Retrying");
+            execute(commandEvent);
+            return;
         }
 
         List<Role> mentionedRoles = commandEvent.getMessage().getMentionedRoles();
@@ -62,13 +61,12 @@ public class SetModRoleCommand extends Command {
             return;
         }
 
-        try {
-            // Just use the first mentioned roles
-            guildDAO.updateMinModRole(guild.getId(), mentionedRoles.get(0).getId());
-            commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
-        } catch (SQLException e) {
+        // Just use the first mentioned roles
+        if(!guildDAO.updateMinModRole(guild.getId(), mentionedRoles.get(0).getId())) {
             LOGGER.log(Level.SEVERE, "Failed to update mod role for guild " + guild.getId());
             commandEvent.reply("Something went wrong. Please contact the developers on the support server. " + Bot.SUPPORT_INVITE_LINK);
         }
+        commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
+
     }
 }
