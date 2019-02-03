@@ -30,9 +30,9 @@ public class ShardingManager {
         shards = new JDA[numShards];
         Bot bot = null;
         CommandClient client = null;
+        bot = new Bot(new EventWaiter());
 
         if (!supportScript) {
-            bot = new Bot(new EventWaiter());
             CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
             commandClientBuilder.setPrefix("~");
             commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
@@ -94,13 +94,11 @@ public class ShardingManager {
 
             shards[i].awaitReady();
 
-            if (!supportScript) {
-                EventWaiter waiter = new EventWaiter();
+            EventWaiter waiter = new EventWaiter();
 
-                shards[i].addEventListener(waiter);
-                shards[i].addEventListener(client);
-                shards[i].addEventListener(bot);
-            }
+            shards[i].addEventListener(waiter);
+            shards[i].addEventListener(client);
+            shards[i].addEventListener(bot);
 
             System.out.println("Shard " + i + " built.");
         }
