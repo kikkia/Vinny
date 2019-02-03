@@ -74,12 +74,12 @@ public class Bot extends ListenerAdapter {
 	// This code runs every time a message is received by the bot
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		String[] command = event.getMessage().getContentRaw().split(" ", 2);
-
-		if ("hi".equals(command[0])){
-			event.getTextChannel().sendMessage("yo").queue();
-			waiter.waitForEvent(MessageReceivedEvent.class, getResponseFromSender(event), responseConsumer(event), 10, TimeUnit.SECONDS, new exampleTimeout(event));
-		}
+//		String[] command = event.getMessage().getContentRaw().split(" ", 2);
+//
+//		if ("hi".equals(command[0])){
+//			event.getTextChannel().sendMessage("yo").queue();
+//			waiter.waitForEvent(MessageReceivedEvent.class, getResponseFromSender(event), responseConsumer(event), 10, TimeUnit.SECONDS, new exampleTimeout(event));
+//		}
 	}
 
 	@Override
@@ -175,7 +175,6 @@ public class Bot extends ListenerAdapter {
 
 	// Predicate defines the condition we need to fulfill
 	private Predicate<MessageReceivedEvent> getResponseFromSender(MessageReceivedEvent original) {
-		System.out.println("here");
 		return p -> p.getAuthor() == original.getAuthor() && p.getMessage().getContentRaw().equals("sup");
 	}
 
