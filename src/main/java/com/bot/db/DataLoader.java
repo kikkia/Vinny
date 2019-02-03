@@ -83,7 +83,6 @@ public class DataLoader {
 			try {
 				System.out.println("Starting shard: " + bot.getShardInfo().getShardId() + " for " + bot.getGuilds().size() + " guilds");
 				PreparedStatement statement;
-				List<Guild> guilds = bot.getGuilds();
 				int guildCount = 0;
 				int textChannelCount = 0;
 				int voiceChannelCount = 0;
@@ -91,7 +90,7 @@ public class DataLoader {
 				int membershipCount = 0;
 
 				// Loads guilds into db
-				for (Guild g : guilds) {
+				for (Guild g : bot.getGuilds()) {
 					statement = connection.prepareStatement(guildInsertQuery);
 					statement.setString(1, g.getId());
 					statement.setString(2, g.getName());
@@ -155,8 +154,6 @@ public class DataLoader {
 				}
 				System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + guildCount + " guilds and " + textChannelCount + " channels and " + voiceChannelCount + " voice channels.");
 
-
-				System.out.println("Starting user and membership migration");
 				System.out.println("FINISHED: Shard: " + bot.getShardInfo().getShardId() + " Added " + userCount + " users and " + membershipCount + " memberships.");
 			}
 			catch (Exception e) {
