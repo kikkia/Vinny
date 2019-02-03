@@ -32,11 +32,11 @@ public class ShardingManager {
         CommandClient client = null;
         bot = new Bot(new EventWaiter());
 
-        if (!supportScript) {
-            CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
-            commandClientBuilder.setPrefix("~");
-            commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
+        CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
+        commandClientBuilder.setPrefix("~");
+        commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
 
+        if (!supportScript) {
             commandClientBuilder.addCommands(
                     // Voice Commands
                     new PlayCommand(bot),
@@ -79,12 +79,9 @@ public class ShardingManager {
                         new SetVoiceRoleCommand()
                 );
             }
-
-            commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
-
-
-            client = commandClientBuilder.build();
         }
+        commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
+        client = commandClientBuilder.build();
 
         for (int i = 0; i < numShards; i++){
             shards[i] = new JDABuilder(AccountType.BOT)
