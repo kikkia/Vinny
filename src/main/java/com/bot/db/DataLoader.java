@@ -101,6 +101,7 @@ public class DataLoader {
 					statement.setString(7, g.getPublicRole().getId());
 
 					statement.execute();
+					statement.close();
 					guildCount++;
 
 					if (guildCount % 250 == 0) {
@@ -114,6 +115,7 @@ public class DataLoader {
 						statement.setString(2, g.getId());
 						statement.setString(3, c.getName());
 						statement.execute();
+						statement.close();
 						textChannelCount++;
 
 						if (textChannelCount % 500 == 0) {
@@ -127,6 +129,7 @@ public class DataLoader {
 						statement.setString(2, g.getId());
 						statement.setString(3, v.getName());
 						statement.execute();
+						statement.close();
 						voiceChannelCount++;
 					}
 
@@ -135,6 +138,7 @@ public class DataLoader {
 						statement.setString(1, m.getUser().getId());
 						statement.setString(2, m.getUser().getName());
 						statement.execute();
+						statement.close();
 						userCount++;
 
 						if (userCount % 2500 == 0) {
@@ -145,6 +149,7 @@ public class DataLoader {
 						statement.setString(1, m.getUser().getId());
 						statement.setString(2, g.getId());
 						statement.execute();
+						statement.close();
 						membershipCount++;
 
 						if (membershipCount % 5000 == 0) {
