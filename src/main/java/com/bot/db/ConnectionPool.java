@@ -20,6 +20,8 @@ public class ConnectionPool {
 		hikariConfig.setJdbcUrl("jdbc:mysql://" + config.getConfig(Config.DB_URI) + "/"  + config.getConfig(Config.DB_SCHEMA));
 		hikariConfig.setUsername(config.getConfig(Config.DB_USERNAME));
 		hikariConfig.setPassword(config.getConfig(Config.DB_PASSWORD));
+		hikariConfig.setMaximumPoolSize(30);
+		hikariConfig.setLeakDetectionThreshold(30 * 1000);
 		hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
 		hikariConfig.addDataSourceProperty("prepStmtCacheSize", "50");
 		hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
