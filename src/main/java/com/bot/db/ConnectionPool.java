@@ -21,7 +21,7 @@ public class ConnectionPool {
 		hikariConfig.setUsername(config.getConfig(Config.DB_USERNAME));
 		hikariConfig.setPassword(config.getConfig(Config.DB_PASSWORD));
 		hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
-		hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+		hikariConfig.addDataSourceProperty("prepStmtCacheSize", "50");
 		hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 		hikariConfig.addDataSourceProperty("useServerPrepStmts", "true");
 
