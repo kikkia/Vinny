@@ -91,6 +91,9 @@ public class ShardingManager {
                     .setToken(config.getConfig(Config.DISCORD_TOKEN))
                     .useSharding(i, numShards)
                     .build();
+
+            shards[i].awaitReady();
+
             if (!supportScript) {
                 EventWaiter waiter = new EventWaiter();
 

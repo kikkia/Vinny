@@ -49,7 +49,6 @@ public class DataLoader {
 		try {
 			for (JDA bot: shardingManager.getShards()){
 				loadThreads.add(new LoadThread(bot, config, startTime));
-				bot.awaitReady();
 			}
 			for (LoadThread thread : loadThreads) {
 				thread.start();
