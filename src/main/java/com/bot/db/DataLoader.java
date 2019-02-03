@@ -10,6 +10,7 @@ import net.dv8tion.jda.core.entities.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DataLoader {
@@ -45,17 +46,15 @@ public class DataLoader {
 			return;
 		}
 
-		List<LoadThread> loadThreads = new ArrayList<>();
 		try {
 			for (JDA bot: shardingManager.getShards()){
-				loadThreads.add(new LoadThread(bot, config, startTime));
-			}
-			for (LoadThread thread : loadThreads) {
+				LoadThread thread = new LoadThread(bot, config, startTime);
+				bot.awaitReady();
 				thread.start();
 			}
 		}
 		catch (Exception e) {
-			System.out.println(e);
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 
 	}
