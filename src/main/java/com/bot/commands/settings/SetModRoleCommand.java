@@ -20,7 +20,7 @@ public class SetModRoleCommand extends Command {
     private static Logger LOGGER = Logger.getLogger(SetModRoleCommand.class.getName());
 
     public SetModRoleCommand() {
-        this.name = "modole";
+        this.name = "modrole";
         this.help = "Sets the minimum role required to use a moderation command. (Mod command permission required)";
         this.arguments = "<Role mention>";
         this.guildOnly = true;

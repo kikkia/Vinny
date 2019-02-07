@@ -16,7 +16,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     private static final Logger LOGGER = Logger.getLogger(VoiceSendHandler.class.getName());
 
     // Max Duration is in seconds
-    public static long MAX_DURATION = 3600;
+    public static long MAX_DURATION = 36009;
 
     private long guildID;
     private long requester;

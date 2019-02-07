@@ -102,10 +102,6 @@ public class DataLoader {
 					statement.close();
 					guildCount++;
 
-					if (guildCount % 250 == 0) {
-						LOGGER.info("Shard: " + bot.getShardInfo().getShardId() + " Added " + guildCount + " guilds");
-					}
-
 					// Load all text channels for the guild
 					for (TextChannel c : g.getTextChannels()) {
 						statement = connection.prepareStatement(textChannelInsertQuery);
@@ -116,9 +112,6 @@ public class DataLoader {
 						statement.close();
 						textChannelCount++;
 
-						if (textChannelCount % 500 == 0) {
-							LOGGER.info("Shard: " + bot.getShardInfo().getShardId() + " Added " + textChannelCount + " textChannels");
-						}
 					}
 
 					for (VoiceChannel v : g.getVoiceChannels()) {
@@ -149,10 +142,6 @@ public class DataLoader {
 						statement.execute();
 						statement.close();
 						membershipCount++;
-
-						if (membershipCount % 5000 == 0) {
-							LOGGER.info("Shard: " + bot.getShardInfo().getShardId() + " Added " + membershipCount + " memberships");
-						}
 					}
 				}
 				LOGGER.info("Shard: " + bot.getShardInfo().getShardId() + " Added " + guildCount + " guilds and " + textChannelCount + " channels and " + voiceChannelCount + " voice channels.");
