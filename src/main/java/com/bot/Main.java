@@ -43,12 +43,10 @@ public class Main {
 
 		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));
 		boolean dataLoader = Boolean.parseBoolean(config.getConfig(Config.DATA_LOADER));
-		ShardingManager shardingManager = new ShardingManager(numShards, dataLoader, useDB);
+		ShardingManager shardingManager = new ShardingManager(numShards, useDB);
 
-		if(dataLoader) {
-			LOGGER.log(Level.INFO, "Starting a data loader");
-			DataLoader loader = new DataLoader(shardingManager);
-		}
+		LOGGER.log(Level.INFO, "Starting a data loader");
+		DataLoader loader = new DataLoader(shardingManager);
 
 		System.out.println("Successfully started.");
 	}
