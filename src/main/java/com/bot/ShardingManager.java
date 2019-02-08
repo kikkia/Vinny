@@ -45,6 +45,7 @@ public class ShardingManager {
                 new ResumeCommand(),
                 new VolumeCommand(),
                 new ListTracksCommand(),
+                new SkipCommand(),
 
                 // Battle Royale
                 //new BattleRoyaleCommand(),

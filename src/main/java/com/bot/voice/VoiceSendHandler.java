@@ -23,7 +23,6 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     private QueuedAudioTrack nowPlaying;
     private Set<String> skipVotes;
     private Queue<QueuedAudioTrack> tracks;
-    private List<AudioTrack> trackList;
     private AudioPlayer player;
     private AudioFrame lastFrame;
     private Bot bot;
@@ -35,7 +34,6 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         this.bot = bot;
         this.skipVotes = new HashSet<>();
         this.tracks = new LinkedBlockingQueue<>();
-        this.trackList = new LinkedList<>();
         this.nowPlaying = null;
         this.repeat = false;
     }
@@ -48,6 +46,21 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         }
         else {
             tracks.add(new QueuedAudioTrack(track, user));
+        }
+    }
+
+    public boolean skipTrack() {
+        if (player.getPlayingTrack() == null) {
+            return false;
+        }
+        else if (tracks.size() == 0) {
+            return false;
+        }
+        else {
+            QueuedAudioTrack nextTrack = tracks.poll();
+            player.playTrack(nextTrack.getTrack());
+            nowPlaying = nextTrack;
+            return true;
         }
     }
 
