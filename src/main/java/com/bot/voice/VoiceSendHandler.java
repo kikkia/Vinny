@@ -18,21 +18,15 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     // Max Duration is in seconds
     public static long MAX_DURATION = 36009;
 
-    private long guildID;
     private long requester;
     private QueuedAudioTrack nowPlaying;
-    private Set<String> skipVotes;
     private Queue<QueuedAudioTrack> tracks;
     private AudioPlayer player;
     private AudioFrame lastFrame;
-    private Bot bot;
     private boolean repeat;
 
     public VoiceSendHandler(long guildID, AudioPlayer player, Bot bot) {
         this.player = player;
-        this.guildID = guildID;
-        this.bot = bot;
-        this.skipVotes = new HashSet<>();
         this.tracks = new LinkedBlockingQueue<>();
         this.nowPlaying = null;
         this.repeat = false;
@@ -58,8 +52,14 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         }
         else {
             QueuedAudioTrack nextTrack = tracks.poll();
-            player.playTrack(nextTrack.getTrack());
-            nowPlaying = nextTrack;
+            if (nextTrack == null) {
+                stop();
+            }
+            else {
+                requester = nextTrack.getRequesterID();
+                player.playTrack(nextTrack.getTrack());
+                nowPlaying = nextTrack;
+            }
             return true;
         }
     }
@@ -99,6 +99,10 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         if (endReason == AudioTrackEndReason.FINISHED && repeat) {
             queueTrack(track.makeClone(), requester);
         }
+        else if (endReason != AudioTrackEndReason.FINISHED) {
+            return;
+        }
+        
         QueuedAudioTrack nextTrack = tracks.poll();
         // If nextTrack is null then we are dont
         if (nextTrack == null) {
