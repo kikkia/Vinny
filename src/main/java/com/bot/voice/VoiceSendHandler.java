@@ -102,7 +102,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         else if (endReason != AudioTrackEndReason.FINISHED) {
             return;
         }
-        
+
         QueuedAudioTrack nextTrack = tracks.poll();
         // If nextTrack is null then we are dont
         if (nextTrack == null) {

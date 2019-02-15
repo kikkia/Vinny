@@ -56,7 +56,7 @@ public class GuildDAO {
             }
             close(null, set);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to get guild from db: " + guildId, e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to get guild from db: " + guildId, e.getMessage());
             return null;
         }
         return returned;
@@ -79,7 +79,7 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to add guild to db: " + guild.getId(), e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to add guild to db: " + guild.getId(), e.getMessage());
             return false;
         }
     }
@@ -94,7 +94,7 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to update volume for guild: " + guildId, e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to update volume for guild: " + guildId, e.getMessage());
             return false;
         }
     }
@@ -109,7 +109,7 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to update base role for guild: " + guildId, e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to update base role for guild: " + guildId, e.getMessage());
             return false;
         }
     }
@@ -124,7 +124,7 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to update nsfw role for: " + guildId, e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to update nsfw role for: " + guildId, e.getMessage());
             return false;
         }
     }
@@ -139,7 +139,7 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to update voice role for guild: " + guildId, e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to update voice role for guild: " + guildId, e.getMessage());
             return false;
         }
     }
@@ -154,7 +154,7 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to update min mod role for guild: " + guildId, e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to update min mod role for guild: " + guildId, e.getMessage());
             return false;
         }
     }
