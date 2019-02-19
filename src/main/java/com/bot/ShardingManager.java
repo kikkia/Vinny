@@ -1,12 +1,8 @@
 package com.bot;
 
 import com.bot.commands.general.InviteCommand;
-import com.bot.commands.reddit.NewPostCommand;
-import com.bot.commands.reddit.RandomPostCommand;
-import com.bot.commands.reddit.TopPostCommand;
 import com.bot.commands.settings.*;
 import com.bot.commands.voice.*;
-import com.bot.commands.battleroyale.BattleRoyaleCommand;
 import com.bot.utils.Config;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;

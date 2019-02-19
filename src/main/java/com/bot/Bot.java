@@ -16,7 +16,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.channel.text.GenericTextChannelEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelCreateEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
@@ -36,17 +35,12 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
 
-import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Bot extends ListenerAdapter {
 	private static final Logger LOGGER = Logger.getLogger(Bot.class.getName());
 	private EventWaiter waiter;
-	private JDA jda;
 	private final AudioPlayerManager manager;
 
 	private GuildDAO guildDAO;
@@ -172,34 +166,31 @@ public class Bot extends ListenerAdapter {
 		channelDAO.addVoiceChannel(event.getChannel());
 	}
 
+//
+//	// Predicate defines the condition we need to fulfill
+//	private Predicate<MessageReceivedEvent> getResponseFromSender(MessageReceivedEvent original) {
+//		return p -> p.getAuthor() == original.getAuthor() && p.getMessage().getContentRaw().equals("sup");
+//	}
+//
+//	// This code will run when the predicate is met
+//	private Consumer<MessageReceivedEvent> responseConsumer(MessageReceivedEvent event) {
+//		return x -> event.getTextChannel().sendMessage("not much fam hbu").queue();
+//	}
+//
+//	// Runnable to execute when timeout is met.
+//	public class exampleTimeout implements Runnable {
+//		TextChannel channel;
+//
+//		public exampleTimeout(MessageReceivedEvent event) {
+//			channel = event.getTextChannel();
+//		}
+//
+//		@Override
+//		public void run() {
+//			channel.sendMessage("oops out of time!").queue();
+//		}
+//	}
 
-	// Predicate defines the condition we need to fulfill
-	private Predicate<MessageReceivedEvent> getResponseFromSender(MessageReceivedEvent original) {
-		return p -> p.getAuthor() == original.getAuthor() && p.getMessage().getContentRaw().equals("sup");
-	}
-
-	// This code will run when the predicate is met
-	private Consumer<MessageReceivedEvent> responseConsumer(MessageReceivedEvent event) {
-		return x -> event.getTextChannel().sendMessage("not much fam hbu").queue();
-	}
-
-	// Runnable to execute when timeout is met.
-	public class exampleTimeout implements Runnable {
-		TextChannel channel;
-
-		public exampleTimeout(MessageReceivedEvent event) {
-			channel = event.getTextChannel();
-		}
-
-		@Override
-		public void run() {
-			channel.sendMessage("oops out of time!").queue();
-		}
-	}
-
-	public JDA getJda() {
-		return jda;
-	}
 
 	public AudioPlayerManager getManager() {
 		return manager;
@@ -254,7 +245,7 @@ public class Bot extends ListenerAdapter {
 	}
 
 	private boolean addGuildIfNotPresent(GenericGuildEvent event) {
-		InternalGuild guild = null;
+		InternalGuild guild;
 		guild = guildDAO.getGuildById(event.getGuild().getId());
 
 		if (guild == null) {
@@ -265,7 +256,7 @@ public class Bot extends ListenerAdapter {
 	}
 
 	private boolean addGuildIfNotPresent(GenericTextChannelEvent event) {
-		InternalGuild guild = null;
+		InternalGuild guild;
 		guild = guildDAO.getGuildById(event.getGuild().getId());
 
 		if (guild == null) {
@@ -276,7 +267,7 @@ public class Bot extends ListenerAdapter {
 	}
 
 	private boolean addGuildIfNotPresent(GenericVoiceChannelEvent event) {
-		InternalGuild guild = null;
+		InternalGuild guild;
 		guild = guildDAO.getGuildById(event.getGuild().getId());
 
 		if (guild == null) {

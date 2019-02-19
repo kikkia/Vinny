@@ -4,8 +4,6 @@ import com.bot.db.GuildDAO;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import java.sql.SQLException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DefaultVolumeCommand extends Command {
