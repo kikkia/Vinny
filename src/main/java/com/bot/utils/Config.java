@@ -1,4 +1,4 @@
-package com.bot;
+package com.bot.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,6 +33,7 @@ public class Config {
 
     public static final String NUM_SHARDS = "NUM_SHARDS";
     public static final String PREFIX = "PREFIX";
+    public static final String DATA_LOADER = "DATA_LOADER";
 
 
     private Config() {

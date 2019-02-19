@@ -1,6 +1,8 @@
 package com.bot;
 
 import com.bot.db.ConnectionPool;
+import com.bot.db.DataLoader;
+import com.bot.utils.Config;
 import org.flywaydb.core.Flyway;
 
 import java.util.logging.Logger;
@@ -40,7 +42,11 @@ public class Main {
 		}
 
 		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));
-		ShardingManager shardingManager = new ShardingManager(numShards, false, useDB);
+		boolean dataLoader = Boolean.parseBoolean(config.getConfig(Config.DATA_LOADER));
+		ShardingManager shardingManager = new ShardingManager(numShards, useDB);
+
+		LOGGER.log(Level.INFO, "Starting a data loader");
+		DataLoader loader = new DataLoader(shardingManager);
 
 		System.out.println("Successfully started.");
 	}

@@ -4,8 +4,6 @@ import com.bot.db.GuildDAO;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import java.sql.SQLException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DefaultVolumeCommand extends Command {
@@ -29,15 +27,16 @@ public class DefaultVolumeCommand extends Command {
             if (newVolume > 200 || newVolume < 0) {
                 throw new NumberFormatException();
             }
-            guildDAO.updateGuildVolume(commandEvent.getGuild().getId(), newVolume);
+
+            if (!guildDAO.updateGuildVolume(commandEvent.getGuild().getId(), newVolume)) {
+                commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong updating the default volume.");
+                return;
+            }
+
             commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
         }
         catch (NumberFormatException e) {
             commandEvent.reply(commandEvent.getClient().getError() + " You must enter a volume between 0 and 200");
-        }
-        catch (SQLException e) {
-            commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong updating the default volume.");
-            LOGGER.log(Level.SEVERE, "Error persisting a volume for a guild " + e.getSQLState());
         }
     }
 

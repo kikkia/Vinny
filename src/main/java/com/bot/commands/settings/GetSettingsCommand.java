@@ -8,7 +8,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,16 +41,15 @@ public class GetSettingsCommand extends Command {
         if (guild == null) {
             LOGGER.log(Level.WARNING, "Guild not found in db, attempting to add: " + commandGuild.getId());
             commandEvent.reply(commandEvent.getClient().getWarning() + " This guild was not found in my database. I am going to try to add it. Please standby.");
-            try {
-                guildDAO.addGuild(commandGuild);
-                commandEvent.reply(commandEvent.getClient().getSuccess() + " Added the guild to the database. Retrying");
-                execute(commandEvent);
-                return;
-            } catch (SQLException e) {
+
+            if (!guildDAO.addGuild(commandGuild)) {
                 LOGGER.log(Level.SEVERE, "Failed to add the guild to the db");
                 commandEvent.reply(commandEvent.getClient().getError() + " Error adding the guild to the db. Please contact the developer on the support server." + Bot.SUPPORT_INVITE_LINK);
                 return;
             }
+            commandEvent.reply(commandEvent.getClient().getSuccess() + " Added the guild to the database. Retrying");
+            execute(commandEvent);
+            return;
         }
 
         EmbedBuilder builder = new EmbedBuilder();

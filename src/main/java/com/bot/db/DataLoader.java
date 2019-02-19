@@ -1,35 +1,28 @@
 package com.bot.db;
 
-import com.bot.Config;
+import com.bot.utils.Config;
 import com.bot.ShardingManager;
 import com.bot.utils.GuildUtils;
 import com.bot.voice.QueuedAudioTrack;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.entities.VoiceChannel;
-import org.flywaydb.core.Flyway;
+import net.dv8tion.jda.core.entities.*;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DataLoader {
-	private static final Logger LOGGER = Logger.getLogger(DataLoader.class.getName());
+	private final Logger LOGGER = Logger.getLogger(DataLoader.class.getName());
 
-	private static ShardingManager shardingManager;
+	private ShardingManager shardingManager;
 	// Needs shards for when running on PROD
 
-	public static void main(String[] args) throws Exception {
+	public DataLoader(ShardingManager shardingManager) throws Exception {
+		this.shardingManager = shardingManager;
+
 		// Config gets tokens
 		Config config = Config.getInstance();
 		long startTime = System.currentTimeMillis();
-		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));
-
-		shardingManager = new ShardingManager(numShards, true, true);
 
 		if (config.getConfig(Config.USE_DB).equals("False")) {
 			System.out.println("Use_DB Set to False in the config file. Exiting...");
@@ -51,23 +44,15 @@ public class DataLoader {
 			return;
 		}
 
-		LOGGER.log(Level.INFO, "Hikari pool successfully initialized");
-		Flyway flyway = new Flyway();
-		flyway.setDataSource(ConnectionPool.getDataSource());
-		flyway.migrate();
-		LOGGER.log(Level.INFO, "Flyway migrations completed");
-
-		List<LoadThread> loadThreads = new ArrayList<>();
 		try {
 			for (JDA bot: shardingManager.getShards()){
-				loadThreads.add(new LoadThread(bot, config, startTime));
-			}
-			for (LoadThread thread : loadThreads) {
+				LoadThread thread = new LoadThread(bot, config, startTime);
+				bot.awaitReady();
 				thread.start();
 			}
 		}
 		catch (Exception e) {
-			System.out.println(e);
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 
 	}
@@ -75,13 +60,14 @@ public class DataLoader {
 	private static class LoadThread extends Thread {
 
 		private JDA bot;
-		private Connection connection = null;
-		private long startTime = 0;
+		private Connection connection;
+		private long startTime;
 		private String guildInsertQuery = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE name=name";
 		private String textChannelInsertQuery = "INSERT INTO text_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private String userInsertQuery = "INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild) VALUES (?, ?) ON DUPLICATE KEY UPDATE guild = guild";
 		private String voiceChannelInsertQuery = "INSERT INTO voice_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
+		private final Logger LOGGER = Logger.getLogger(LoadThread.class.getName());
 
 		public LoadThread(JDA bot, Config config, long startTime) throws SQLException, ClassNotFoundException {
 			this.bot = bot;
@@ -93,16 +79,16 @@ public class DataLoader {
 		@Override
 		public void run() {
 			try {
-				System.out.println("Starting shard: " + bot.getShardInfo().getShardId() + " for " + bot.getGuilds().size() + " guilds");
+				LOGGER.log(Level.INFO, "Starting shard: " + bot.getShardInfo().getShardId() + " for " + bot.getGuilds().size() + " guilds");
 				PreparedStatement statement;
-				List<User> users = bot.getUsers();
-				List<Guild> guilds = bot.getGuilds();
 				int guildCount = 0;
 				int textChannelCount = 0;
 				int voiceChannelCount = 0;
+				int userCount = 0;
+				int membershipCount = 0;
 
 				// Loads guilds into db
-				for (Guild g : guilds) {
+				for (Guild g : bot.getGuilds()) {
 					statement = connection.prepareStatement(guildInsertQuery);
 					statement.setString(1, g.getId());
 					statement.setString(2, g.getName());
@@ -113,11 +99,8 @@ public class DataLoader {
 					statement.setString(7, g.getPublicRole().getId());
 
 					statement.execute();
+					statement.close();
 					guildCount++;
-
-					if (guildCount % 250 == 0) {
-						System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + guildCount + " guilds");
-					}
 
 					// Load all text channels for the guild
 					for (TextChannel c : g.getTextChannels()) {
@@ -126,11 +109,9 @@ public class DataLoader {
 						statement.setString(2, g.getId());
 						statement.setString(3, c.getName());
 						statement.execute();
+						statement.close();
 						textChannelCount++;
 
-						if (textChannelCount % 500 == 0) {
-							System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + textChannelCount + " textChannels");
-						}
 					}
 
 					for (VoiceChannel v : g.getVoiceChannels()) {
@@ -139,44 +120,33 @@ public class DataLoader {
 						statement.setString(2, g.getId());
 						statement.setString(3, v.getName());
 						statement.execute();
+						statement.close();
 						voiceChannelCount++;
 					}
-				}
-				System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + guildCount + " guilds and " + textChannelCount + " channels and " + voiceChannelCount + " voice channels.");
 
-
-				System.out.println("Starting user and membership migration");
-				// Users must be added after ALL guilds to ensure no sharding discrepancies.
-				System.out.println("Starting shard: " + bot.getShardInfo().getShardId() + " for " + bot.getUsers().size() + " users");
-				int userCount = 0;
-				int membershipCount = 0;
-
-				// Populate users
-				for (User u : users) {
-					statement = connection.prepareStatement(userInsertQuery);
-					statement.setString(1, u.getId());
-					statement.setString(2, u.getName());
-					statement.execute();
-					userCount++;
-
-					if (userCount % 2500 == 0) {
-						System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + userCount + " users");
-					}
-
-					// Populate Mutual guild memberships
-					for (Guild mg : u.getMutualGuilds()) {
-						statement = connection.prepareStatement(guildMembershipInsertQuery);
-						statement.setString(1, u.getId());
-						statement.setString(2, mg.getId());
+					for (Member m : g.getMembers()) {
+						statement = connection.prepareStatement(userInsertQuery);
+						statement.setString(1, m.getUser().getId());
+						statement.setString(2, m.getUser().getName());
 						statement.execute();
-						membershipCount++;
+						statement.close();
+						userCount++;
 
-						if (membershipCount % 5000 == 0) {
-							System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Added " + membershipCount + " memberships");
+						if (userCount % 2500 == 0) {
+							LOGGER.info("Shard: " + bot.getShardInfo().getShardId() + " Added " + userCount + " users");
 						}
+
+						statement = connection.prepareStatement(guildMembershipInsertQuery);
+						statement.setString(1, m.getUser().getId());
+						statement.setString(2, g.getId());
+						statement.execute();
+						statement.close();
+						membershipCount++;
 					}
 				}
-				System.out.println("FINISHED: Shard: " + bot.getShardInfo().getShardId() + " Added " + userCount + " users and " + membershipCount + " memberships.");
+				LOGGER.info("Shard: " + bot.getShardInfo().getShardId() + " Added " + guildCount + " guilds and " + textChannelCount + " channels and " + voiceChannelCount + " voice channels.");
+
+				LOGGER.info("FINISHED: Shard: " + bot.getShardInfo().getShardId() + " Added " + userCount + " users and " + membershipCount + " memberships.");
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -187,7 +157,7 @@ public class DataLoader {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				System.out.println("Shard: " + bot.getShardInfo().getShardId() + " Successfully migrated. Elapsed Time: " + QueuedAudioTrack.msToMinSec(System.currentTimeMillis() - startTime));
+				LOGGER.info("Shard: " + bot.getShardInfo().getShardId() + " Successfully migrated. Elapsed Time: " + QueuedAudioTrack.msToMinSec(System.currentTimeMillis() - startTime));
 			}
 		}
 	}

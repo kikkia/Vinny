@@ -1,6 +1,6 @@
 package com.bot.db;
 
-import com.bot.Config;
+import com.bot.utils.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -17,11 +17,13 @@ public class ConnectionPool {
 		Config config = Config.getInstance();
 
 		HikariConfig hikariConfig = new HikariConfig();
-		hikariConfig.setJdbcUrl("jdbc:mysql://" + config.getConfig(Config.DB_URI) + "/" + config.getConfig(Config.DB_SCHEMA));
+		hikariConfig.setJdbcUrl("jdbc:mysql://" + config.getConfig(Config.DB_URI) + "/"  + config.getConfig(Config.DB_SCHEMA));
 		hikariConfig.setUsername(config.getConfig(Config.DB_USERNAME));
 		hikariConfig.setPassword(config.getConfig(Config.DB_PASSWORD));
+		hikariConfig.setMaximumPoolSize(30);
+		hikariConfig.setLeakDetectionThreshold(30 * 1000);
 		hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
-		hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+		hikariConfig.addDataSourceProperty("prepStmtCacheSize", "50");
 		hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 		hikariConfig.addDataSourceProperty("useServerPrepStmts", "true");
 

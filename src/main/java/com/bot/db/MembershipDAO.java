@@ -87,7 +87,7 @@ public class MembershipDAO {
             statement.setString(2, userId);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to remove user membership from guild. " + e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to remove user membership from guild. " + e.getMessage());
         } finally {
             close(statement, null);
         }
@@ -108,7 +108,7 @@ public class MembershipDAO {
             statement.setString(2, user.getId());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to add membership for user to guild: " + e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to add membership for user to guild: " + e.getMessage());
         } finally {
             close(statement, null);
         }
@@ -122,7 +122,7 @@ public class MembershipDAO {
             statement.setString(2, user.getName());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to add user to db: " +e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to add user to db: " +e.getMessage());
         } finally {
             close(statement, null);
         }

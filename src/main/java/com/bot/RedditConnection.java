@@ -1,5 +1,6 @@
 package com.bot;
 
+import com.bot.utils.Config;
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.http.OkHttpNetworkAdapter;
 import net.dean.jraw.http.UserAgent;

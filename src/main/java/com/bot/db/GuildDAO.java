@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GuildDAO {
@@ -44,76 +45,118 @@ public class GuildDAO {
         this.write = ConnectionPool.getDataSource().getConnection();
     }
 
-    public InternalGuild getGuildById(String guildId) throws SQLException {
+    public InternalGuild getGuildById(String guildId) {
         String query = "SELECT id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id FROM guild WHERE id = ?";
-        ResultSet set = executeGetQuery(query, guildId);
+        ResultSet set = null;
         InternalGuild returned = null;
-        if (set.next()) {
-            returned = mapSetToGuild(set);
+        try {
+            set = executeGetQuery(query, guildId);
+            if (set.next()) {
+                returned = mapSetToGuild(set);
+            }
+            close(null, set);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to get guild from db: " + guildId, e.getMessage());
+            return null;
         }
-        close(null, set);
         return returned;
     }
 
     // We throw on this one so if we cant add a guild to the db we just leave the guild to avoid greater problems
-    public void addGuild(Guild guild) throws SQLException {
+    public boolean addGuild(Guild guild) {
         String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE name=name";
-        PreparedStatement statement = write.prepareStatement(query);
-        statement.setString(1, guild.getId());
-        statement.setString(2, guild.getName());
-        statement.setInt(3, DEFAULT_VOLUME);
+        try {
+            PreparedStatement statement = write.prepareStatement(query);
+            statement.setString(1, guild.getId());
+            statement.setString(2, guild.getName());
+            statement.setInt(3, DEFAULT_VOLUME);
 
-        statement.setString(4, guild.getPublicRole().getId());
-        statement.setString(5, GuildUtils.getHighestRole(guild).getId());
-        statement.setString(6, guild.getPublicRole().getId());
-        statement.setString(7, guild.getPublicRole().getId());
-        statement.execute();
-        close(statement, null);
+            statement.setString(4, guild.getPublicRole().getId());
+            statement.setString(5, GuildUtils.getHighestRole(guild).getId());
+            statement.setString(6, guild.getPublicRole().getId());
+            statement.setString(7, guild.getPublicRole().getId());
+            statement.execute();
+            close(statement, null);
+            return true;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to add guild to db: " + guild.getId(), e.getMessage());
+            return false;
+        }
     }
 
-    public void updateGuildVolume(String guildId, int newVolume) throws SQLException {
-        String query = "UPDATE guild SET default_volume = ? WHERE id = ?";
-        PreparedStatement statement = write.prepareStatement(query);
-        statement.setInt(1, newVolume);
-        statement.setString(2, guildId);
-        statement.execute();
-        close(statement, null);
+    public boolean updateGuildVolume(String guildId, int newVolume) {
+        try {
+            String query = "UPDATE guild SET default_volume = ? WHERE id = ?";
+            PreparedStatement statement = write.prepareStatement(query);
+            statement.setInt(1, newVolume);
+            statement.setString(2, guildId);
+            statement.execute();
+            close(statement, null);
+            return true;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update volume for guild: " + guildId, e.getMessage());
+            return false;
+        }
     }
 
-    public void updateMinBaseRole(String guildId, String newRoleId) throws SQLException {
-        String query = "UPDATE guild SET min_base_role_id = ? WHERE id = ?";
-        PreparedStatement statement = write.prepareStatement(query);
-        statement.setString(1, newRoleId);
-        statement.setString(2, guildId);
-        statement.execute();
-        close(statement, null);
+    public boolean updateMinBaseRole(String guildId, String newRoleId) {
+        try {
+            String query = "UPDATE guild SET min_base_role_id = ? WHERE id = ?";
+            PreparedStatement statement = write.prepareStatement(query);
+            statement.setString(1, newRoleId);
+            statement.setString(2, guildId);
+            statement.execute();
+            close(statement, null);
+            return true;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update base role for guild: " + guildId, e.getMessage());
+            return false;
+        }
     }
 
-    public void updateMinNSFWRole(String guildId, String newRoleId) throws SQLException {
-        String query = "UPDATE guild SET min_nsfw_role_id = ? WHERE id = ?";
-        PreparedStatement statement = write.prepareStatement(query);
-        statement.setString(1, newRoleId);
-        statement.setString(2, guildId);
-        statement.execute();
-        close(statement, null);
+    public boolean updateMinNSFWRole(String guildId, String newRoleId) {
+        try {
+            String query = "UPDATE guild SET min_nsfw_role_id = ? WHERE id = ?";
+            PreparedStatement statement = write.prepareStatement(query);
+            statement.setString(1, newRoleId);
+            statement.setString(2, guildId);
+            statement.execute();
+            close(statement, null);
+            return true;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update nsfw role for: " + guildId, e.getMessage());
+            return false;
+        }
     }
 
-    public void updateMinVoiceRole(String guildId, String newRoleId) throws SQLException {
-        String query = "UPDATE guild SET min_voice_role_id = ? WHERE id = ?";
-        PreparedStatement statement = write.prepareStatement(query);
-        statement.setString(1, newRoleId);
-        statement.setString(2, guildId);
-        statement.execute();
-        close(statement, null);
+    public boolean updateMinVoiceRole(String guildId, String newRoleId) {
+        try {
+            String query = "UPDATE guild SET min_voice_role_id = ? WHERE id = ?";
+            PreparedStatement statement = write.prepareStatement(query);
+            statement.setString(1, newRoleId);
+            statement.setString(2, guildId);
+            statement.execute();
+            close(statement, null);
+            return true;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update voice role for guild: " + guildId, e.getMessage());
+            return false;
+        }
     }
 
-    public void updateMinModRole(String guildId, String newRoleId) throws SQLException {
-        String query = "UPDATE guild SET min_mod_role_id = ? WHERE id = ?";
-        PreparedStatement statement = write.prepareStatement(query);
-        statement.setString(1, newRoleId);
-        statement.setString(2, guildId);
-        statement.execute();
-        close(statement, null);
+    public boolean updateMinModRole(String guildId, String newRoleId) {
+        try {
+            String query = "UPDATE guild SET min_mod_role_id = ? WHERE id = ?";
+            PreparedStatement statement = write.prepareStatement(query);
+            statement.setString(1, newRoleId);
+            statement.setString(2, guildId);
+            statement.execute();
+            close(statement, null);
+            return true;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update min mod role for guild: " + guildId, e.getMessage());
+            return false;
+        }
     }
 
     private ResultSet executeGetQuery(String query, String guildId) throws SQLException {

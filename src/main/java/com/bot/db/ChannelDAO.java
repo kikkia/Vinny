@@ -64,7 +64,7 @@ public class ChannelDAO {
             preparedStatement.setString(3, voiceChannel.getName());
             preparedStatement.execute();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to add voice channel to the db " +e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to add voice channel to the db " +e.getMessage());
         } finally {
             close(preparedStatement, null);
         }
@@ -81,7 +81,7 @@ public class ChannelDAO {
             preparedStatement.setString(3, textChannel.getName());
             preparedStatement.execute();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to add text channel to the db: " + e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to add text channel to the db: " + e.getMessage());
         } finally {
             close(preparedStatement, null);
         }
@@ -96,7 +96,7 @@ public class ChannelDAO {
             preparedStatement.setString(1, channel.getId());
             preparedStatement.execute();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to remove a voice channel from db: " +e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to remove a voice channel from db: " +e.getMessage());
         } finally {
             close(preparedStatement, null);
         }
@@ -111,7 +111,7 @@ public class ChannelDAO {
             preparedStatement.setString(1, channel.getId());
             preparedStatement.execute();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to remove a text channel from db: " +e.getSQLState());
+            LOGGER.log(Level.SEVERE, "Failed to remove a text channel from db: " +e.getMessage());
         } finally {
             close(preparedStatement, null);
         }
