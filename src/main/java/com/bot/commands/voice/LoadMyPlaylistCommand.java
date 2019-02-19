@@ -4,6 +4,7 @@ import com.bot.Bot;
 import com.bot.db.PlaylistDAO;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
+import com.bot.utils.CommandCategories;
 import com.bot.voice.LoadHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -21,6 +22,8 @@ public class LoadMyPlaylistCommand extends Command {
         this.name = "loadmyplaylist";
         this.arguments = "<playlist id|playlist name>";
         this.help = "Loads one of your playlists. You must either specify the id or the name of the playlist.";
+        this.category = CommandCategories.VOICE;
+
         this.playlistDAO = PlaylistDAO.getInstance();
         this.bot = bot;
     }

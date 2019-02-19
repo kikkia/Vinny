@@ -1,5 +1,6 @@
 package com.bot.commands.voice;
 
+import com.bot.utils.CommandCategories;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -13,6 +14,7 @@ public class ResumeCommand extends Command {
 		this.name = "resume";
 		this.arguments = "";
 		this.help = "Resumes a paused Stream";
+		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

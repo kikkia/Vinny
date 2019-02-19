@@ -1,5 +1,6 @@
 package com.bot.commands.voice;
 
+import com.bot.utils.CommandCategories;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -13,6 +14,7 @@ public class SkipCommand extends Command {
 		this.name = "skip";
 		this.arguments = "";
 		this.help = "skips to the next track";
+		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

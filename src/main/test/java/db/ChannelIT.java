@@ -2,6 +2,7 @@ package db;
 
 import com.bot.db.ChannelDAO;
 import com.bot.models.*;
+import com.bot.utils.CommandCategories;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
@@ -107,10 +108,10 @@ public class ChannelIT {
             statement.setString(1, g.getId());
             statement.setString(2, g.getName());
             statement.setInt(3, g.getVolume());
-            statement.setString(4, g.getMinBaseRole());
-            statement.setString(5, g.getMinModRole());
-            statement.setString(6, g.getMinVoiceRole());
-            statement.setString(7, g.getMinNsfwRole());
+            statement.setString(4, g.getRequiredPermission(CommandCategories.GENERAL));
+            statement.setString(5, g.getRequiredPermission(CommandCategories.MOD));
+            statement.setString(6, g.getRequiredPermission(CommandCategories.VOICE));
+            statement.setString(7, g.getRequiredPermission(CommandCategories.NSFW));
 
             statement.addBatch();
         }

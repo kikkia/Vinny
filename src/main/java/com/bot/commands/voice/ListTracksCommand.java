@@ -1,5 +1,6 @@
 package com.bot.commands.voice;
 
+import com.bot.utils.CommandCategories;
 import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
@@ -16,6 +17,7 @@ public class ListTracksCommand extends Command {
 		this.name = "list";
 		this.arguments = "";
 		this.help = "Lists the tracks currently in the queue";
+		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

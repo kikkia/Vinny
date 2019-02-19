@@ -1,8 +1,9 @@
 package com.bot.db;
 
+import com.bot.db.mappers.TextChannelMapper;
+import com.bot.db.mappers.VoiceChannelMapper;
 import com.bot.models.InternalTextChannel;
 import com.bot.models.InternalVoiceChannel;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 
@@ -155,7 +156,7 @@ public class ChannelDAO {
 
         InternalTextChannel toReturn = null;
         if (set.next()) {
-            toReturn = mapSetToInternalTextChannel(set);
+            toReturn = TextChannelMapper.mapSetToInternalTextChannel(set);
         }
 
         close(statement, set);
@@ -170,7 +171,7 @@ public class ChannelDAO {
 
         InternalVoiceChannel toReturn = null;
         if (set.next()) {
-            toReturn = mapSetToInternalVoiceChannel(set);
+            toReturn = VoiceChannelMapper.mapSetToInternalVoiceChannel(set);
         }
 
         close(statement, set);
@@ -188,7 +189,7 @@ public class ChannelDAO {
             set = statement.executeQuery();
             channels = new ArrayList<>();
             while (set.next()) {
-                channels.add(mapSetToInternalTextChannel(set));
+                channels.add(TextChannelMapper.mapSetToInternalTextChannel(set));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
@@ -197,18 +198,6 @@ public class ChannelDAO {
         }
 
         return channels;
-    }
-
-    private InternalTextChannel mapSetToInternalTextChannel(ResultSet set) throws SQLException {
-        return new InternalTextChannel(
-                set.getString("id"),
-                set.getString("guild"),
-                set.getString("name"),
-                set.getBoolean("announcement"),
-                set.getBoolean("nsfw_enabled"),
-                set.getBoolean("commands_enabled"),
-                set.getBoolean("voice_enabled")
-        );
     }
 
     private List<InternalVoiceChannel> getVoiceChannelsForQuery(String guildId, String query) {
@@ -222,7 +211,7 @@ public class ChannelDAO {
             set = statement.executeQuery();
             channels = new ArrayList<>();
             while (set.next()) {
-                channels.add(mapSetToInternalVoiceChannel(set));
+                channels.add(VoiceChannelMapper.mapSetToInternalVoiceChannel(set));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
@@ -231,15 +220,6 @@ public class ChannelDAO {
         }
 
         return channels;
-    }
-
-    private InternalVoiceChannel mapSetToInternalVoiceChannel(ResultSet set) throws SQLException {
-        return new InternalVoiceChannel(
-                set.getString("id"),
-                set.getString("guild"),
-                set.getString("name"),
-                set.getBoolean("voice_enabled")
-        );
     }
 
     private void close(PreparedStatement preparedStatement, ResultSet resultSet) {

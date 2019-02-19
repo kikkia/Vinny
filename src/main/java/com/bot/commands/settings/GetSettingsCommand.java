@@ -3,6 +3,7 @@ package com.bot.commands.settings;
 import com.bot.Bot;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
+import com.bot.utils.CommandCategories;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -55,10 +56,10 @@ public class GetSettingsCommand extends Command {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Settings for " + guild.getName());
         builder.addField("Default Volume", guild.getVolume() + "", true);
-        builder.addField("Min Command Role", commandGuild.getRoleById(guild.getMinBaseRole()).getName(), false);
-        builder.addField("Min Mod Command Role", commandGuild.getRoleById(guild.getMinModRole()).getName(), false);
-        builder.addField("Min Voice Command Role", commandGuild.getRoleById(guild.getMinVoiceRole()).getName(), false);
-        builder.addField("Min NSFW Command Role", commandGuild.getRoleById(guild.getMinNsfwRole()).getName(), false);
+        builder.addField("Min Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.GENERAL)).getName(), false);
+        builder.addField("Min Mod Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.MOD)).getName(), false);
+        builder.addField("Min Voice Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.VOICE)).getName(), false);
+        builder.addField("Min NSFW Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.NSFW)).getName(), false);
 
         commandEvent.reply(builder.build());
     }

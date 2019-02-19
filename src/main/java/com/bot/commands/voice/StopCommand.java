@@ -1,5 +1,7 @@
 package com.bot.commands.voice;
 
+import com.bot.utils.CommandCategories;
+import com.bot.utils.CommandPermissions;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -13,10 +15,12 @@ public class StopCommand extends Command {
 		this.name = "stop";
 		this.arguments = "";
 		this.help = "Stops stream and clears the current playlist";
+		this.category = CommandCategories.VOICE;
 	}
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
+		CommandPermissions.canExecuteCommand(this, commandEvent);
 		// TODO: Add more permissions checks
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		if (handler == null) {

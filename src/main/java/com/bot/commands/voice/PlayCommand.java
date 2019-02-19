@@ -1,6 +1,7 @@
 package com.bot.commands.voice;
 
 import com.bot.Bot;
+import com.bot.utils.CommandCategories;
 import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
@@ -24,6 +25,7 @@ public class PlayCommand extends Command {
 		this.name = "play";
 		this.arguments = "<title|URL>";
 		this.help = "plays the provided audio track";
+		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

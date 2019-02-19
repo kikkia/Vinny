@@ -26,7 +26,7 @@ public class RedditConnection {
         // Load Credentials
         Credentials oauthCreds = Credentials.userless(clientID, redditSecret, UUID.randomUUID());
 
-        // Create a unique UserMembership-Agent
+        // Create a unique InternalGuildMembership-Agent
         UserAgent userAgent = new UserAgent("bot", "kikkia.vinny", "1.0.0", "Kikkia");
 
         // Authenticate

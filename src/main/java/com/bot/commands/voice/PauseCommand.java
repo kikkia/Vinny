@@ -1,5 +1,6 @@
 package com.bot.commands.voice;
 
+import com.bot.utils.CommandCategories;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -15,6 +16,7 @@ public class PauseCommand extends Command {
 		this.name = "pause";
 		this.arguments = "";
 		this.help = "Pauses or resumes the stream";
+		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

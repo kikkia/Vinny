@@ -1,11 +1,11 @@
 package db;
 
-import com.bot.db.GuildDAO;
 import com.bot.db.PlaylistDAO;
 import com.bot.models.AudioTrack;
 import com.bot.models.InternalGuild;
+import com.bot.models.InternalGuildMembership;
 import com.bot.models.Playlist;
-import com.bot.models.UserMembership;
+import com.bot.utils.CommandCategories;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
@@ -28,12 +28,12 @@ public class PlaylistIT {
     private static PlaylistDAO playlistDAO;
     private static final Logger LOGGER = Logger.getLogger(GuildIT.class.getName());
 
-    private List<UserMembership> memberships = Arrays.asList(
-            new UserMembership("1", "user-1", "101", true),
-            new UserMembership("2", "user-2", "102", true),
-            new UserMembership("3", "user-3", "101", true),
-            new UserMembership("4", "user-4", "101", true),
-            new UserMembership("3", "user-3", "102", false)
+    private List<InternalGuildMembership> memberships = Arrays.asList(
+            new InternalGuildMembership("1", "user-1", "101", true),
+            new InternalGuildMembership("2", "user-2", "102", true),
+            new InternalGuildMembership("3", "user-3", "101", true),
+            new InternalGuildMembership("4", "user-4", "101", true),
+            new InternalGuildMembership("3", "user-3", "102", false)
     );
 
     private List<InternalGuild> guilds = Arrays.asList(
@@ -152,10 +152,10 @@ public class PlaylistIT {
             statement.setString(1, g.getId());
             statement.setString(2, g.getName());
             statement.setInt(3, g.getVolume());
-            statement.setString(4, g.getMinBaseRole());
-            statement.setString(5, g.getMinModRole());
-            statement.setString(6, g.getMinVoiceRole());
-            statement.setString(7, g.getMinNsfwRole());
+            statement.setString(4, g.getRequiredPermission(CommandCategories.GENERAL));
+            statement.setString(5, g.getRequiredPermission(CommandCategories.MOD));
+            statement.setString(6, g.getRequiredPermission(CommandCategories.VOICE));
+            statement.setString(7, g.getRequiredPermission(CommandCategories.NSFW));
 
             statement.addBatch();
         }
@@ -170,7 +170,7 @@ public class PlaylistIT {
         PreparedStatement userStatement = connection.prepareStatement(userQuery);
         PreparedStatement membershipStatement = connection.prepareStatement(membershipQuery);
 
-        for (UserMembership u : memberships) {
+        for (InternalGuildMembership u : memberships) {
             userStatement.setString(1, u.getId());
             userStatement.setString(2, u.getName());
 
@@ -178,7 +178,7 @@ public class PlaylistIT {
 
             membershipStatement.setString(1, u.getGuildId());
             membershipStatement.setString(2, u.getId());
-            membershipStatement.setBoolean(3, u.isCanUseBot());
+            membershipStatement.setBoolean(3, u.canUseBot());
 
             membershipStatement.addBatch();
         }

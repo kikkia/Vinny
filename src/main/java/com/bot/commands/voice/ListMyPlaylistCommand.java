@@ -2,6 +2,7 @@ package com.bot.commands.voice;
 
 import com.bot.db.PlaylistDAO;
 import com.bot.models.Playlist;
+import com.bot.utils.CommandCategories;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -18,6 +19,7 @@ public class ListMyPlaylistCommand extends Command {
 		this.playlistDAO = PlaylistDAO.getInstance();
 		this.name = "myplaylists";
 		this.help = "Returns all of the playlists you have";
+		this.category = CommandCategories.VOICE;
 	}
 
 	@Override
