@@ -5,6 +5,7 @@ import com.bot.db.PlaylistDAO;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
 import com.bot.utils.CommandCategories;
+import com.bot.utils.CommandPermissions;
 import com.bot.voice.LoadHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -30,6 +31,10 @@ public class LoadGuildPlaylistCommand extends Command {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        // Check the permissions to do the command
+        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
+            return;
+
         int playlistId = -1;
         String playlistName = null;
         Playlist playlist;

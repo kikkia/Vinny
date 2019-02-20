@@ -3,6 +3,8 @@ package com.bot.commands.settings;
 import com.bot.Bot;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
+import com.bot.utils.CommandCategories;
+import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.entities.Guild;
@@ -22,12 +24,16 @@ public class SetBaseRoleCommand extends Command {
         this.help = "Sets the minimum role required to use any command. (Mod command permission required)";
         this.arguments = "<Role mention>";
         this.guildOnly = true;
-
+        this.category = CommandCategories.MOD;
         this.guildDAO = GuildDAO.getInstance();
     }
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        // Check the permissions to do the command
+        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
+            return;
+
         InternalGuild guild = null;
         Guild commandGuild = commandEvent.getGuild();
 

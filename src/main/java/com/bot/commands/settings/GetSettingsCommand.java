@@ -4,6 +4,7 @@ import com.bot.Bot;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.utils.CommandCategories;
+import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -21,12 +22,16 @@ public class GetSettingsCommand extends Command {
         this.help = "Gets the settings for the guild. (Requires mod command permissions)";
         this.arguments = "";
         this.guildOnly = true;
-
+        // General since we are not setting any data
+        this.category = CommandCategories.GENERAL;
         this.guildDAO = GuildDAO.getInstance();
     }
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        // Check the permissions to do the command
+        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
+            return;
 
         InternalGuild guild = null;
         Guild commandGuild = commandEvent.getGuild();

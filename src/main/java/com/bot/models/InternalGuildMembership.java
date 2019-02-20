@@ -1,24 +1,23 @@
 package com.bot.models;
 
 public class InternalGuildMembership {
-    private String id;
+    private String user_id;
     private String name;
     private String guildId;
     private boolean canUseBot;
 
-    public InternalGuildMembership(String id, String name, String guildId, boolean canUseBot) {
-        this.id = id;
-        this.name = name;
+    public InternalGuildMembership(String id, String guildId, boolean canUseBot) {
+        this.user_id = id;
         this.guildId = guildId;
         this.canUseBot = canUseBot;
     }
 
     public String getId() {
-        return id;
+        return user_id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.user_id = id;
     }
 
     public String getName() {

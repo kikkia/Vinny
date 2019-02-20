@@ -15,9 +15,9 @@ public class InviteCommand extends Command {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        // No need to check perms here
         User user = commandEvent.getAuthor();
         PrivateChannel privateChannel = user.openPrivateChannel().complete();
-        // TODO: This is currently the Test Bot invite link. Before public release change this too the actual bot
-        privateChannel.sendMessage("https://discordapp.com/api/oauth2/authorize?client_id=489251749387960321&permissions=0&redirect_uri=https%3A%2F%2Fwww.official.men&response_type=code&scope=guilds%20identify%20guilds.join%20gdm.join%20rpc%20rpc.api%20messages.read%20bot%20rpc.notifications.read").queue();
+        privateChannel.sendMessage("https://discordapp.com/oauth2/authorize?client_id=276855867796881408&scope=bot&permissions=523365751").queue();
     }
 }

@@ -20,8 +20,10 @@ public class StopCommand extends Command {
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
-		CommandPermissions.canExecuteCommand(this, commandEvent);
-		// TODO: Add more permissions checks
+	    // Command permissions check
+		if (!CommandPermissions.canExecuteCommand(this, commandEvent))
+		    return;
+
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		if (handler == null) {
 			commandEvent.reply(commandEvent.getClient().getWarning() + " I am not connected to a voice channel.");

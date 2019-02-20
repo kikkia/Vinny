@@ -33,11 +33,11 @@ public class GuildIT {
     private static final Logger LOGGER = Logger.getLogger(GuildIT.class.getName());
 
     private List<InternalGuildMembership> memberships = Arrays.asList(
-            new InternalGuildMembership("1", "user-1", "101", true),
-            new InternalGuildMembership("2", "user-2", "102", true),
-            new InternalGuildMembership("3", "user-3", "101", true),
-            new InternalGuildMembership("4", "user-4", "101", true),
-            new InternalGuildMembership("3", "user-3", "102", false)
+            new InternalGuildMembership("1",  "101", true),
+            new InternalGuildMembership("2",  "102", true),
+            new InternalGuildMembership("3",  "101", true),
+            new InternalGuildMembership("4",  "101", true),
+            new InternalGuildMembership("3",  "102", false)
             );
 
     private List<InternalGuild> guilds = Arrays.asList(

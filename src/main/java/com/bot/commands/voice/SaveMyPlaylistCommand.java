@@ -3,6 +3,7 @@ package com.bot.commands.voice;
 import com.bot.Bot;
 import com.bot.db.PlaylistDAO;
 import com.bot.utils.CommandCategories;
+import com.bot.utils.CommandPermissions;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -29,6 +30,10 @@ public class SaveMyPlaylistCommand extends Command {
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
+		// Check the permissions to do the command
+		if (!CommandPermissions.canExecuteCommand(this, commandEvent))
+			return;
+
 		String args = commandEvent.getArgs();
 		if (args.equals("")) {
 			commandEvent.reply("You need to specify a name for the playlist.");
