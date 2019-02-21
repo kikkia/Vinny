@@ -2,6 +2,8 @@ package com.bot.commands.voice;
 
 import com.bot.Bot;
 import com.bot.db.PlaylistDAO;
+import com.bot.utils.CommandCategories;
+import com.bot.utils.CommandPermissions;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -18,14 +20,20 @@ public class SaveMyPlaylistCommand extends Command {
 
 	public SaveMyPlaylistCommand(Bot bot) {
 		this.bot = bot;
-		playlistDAO = PlaylistDAO.getInstance();
 		this.name = "savemyplaylist";
 		this.arguments = "Name";
 		this.help = "Saves the current audio playlist as a playlist accessible for any server you are on.";
+		this.category = CommandCategories.VOICE;
+
+		playlistDAO = PlaylistDAO.getInstance();
 	}
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
+		// Check the permissions to do the command
+		if (!CommandPermissions.canExecuteCommand(this, commandEvent))
+			return;
+
 		String args = commandEvent.getArgs();
 		if (args.equals("")) {
 			commandEvent.reply("You need to specify a name for the playlist.");

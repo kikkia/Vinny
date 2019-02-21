@@ -1,7 +1,8 @@
 package com.bot.db;
 
 
-import com.bot.models.UserMembership;
+import com.bot.db.mappers.GuildMembershipMapper;
+import com.bot.models.InternalGuildMembership;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 
@@ -48,31 +49,31 @@ public class MembershipDAO {
         this.write = ConnectionPool.getDataSource().getConnection();
     }
 
-    public UserMembership getUserMembershipByIdInGuild(String userId, String guildId) throws SQLException {
+    public InternalGuildMembership getUserMembershipByIdInGuild(String userId, String guildId) throws SQLException {
         // TODO: IS there a better way to close these in case of error
-        String query = "SELECT u.id, u.can_use_bot, u.name, g.id FROM users u JOIN guild_membership gm ON gm.user_id = u.id JOIN guild g ON g.id = gm.guild WHERE g.id = ? AND u.id = ?";
-        UserMembership membership = null;
+        String query = "SELECT * FROM guild_membership gm WHERE gm.user_id = ? AND gm.guild = ?";
+        InternalGuildMembership membership = null;
 
         PreparedStatement statement = read.prepareStatement(query);
-        statement.setString(1, guildId);
-        statement.setString(2, userId);
+        statement.setString(1, userId);
+        statement.setString(2, guildId);
         ResultSet set = statement.executeQuery();
         if (set.next()) {
-            membership = mapUserMembership(set);
+            membership = GuildMembershipMapper.mapGuildMembership(set);
         }
 
         close(statement, set);
         return membership;
     }
 
-    public List<UserMembership> getMembershipsForUser(String userId) throws SQLException {
+    public List<InternalGuildMembership> getMembershipsForUser(String userId) throws SQLException {
         String query = "SELECT u.id, u.can_use_bot, u.name, g.id FROM users u JOIN guild_membership gm ON gm.user_id = u.id JOIN guild g ON g.id = gm.guild WHERE u.id = ?";
         PreparedStatement statement = read.prepareStatement(query);
         statement.setString(1, userId);
         ResultSet set = statement.executeQuery();
-        List<UserMembership> memberships = new ArrayList<>();
+        List<InternalGuildMembership> memberships = new ArrayList<>();
         while (set.next()) {
-            memberships.add(mapUserMembership(set));
+            memberships.add(GuildMembershipMapper.mapGuildMembership(set));
         }
         close(statement, set);
         return memberships;
@@ -95,7 +96,7 @@ public class MembershipDAO {
 
     public void addUserToGuild(User user, Guild guild) {
         String userInsertQuery = "INSERT INTO users (id, name) VALUES(?,?) ON DUPLICATE KEY UPDATE name = name";
-        String membershipInsertQuery = "INSERT INTO guild_membership (guild, user_id) VALUES(?,?) ON DUPLICATE KEY UPDATE user_id = user_id";
+        String membershipInsertQuery = "INSERT INTO guild_membership (guild, user_id, can_use_bot) VALUES(?,?,?) ON DUPLICATE KEY UPDATE user_id = user_id";
         addUser(userInsertQuery, user);
         addMembership(membershipInsertQuery, user, guild);
     }
@@ -106,6 +107,7 @@ public class MembershipDAO {
             statement = write.prepareStatement(membershipInsertQuery);
             statement.setString(1, guild.getId());
             statement.setString(2, user.getId());
+            statement.setBoolean(3, true);
             statement.execute();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add membership for user to guild: " + e.getMessage());
@@ -133,13 +135,6 @@ public class MembershipDAO {
         ResultSet set = statement.executeQuery();
         close(statement, null);
         return set;
-    }
-
-    private UserMembership mapUserMembership(ResultSet set) throws SQLException {
-        return new UserMembership(set.getString("u.id"),
-                set.getString("name"),
-                set.getString("g.id"),
-                set.getBoolean("u.can_use_bot"));
     }
 
     private void close(PreparedStatement preparedStatement, ResultSet resultSet) {

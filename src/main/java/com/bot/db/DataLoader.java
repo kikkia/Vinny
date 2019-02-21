@@ -65,7 +65,7 @@ public class DataLoader {
 		private String guildInsertQuery = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE name=name";
 		private String textChannelInsertQuery = "INSERT INTO text_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private String userInsertQuery = "INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
-		private String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild) VALUES (?, ?) ON DUPLICATE KEY UPDATE guild = guild";
+		private String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild, can_use_bot) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE guild = guild";
 		private String voiceChannelInsertQuery = "INSERT INTO voice_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private final Logger LOGGER = Logger.getLogger(LoadThread.class.getName());
 
@@ -139,6 +139,7 @@ public class DataLoader {
 						statement = connection.prepareStatement(guildMembershipInsertQuery);
 						statement.setString(1, m.getUser().getId());
 						statement.setString(2, g.getId());
+						statement.setBoolean(3, true);
 						statement.execute();
 						statement.close();
 						membershipCount++;

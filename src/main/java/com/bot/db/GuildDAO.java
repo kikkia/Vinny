@@ -1,8 +1,12 @@
 package com.bot.db;
 
+import com.bot.db.mappers.GuildMapper;
 import com.bot.models.InternalGuild;
 import com.bot.utils.GuildUtils;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -45,20 +49,16 @@ public class GuildDAO {
         this.write = ConnectionPool.getDataSource().getConnection();
     }
 
-    public InternalGuild getGuildById(String guildId) {
+    public InternalGuild getGuildById(String guildId) throws SQLException {
         String query = "SELECT id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id FROM guild WHERE id = ?";
         ResultSet set = null;
         InternalGuild returned = null;
-        try {
-            set = executeGetQuery(query, guildId);
-            if (set.next()) {
-                returned = mapSetToGuild(set);
-            }
-            close(null, set);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to get guild from db: " + guildId, e.getMessage());
-            return null;
+        set = executeGetQuery(query, guildId);
+        if (set.next()) {
+            returned = GuildMapper.mapSetToGuild(set);
         }
+        close(null, set);
+
         return returned;
     }
 
@@ -79,9 +79,27 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to add guild to db: " + guild.getId(), e.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to add guild to db: " + guild.getId() + " " + e.getMessage());
             return false;
         }
+    }
+
+    public void addFreshGuild(Guild guild) {
+        MembershipDAO membershipDAO = MembershipDAO.getInstance();
+        ChannelDAO channelDAO = ChannelDAO.getInstance();
+
+        addGuild(guild);
+        for (Member m : guild.getMembers()) {
+            membershipDAO.addUserToGuild(m.getUser(), guild);
+        }
+        for (TextChannel t : guild.getTextChannels()) {
+            channelDAO.addTextChannel(t);
+        }
+        for (VoiceChannel v : guild.getVoiceChannels()) {
+            channelDAO.addVoiceChannel(v);
+        }
+
+        LOGGER.info("Completed addition of fresh guild.");
     }
 
     public boolean updateGuildVolume(String guildId, int newVolume) {
@@ -94,7 +112,7 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to update volume for guild: " + guildId, e.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to update volume for guild: " + guildId + " " + e.getMessage());
             return false;
         }
     }
@@ -109,7 +127,7 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to update base role for guild: " + guildId, e.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to update base role for guild: " + guildId + " " + e.getMessage());
             return false;
         }
     }
@@ -124,7 +142,7 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to update nsfw role for: " + guildId, e.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to update nsfw role for: " + guildId + " " + e.getMessage());
             return false;
         }
     }
@@ -139,7 +157,7 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to update voice role for guild: " + guildId, e.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to update voice role for guild: " + guildId + " " + e.getMessage());
             return false;
         }
     }
@@ -154,7 +172,7 @@ public class GuildDAO {
             close(statement, null);
             return true;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to update min mod role for guild: " + guildId, e.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to update min mod role for guild: " + guildId + " " + e.getMessage());
             return false;
         }
     }
@@ -165,16 +183,6 @@ public class GuildDAO {
         ResultSet set = statement.executeQuery();
         close(statement, null);
         return set;
-    }
-
-    private InternalGuild mapSetToGuild(ResultSet set) throws SQLException {
-        return new InternalGuild(set.getString("id"),
-                set.getString("name"),
-                set.getInt("default_volume"),
-                set.getString("min_base_role_id"),
-                set.getString("min_mod_role_id"),
-                set.getString("min_nsfw_role_id"),
-                set.getString("min_voice_role_id"));
     }
 
     private void close(PreparedStatement preparedStatement, ResultSet resultSet) {

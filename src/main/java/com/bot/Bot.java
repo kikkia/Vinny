@@ -13,7 +13,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.channel.text.GenericTextChannelEvent;
@@ -35,6 +34,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
 
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,11 +46,6 @@ public class Bot extends ListenerAdapter {
 	private GuildDAO guildDAO;
 	private MembershipDAO membershipDAO;
 	private ChannelDAO channelDAO;
-
-	public final static Command.Category VOICE = new Command.Category("Voice");
-	public final static Command.Category MEME = new Command.Category("Meme");
-	public final static Command.Category NSFW = new Command.Category("Nsfw");
-	public final static Command.Category MOD = new Command.Category("MODERATION");
 
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 
@@ -102,20 +97,7 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
-		if (!guildDAO.addGuild(guildJoinEvent.getGuild())) {
-			// Failed to add guild to db. So leave the guild to avoid issues
-			guildJoinEvent.getGuild().leave().queue();
-		}
-
-		for (Member m : guildJoinEvent.getGuild().getMembers()) {
-			membershipDAO.addUserToGuild(m.getUser(), guildJoinEvent.getGuild());
-		}
-		for (TextChannel t : guildJoinEvent.getGuild().getTextChannels()) {
-			channelDAO.addTextChannel(t);
-		}
-		for (VoiceChannel v : guildJoinEvent.getGuild().getVoiceChannels()) {
-			channelDAO.addVoiceChannel(v);
-		}
+		guildDAO.addFreshGuild(guildJoinEvent.getGuild());
 	}
 
 	@Override
@@ -246,7 +228,12 @@ public class Bot extends ListenerAdapter {
 
 	private boolean addGuildIfNotPresent(GenericGuildEvent event) {
 		InternalGuild guild;
-		guild = guildDAO.getGuildById(event.getGuild().getId());
+		try {
+			guild = guildDAO.getGuildById(event.getGuild().getId());
+		} catch (SQLException e) {
+			LOGGER.warning("Failed to get guild from db: " + event.getGuild().getId());
+			return false;
+		}
 
 		if (guild == null) {
 			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild {}", event.getGuild().getId());
@@ -257,7 +244,12 @@ public class Bot extends ListenerAdapter {
 
 	private boolean addGuildIfNotPresent(GenericTextChannelEvent event) {
 		InternalGuild guild;
-		guild = guildDAO.getGuildById(event.getGuild().getId());
+		try {
+			guild = guildDAO.getGuildById(event.getGuild().getId());
+		} catch (SQLException e) {
+			LOGGER.warning("Failed to get guild from db: " + event.getGuild().getId());
+			return false;
+		}
 
 		if (guild == null) {
 			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild {}", event.getGuild().getId());
@@ -268,7 +260,12 @@ public class Bot extends ListenerAdapter {
 
 	private boolean addGuildIfNotPresent(GenericVoiceChannelEvent event) {
 		InternalGuild guild;
-		guild = guildDAO.getGuildById(event.getGuild().getId());
+		try {
+			guild = guildDAO.getGuildById(event.getGuild().getId());
+		} catch (SQLException e) {
+			LOGGER.warning("Failed to get guild from db: " + event.getGuild().getId());
+			return false;
+		}
 
 		if (guild == null) {
 			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild {}", event.getGuild().getId());

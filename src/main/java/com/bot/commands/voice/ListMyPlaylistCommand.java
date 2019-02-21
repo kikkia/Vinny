@@ -2,6 +2,8 @@ package com.bot.commands.voice;
 
 import com.bot.db.PlaylistDAO;
 import com.bot.models.Playlist;
+import com.bot.utils.CommandCategories;
+import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -18,10 +20,15 @@ public class ListMyPlaylistCommand extends Command {
 		this.playlistDAO = PlaylistDAO.getInstance();
 		this.name = "myplaylists";
 		this.help = "Returns all of the playlists you have";
+		this.category = CommandCategories.VOICE;
 	}
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
+		// Check the permissions to do the command
+		if (!CommandPermissions.canExecuteCommand(this, commandEvent))
+			return;
+
 		List<Playlist> playlistList = playlistDAO.getPlaylistsForUser(commandEvent.getAuthor().getId());
 
 		if (playlistList.size() == 0) {

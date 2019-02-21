@@ -1,23 +1,27 @@
 package com.bot.models;
 
+import com.bot.utils.CommandCategories;
+import com.jagrosh.jdautilities.command.Command;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class InternalGuild {
 
     private String id;
     private String name;
     private int volume;
-    private String minBaseRole;
-    private String minModRole;
-    private String minNsfwRole;
-    private String minVoiceRole;
+    private Map<Command.Category, String> roleRequirements;
 
     public InternalGuild(String id, String name, int minVolume, String minBaseRole, String minModRole, String minNsfwRole, String minVoiceRole) {
         this.id = id;
         this.name = name;
         this.volume = minVolume;
-        this.minBaseRole = minBaseRole;
-        this.minModRole = minModRole;
-        this.minNsfwRole = minNsfwRole;
-        this.minVoiceRole = minVoiceRole;
+        this.roleRequirements = new HashMap<>();
+        this.roleRequirements.put(CommandCategories.GENERAL, minBaseRole);
+        this.roleRequirements.put(CommandCategories.MOD, minModRole);
+        this.roleRequirements.put(CommandCategories.NSFW, minNsfwRole);
+        this.roleRequirements.put(CommandCategories.VOICE, minVoiceRole);
     }
 
     public String getId() {
@@ -44,35 +48,7 @@ public class InternalGuild {
         this.volume = minVolume;
     }
 
-    public String getMinBaseRole() {
-        return minBaseRole;
-    }
-
-    public void setMinBaseRole(String minBaseRole) {
-        this.minBaseRole = minBaseRole;
-    }
-
-    public String getMinModRole() {
-        return minModRole;
-    }
-
-    public void setMinModRole(String minModRole) {
-        this.minModRole = minModRole;
-    }
-
-    public String getMinNsfwRole() {
-        return minNsfwRole;
-    }
-
-    public void setMinNsfwRole(String minNsfwRole) {
-        this.minNsfwRole = minNsfwRole;
-    }
-
-    public String getMinVoiceRole() {
-        return minVoiceRole;
-    }
-
-    public void setMinVoiceRole(String minVoiceRole) {
-        this.minVoiceRole = minVoiceRole;
+    public String getRequiredPermission(Command.Category category) {
+        return roleRequirements.get(category);
     }
 }

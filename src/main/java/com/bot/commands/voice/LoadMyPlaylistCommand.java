@@ -4,6 +4,8 @@ import com.bot.Bot;
 import com.bot.db.PlaylistDAO;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
+import com.bot.utils.CommandCategories;
+import com.bot.utils.CommandPermissions;
 import com.bot.voice.LoadHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -21,12 +23,18 @@ public class LoadMyPlaylistCommand extends Command {
         this.name = "loadmyplaylist";
         this.arguments = "<playlist id|playlist name>";
         this.help = "Loads one of your playlists. You must either specify the id or the name of the playlist.";
+        this.category = CommandCategories.VOICE;
+
         this.playlistDAO = PlaylistDAO.getInstance();
         this.bot = bot;
     }
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        // Check the permissions to do the command
+        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
+            return;
+
         int playlistId = -1;
         String playlistName = null;
         Playlist playlist;

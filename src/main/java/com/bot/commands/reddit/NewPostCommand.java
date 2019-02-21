@@ -1,6 +1,8 @@
 package com.bot.commands.reddit;
 
 import com.bot.RedditConnection;
+import com.bot.utils.CommandCategories;
+import com.bot.utils.CommandPermissions;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -19,12 +21,17 @@ public class NewPostCommand extends Command {
         this.name = "nr";
         this.help = "Grabs a random new post from the newest 100 posts in a given subreddit";
         this.arguments = "<subreddit name>";
-
+        this.category = CommandCategories.GENERAL;
         redditConnection = RedditConnection.getInstance();
     }
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        // Check the permissions to do the command
+        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
+            return;
+
+        // TODO: NSFW Checks as well
         try{
             RedditHelper.getRandomSubmissionAndSend(redditConnection,
                     commandEvent,
