@@ -27,6 +27,7 @@ public class ReadConnectionPool {
 		hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
 		hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
 		hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+		hikariConfig.addDataSourceProperty("useServerPrepStmts", "true");
 		hikariConfig.setReadOnly(true);
 
 		this.dataSource = new HikariDataSource(hikariConfig);
