@@ -21,10 +21,12 @@ public class ReadConnectionPool {
 		hikariConfig.setJdbcUrl("jdbc:mysql://" + config.getConfig(Config.DB_URI) + "/" + config.getConfig(Config.DB_SCHEMA));
 		hikariConfig.setUsername(config.getConfig(Config.DB_USERNAME));
 		hikariConfig.setPassword(config.getConfig(Config.DB_PASSWORD));
+		hikariConfig.setMaximumPoolSize(12);
+		hikariConfig.setLeakDetectionThreshold(30 * 1000);
+		hikariConfig.setMaxLifetime(28700);
 		hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
 		hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
 		hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-		hikariConfig.addDataSourceProperty("useServerPrepStmts", "true");
 		hikariConfig.setReadOnly(true);
 
 		this.dataSource = new HikariDataSource(hikariConfig);
