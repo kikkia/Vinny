@@ -206,6 +206,22 @@ public class Bot extends ListenerAdapter {
 			AudioPlayer player = manager.createPlayer();
 			// TODO: Add Default Volume from DB
 			handler = new VoiceSendHandler(guild.getIdLong(), player, this);
+
+			// Get default volume
+			int dVolume = 100;
+			try {
+				InternalGuild g = guildDAO.getGuildById(guild.getId());
+				if (g == null) {
+					LOGGER.warning("Failed to get guild when looking for volume. Attempting an add");
+					guildDAO.addFreshGuild(guild);
+					// Just play, no need to return
+				}
+			} catch (SQLException e) {
+				LOGGER.severe("Failed to get volume from guild. " + e.getMessage());
+				// Just play with 100 default
+			}
+
+			handler.getPlayer().setVolume(dVolume);
 			player.addListener(handler);
 			guild.getAudioManager().setSendingHandler(handler);
 		}
