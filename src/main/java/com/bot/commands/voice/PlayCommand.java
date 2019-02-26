@@ -89,7 +89,7 @@ public class PlayCommand extends Command {
 				}
 				// If the queue track was successful go on, if not return.
 				if (bot.queueTrack(track, commandEvent, message)) {
-					message.editMessage(commandEvent.getClient().getSuccess() + " Successfully added track to queue.").queue();
+					message.editMessage(commandEvent.getClient().getSuccess() + " Successfully added `"+ track.getInfo().title + "` to queue.").queue();
 					return true;
 				} else {
 					message.editMessage(commandEvent.getClient().getError() + " Failed to add track to playlist.").queue();
@@ -122,6 +122,11 @@ public class PlayCommand extends Command {
 
 		@Override
 		public void playlistLoaded(AudioPlaylist audioPlaylist) {
+			if (audioPlaylist.isSearchResult()) {
+				AudioTrack track = audioPlaylist.getTracks().get(0);
+				loadTracks(track, null);
+				return;
+			}
 			if (commandEvent.getArgs().split(" ").length < 2) {
 				message.editMessage(commandEvent.getClient().getWarning() + " Playlist detected. Please try again but include the songs you want included." +
 						" Example: `~play *playlist url* 1-5` This would load songs 1-5 on the playlist. Limited to loading up to 10 songs at a time.").queue();
