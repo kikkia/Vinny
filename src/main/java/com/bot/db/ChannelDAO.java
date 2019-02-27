@@ -130,7 +130,26 @@ public class ChannelDAO {
             statement.setBoolean(4, enabled);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to update channel en");
+            LOGGER.log(Level.SEVERE, "Failed to update channel voice: " + e.getMessage());
+            return false;
+        } finally {
+            close(statement, null);
+        }
+        return true;
+    }
+
+    public boolean setTextChannelNSFW(TextChannel textChannel, boolean enabled) {
+        String query = "INSERT INTO text_channel (id, name, guild, nsfw_enabled) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE nsfw_enabled = VALUES(nsfw_enabled)";
+        PreparedStatement statement = null;
+        try {
+            statement = write.prepareStatement(query);
+            statement.setString(1, textChannel.getId());
+            statement.setString(2, textChannel.getName());
+            statement.setString(3, textChannel.getGuild().getId());
+            statement.setBoolean(4, enabled);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update channel nsfw: " + e.getMessage());
             return false;
         } finally {
             close(statement, null);

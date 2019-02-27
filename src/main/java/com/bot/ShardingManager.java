@@ -1,6 +1,9 @@
 package com.bot;
 
 import com.bot.commands.general.InviteCommand;
+import com.bot.commands.reddit.NewPostCommand;
+import com.bot.commands.reddit.RandomPostCommand;
+import com.bot.commands.reddit.TopPostCommand;
 import com.bot.commands.settings.*;
 import com.bot.commands.voice.*;
 import com.bot.utils.Config;
@@ -47,12 +50,12 @@ public class ShardingManager {
                 //new BattleRoyaleCommand(),
 
                 // General Commands
-                new InviteCommand()
+                new InviteCommand(),
 
                 // Reddit Commands
-                //new RandomPostCommand(),
-                //new TopPostCommand(),
-                //new NewPostCommand()
+                new RandomPostCommand(),
+                new TopPostCommand(),
+                new NewPostCommand()
         );
 
         // Commands that rely on the DB (usually only turned off to test)
@@ -72,7 +75,9 @@ public class ShardingManager {
                     new SetBaseRoleCommand(),
                     new SetModRoleCommand(),
                     new SetNSFWCommand(),
-                    new SetVoiceRoleCommand()
+                    new SetVoiceRoleCommand(),
+                    new EnableNSFWCommand(),
+                    new DisableNSFWCommand()
             );
         }
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
