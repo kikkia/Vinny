@@ -24,7 +24,8 @@ public class RedditHelper {
                                                   CommandEvent commandEvent,
                                                   SubredditSort sortType,
                                                   TimePeriod timePeriod,
-                                                  int limit) throws Exception {
+                                                  int limit,
+                                                  boolean isChannelNSFW) throws Exception {
         String subredditName = commandEvent.getArgs();
 
         // If the subreddit name contains an invalid character throw a error response
@@ -37,7 +38,13 @@ public class RedditHelper {
                 .subreddit(subredditName);
 
         if (subreddit.about().isNsfw()) {
-            // TODO Check if the channel has NSFW enabled (Use InternalChannel cache?)
+            if (!isChannelNSFW) {
+                commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW subreddit detected and NSFW is not enabled on this channel. " +
+                        "To enable it, use the `~enableNSFW` command.");
+                return;
+            } else if (!CommandPermissions.canExecuteCommand(CommandCategories.NSFW, commandEvent)) {
+                return;
+            }
         }
 
         DefaultPaginator<Submission> paginator = subreddit
@@ -52,8 +59,18 @@ public class RedditHelper {
         Submission submission =  getRandomSubmission(page, false);// Get random child post from the page
 
 
-        if (submission.isNsfw()) {
-            // TODO Check if the channel has NSFW enabled (Use InternalChannel cache?)
+        if (submission.isNsfw() && !isChannelNSFW) {
+            // Submission is nsfw but sub is not. Try 10 times to find non nsfw-post
+            int tries = 0;
+            while (submission.isNsfw()) {
+                submission = getRandomSubmission(page, false);
+                tries++;
+                if (tries == 10) {
+                    commandEvent.reply(commandEvent.getClient().getWarning() + " I only found NSFW posts and NSFW is not enabled on this channel. " +
+                            "To enable it, use the `~enableNSFW` command, or you can try again and I will look at some more.");
+                    return;
+                }
+            }
         }
 
         // Send the embed, content will be sent separatly below

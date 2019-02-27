@@ -25,6 +25,10 @@ public class CommandPermissions {
 
 
     public static boolean canExecuteCommand(Command command, CommandEvent commandEvent) {
+        return canExecuteCommand(command.getCategory(), commandEvent);
+    }
+
+    public static boolean canExecuteCommand(Command.Category commandCategory, CommandEvent commandEvent) {
         InternalGuild guild;
 
         try {
@@ -42,7 +46,7 @@ public class CommandPermissions {
         }
 
         // Check the roles returned
-        Role requiredRole = commandEvent.getGuild().getRoleById(guild.getRequiredPermission(command.getCategory()));
+        Role requiredRole = commandEvent.getGuild().getRoleById(guild.getRequiredPermission(commandCategory));
 
         // Get users role, if they have none then use default
         List<Role> roleList = commandEvent.getMember().getRoles();
@@ -54,9 +58,9 @@ public class CommandPermissions {
 
         if (highestRole.getPosition() < requiredRole.getPosition()) {
             // Reply to the command event stating that they do not hold the position required.
-            commandEvent.reply(commandEvent.getClient().getError() +
-                    "Error: You do not have the required role to use this command. You must have at least the " +
-                    requiredRole.getName() + " role or higher to use " + command.getCategory().getName() + " commands.");
+            commandEvent.reply(commandEvent.getClient().getWarning() +
+                    " You do not have the required role to use this command. You must have at least the " +
+                    requiredRole.getName() + " role or higher to use " + commandCategory.getName() + " commands.");
             return false;
         }
 
@@ -76,13 +80,13 @@ public class CommandPermissions {
         }
 
         if (!membership.canUseBot()) {
-            commandEvent.reply(commandEvent.getClient().getError() + " Your ability to use commands has been disabled. " +
+            commandEvent.reply(commandEvent.getClient().getWarning() + " Your ability to use commands has been disabled. " +
                     "To unlock commands please talk to a guild admin.");
             return false;
         }
 
         // TODO: Check channel permissions
-        if (command.getCategory() == CommandCategories.VOICE) {
+        if (commandCategory == CommandCategories.VOICE) {
             // If their in a voice channel the doesn't allow voice, then dont let them use it
             if (commandEvent.getMember().getVoiceState().inVoiceChannel()) {
                 InternalVoiceChannel voiceChannel;
