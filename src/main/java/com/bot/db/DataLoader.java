@@ -1,5 +1,6 @@
 package com.bot.db;
 
+import com.bot.models.InternalShard;
 import com.bot.utils.Config;
 import com.bot.ShardingManager;
 import com.bot.utils.GuildUtils;
@@ -8,6 +9,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
 
 import java.sql.*;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,9 +47,8 @@ public class DataLoader {
 		}
 
 		try {
-			for (JDA bot: shardingManager.getShards()){
-				LoadThread thread = new LoadThread(bot, config, startTime);
-				bot.awaitReady();
+			for (Map.Entry<Integer, InternalShard> entry: shardingManager.getShards().entrySet()){
+				LoadThread thread = new LoadThread(entry.getValue().getJda(), config, startTime);
 				thread.start();
 			}
 		}
@@ -69,10 +70,9 @@ public class DataLoader {
 		private String voiceChannelInsertQuery = "INSERT INTO voice_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private final Logger LOGGER = Logger.getLogger(LoadThread.class.getName());
 
-		public LoadThread(JDA bot, Config config, long startTime) throws SQLException, ClassNotFoundException {
+		public LoadThread(JDA bot, Config config, long startTime) throws SQLException {
 			this.bot = bot;
 			this.startTime = startTime;
-			Class.forName("com.mysql.jdbc.Driver");
 			this.connection = ConnectionPool.getDataSource().getConnection();
 		}
 
@@ -131,10 +131,6 @@ public class DataLoader {
 						statement.execute();
 						statement.close();
 						userCount++;
-
-						if (userCount % 2500 == 0) {
-							LOGGER.info("Shard: " + bot.getShardInfo().getShardId() + " Added " + userCount + " users");
-						}
 
 						statement = connection.prepareStatement(guildMembershipInsertQuery);
 						statement.setString(1, m.getUser().getId());

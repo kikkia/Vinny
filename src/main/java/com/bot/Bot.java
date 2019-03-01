@@ -30,6 +30,7 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.core.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
@@ -73,12 +74,12 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-		checkVoiceLobby(event.getGuild());
+		checkVoiceLobby(event);
 	}
 
 	@Override
 	public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-		checkVoiceLobby(event.getGuild());
+		checkVoiceLobby(event);
 	}
 
 	@Override
@@ -195,6 +196,8 @@ public class Bot extends ListenerAdapter {
 			getHandler(event.getGuild()).queueTrack(track, event.getAuthor().getIdLong());
 			if (!event.getGuild().getAudioManager().isConnected()) {
 				event.getGuild().getAudioManager().openAudioConnection(event.getMember().getVoiceState().getChannel());
+				// Add the stream to the shard tracking info
+				ShardingManager.getInstance().getShards().get(event.getJDA().getShardInfo().getShardId()).addVoiceStream();
 			}
 			return true;
 		}
@@ -204,7 +207,6 @@ public class Bot extends ListenerAdapter {
 		VoiceSendHandler handler;
 		if (guild.getAudioManager().getSendingHandler() == null) {
 			AudioPlayer player = manager.createPlayer();
-			// TODO: Add Default Volume from DB
 			handler = new VoiceSendHandler(guild.getIdLong(), player, this);
 
 			// Get default volume
@@ -231,13 +233,16 @@ public class Bot extends ListenerAdapter {
 		return handler;
 	}
 
-	private void checkVoiceLobby(Guild guild) {
+	private void checkVoiceLobby(GuildVoiceUpdateEvent event) {
+		Guild guild = event.getGuild();
 		VoiceSendHandler handler = getHandler(guild);
 		AudioManager manager = guild.getAudioManager();
 		if (manager.isConnected()) {
 			if (manager.getConnectedChannel().getMembers().size() == 1) {
 				handler.stop();
 				manager.closeAudioConnection();
+				// Remove voice stream from shard tracking
+				ShardingManager.getInstance().getShards().get(event.getJDA().getShardInfo().getShardId()).removeVoiceStream();
 			}
 		}
 	}

@@ -1,11 +1,14 @@
 package com.bot;
 
 import com.bot.commands.general.InviteCommand;
+import com.bot.commands.general.PingCommand;
+import com.bot.commands.general.ShardStatsCommand;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
 import com.bot.commands.reddit.TopPostCommand;
 import com.bot.commands.settings.*;
 import com.bot.commands.voice.*;
+import com.bot.models.InternalShard;
 import com.bot.utils.Config;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
@@ -14,19 +17,32 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class ShardingManager {
 
     private static final Logger LOGGER = Logger.getLogger(ShardingManager.class.getName());
+    private static ShardingManager instance;
 
-    private JDA[] shards;
+    private Map<Integer, InternalShard> shards;
+
+    public static ShardingManager getInstance() {
+        return instance;
+    }
+
+    public static ShardingManager getInstance(int numShards, boolean useDB) throws Exception {
+        if (instance == null)
+            instance = new ShardingManager(numShards, useDB);
+        return instance;
+    }
 
     // This adds a connection for each shard. Shards make it more efficient. ~1000 servers to shards is ideal
     // supportScript disables commands. Useful for running a supportScript simultaneously while the bot is going on prod
-    public ShardingManager(int numShards, boolean useDB) throws Exception {
+    private ShardingManager(int numShards, boolean useDB) throws Exception {
         Config config = Config.getInstance();
-        shards = new JDA[numShards];
+        shards = new HashMap<>();
         Bot bot = null;
         CommandClient client = null;
         bot = new Bot(new EventWaiter());
@@ -51,6 +67,8 @@ public class ShardingManager {
 
                 // General Commands
                 new InviteCommand(),
+                new ShardStatsCommand(),
+                new PingCommand(),
 
                 // Reddit Commands
                 new RandomPostCommand(),
@@ -84,28 +102,26 @@ public class ShardingManager {
         client = commandClientBuilder.build();
 
         for (int i = 0; i < numShards; i++) {
-            shards[i] = new JDABuilder(AccountType.BOT)
+            JDA jda = new JDABuilder(AccountType.BOT)
                     .setToken(config.getConfig(Config.DISCORD_TOKEN))
                     .useSharding(i, numShards)
                     .build();
 
-            shards[i].awaitReady();
+            jda.awaitReady();
 
             EventWaiter waiter = new EventWaiter();
-
-            shards[i].addEventListener(waiter);
-            shards[i].addEventListener(client);
-            shards[i].addEventListener(bot);
+            jda.addEventListener(waiter);
+            jda.addEventListener(client);
+            jda.addEventListener(bot);
+            int shardId = jda.getShardInfo().getShardId();
+            shards.put(shardId, new InternalShard(shardId, jda));
 
             System.out.println("Shard " + i + " built.");
         }
     }
 
-    public JDA[] getShards() {
+    public Map<Integer, InternalShard> getShards() {
         return shards;
     }
 
-    public JDA getJDA(int shardId) {
-        return shards[shardId];
-    }
 }
