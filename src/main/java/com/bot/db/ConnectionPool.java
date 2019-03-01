@@ -21,10 +21,9 @@ public class ConnectionPool {
 		hikariConfig.setUsername(config.getConfig(Config.DB_USERNAME));
 		hikariConfig.setPassword(config.getConfig(Config.DB_PASSWORD));
 		hikariConfig.setMaximumPoolSize(12);
-		hikariConfig.setLeakDetectionThreshold(30 * 1000);
-		hikariConfig.setMaxLifetime(28700);
+		hikariConfig.setLeakDetectionThreshold(5 * 1000);
 		hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
-		hikariConfig.addDataSourceProperty("prepStmtCacheSize", "50");
+		hikariConfig.addDataSourceProperty("prepStmtCacheSize", "150");
 		hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 		hikariConfig.addDataSourceProperty("useServerPrepStmts", "true");
 		this.dataSource = new HikariDataSource(hikariConfig);
