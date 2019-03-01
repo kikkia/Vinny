@@ -48,7 +48,7 @@ public class DataLoader {
 
 		try {
 			for (Map.Entry<Integer, InternalShard> entry: shardingManager.getShards().entrySet()){
-				LoadThread thread = new LoadThread(entry.getValue().getJda(), config, startTime);
+				LoadThread thread = new LoadThread(entry.getValue().getJda(), startTime);
 				thread.start();
 			}
 		}
@@ -70,7 +70,7 @@ public class DataLoader {
 		private String voiceChannelInsertQuery = "INSERT INTO voice_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private final Logger LOGGER = Logger.getLogger(LoadThread.class.getName());
 
-		public LoadThread(JDA bot, Config config, long startTime) throws SQLException {
+		public LoadThread(JDA bot, long startTime) throws SQLException {
 			this.bot = bot;
 			this.startTime = startTime;
 			this.connection = ConnectionPool.getDataSource().getConnection();
