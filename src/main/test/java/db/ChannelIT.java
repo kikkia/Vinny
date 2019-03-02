@@ -29,10 +29,11 @@ import static org.mockito.Mockito.mock;
 
 public class ChannelIT {
 
-    private static Connection connection;
     private static Flyway flyway;
     private static final Logger LOGGER = Logger.getLogger(GuildIT.class.getName());
     private static ChannelDAO channelDAO;
+    private static HikariDataSource dataSource;
+
 
     private List<InternalGuild> guilds = Arrays.asList(
             new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1"),
@@ -65,7 +66,6 @@ public class ChannelIT {
         hikariConfig.addDataSourceProperty("useServerPrepStmts", "true");
 
         // The integration tests start too fast (OH NOOOO) So we might need to wait for a couple seconds to ensure the db is up.
-        HikariDataSource dataSource;
         int count = 0;
         int maxTries = 10;
         while(true) {
@@ -80,12 +80,11 @@ public class ChannelIT {
             }
         }
 
-        connection = dataSource.getConnection();
 
         flyway = new Flyway();
         flyway.setDataSource(dataSource);
 
-        channelDAO = new ChannelDAO(connection);
+        channelDAO = new ChannelDAO(dataSource);
     }
 
     @Before
@@ -102,6 +101,7 @@ public class ChannelIT {
 
     private void loadGuilds() throws SQLException {
         String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id) VALUES(?,?,?,?,?,?,?)";
+        Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement(query);
 
         for(InternalGuild g : guilds) {
@@ -118,11 +118,13 @@ public class ChannelIT {
 
         statement.executeBatch();
         statement.close();
+        connection.close();
     }
 
     private void loadChannels() throws SQLException {
         String voiceChannelQuery = "INSERT INTO voice_channel(id, guild, name) VALUES (?,?,?) ON DUPLICATE KEY UPDATE name=VALUES(name)";
         String textChannelQuery = "INSERT INTO text_channel(id, guild, name) VALUES (?,?,?) ON DUPLICATE KEY UPDATE name=VALUES(name)";
+        Connection connection = dataSource.getConnection();
         PreparedStatement textStatement = connection.prepareStatement(textChannelQuery);
         PreparedStatement voiceStatement = connection.prepareStatement(voiceChannelQuery);
 
@@ -146,7 +148,7 @@ public class ChannelIT {
         voiceStatement.executeBatch();
         textStatement.close();
         voiceStatement.close();
-
+        connection.close();
     }
 
     private void assertTextChannelEquals(InternalTextChannel expected, InternalTextChannel actual) {

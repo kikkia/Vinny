@@ -17,10 +17,13 @@ public class ConnectionPool {
 		Config config = Config.getInstance();
 
 		HikariConfig hikariConfig = new HikariConfig();
-		hikariConfig.setJdbcUrl("jdbc:mysql://" + config.getConfig(Config.DB_URI) + "/"  + config.getConfig(Config.DB_SCHEMA));
+		hikariConfig.setJdbcUrl("jdbc:mysql://" + config.getConfig(Config.DB_URI) + "/"  + config.getConfig(Config.DB_SCHEMA) + "?useSSL=false");
 		hikariConfig.setUsername(config.getConfig(Config.DB_USERNAME));
 		hikariConfig.setPassword(config.getConfig(Config.DB_PASSWORD));
+		hikariConfig.setIdleTimeout(600*1000);
+		hikariConfig.setMaxLifetime(900*1000);
 		hikariConfig.setMaximumPoolSize(12);
+		hikariConfig.setMinimumIdle(2);
 		hikariConfig.setLeakDetectionThreshold(5 * 1000);
 		hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
 		hikariConfig.addDataSourceProperty("prepStmtCacheSize", "150");
@@ -36,7 +39,7 @@ public class ConnectionPool {
 		return connectionPool;
 	}
 
-	public static DataSource getDataSource() {
+	public static HikariDataSource getDataSource() {
 		if (connectionPool == null) {
 			connectionPool = new ConnectionPool();
 		}
