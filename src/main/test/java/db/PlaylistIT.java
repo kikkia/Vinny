@@ -23,10 +23,10 @@ import java.util.logging.Logger;
 
 public class PlaylistIT {
 
-    private static Connection connection;
     private static Flyway flyway;
     private static PlaylistDAO playlistDAO;
     private static final Logger LOGGER = Logger.getLogger(GuildIT.class.getName());
+    private static HikariDataSource dataSource;
 
     private List<InternalGuildMembership> memberships = Arrays.asList(
             new InternalGuildMembership("1", "101", true),
@@ -67,7 +67,6 @@ public class PlaylistIT {
         hikariConfig.addDataSourceProperty("useServerPrepStmts", "true");
 
         // The integration tests start too fast (OH NOOOO) So we might need to wait for a couple seconds to ensure the db is up.
-        HikariDataSource dataSource;
         int count = 0;
         int maxTries = 10;
         while(true) {
@@ -105,7 +104,7 @@ public class PlaylistIT {
         String playlistInsertQuery = "INSERT INTO playlist (user_id, guild, name) VALUES(?,?,?) ON DUPLICATE KEY UPDATE name = name";
         String trackInsertQuery = "INSERT INTO track (url, title) VALUES (?, ?) ON DUPLICATE KEY UPDATE title = title";
         String playlistTrackQuery = "INSERT INTO playlist_track (track, playlist, position) VALUES (?, ?, ?)";
-
+        Connection connection = dataSource.getConnection();
         PreparedStatement trackStatement = connection.prepareStatement(trackInsertQuery);
         for (AudioTrack t : tracks) {
             trackStatement.setString(1, t.getUrl());
@@ -139,11 +138,12 @@ public class PlaylistIT {
         }
         guildPlaylistStatement.executeBatch();
         guildPlaylistStatement.close();
-
+        connection.close();
     }
 
     private void loadGuilds() throws SQLException {
         String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id) VALUES(?,?,?,?,?,?,?)";
+        Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement(query);
 
         for(InternalGuild g : guilds) {
@@ -160,11 +160,13 @@ public class PlaylistIT {
 
         statement.executeBatch();
         statement.close();
+        connection.close();
     }
 
     private void loadUsers() throws SQLException {
         String userQuery = "INSERT INTO users(id, name) VALUES(?,?) ON DUPLICATE KEY UPDATE name=name";
         String membershipQuery = "INSERT INTO guild_membership(guild, user_id, can_use_bot) VALUES(?,?,?)";
+        Connection connection = dataSource.getConnection();
         PreparedStatement userStatement = connection.prepareStatement(userQuery);
         PreparedStatement membershipStatement = connection.prepareStatement(membershipQuery);
 
@@ -185,5 +187,6 @@ public class PlaylistIT {
         userStatement.close();
         membershipStatement.executeBatch();
         membershipStatement.close();
+        connection.close();
     }
 }
