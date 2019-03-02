@@ -11,7 +11,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
 
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,11 +35,8 @@ public class NewPostCommand extends Command {
         if (!CommandPermissions.canExecuteCommand(this, commandEvent))
             return;
 
-        InternalTextChannel channel;
-        try {
-            channel = channelDAO.getTextChannelForId(commandEvent.getTextChannel().getId());
-        } catch (SQLException e) {
-            LOGGER.severe("Failed to get channel for random reddit command: " + e.getMessage());
+        InternalTextChannel channel = channelDAO.getTextChannelForId(commandEvent.getTextChannel().getId());
+        if (channel == null) {
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong getting the channel from the db. Please try again.");
             return;
         }

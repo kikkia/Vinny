@@ -36,11 +36,9 @@ public class TopPostCommand extends Command{
         if (!CommandPermissions.canExecuteCommand(this, commandEvent))
             return;
 
-        InternalTextChannel channel;
-        try {
-            channel = channelDAO.getTextChannelForId(commandEvent.getTextChannel().getId());
-        } catch (SQLException e) {
-            LOGGER.severe("Failed to get channel for random reddit command: " + e.getMessage());
+        InternalTextChannel channel = channelDAO.getTextChannelForId(commandEvent.getTextChannel().getId());
+
+        if (channel == null) {
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong getting the channel from the db. Please try again.");
             return;
         }

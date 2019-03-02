@@ -82,12 +82,10 @@ public class PlaylistIT {
             }
         }
 
-        connection = dataSource.getConnection();
-
         flyway = new Flyway();
         flyway.setDataSource(dataSource);
 
-        playlistDAO = new PlaylistDAO(connection);
+        playlistDAO = new PlaylistDAO(dataSource);
     }
 
     @Before

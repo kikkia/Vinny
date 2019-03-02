@@ -2,7 +2,9 @@ package com.bot.db;
 
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
+import com.bot.utils.DbHelpers;
 import com.bot.voice.QueuedAudioTrack;
+import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
 import java.util.*;
@@ -12,8 +14,8 @@ import java.util.logging.Logger;
 public class PlaylistDAO {
     private static final Logger LOGGER = Logger.getLogger(PlaylistDAO.class.getName());
 
-    private Connection read;
-	private Connection write;
+    private HikariDataSource read;
+	private HikariDataSource write;
 	private static PlaylistDAO instance;
 
 
@@ -26,9 +28,9 @@ public class PlaylistDAO {
 	}
 
 	// This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
-	public PlaylistDAO(Connection connection) {
-		read = connection;
-		write = connection;
+	public PlaylistDAO(HikariDataSource dataSource) {
+		read = dataSource;
+		write = dataSource;
 	}
 
 
@@ -39,8 +41,8 @@ public class PlaylistDAO {
 	}
 
 	private void initialize() throws SQLException {
-		this.read = ReadConnectionPool.getDataSource().getConnection();
-		this.write = ConnectionPool.getDataSource().getConnection();
+		this.read = ReadConnectionPool.getDataSource();
+		this.write = ConnectionPool.getDataSource();
 	}
 
 	public List<Playlist> getPlaylistsForUser(String userId) {
@@ -170,9 +172,11 @@ public class PlaylistDAO {
 		Map<Integer, Playlist> playlists = null;
 		PreparedStatement statement = null;
 		ResultSet set = null;
+		Connection conn = null;
 
 		try {
-			statement = read.prepareStatement(query);
+			conn = read.getConnection();
+			statement = conn.prepareStatement(query);
 			statement.setString(1, ownerId);
 			set = statement.executeQuery();
 			playlists = new HashMap<>();
@@ -199,7 +203,7 @@ public class PlaylistDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			close(statement, set);
+			DbHelpers.close(statement, set, conn);
 		}
 
 		return new ArrayList<>(playlists.values());
@@ -208,13 +212,15 @@ public class PlaylistDAO {
 	private Playlist getPlaylistFromQueryWithName(String ownerId, String query, String name) throws SQLException {
 		PreparedStatement statement = null;
 		ResultSet set = null;
+		Connection conn = null;
 
 		int playlistId = 0;
 		String playlistName = null;
 		List<AudioTrack> tracks = new ArrayList<>();
 
 		try {
-			statement = read.prepareStatement(query);
+			conn = read.getConnection();
+			statement = conn.prepareStatement(query);
 			statement.setString(1, ownerId);
 			statement.setString(2, name);
 			set = statement.executeQuery();
@@ -232,7 +238,7 @@ public class PlaylistDAO {
 
 
 		} finally {
-			close(statement, set);
+			DbHelpers.close(statement, set, conn);
 		}
 
 		return new Playlist(playlistId, ownerId, playlistName, tracks);
@@ -241,9 +247,11 @@ public class PlaylistDAO {
 	private boolean addPlaylist(String ownerId, String name, List<QueuedAudioTrack> tracks, String playlistQuery, String trackQuery, String playlistTrackQuery) {
 		PreparedStatement statement = null;
 		ResultSet set = null;
+		Connection conn = null;
 
 		try {
-			statement = write.prepareStatement(playlistQuery, Statement.RETURN_GENERATED_KEYS);
+			conn = write.getConnection();
+			statement = conn.prepareStatement(playlistQuery, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, ownerId);
 			statement.setString(2, name);
 			statement.execute();
@@ -257,7 +265,7 @@ public class PlaylistDAO {
 
 			for (int i = 0; i < tracks.size(); i++) {
 				QueuedAudioTrack t = tracks.get(i);
-				statement = write.prepareStatement(trackQuery, Statement.RETURN_GENERATED_KEYS);
+				statement = conn.prepareStatement(trackQuery, Statement.RETURN_GENERATED_KEYS);
 				statement.setString(1, t.getTrack().getInfo().uri);
 				statement.setString(2, t.getTrack().getInfo().title);
 				statement.execute();
@@ -270,7 +278,7 @@ public class PlaylistDAO {
 					trackId = set.getInt(1);
 				} catch (SQLException e) {
 					// if we hit an error writing the track then we can get the id another way
-					statement = read.prepareStatement("SELECT * FROM track t WHERE t.url = \"" + t.getTrack().getInfo().uri + "\"");
+					statement = conn.prepareStatement("SELECT * FROM track t WHERE t.url = \"" + t.getTrack().getInfo().uri + "\"");
 					statement.execute();
 					set = statement.getResultSet();
 					set.next();
@@ -278,7 +286,7 @@ public class PlaylistDAO {
 				}
 
 				// Write the track -> playlist joins
-				statement = write.prepareStatement(playlistTrackQuery);
+				statement = conn.prepareStatement(playlistTrackQuery);
 				statement.setInt(1, trackId);
 				statement.setInt(2, playlistId);
 				statement.setInt(3, i);
@@ -289,7 +297,7 @@ public class PlaylistDAO {
 			e.printStackTrace();
 			return false;
 		} finally {
-			close(statement, set);
+			DbHelpers.close(statement, set, conn);
 		}
 	}
 
@@ -297,9 +305,11 @@ public class PlaylistDAO {
 									   String addTrackQuery, String insertPlaylistQuery, String numTracksQuery) {
 		PreparedStatement statement = null;
 		ResultSet set = null;
+		Connection conn = null;
 
 		try {
-			statement = write.prepareStatement(addTrackQuery, Statement.RETURN_GENERATED_KEYS);
+			conn = write.getConnection();
+			statement = conn.prepareStatement(addTrackQuery, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, track.getTrack().getInfo().uri);
 			statement.setString(2, track.getTrack().getInfo().title);
 			statement.execute();
@@ -307,13 +317,13 @@ public class PlaylistDAO {
 			set.next();
 			int trackId = set.getInt(1);
 
-			statement = read.prepareStatement(numTracksQuery);
+			statement = conn.prepareStatement(numTracksQuery);
 			statement.execute();
 			set = statement.getResultSet();
 			set.next();
 			int trackPosition = set.getInt(1);
 
-			statement = write.prepareStatement(insertPlaylistQuery);
+			statement = conn.prepareStatement(insertPlaylistQuery);
 			statement.setInt(1, trackId);
 			statement.setInt(2, playlistId);
 			statement.setInt(3, trackPosition + 1);
@@ -325,18 +335,7 @@ public class PlaylistDAO {
 			e.printStackTrace();
 			return false;
 		} finally {
-			close(statement, set);
-		}
-	}
-
-	private void close(PreparedStatement preparedStatement, ResultSet resultSet) {
-		try {
-			if (preparedStatement != null)
-				preparedStatement.close();
-			if (resultSet != null)
-				resultSet.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+			DbHelpers.close(statement, set, conn);
 		}
 	}
 
@@ -344,8 +343,11 @@ public class PlaylistDAO {
 	public boolean healthCheck() {
 		PreparedStatement statement = null;
 		ResultSet set = null;
+		Connection conn = null;
+
 		try {
-			statement = read.prepareStatement("SELECT * FROM playlist");
+			conn = read.getConnection();
+			statement = conn.prepareStatement("SELECT * FROM playlist");
 			set = statement.executeQuery();
 			set.first();
 			return true;
@@ -353,7 +355,7 @@ public class PlaylistDAO {
 			System.out.println(e.getMessage());
 			return false;
 		} finally {
-			close(statement, set);
+			DbHelpers.close(statement, set, conn);
 		}
 	}
 }

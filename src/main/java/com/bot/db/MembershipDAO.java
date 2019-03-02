@@ -3,6 +3,8 @@ package com.bot.db;
 
 import com.bot.db.mappers.GuildMembershipMapper;
 import com.bot.models.InternalGuildMembership;
+import com.bot.utils.DbHelpers;
+import com.zaxxer.hikari.HikariDataSource;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 
@@ -18,8 +20,8 @@ import java.util.logging.Level;
 public class MembershipDAO {
     private static final Logger LOGGER = Logger.getLogger(MembershipDAO.class.getName());
 
-    private Connection read;
-    private Connection write;
+    private HikariDataSource read;
+    private HikariDataSource write;
     private static MembershipDAO instance;
 
     private MembershipDAO() {
@@ -31,9 +33,9 @@ public class MembershipDAO {
     }
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
-    public MembershipDAO(Connection connection) {
-        read = connection;
-        write = connection;
+    public MembershipDAO(HikariDataSource dataSource) {
+        read = dataSource;
+        write = dataSource;
     }
 
 
@@ -45,52 +47,76 @@ public class MembershipDAO {
     }
 
     private void initialize() throws SQLException {
-        this.read = ReadConnectionPool.getDataSource().getConnection();
-        this.write = ConnectionPool.getDataSource().getConnection();
+        this.read = ReadConnectionPool.getDataSource();
+        this.write = ConnectionPool.getDataSource();
     }
 
     public InternalGuildMembership getUserMembershipByIdInGuild(String userId, String guildId) throws SQLException {
-        // TODO: IS there a better way to close these in case of error
         String query = "SELECT * FROM guild_membership gm WHERE gm.user_id = ? AND gm.guild = ?";
         InternalGuildMembership membership = null;
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet set = null;
 
-        PreparedStatement statement = read.prepareStatement(query);
-        statement.setString(1, userId);
-        statement.setString(2, guildId);
-        ResultSet set = statement.executeQuery();
-        if (set.next()) {
-            membership = GuildMembershipMapper.mapGuildMembership(set);
+        try {
+            connection = read.getConnection();
+
+            statement = connection.prepareStatement(query);
+            statement.setString(1, userId);
+            statement.setString(2, guildId);
+            set = statement.executeQuery();
+            if (set.next()) {
+                membership = GuildMembershipMapper.mapGuildMembership(set);
+            }
+        } catch (SQLException e) {
+            LOGGER.severe("Failed to get user membership in guild: " + e.getMessage());
+        } finally {
+            DbHelpers.close(statement, set, connection);
         }
 
-        close(statement, set);
         return membership;
     }
 
-    public List<InternalGuildMembership> getMembershipsForUser(String userId) throws SQLException {
+    public List<InternalGuildMembership> getMembershipsForUser(String userId) {
         String query = "SELECT u.id, u.can_use_bot, u.name, g.id FROM users u JOIN guild_membership gm ON gm.user_id = u.id JOIN guild g ON g.id = gm.guild WHERE u.id = ?";
-        PreparedStatement statement = read.prepareStatement(query);
-        statement.setString(1, userId);
-        ResultSet set = statement.executeQuery();
-        List<InternalGuildMembership> memberships = new ArrayList<>();
-        while (set.next()) {
-            memberships.add(GuildMembershipMapper.mapGuildMembership(set));
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet set = null;
+        List<InternalGuildMembership> memberships = null;
+
+        try {
+            connection = read.getConnection();
+
+            statement = connection.prepareStatement(query);
+            statement.setString(1, userId);
+            set = statement.executeQuery();
+            memberships = new ArrayList<>();
+            while (set.next()) {
+                memberships.add(GuildMembershipMapper.mapGuildMembership(set));
+            }
+            DbHelpers.close(statement, set, connection);
+        } catch (SQLException e) {
+            LOGGER.severe("Failed to get memberships for user. " + e.getMessage());
+        } finally {
+            DbHelpers.close(statement, set, connection);
         }
-        close(statement, set);
         return memberships;
     }
 
     public void removeUserMembershipToGuild(String userId, String guildId) {
         String query = "DELETE FROM guild_membership WHERE guild = ? AND user_id = ?";
         PreparedStatement statement = null;
+        Connection connection = null;
         try {
-            statement = write.prepareStatement(query);
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
             statement.setString(1, guildId);
             statement.setString(2, userId);
             statement.execute();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to remove user membership from guild. " + e.getMessage());
         } finally {
-            close(statement, null);
+            DbHelpers.close(statement, null, connection);
         }
     }
 
@@ -103,8 +129,10 @@ public class MembershipDAO {
 
     private void addMembership(String membershipInsertQuery, User user, Guild guild) {
         PreparedStatement statement = null;
+        Connection connection = null;
         try {
-            statement = write.prepareStatement(membershipInsertQuery);
+            connection = write.getConnection();
+            statement = connection.prepareStatement(membershipInsertQuery);
             statement.setString(1, guild.getId());
             statement.setString(2, user.getId());
             statement.setBoolean(3, true);
@@ -112,39 +140,23 @@ public class MembershipDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add membership for user to guild: " + e.getMessage());
         } finally {
-            close(statement, null);
+            DbHelpers.close(statement, null, connection);
         }
     }
 
     private void addUser(String userInseryQuery, User user) {
         PreparedStatement statement = null;
+        Connection connection = null;
         try {
-            statement = write.prepareStatement(userInseryQuery);
+            connection = write.getConnection();
+            statement = connection.prepareStatement(userInseryQuery);
             statement.setString(1, user.getId());
             statement.setString(2, user.getName());
             statement.execute();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add user to db: " +e.getMessage());
         } finally {
-            close(statement, null);
-        }
-    }
-
-    private ResultSet executeGetQuery(String query) throws SQLException {
-        PreparedStatement statement = read.prepareStatement(query);
-        ResultSet set = statement.executeQuery();
-        close(statement, null);
-        return set;
-    }
-
-    private void close(PreparedStatement preparedStatement, ResultSet resultSet) {
-        try {
-            if (preparedStatement != null)
-                preparedStatement.close();
-            if (resultSet != null)
-                resultSet.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            DbHelpers.close(statement, null, connection);
         }
     }
 }

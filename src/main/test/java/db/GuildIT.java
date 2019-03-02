@@ -72,12 +72,10 @@ public class GuildIT {
             }
         }
 
-        connection = dataSource.getConnection();
-
         flyway = new Flyway();
         flyway.setDataSource(dataSource);
 
-        guildDAO = new GuildDAO(connection);
+        guildDAO = new GuildDAO(dataSource);
     }
 
     @Before

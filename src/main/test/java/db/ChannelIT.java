@@ -80,12 +80,11 @@ public class ChannelIT {
             }
         }
 
-        connection = dataSource.getConnection();
 
         flyway = new Flyway();
         flyway.setDataSource(dataSource);
 
-        channelDAO = new ChannelDAO(connection);
+        channelDAO = new ChannelDAO(dataSource);
     }
 
     @Before

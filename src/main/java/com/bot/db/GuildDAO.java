@@ -2,7 +2,9 @@ package com.bot.db;
 
 import com.bot.db.mappers.GuildMapper;
 import com.bot.models.InternalGuild;
+import com.bot.utils.DbHelpers;
 import com.bot.utils.GuildUtils;
+import com.zaxxer.hikari.HikariDataSource;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -19,8 +21,8 @@ public class GuildDAO {
     private static final Logger LOGGER = Logger.getLogger(PlaylistDAO.class.getName());
     private final int DEFAULT_VOLUME = 100;
 
-    private Connection read;
-    private Connection write;
+    private HikariDataSource read;
+    private HikariDataSource write;
     private static GuildDAO instance;
 
 
@@ -33,9 +35,9 @@ public class GuildDAO {
     }
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
-    public GuildDAO(Connection connection) {
-        read = connection;
-        write = connection;
+    public GuildDAO(HikariDataSource dataSource) {
+        read = dataSource;
+        write = dataSource;
     }
 
     public static GuildDAO getInstance() {
@@ -45,19 +47,25 @@ public class GuildDAO {
     }
 
     private void initialize() throws SQLException {
-        this.read = ReadConnectionPool.getDataSource().getConnection();
-        this.write = ConnectionPool.getDataSource().getConnection();
+        this.read = ReadConnectionPool.getDataSource();
+        this.write = ConnectionPool.getDataSource();
     }
 
-    public InternalGuild getGuildById(String guildId) throws SQLException {
+    public InternalGuild getGuildById(String guildId) {
         String query = "SELECT id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id FROM guild WHERE id = ?";
         ResultSet set = null;
         InternalGuild returned = null;
-        set = executeGetQuery(query, guildId);
-        if (set.next()) {
-            returned = GuildMapper.mapSetToGuild(set);
+
+        try {
+            set = executeGetQuery(query, guildId);
+            if (set.next()) {
+                returned = GuildMapper.mapSetToGuild(set);
+            }
+        } catch (SQLException e) {
+            LOGGER.severe("Failed to get guildById: " + e.getMessage());
+        } finally {
+            DbHelpers.close(null, set, null);
         }
-        close(null, set);
 
         return returned;
     }
@@ -65,8 +73,11 @@ public class GuildDAO {
     // We throw on this one so if we cant add a guild to the db we just leave the guild to avoid greater problems
     public boolean addGuild(Guild guild) {
         String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE name=name";
+        Connection connection = null;
+        PreparedStatement statement = null;
         try {
-            PreparedStatement statement = write.prepareStatement(query);
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
             statement.setString(1, guild.getId());
             statement.setString(2, guild.getName());
             statement.setInt(3, DEFAULT_VOLUME);
@@ -76,12 +87,13 @@ public class GuildDAO {
             statement.setString(6, guild.getPublicRole().getId());
             statement.setString(7, guild.getPublicRole().getId());
             statement.execute();
-            close(statement, null);
-            return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add guild to db: " + guild.getId() + " " + e.getMessage());
             return false;
+        } finally {
+            DbHelpers.close(statement, null, connection);
         }
+        return true;
     }
 
     public void addFreshGuild(Guild guild) {
@@ -99,100 +111,118 @@ public class GuildDAO {
             channelDAO.addVoiceChannel(v);
         }
 
-        LOGGER.info("Completed addition of fresh guild.");
+        LOGGER.info("Completed addition of fresh guild. " + guild.getId());
     }
 
     public boolean updateGuildVolume(String guildId, int newVolume) {
+        String query = "UPDATE guild SET default_volume = ? WHERE id = ?";
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+
         try {
-            String query = "UPDATE guild SET default_volume = ? WHERE id = ?";
-            PreparedStatement statement = write.prepareStatement(query);
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
             statement.setInt(1, newVolume);
             statement.setString(2, guildId);
             statement.execute();
-            close(statement, null);
-            return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to update volume for guild: " + guildId + " " + e.getMessage());
             return false;
+        } finally {
+            DbHelpers.close(statement, null, connection);
         }
+        return true;
     }
 
     public boolean updateMinBaseRole(String guildId, String newRoleId) {
+        String query = "UPDATE guild SET min_base_role_id = ? WHERE id = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
         try {
-            String query = "UPDATE guild SET min_base_role_id = ? WHERE id = ?";
-            PreparedStatement statement = write.prepareStatement(query);
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
             statement.setString(1, newRoleId);
             statement.setString(2, guildId);
             statement.execute();
-            close(statement, null);
-            return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to update base role for guild: " + guildId + " " + e.getMessage());
             return false;
+        } finally {
+            DbHelpers.close(statement, null, connection);
         }
+
+        return true;
     }
 
     public boolean updateMinNSFWRole(String guildId, String newRoleId) {
+        String query = "UPDATE guild SET min_nsfw_role_id = ? WHERE id = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
         try {
-            String query = "UPDATE guild SET min_nsfw_role_id = ? WHERE id = ?";
-            PreparedStatement statement = write.prepareStatement(query);
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
             statement.setString(1, newRoleId);
             statement.setString(2, guildId);
             statement.execute();
-            close(statement, null);
-            return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to update nsfw role for: " + guildId + " " + e.getMessage());
             return false;
+        } finally {
+            DbHelpers.close(statement, null, connection);
         }
+
+        return true;
     }
 
     public boolean updateMinVoiceRole(String guildId, String newRoleId) {
+        String query = "UPDATE guild SET min_voice_role_id = ? WHERE id = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
         try {
-            String query = "UPDATE guild SET min_voice_role_id = ? WHERE id = ?";
-            PreparedStatement statement = write.prepareStatement(query);
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
             statement.setString(1, newRoleId);
             statement.setString(2, guildId);
             statement.execute();
-            close(statement, null);
-            return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to update voice role for guild: " + guildId + " " + e.getMessage());
             return false;
+        } finally {
+            DbHelpers.close(statement, null, connection);
         }
+
+        return true;
     }
 
     public boolean updateMinModRole(String guildId, String newRoleId) {
+        String query = "UPDATE guild SET min_mod_role_id = ? WHERE id = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
         try {
-            String query = "UPDATE guild SET min_mod_role_id = ? WHERE id = ?";
-            PreparedStatement statement = write.prepareStatement(query);
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
             statement.setString(1, newRoleId);
             statement.setString(2, guildId);
             statement.execute();
-            close(statement, null);
-            return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to update min mod role for guild: " + guildId + " " + e.getMessage());
             return false;
+        } finally {
+            DbHelpers.close(statement, null,connection);
         }
+        return true;
     }
 
     private ResultSet executeGetQuery(String query, String guildId) throws SQLException {
-        PreparedStatement statement = read.prepareStatement(query);
+        Connection connection = read.getConnection();
+        PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, guildId);
         ResultSet set = statement.executeQuery();
-        close(statement, null);
+        DbHelpers.close(statement, null, connection);
         return set;
-    }
-
-    private void close(PreparedStatement preparedStatement, ResultSet resultSet) {
-        try {
-            if (preparedStatement != null)
-                preparedStatement.close();
-            if (resultSet != null)
-                resultSet.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 }

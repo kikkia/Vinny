@@ -4,6 +4,8 @@ import com.bot.db.mappers.TextChannelMapper;
 import com.bot.db.mappers.VoiceChannelMapper;
 import com.bot.models.InternalTextChannel;
 import com.bot.models.InternalVoiceChannel;
+import com.bot.utils.DbHelpers;
+import com.zaxxer.hikari.HikariDataSource;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 
@@ -20,8 +22,8 @@ import java.util.logging.Logger;
 public class ChannelDAO {
     private static final Logger LOGGER = Logger.getLogger(ChannelDAO.class.getName());
 
-    private Connection read;
-    private Connection write;
+    private HikariDataSource read;
+    private HikariDataSource write;
     private static ChannelDAO instance;
 
     private ChannelDAO() {
@@ -33,9 +35,9 @@ public class ChannelDAO {
     }
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
-    public ChannelDAO(Connection connection) {
-        read = connection;
-        write = connection;
+    public ChannelDAO(HikariDataSource dataSource) {
+        read = dataSource;
+        write = dataSource;
     }
 
 
@@ -47,19 +49,17 @@ public class ChannelDAO {
     }
 
     private void initialize() throws SQLException {
-        DataSource dataSource = ConnectionPool.getDataSource();
-        DataSource readDataSource = ReadConnectionPool.getDataSource();
-
-        this.read = readDataSource.getConnection();
-        this.write = dataSource.getConnection();
+        this.write = ConnectionPool.getDataSource();
+        this.read = ReadConnectionPool.getDataSource();
     }
 
     public void addVoiceChannel(VoiceChannel voiceChannel) {
         String query = "INSERT INTO voice_channel(id, guild, name) VALUES (?,?,?) ON DUPLICATE KEY UPDATE name=VALUES(name)";
         PreparedStatement preparedStatement = null;
-
+        Connection connection = null;
         try {
-            preparedStatement = write.prepareStatement(query);
+            connection = write.getConnection();
+            preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, voiceChannel.getId());
             preparedStatement.setString(2, voiceChannel.getGuild().getId());
             preparedStatement.setString(3, voiceChannel.getName());
@@ -67,16 +67,18 @@ public class ChannelDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add voice channel to the db " +e.getMessage());
         } finally {
-            close(preparedStatement, null);
+            DbHelpers.close(preparedStatement, null, connection);
         }
     }
 
     public void addTextChannel(TextChannel textChannel) {
         String query = "INSERT INTO text_channel(id, guild, name) VALUES (?,?,?) ON DUPLICATE KEY UPDATE name=VALUES(name)";
         PreparedStatement preparedStatement = null;
+        Connection connection = null;
 
         try {
-            preparedStatement = write.prepareStatement(query);
+            connection = write.getConnection();
+            preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, textChannel.getId());
             preparedStatement.setString(2, textChannel.getGuild().getId());
             preparedStatement.setString(3, textChannel.getName());
@@ -84,37 +86,41 @@ public class ChannelDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add text channel to the db: " + e.getMessage());
         } finally {
-            close(preparedStatement, null);
+            DbHelpers.close(preparedStatement, null, connection);
         }
     }
 
     public void removeVoiceChannel(VoiceChannel channel) {
         String query = "DELETE FROM voice_channel WHERE id = ?";
         PreparedStatement preparedStatement = null;
+        Connection connection = null;
 
         try {
-            preparedStatement = write.prepareStatement(query);
+            connection = write.getConnection();
+            preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, channel.getId());
             preparedStatement.execute();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to remove a voice channel from db: " +e.getMessage());
         } finally {
-            close(preparedStatement, null);
+            DbHelpers.close(preparedStatement, null, connection);
         }
     }
 
     public void removeTextChannel(TextChannel channel) {
         String query = "DELETE FROM text_channel WHERE id = ?";
         PreparedStatement preparedStatement = null;
+        Connection connection = null;
 
         try {
-            preparedStatement = write.prepareStatement(query);
+            connection = write.getConnection();
+            preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, channel.getId());
             preparedStatement.execute();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to remove a text channel from db: " +e.getMessage());
         } finally {
-            close(preparedStatement, null);
+            DbHelpers.close(preparedStatement, null, connection);
         }
     }
 
@@ -122,8 +128,11 @@ public class ChannelDAO {
     public boolean setVoiceChannelEnabled(VoiceChannel channel, boolean enabled) {
         String query = "INSERT INTO voice_channel(id, name, guild, voice_enabled) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE voice_enabled = VALUES(voice_enabled)";
         PreparedStatement statement = null;
+        Connection connection = null;
+
         try {
-            statement = write.prepareStatement(query);
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
             statement.setString(1, channel.getId());
             statement.setString(2, channel.getName());
             statement.setString(3, channel.getGuild().getId());
@@ -133,7 +142,7 @@ public class ChannelDAO {
             LOGGER.log(Level.SEVERE, "Failed to update channel voice: " + e.getMessage());
             return false;
         } finally {
-            close(statement, null);
+            DbHelpers.close(statement, null, connection);
         }
         return true;
     }
@@ -141,8 +150,11 @@ public class ChannelDAO {
     public boolean setTextChannelNSFW(TextChannel textChannel, boolean enabled) {
         String query = "INSERT INTO text_channel (id, name, guild, nsfw_enabled) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE nsfw_enabled = VALUES(nsfw_enabled)";
         PreparedStatement statement = null;
+        Connection connection = null;
+
         try {
-            statement = write.prepareStatement(query);
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
             statement.setString(1, textChannel.getId());
             statement.setString(2, textChannel.getName());
             statement.setString(3, textChannel.getGuild().getId());
@@ -152,7 +164,7 @@ public class ChannelDAO {
             LOGGER.log(Level.SEVERE, "Failed to update channel nsfw: " + e.getMessage());
             return false;
         } finally {
-            close(statement, null);
+            DbHelpers.close(statement, null, connection);
         }
         return true;
     }
@@ -167,33 +179,51 @@ public class ChannelDAO {
         return getTextChannelsForQuery(guildId, query);
     }
 
-    public InternalTextChannel getTextChannelForId(String channelId) throws SQLException {
+    public InternalTextChannel getTextChannelForId(String channelId) {
         String query = "SELECT c.id, c.name, c.guild, c.voice_enabled, c.announcement, c.nsfw_enabled, c.commands_enabled FROM text_channel c WHERE c.id = ?";
-        PreparedStatement statement = read.prepareStatement(query);
-        statement.setString(1, channelId);
-        ResultSet set = statement.executeQuery();
-
+        PreparedStatement statement = null;
         InternalTextChannel toReturn = null;
-        if (set.next()) {
-            toReturn = TextChannelMapper.mapSetToInternalTextChannel(set);
+        Connection connection = null;
+        ResultSet set = null;
+        try {
+            connection = read.getConnection();
+            statement = connection.prepareStatement(query);
+            statement.setString(1, channelId);
+            set = statement.executeQuery();
+
+            if (set.next()) {
+                toReturn = TextChannelMapper.mapSetToInternalTextChannel(set);
+            }
+        } catch (SQLException e ) {
+            LOGGER.severe("Failed to get Text channel: "+ channelId +" for id.." + e.getMessage());
+        } finally {
+            DbHelpers.close(statement, set, connection);
         }
 
-        close(statement, set);
         return toReturn;
     }
 
-    public InternalVoiceChannel getVoiceChannelForId(String channelId) throws SQLException {
+    public InternalVoiceChannel getVoiceChannelForId(String channelId) {
         String query = "SELECT c.id, c.name, c.voice_enabled, c.guild FROM voice_channel c WHERE c.id = ?";
-        PreparedStatement statement = read.prepareStatement(query);
-        statement.setString(1, channelId);
-        ResultSet set = statement.executeQuery();
-
+        PreparedStatement statement = null;
         InternalVoiceChannel toReturn = null;
-        if (set.next()) {
-            toReturn = VoiceChannelMapper.mapSetToInternalVoiceChannel(set);
-        }
+        Connection connection = null;
+        ResultSet set = null;
 
-        close(statement, set);
+        try {
+            connection = read.getConnection();
+            statement = connection.prepareStatement(query);
+            statement.setString(1, channelId);
+            set = statement.executeQuery();
+
+            if (set.next()) {
+                toReturn = VoiceChannelMapper.mapSetToInternalVoiceChannel(set);
+            }
+        } catch (SQLException e) {
+            LOGGER.severe("Failed to get voiceChannel: "+ channelId + " for id.. " + e.getMessage());
+        } finally {
+            DbHelpers.close(statement, set, connection);
+        }
         return toReturn;
     }
 
@@ -201,9 +231,11 @@ public class ChannelDAO {
         List<InternalTextChannel> channels = null;
         PreparedStatement statement = null;
         ResultSet set = null;
+        Connection connection = null;
 
         try {
-            statement = read.prepareStatement(query);
+            connection = read.getConnection();
+            statement = connection.prepareStatement(query);
             statement.setString(1, guildId);
             set = statement.executeQuery();
             channels = new ArrayList<>();
@@ -213,7 +245,7 @@ public class ChannelDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
         } finally {
-            close(statement, set);
+            DbHelpers.close(statement, set, connection);
         }
 
         return channels;
@@ -223,9 +255,11 @@ public class ChannelDAO {
         List<InternalVoiceChannel> channels = null;
         PreparedStatement statement = null;
         ResultSet set = null;
+        Connection connection = null;
 
         try {
-            statement = read.prepareStatement(query);
+            connection = read.getConnection();
+            statement = connection.prepareStatement(query);
             statement.setString(1, guildId);
             set = statement.executeQuery();
             channels = new ArrayList<>();
@@ -235,20 +269,9 @@ public class ChannelDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
         } finally {
-            close(statement, set);
+            DbHelpers.close(statement, set, connection);
         }
 
         return channels;
-    }
-
-    private void close(PreparedStatement preparedStatement, ResultSet resultSet) {
-        try {
-            if (preparedStatement != null)
-                preparedStatement.close();
-            if (resultSet != null)
-                resultSet.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 }
