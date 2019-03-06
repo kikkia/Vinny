@@ -90,7 +90,7 @@ public class GuildIT {
     }
 
     private void loadGuilds() throws SQLException {
-        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id) VALUES(?,?,?,?,?,?,?)";
+        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id, prefixes) VALUES(?,?,?,?,?,?,?,?)";
         Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement(query);
 

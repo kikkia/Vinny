@@ -19,11 +19,6 @@ public class GuildPreferencesManager implements GuildSettingsManager {
         cache = GuildCache.getInstance();
     }
 
-    @Override
-    public void init(){
-
-    }
-
     @Nullable
     @Override
     public GuildPreferencesProvider getSettings(Guild g) {

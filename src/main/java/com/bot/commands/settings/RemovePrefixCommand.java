@@ -3,7 +3,6 @@ package com.bot.commands.settings;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.utils.CommandCategories;
-import com.bot.utils.GuildUtils;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 

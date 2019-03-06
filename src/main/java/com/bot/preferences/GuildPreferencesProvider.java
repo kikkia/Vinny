@@ -7,8 +7,8 @@ import java.util.List;
 
 public class GuildPreferencesProvider implements GuildSettingsProvider {
 
-    List<String> prefixes;
-    String guildId;
+    private List<String> prefixes;
+    private String guildId;
 
     public GuildPreferencesProvider(List<String> prefixes, String guildId) {
         this.prefixes = prefixes;
