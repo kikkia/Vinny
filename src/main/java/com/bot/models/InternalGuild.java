@@ -1,10 +1,10 @@
 package com.bot.models;
 
+import com.bot.preferences.GuildPreferencesProvider;
 import com.bot.utils.CommandCategories;
 import com.jagrosh.jdautilities.command.Command;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class InternalGuild {
 
@@ -12,8 +12,9 @@ public class InternalGuild {
     private String name;
     private int volume;
     private Map<Command.Category, String> roleRequirements;
+    private String prefixes;
 
-    public InternalGuild(String id, String name, int minVolume, String minBaseRole, String minModRole, String minNsfwRole, String minVoiceRole) {
+    public InternalGuild(String id, String name, int minVolume, String minBaseRole, String minModRole, String minNsfwRole, String minVoiceRole, String prefixes) {
         this.id = id;
         this.name = name;
         this.volume = minVolume;
@@ -22,6 +23,7 @@ public class InternalGuild {
         this.roleRequirements.put(CommandCategories.MOD, minModRole);
         this.roleRequirements.put(CommandCategories.NSFW, minNsfwRole);
         this.roleRequirements.put(CommandCategories.VOICE, minVoiceRole);
+        this.prefixes = prefixes;
     }
 
     public String getId() {
@@ -50,5 +52,25 @@ public class InternalGuild {
 
     public String getRequiredPermission(Command.Category category) {
         return roleRequirements.get(category);
+    }
+
+    public String getPrefixes() {
+        return prefixes;
+    }
+
+    public ArrayList<String> getPrefixList() {
+        if (prefixes == null)
+            return new ArrayList<>();
+
+        return new ArrayList<>(Arrays.asList(prefixes.split(" ")));
+    }
+
+    public GuildPreferencesProvider getGuildPreferencesProvider() {
+        // Return null if no prefixes are set
+        if(prefixes == null || prefixes.isEmpty())
+            return null;
+
+        // We use a space as a delimiter in the db as it is impossible for it to be uses in a prefix (as jda splits args using it)
+        return new GuildPreferencesProvider(Arrays.asList(prefixes.split(" ")), id);
     }
 }

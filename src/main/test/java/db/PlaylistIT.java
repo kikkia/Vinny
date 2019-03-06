@@ -37,8 +37,8 @@ public class PlaylistIT {
     );
 
     private List<InternalGuild> guilds = Arrays.asList(
-            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1"),
-            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3")
+            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", null),
+            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", null)
     );
 
     private List<AudioTrack> tracks = Arrays.asList(
@@ -142,7 +142,7 @@ public class PlaylistIT {
     }
 
     private void loadGuilds() throws SQLException {
-        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id) VALUES(?,?,?,?,?,?,?)";
+        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id, prefixes) VALUES(?,?,?,?,?,?,?,?)";
         Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement(query);
 

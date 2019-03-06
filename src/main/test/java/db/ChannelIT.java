@@ -36,8 +36,8 @@ public class ChannelIT {
 
 
     private List<InternalGuild> guilds = Arrays.asList(
-            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1"),
-            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3")
+            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", "! v jk"),
+            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", null)
     );
 
     private List<InternalTextChannel> textChannels = Arrays.asList(
@@ -100,7 +100,7 @@ public class ChannelIT {
     }
 
     private void loadGuilds() throws SQLException {
-        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id) VALUES(?,?,?,?,?,?,?)";
+        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id, prefixes) VALUES(?,?,?,?,?,?,?,?)";
         Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement(query);
 
@@ -112,6 +112,7 @@ public class ChannelIT {
             statement.setString(5, g.getRequiredPermission(CommandCategories.MOD));
             statement.setString(6, g.getRequiredPermission(CommandCategories.VOICE));
             statement.setString(7, g.getRequiredPermission(CommandCategories.NSFW));
+            statement.setString(8, g.getPrefixes());
 
             statement.addBatch();
         }

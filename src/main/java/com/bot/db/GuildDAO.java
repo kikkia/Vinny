@@ -2,6 +2,7 @@ package com.bot.db;
 
 import com.bot.db.mappers.GuildMapper;
 import com.bot.models.InternalGuild;
+import com.bot.preferences.GuildCache;
 import com.bot.utils.DbHelpers;
 import com.bot.utils.GuildUtils;
 import com.zaxxer.hikari.HikariDataSource;
@@ -14,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +25,7 @@ public class GuildDAO {
 
     private HikariDataSource read;
     private HikariDataSource write;
+    private GuildCache cache;
     private static GuildDAO instance;
 
 
@@ -38,6 +41,7 @@ public class GuildDAO {
     public GuildDAO(HikariDataSource dataSource) {
         read = dataSource;
         write = dataSource;
+        cache = GuildCache.getInstance();
     }
 
     public static GuildDAO getInstance() {
@@ -49,12 +53,24 @@ public class GuildDAO {
     private void initialize() throws SQLException {
         this.read = ReadConnectionPool.getDataSource();
         this.write = ConnectionPool.getDataSource();
+        cache = GuildCache.getInstance();
     }
 
     public InternalGuild getGuildById(String guildId) {
-        String query = "SELECT id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id FROM guild WHERE id = ?";
+        return getGuildById(guildId, true);
+    }
+
+    public InternalGuild getGuildById(String guildId, boolean useCache) {
+        String query = "SELECT * FROM guild WHERE id = ?";
         ResultSet set = null;
         InternalGuild returned = null;
+
+        if (useCache)
+            returned = cache.get(guildId);
+
+        if (returned != null) {
+            return returned;
+        }
 
         try {
             set = executeGetQuery(query, guildId);
@@ -93,6 +109,9 @@ public class GuildDAO {
         } finally {
             DbHelpers.close(statement, null, connection);
         }
+
+        updateGuildInCache(guild.getId());
+
         return true;
     }
 
@@ -132,6 +151,9 @@ public class GuildDAO {
         } finally {
             DbHelpers.close(statement, null, connection);
         }
+
+        updateGuildInCache(guildId);
+
         return true;
     }
 
@@ -151,6 +173,8 @@ public class GuildDAO {
         } finally {
             DbHelpers.close(statement, null, connection);
         }
+
+        updateGuildInCache(guildId);
 
         return true;
     }
@@ -173,6 +197,8 @@ public class GuildDAO {
             DbHelpers.close(statement, null, connection);
         }
 
+        updateGuildInCache(guildId);
+
         return true;
     }
 
@@ -194,6 +220,8 @@ public class GuildDAO {
             DbHelpers.close(statement, null, connection);
         }
 
+        updateGuildInCache(guildId);
+
         return true;
     }
 
@@ -214,6 +242,33 @@ public class GuildDAO {
         } finally {
             DbHelpers.close(statement, null,connection);
         }
+
+        updateGuildInCache(guildId);
+
+        return true;
+    }
+
+    public boolean updateGuildPrefixes(String guildId, List<String> prefixList) {
+        String prefixes = GuildUtils.convertListToPrefixesString(prefixList);
+        String query = "UPDATE guild SET prefixes = ? WHERE id = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
+            statement.setString(1, prefixes);
+            statement.setString(2, guildId);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update prefixes for guild: " + guildId + " " + e.getMessage());
+            return false;
+        } finally {
+            DbHelpers.close(statement, null,connection);
+        }
+
+        updateGuildInCache(guildId);
+
         return true;
     }
 
@@ -224,5 +279,11 @@ public class GuildDAO {
         ResultSet set = statement.executeQuery();
         DbHelpers.close(statement, null, connection);
         return set;
+    }
+
+    // Whenever we update a guild we want to make sure its updated in the cache
+    private void updateGuildInCache(String guildId) {
+        InternalGuild guild = getGuildById(guildId, false);
+        cache.put(guildId, guild);
     }
 }

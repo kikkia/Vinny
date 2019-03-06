@@ -3,6 +3,7 @@ package db;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalGuildMembership;
+import com.bot.preferences.GuildCache;
 import com.bot.utils.CommandCategories;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -41,8 +42,8 @@ public class GuildIT {
             );
 
     private List<InternalGuild> guilds = Arrays.asList(
-            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1"),
-            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3")
+            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", null),
+            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", "Dude ~ !")
     );
 
     @BeforeClass
@@ -82,6 +83,9 @@ public class GuildIT {
         resetdb();
         loadGuilds();
         loadUsers();
+
+        GuildCache cache = GuildCache.getInstance();
+        cache.removeAll();
     }
 
     private void resetdb() {
@@ -90,7 +94,7 @@ public class GuildIT {
     }
 
     private void loadGuilds() throws SQLException {
-        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id) VALUES(?,?,?,?,?,?,?)";
+        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id, prefixes) VALUES(?,?,?,?,?,?,?,?)";
         Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement(query);
 
@@ -102,6 +106,7 @@ public class GuildIT {
             statement.setString(5, g.getRequiredPermission(CommandCategories.MOD));
             statement.setString(6, g.getRequiredPermission(CommandCategories.VOICE));
             statement.setString(7, g.getRequiredPermission(CommandCategories.NSFW));
+            statement.setString(8, g.getPrefixes());
 
             statement.addBatch();
         }
@@ -152,13 +157,12 @@ public class GuildIT {
     public void testGetGuildById() throws SQLException {
         InternalGuild expected = guilds.get(1); // Guild 102
         InternalGuild returned = guildDAO.getGuildById(expected.getId());
-
         assertGuildEquals(expected, returned);
     }
 
     @Test
     public void testAddGuild() throws SQLException {
-        InternalGuild expected = new InternalGuild("999", "test-added", 100, "999", "12345", "999", "999");
+        InternalGuild expected = new InternalGuild("999", "test-added", 100, "999", "12345", "999", "999", null);
         Role lowRole = mock(Role.class);
         Role highRole = mock(Role.class);
         List<Role> roles = Arrays.asList(lowRole, highRole);
@@ -191,7 +195,7 @@ public class GuildIT {
 
     @Test
     public void testUpdateMinBaseRole() throws SQLException {
-        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "50", "2", "2", "1");
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "50", "2", "2", "1", null);
         guildDAO.updateMinBaseRole("101", "50");
         InternalGuild returned = guildDAO.getGuildById(expected.getId());
         assertGuildEquals(expected, returned);
@@ -199,7 +203,7 @@ public class GuildIT {
 
     @Test
     public void testUpdateMinModRole() throws SQLException {
-        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "50", "2", "1");
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "50", "2", "1", null);
         guildDAO.updateMinModRole("101", "50");
         InternalGuild returned = guildDAO.getGuildById(expected.getId());
         assertGuildEquals(expected, returned);
@@ -208,7 +212,7 @@ public class GuildIT {
 
     @Test
     public void testUpdateMinNSFWRole() throws SQLException {
-        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "2", "50", "1");
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "2", "50", "1", null);
         guildDAO.updateMinNSFWRole("101", "50");
         InternalGuild returned = guildDAO.getGuildById(expected.getId());
         assertGuildEquals(expected, returned);
@@ -216,7 +220,7 @@ public class GuildIT {
 
     @Test
     public void testUpdateMinVoiceRole() throws SQLException {
-        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "2", "2", "50");
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "2", "2", "50", null);
         guildDAO.updateMinVoiceRole("101", "50");
         InternalGuild returned = guildDAO.getGuildById(expected.getId());
         assertGuildEquals(expected, returned);

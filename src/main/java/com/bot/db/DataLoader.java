@@ -26,11 +26,6 @@ public class DataLoader {
 		Config config = Config.getInstance();
 		long startTime = System.currentTimeMillis();
 
-		if (config.getConfig(Config.USE_DB).equals("False")) {
-			System.out.println("Use_DB Set to False in the config file. Exiting...");
-			return;
-		}
-
 		if (config.getConfig(Config.DB_URI) == null) {
 			System.out.println("DB_URI not set in the config file. Exiting...");
 			return;

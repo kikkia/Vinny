@@ -3,6 +3,8 @@ package com.bot.utils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
 
+import java.util.List;
+
 public class GuildUtils {
 
     public static Role getHighestRole(Guild guild) {
@@ -14,5 +16,15 @@ public class GuildUtils {
                 highest = r;
         }
         return highest;
+    }
+
+    public static String convertListToPrefixesString(List<String> prefixes) {
+        StringBuilder sb = new StringBuilder();
+        for (String prefix : prefixes) {
+            sb.append(prefix);
+            sb.append(" ");
+        }
+
+        return sb.toString();
     }
 }
