@@ -3,6 +3,7 @@ package db;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalGuildMembership;
+import com.bot.preferences.GuildCache;
 import com.bot.utils.CommandCategories;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -82,6 +83,9 @@ public class GuildIT {
         resetdb();
         loadGuilds();
         loadUsers();
+
+        GuildCache cache = GuildCache.getInstance();
+        cache.removeAll();
     }
 
     private void resetdb() {
@@ -153,7 +157,6 @@ public class GuildIT {
     public void testGetGuildById() throws SQLException {
         InternalGuild expected = guilds.get(1); // Guild 102
         InternalGuild returned = guildDAO.getGuildById(expected.getId());
-
         assertGuildEquals(expected, returned);
     }
 

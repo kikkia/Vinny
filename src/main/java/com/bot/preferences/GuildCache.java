@@ -6,6 +6,7 @@ import org.apache.commons.collections4.MapIterator;
 import org.apache.commons.collections4.map.LRUMap;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -91,6 +92,13 @@ public class GuildCache {
     public void remove(String key) {
         synchronized (cacheMap) {
             cacheMap.remove(key);
+        }
+    }
+
+    public void removeAll() {
+        synchronized (cacheMap) {
+            for (Object entry : cacheMap.keySet())
+            cacheMap.remove((String) entry);
         }
     }
 
