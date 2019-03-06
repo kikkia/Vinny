@@ -37,8 +37,8 @@ public class PlaylistIT {
     );
 
     private List<InternalGuild> guilds = Arrays.asList(
-            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1"),
-            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3")
+            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", null),
+            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", null)
     );
 
     private List<AudioTrack> tracks = Arrays.asList(

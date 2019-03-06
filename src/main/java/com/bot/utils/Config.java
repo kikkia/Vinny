@@ -25,7 +25,7 @@ public class Config {
     public static final String BOT_API_TOKEN = "BOT_PW_API";
 
 
-    public static final String USE_DB = "USE_DB";
+    public static final String SILENT_DEPLOY = "SILENT_DEPLOY";
     public static final String DB_URI = "DB_URI";
     public static final String DB_USERNAME = "DB_USERNAME";
     public static final String DB_PASSWORD = "DB_PASSWORD";
@@ -35,6 +35,9 @@ public class Config {
     public static final String PREFIX = "PREFIX";
     public static final String DATA_LOADER = "DATA_LOADER";
 
+    public static final String GUILD_PREFS_CACHE_MAX_ITEMS = "GUILD_PREFS_CACHE_MAX_ITEMS";
+    public static final String GUILD_PREFS_CACHE_OBJECT_LIFETIME = "GUILD_PREFS_OBJECT_LIFETIME";
+    public static final String GUILD_PREFS_CACHE_CLEANUP_INTERVAL = "GUILD_PREFS_CACHE_CLEANUP_INTERVAL";
 
     private Config() {
         this.configFile = new File("res/config/config.conf");

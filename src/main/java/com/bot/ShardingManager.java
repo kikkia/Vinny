@@ -9,6 +9,7 @@ import com.bot.commands.reddit.TopPostCommand;
 import com.bot.commands.settings.*;
 import com.bot.commands.voice.*;
 import com.bot.models.InternalShard;
+import com.bot.preferences.GuildPreferencesManager;
 import com.bot.utils.Config;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
@@ -32,16 +33,20 @@ public class ShardingManager {
         return instance;
     }
 
-    public static ShardingManager getInstance(int numShards, boolean useDB) throws Exception {
+    public static ShardingManager getInstance(int numShards) throws Exception {
         if (instance == null)
-            instance = new ShardingManager(numShards, useDB);
+            instance = new ShardingManager(numShards);
         return instance;
     }
 
     // This adds a connection for each shard. Shards make it more efficient. ~1000 servers to shards is ideal
     // supportScript disables commands. Useful for running a supportScript simultaneously while the bot is going on prod
-    private ShardingManager(int numShards, boolean useDB) throws Exception {
+    private ShardingManager(int numShards) throws Exception {
         Config config = Config.getInstance();
+
+        // Check if we are just doing a silent deploy (For debug and stress testing purposes)
+        boolean silentDeploy = Boolean.parseBoolean(config.getConfig(Config.SILENT_DEPLOY));
+
         shards = new HashMap<>();
         Bot bot = null;
         CommandClient client = null;
@@ -49,37 +54,21 @@ public class ShardingManager {
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
         commandClientBuilder.setPrefix("~");
+        commandClientBuilder.setAlternativePrefix("@mention");
         commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
 
-        commandClientBuilder.addCommands(
-                // Voice Commands
-                new PlayCommand(bot),
-                new PauseCommand(),
-                new RepeatCommand(),
-                new StopCommand(),
-                new ResumeCommand(),
-                new VolumeCommand(),
-                new ListTracksCommand(),
-                new SkipCommand(),
-
-                // Battle Royale
-                //new BattleRoyaleCommand(),
-
-                // General Commands
-                new InviteCommand(),
-                new ShardStatsCommand(),
-                new PingCommand(),
-
-                // Reddit Commands
-                new RandomPostCommand(),
-                new TopPostCommand(),
-                new NewPostCommand()
-        );
-
-        // Commands that rely on the DB (usually only turned off to test)
-        // TODO: Make DB Mandatory
-        if (useDB) {
+        // If we are deploying silently we are not registering commands.
+        if (!silentDeploy) {
             commandClientBuilder.addCommands(
+                    // Voice Commands
+                    new PlayCommand(bot),
+                    new PauseCommand(),
+                    new RepeatCommand(),
+                    new StopCommand(),
+                    new ResumeCommand(),
+                    new VolumeCommand(),
+                    new ListTracksCommand(),
+                    new SkipCommand(),
                     new SaveMyPlaylistCommand(bot),
                     new ListMyPlaylistCommand(),
                     new LoadMyPlaylistCommand(bot),
@@ -87,18 +76,38 @@ public class ShardingManager {
                     new SaveGuildPlaylistCommand(bot),
                     new ListGuildPlaylistCommand(),
 
+                    // Battle Royale
+                    //new BattleRoyaleCommand(),
+
+                    // General Commands
+                    new InviteCommand(),
+                    new ShardStatsCommand(),
+                    new PingCommand(),
+
+                    // Reddit Commands
+                    new RandomPostCommand(),
+                    new TopPostCommand(),
+                    new NewPostCommand(),
+
                     // Guild Settings Commands
-                    new DefaultVolumeCommand(),
                     new GetSettingsCommand(),
+                    new DefaultVolumeCommand(),
                     new SetBaseRoleCommand(),
                     new SetModRoleCommand(),
                     new SetNSFWCommand(),
                     new SetVoiceRoleCommand(),
                     new EnableNSFWCommand(),
-                    new DisableNSFWCommand()
+                    new DisableNSFWCommand(),
+                    new PrefixesCommand(),
+                    new AddPrefixCommand(),
+                    new RemovePrefixCommand()
             );
+        } else {
+            commandClientBuilder.useHelpBuilder(false);
         }
+
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
+        commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
         client = commandClientBuilder.build();
 
         for (int i = 0; i < numShards; i++) {

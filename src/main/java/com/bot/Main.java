@@ -31,19 +31,16 @@ public class Main {
 			return;
 		}
 
-		boolean useDB = Boolean.parseBoolean(config.getConfig(Config.USE_DB));
-		if (useDB) {
-			ConnectionPool connectionPool = ConnectionPool.getInstance();
-			LOGGER.log(Level.INFO, "Hikari pool successfully initialized");
-			Flyway flyway = new Flyway();
-			flyway.setDataSource(connectionPool.getDataSource());
-			flyway.migrate();
-			LOGGER.log(Level.INFO, "Flyway migrations completed");
-		}
+		ConnectionPool connectionPool = ConnectionPool.getInstance();
+		LOGGER.log(Level.INFO, "Hikari pool successfully initialized");
+		Flyway flyway = new Flyway();
+		flyway.setDataSource(connectionPool.getDataSource());
+		flyway.migrate();
+		LOGGER.log(Level.INFO, "Flyway migrations completed");
 
 		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));
 		boolean dataLoader = Boolean.parseBoolean(config.getConfig(Config.DATA_LOADER));
-		ShardingManager shardingManager = ShardingManager.getInstance(numShards, useDB);
+		ShardingManager shardingManager = ShardingManager.getInstance(numShards);
 
 		LOGGER.log(Level.INFO, "Starting a data loader");
 		DataLoader loader = new DataLoader(shardingManager);
