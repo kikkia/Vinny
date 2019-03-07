@@ -3,6 +3,7 @@ package com.bot.commands.settings;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.utils.CommandCategories;
+import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
@@ -25,6 +26,10 @@ public class RemovePrefixCommand extends Command {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        // Check the permissions to do the command
+        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
+            return;
+
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
 
         if (commandEvent.getArgs().isEmpty()) {
