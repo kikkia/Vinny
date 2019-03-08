@@ -42,8 +42,10 @@ public class Main {
 		boolean dataLoader = Boolean.parseBoolean(config.getConfig(Config.DATA_LOADER));
 		ShardingManager shardingManager = ShardingManager.getInstance(numShards);
 
-		LOGGER.log(Level.INFO, "Starting a data loader");
-		DataLoader loader = new DataLoader(shardingManager);
+		if (dataLoader) {
+			LOGGER.log(Level.INFO, "Starting a data loader");
+			DataLoader loader = new DataLoader(shardingManager);
+		}
 
 		System.out.println("Successfully started.");
 	}

@@ -62,7 +62,6 @@ public class GuildDAO {
 
     public InternalGuild getGuildById(String guildId, boolean useCache) {
         String query = "SELECT * FROM guild WHERE id = ?";
-        ResultSet set = null;
         InternalGuild returned = null;
 
         if (useCache)
@@ -72,15 +71,22 @@ public class GuildDAO {
             return returned;
         }
 
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet set = null;
+
         try {
-            set = executeGetQuery(query, guildId);
+            connection = read.getConnection();
+            statement = connection.prepareStatement(query);
+            statement.setString(1, guildId);
+            set = statement.executeQuery();
             if (set.next()) {
                 returned = GuildMapper.mapSetToGuild(set);
             }
         } catch (SQLException e) {
             LOGGER.severe("Failed to get guildById: " + e.getMessage());
         } finally {
-            DbHelpers.close(null, set, null);
+            DbHelpers.close(statement, set, connection);
         }
 
         return returned;
