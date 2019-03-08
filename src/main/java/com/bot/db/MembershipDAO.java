@@ -94,7 +94,6 @@ public class MembershipDAO {
             while (set.next()) {
                 memberships.add(GuildMembershipMapper.mapGuildMembership(set));
             }
-            DbHelpers.close(statement, set, connection);
         } catch (SQLException e) {
             LOGGER.severe("Failed to get memberships for user. " + e.getMessage());
         } finally {
