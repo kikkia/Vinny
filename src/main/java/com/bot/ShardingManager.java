@@ -95,6 +95,7 @@ public class ShardingManager {
                     new LennyCommand(),
                     new SaltCommand(),
                     new AyyCommand(),
+                    new AsciiCommand(),
 
                     // Reddit Commands
                     new RandomPostCommand(),
