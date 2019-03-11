@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 public class AsciiCommand extends MemeCommand {
-    Logger LOGGER = Logger.getLogger(this.getClass().getName());
+    private Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
     public AsciiCommand() {
         this.name = "ascii";

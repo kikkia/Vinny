@@ -6,7 +6,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 public class SaltCommand extends MemeCommand {
 
-    String salt = "▒▒▒▒▒▒▄▄██████▄\n" +
+    private String salt = "▒▒▒▒▒▒▄▄██████▄\n" +
             "▒▒▒▒▒▒▒▒▒▒▄▄████████████▄\n" +
             "▒▒▒▒▒▒▄▄██████████████████\n" +
             "▒▒▒▄████▀▀▀██▀██▌███▀▀▀████\n" +

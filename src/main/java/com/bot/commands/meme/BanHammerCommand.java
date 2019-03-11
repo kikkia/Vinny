@@ -6,7 +6,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 public class BanHammerCommand extends MemeCommand {
 
-    String hammer = "░░░░░░░░░░░░\n" +
+    private String hammer = "░░░░░░░░░░░░\n" +
             " ▄████▄░░░░░░░░░░░░░░░░░░░░\n" +
             "██████▄░░░░░░▄▄▄░░░░░░░░░░\n" +
             "░███▀▀▀▄▄▄▀▀▀░░░░░░░░░░░░░\n" +

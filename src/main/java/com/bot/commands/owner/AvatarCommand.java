@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 public class AvatarCommand extends OwnerCommand {
-    Logger LOGGER = Logger.getLogger(this.getClass().getName());
+    private Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
     public AvatarCommand() {
         this.name = "avatar";

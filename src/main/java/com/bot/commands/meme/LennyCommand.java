@@ -6,7 +6,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 public class LennyCommand extends MemeCommand {
 
-    String lenny = "───█───▄▀█▀▀█▀▄▄───▐█──────▄▀█▀▀█▀▄▄\n" +
+    private String lenny = "───█───▄▀█▀▀█▀▄▄───▐█──────▄▀█▀▀█▀▄▄\n" +
             "──█───▀─▐▌──▐▌─▀▀──▐█─────▀─▐▌──▐▌─█▀\n" +
             "─▐▌──────▀▄▄▀──────▐█▄▄──────▀▄▄▀──▐▌\n" +
             "─█────────────────────▀█────────────█\n" +

@@ -6,7 +6,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 public class KappaCommand extends MemeCommand {
 
-    String kappa = "░░░░░░░░░░░░░░░░░░\n" +
+    private String kappa = "░░░░░░░░░░░░░░░░░░\n" +
             "░░░░▄▀▀▀▀▀█▀▄▄▄▄░░░░\n" +
             "░░▄▀▒▓▒▓▓▒▓▒▒▓▒▓▀▄░░\n" +
             "▄▀▒▒▓▒▓▒▒▓▒▓▒▓▓▒▒▓█░\n" +

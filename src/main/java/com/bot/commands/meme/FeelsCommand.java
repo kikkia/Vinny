@@ -6,7 +6,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 public class FeelsCommand extends MemeCommand {
 
-    String feels = "───────▄▀▀▀▀▀▀▀▀▀▀▄▄\n" +
+    private String feels = "───────▄▀▀▀▀▀▀▀▀▀▀▄▄\n" +
             "────▄▀▀░░░░░░░░░░░░░▀▄\n" +
             "──▄▀░░░░░░░░░░░░░░░░░░▀▄\n" +
             "──█░░░░░░░░░░░░░░░░░░░░░▀▄\n" +
