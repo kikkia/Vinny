@@ -1,15 +1,13 @@
 package com.bot.commands.general;
 
-import com.bot.utils.CommandCategories;
+import com.bot.commands.GeneralCommand;
 import com.bot.utils.CommandPermissions;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-public class PingCommand extends Command {
+public class PingCommand extends GeneralCommand {
 
     public PingCommand() {
         this.name = "ping";
-        this.category = CommandCategories.GENERAL;
         this.guildOnly = false;
         this.help = "Gets the ping from Vinny to discord.";
     }

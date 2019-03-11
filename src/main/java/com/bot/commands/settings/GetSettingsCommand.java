@@ -1,11 +1,11 @@
 package com.bot.commands.settings;
 
 import com.bot.Bot;
+import com.bot.commands.GeneralCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
@@ -13,7 +13,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GetSettingsCommand extends Command {
+public class GetSettingsCommand extends GeneralCommand {
     private static final Logger LOGGER = Logger.getLogger(GetSettingsCommand.class.getName());
     private GuildDAO guildDAO;
 
@@ -21,9 +21,8 @@ public class GetSettingsCommand extends Command {
         this.name = "settings";
         this.help = "Gets the settings for the guild. (Requires mod command permissions)";
         this.arguments = "";
-        this.guildOnly = true;
+
         // General since we are not setting any data
-        this.category = CommandCategories.GENERAL;
         this.guildDAO = GuildDAO.getInstance();
     }
 
@@ -62,7 +61,7 @@ public class GetSettingsCommand extends Command {
         builder.setTitle("Settings for " + guild.getName());
         builder.addField("Default Volume", guild.getVolume() + "", true);
         builder.addField("Min Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.GENERAL)).getName(), false);
-        builder.addField("Min Mod Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.MOD)).getName(), false);
+        builder.addField("Min Mod Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.MODERATION)).getName(), false);
         builder.addField("Min Voice Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.VOICE)).getName(), false);
         builder.addField("Min NSFW Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.NSFW)).getName(), false);
 

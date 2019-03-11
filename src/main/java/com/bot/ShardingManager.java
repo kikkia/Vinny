@@ -3,6 +3,8 @@ package com.bot;
 import com.bot.commands.general.InviteCommand;
 import com.bot.commands.general.PingCommand;
 import com.bot.commands.general.ShardStatsCommand;
+import com.bot.commands.meme.KappaCommand;
+import com.bot.commands.owner.AvatarCommand;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
 import com.bot.commands.reddit.TopPostCommand;
@@ -83,6 +85,11 @@ public class ShardingManager {
                     new InviteCommand(),
                     new ShardStatsCommand(),
                     new PingCommand(),
+                    new GetSettingsCommand(),
+                    new PrefixesCommand(),
+
+                    // Meme Commands
+                    new KappaCommand(),
 
                     // Reddit Commands
                     new RandomPostCommand(),
@@ -90,7 +97,6 @@ public class ShardingManager {
                     new NewPostCommand(),
 
                     // Guild Settings Commands
-                    new GetSettingsCommand(),
                     new DefaultVolumeCommand(),
                     new SetBaseRoleCommand(),
                     new SetModRoleCommand(),
@@ -98,9 +104,11 @@ public class ShardingManager {
                     new SetVoiceRoleCommand(),
                     new EnableNSFWCommand(),
                     new DisableNSFWCommand(),
-                    new PrefixesCommand(),
                     new AddPrefixCommand(),
-                    new RemovePrefixCommand()
+                    new RemovePrefixCommand(),
+
+                    // Owner Commands -- All hidden
+                    new AvatarCommand()
             );
         } else {
             commandClientBuilder.useHelpBuilder(false);

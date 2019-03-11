@@ -9,6 +9,7 @@ import com.bot.models.InternalTextChannel;
 import com.bot.models.InternalVoiceChannel;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Role;
 
 import java.sql.SQLException;
@@ -29,6 +30,10 @@ public class CommandPermissions {
     }
 
     public static boolean canExecuteCommand(Command.Category commandCategory, CommandEvent commandEvent) {
+        // If its a PM then screw permissions
+        if (commandEvent.isFromType(ChannelType.PRIVATE))
+            return true;
+
         InternalGuild guild;
 
         try {

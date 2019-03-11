@@ -1,25 +1,22 @@
 package com.bot.commands.settings;
 
+import com.bot.commands.ModerationCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
-import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class RemovePrefixCommand extends Command {
+public class RemovePrefixCommand extends ModerationCommand {
 
     private GuildDAO guildDAO;
 
     public RemovePrefixCommand() {
         this.name = "removeprefix";
         this.help = "Removes one or more custom prefixes from the current custom prefixes.";
-        this.guildOnly = true;
         this.arguments = "<One or more custom prefixes, separated by spaces>";
-        this.category = CommandCategories.MOD;
 
         guildDAO = GuildDAO.getInstance();
     }

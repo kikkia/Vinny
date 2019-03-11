@@ -1,17 +1,16 @@
 package com.bot.commands.settings;
 
+import com.bot.commands.ModerationCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
-import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
 import com.bot.utils.GuildUtils;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class AddPrefixCommand extends Command {
+public class AddPrefixCommand extends ModerationCommand {
 
     private GuildDAO guildDAO;
 
@@ -19,8 +18,6 @@ public class AddPrefixCommand extends Command {
         this.name = "addprefix";
         this.help = "Adds one or more custom prefixes to the server.";
         this.arguments = "<One or more custom prefixes, separated by spaces>";
-        this.guildOnly = true;
-        this.category = CommandCategories.MOD;
 
         guildDAO = GuildDAO.getInstance();
     }

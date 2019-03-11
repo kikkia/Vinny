@@ -1,18 +1,17 @@
 package com.bot.commands.general;
 
-import com.bot.utils.CommandCategories;
-import com.jagrosh.jdautilities.command.Command;
+import com.bot.commands.GeneralCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.User;
 
-public class InviteCommand extends Command {
+public class InviteCommand extends GeneralCommand {
 
     public InviteCommand() {
         this.name = "invite";
         this.help = "Sends a link to invite the bot to your server";
         this.arguments = "";
-        this.category = CommandCategories.GENERAL;
+        this.guildOnly = false;
     }
 
     @Override

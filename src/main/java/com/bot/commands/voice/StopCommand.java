@@ -1,22 +1,20 @@
 package com.bot.commands.voice;
 
 import com.bot.ShardingManager;
-import com.bot.utils.CommandCategories;
+import com.bot.commands.VoiceCommand;
 import com.bot.utils.CommandPermissions;
 import com.bot.voice.VoiceSendHandler;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.logging.Logger;
 
-public class StopCommand extends Command {
+public class StopCommand extends VoiceCommand {
 	private static final Logger LOGGER = Logger.getLogger(StopCommand.class.getName());
 
 	public StopCommand() {
 		this.name = "stop";
 		this.arguments = "";
 		this.help = "Stops stream and clears the current playlist";
-		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

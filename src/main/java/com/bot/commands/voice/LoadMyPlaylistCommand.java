@@ -2,20 +2,19 @@ package com.bot.commands.voice;
 
 import com.bot.Bot;
 import com.bot.ShardingManager;
+import com.bot.commands.VoiceCommand;
 import com.bot.db.PlaylistDAO;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
-import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
 import com.bot.voice.LoadHandler;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LoadMyPlaylistCommand extends Command {
+public class LoadMyPlaylistCommand extends VoiceCommand {
     private static final Logger LOGGER = Logger.getLogger(LoadMyPlaylistCommand.class.getName());
     private PlaylistDAO playlistDAO;
     private Bot bot;
@@ -24,7 +23,6 @@ public class LoadMyPlaylistCommand extends Command {
         this.name = "loadmyplaylist";
         this.arguments = "<playlist id|playlist name>";
         this.help = "Loads one of your playlists. You must either specify the id or the name of the playlist.";
-        this.category = CommandCategories.VOICE;
 
         this.playlistDAO = PlaylistDAO.getInstance();
         this.bot = bot;

@@ -1,17 +1,16 @@
 package com.bot.commands.voice;
 
+import com.bot.commands.VoiceCommand;
 import com.bot.db.PlaylistDAO;
 import com.bot.models.Playlist;
-import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 
 import java.util.List;
 import java.util.logging.Logger;
 
-public class ListMyPlaylistCommand extends Command {
+public class ListMyPlaylistCommand extends VoiceCommand {
     private static final Logger LOGGER = Logger.getLogger(ListMyPlaylistCommand.class.getName());
 
 	private PlaylistDAO playlistDAO;
@@ -20,7 +19,6 @@ public class ListMyPlaylistCommand extends Command {
 		this.playlistDAO = PlaylistDAO.getInstance();
 		this.name = "myplaylists";
 		this.help = "Returns all of the playlists you have";
-		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

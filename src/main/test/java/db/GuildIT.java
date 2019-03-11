@@ -103,7 +103,7 @@ public class GuildIT {
             statement.setString(2, g.getName());
             statement.setInt(3, g.getVolume());
             statement.setString(4, g.getRequiredPermission(CommandCategories.GENERAL));
-            statement.setString(5, g.getRequiredPermission(CommandCategories.MOD));
+            statement.setString(5, g.getRequiredPermission(CommandCategories.MODERATION));
             statement.setString(6, g.getRequiredPermission(CommandCategories.VOICE));
             statement.setString(7, g.getRequiredPermission(CommandCategories.NSFW));
             statement.setString(8, g.getPrefixes());
@@ -148,7 +148,7 @@ public class GuildIT {
         assertEquals(expected.getName(), returned.getName());
         assertEquals(expected.getVolume(), returned.getVolume());
         assertEquals(expected.getRequiredPermission(CommandCategories.GENERAL), returned.getRequiredPermission(CommandCategories.GENERAL));
-        assertEquals(expected.getRequiredPermission(CommandCategories.MOD), returned.getRequiredPermission(CommandCategories.MOD));
+        assertEquals(expected.getRequiredPermission(CommandCategories.MODERATION), returned.getRequiredPermission(CommandCategories.MODERATION));
         assertEquals(expected.getRequiredPermission(CommandCategories.NSFW), returned.getRequiredPermission(CommandCategories.NSFW));
         assertEquals(expected.getRequiredPermission(CommandCategories.VOICE), returned.getRequiredPermission(CommandCategories.VOICE));
     }

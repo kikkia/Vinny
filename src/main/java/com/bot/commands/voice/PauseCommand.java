@@ -1,23 +1,19 @@
 package com.bot.commands.voice;
 
-import com.bot.utils.CommandCategories;
+import com.bot.commands.VoiceCommand;
 import com.bot.utils.CommandPermissions;
 import com.bot.voice.VoiceSendHandler;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.logging.Logger;
 
-public class PauseCommand extends Command {
+public class PauseCommand extends VoiceCommand {
 	private static final Logger LOGGER = Logger.getLogger(PauseCommand.class.getName());
 
 	public PauseCommand() {
 		this.name = "pause";
 		this.arguments = "";
 		this.help = "Pauses or resumes the stream";
-		this.category = CommandCategories.VOICE;
 	}
 
 	@Override
