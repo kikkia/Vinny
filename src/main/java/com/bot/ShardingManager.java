@@ -3,7 +3,7 @@ package com.bot;
 import com.bot.commands.general.InviteCommand;
 import com.bot.commands.general.PingCommand;
 import com.bot.commands.general.ShardStatsCommand;
-import com.bot.commands.meme.KappaCommand;
+import com.bot.commands.meme.*;
 import com.bot.commands.owner.AvatarCommand;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
@@ -90,6 +90,11 @@ public class ShardingManager {
 
                     // Meme Commands
                     new KappaCommand(),
+                    new BanHammerCommand(),
+                    new FeelsCommand(),
+                    new LennyCommand(),
+                    new SaltCommand(),
+                    new AyyCommand(),
 
                     // Reddit Commands
                     new RandomPostCommand(),
