@@ -2,11 +2,13 @@ package com.bot;
 
 import com.bot.commands.general.InviteCommand;
 import com.bot.commands.general.PingCommand;
+import com.bot.commands.general.RollCommand;
 import com.bot.commands.general.ShardStatsCommand;
 import com.bot.commands.meme.*;
 import com.bot.commands.owner.AvatarCommand;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
+import com.bot.commands.reddit.ShitpostCommand;
 import com.bot.commands.reddit.TopPostCommand;
 import com.bot.commands.settings.*;
 import com.bot.commands.voice.*;
@@ -87,6 +89,7 @@ public class ShardingManager {
                     new PingCommand(),
                     new GetSettingsCommand(),
                     new PrefixesCommand(),
+                    new RollCommand(),
 
                     // Meme Commands
                     new KappaCommand(),
@@ -96,6 +99,7 @@ public class ShardingManager {
                     new SaltCommand(),
                     new AyyCommand(),
                     new AsciiCommand(),
+                    new ShitpostCommand(),
 
                     // Reddit Commands
                     new RandomPostCommand(),

@@ -4,7 +4,6 @@ import com.bot.utils.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import javax.sql.DataSource;
 import java.util.logging.Logger;
 
 public class ConnectionPool {
