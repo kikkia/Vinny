@@ -33,6 +33,7 @@ public class Rule34Command extends NSFWCommand {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
         // Check the permissions to do the command
         if (!CommandPermissions.canExecuteCommand(this, commandEvent))
             return;
@@ -48,6 +49,7 @@ public class Rule34Command extends NSFWCommand {
         } catch (Exception e) {
             LOGGER.severe("Something went wrong getting r34 post: " + e.getMessage());
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong getting the image, please try again.");
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
     }
 

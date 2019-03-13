@@ -19,6 +19,8 @@ public class AvatarCommand extends OwnerCommand {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
+
         if (commandEvent.getMessage().getAttachments().isEmpty()) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " You need to give a picture attachment.");
             return;
@@ -40,6 +42,7 @@ public class AvatarCommand extends OwnerCommand {
         catch (IOException e)
         {
             commandEvent.reply(commandEvent.getClient().getError() + " Failed to update the avatar");
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
     }
 }

@@ -19,6 +19,7 @@ public class AsciiCommand extends MemeCommand {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
         // Check the permissions to do the command
         if (!CommandPermissions.canExecuteCommand(this, commandEvent))
             return;
@@ -33,6 +34,7 @@ public class AsciiCommand extends MemeCommand {
         } catch (IOException e) {
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong. Please try again.");
             LOGGER.severe("Error generating ascii: " + e.getMessage());
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         } catch (Exception e) {
             commandEvent.reply(commandEvent.getClient().getWarning() + "Failed to generate ascii. Make sure you are only using unicode characters.");
         }

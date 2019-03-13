@@ -30,6 +30,7 @@ public class ShitpostCommand extends MemeCommand {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
         // Check the permissions to do the command
         if (!CommandPermissions.canExecuteCommand(this, commandEvent))
             return;
@@ -45,6 +46,7 @@ public class ShitpostCommand extends MemeCommand {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error thrown:" + e);
             commandEvent.reply(commandEvent.getClient().getError() + " Sorry, something went wrong getting a reddit post.");
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
     }
 }

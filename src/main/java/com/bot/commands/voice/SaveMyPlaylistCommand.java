@@ -28,6 +28,7 @@ public class SaveMyPlaylistCommand extends VoiceCommand {
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
+		metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
 		// Check the permissions to do the command
 		if (!CommandPermissions.canExecuteCommand(this, commandEvent))
 			return;
@@ -49,6 +50,7 @@ public class SaveMyPlaylistCommand extends VoiceCommand {
 			commandEvent.reply("Playlist successfully created.");
 		} else {
 			commandEvent.reply("Something went wrong! Failed to create playlist.");
+			metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
 		}
 	}
 }

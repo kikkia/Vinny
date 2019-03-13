@@ -27,6 +27,7 @@ public class SetBaseRoleCommand extends ModerationCommand {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
         // Check the permissions to do the command
         if (!CommandPermissions.canExecuteCommand(this, commandEvent))
             return;
@@ -39,6 +40,7 @@ public class SetBaseRoleCommand extends ModerationCommand {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Problem getting guild settings " + e.getMessage());
             commandEvent.reply(commandEvent.getClient().getError() + " There was a problem getting the settings for your guild. Please contact the developer on the support server. " + Bot.SUPPORT_INVITE_LINK);
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             return;
         }
 
@@ -49,6 +51,7 @@ public class SetBaseRoleCommand extends ModerationCommand {
             if (!guildDAO.addGuild(commandGuild)) {
                 LOGGER.log(Level.SEVERE, "Failed to add the guild to the db");
                 commandEvent.reply(commandEvent.getClient().getError() + " Error adding the guild to the db. Please contact the developer on the support server." + Bot.SUPPORT_INVITE_LINK);
+                metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
                 return;
             }
             commandEvent.reply(commandEvent.getClient().getSuccess() + " Added the guild to the database. Retrying");
@@ -66,6 +69,7 @@ public class SetBaseRoleCommand extends ModerationCommand {
         if (!guildDAO.updateMinBaseRole(guild.getId(), mentionedRoles.get(0).getId())) {
             LOGGER.log(Level.SEVERE, "Failed to update base role for guild " + guild.getId());
             commandEvent.reply("Something went wrong. Please contact the developers on the support server. " + Bot.SUPPORT_INVITE_LINK);
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
         commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
 

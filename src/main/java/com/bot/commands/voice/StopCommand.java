@@ -19,7 +19,8 @@ public class StopCommand extends VoiceCommand {
 
 	@Override
 	protected void execute(CommandEvent commandEvent) {
-	    // Command permissions check
+		metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
+		// Command permissions check
 		if (!CommandPermissions.canExecuteCommand(this, commandEvent))
 		    return;
 
