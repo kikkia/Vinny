@@ -1,6 +1,8 @@
 package com.bot.commands.general;
 
 import com.bot.commands.GeneralCommand;
+import com.bot.utils.CommandPermissions;
+import com.bot.utils.MetricsManager;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -16,6 +18,11 @@ public class InviteCommand extends GeneralCommand {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
+        // Check the permissions to do the command
+        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
+            return;
+
         // No need to check perms here
         User user = commandEvent.getAuthor();
         PrivateChannel privateChannel = user.openPrivateChannel().complete();

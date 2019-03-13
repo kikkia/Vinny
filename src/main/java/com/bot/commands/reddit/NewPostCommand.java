@@ -32,6 +32,7 @@ public class NewPostCommand extends RedditCommand {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
         // Check the permissions to do the command
         if (!CommandPermissions.canExecuteCommand(this, commandEvent))
             return;
