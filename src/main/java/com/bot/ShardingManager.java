@@ -2,9 +2,14 @@ package com.bot;
 
 import com.bot.commands.general.InviteCommand;
 import com.bot.commands.general.PingCommand;
+import com.bot.commands.general.RollCommand;
 import com.bot.commands.general.ShardStatsCommand;
+import com.bot.commands.meme.*;
+import com.bot.commands.nsfw.Rule34Command;
+import com.bot.commands.owner.AvatarCommand;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
+import com.bot.commands.reddit.ShitpostCommand;
 import com.bot.commands.reddit.TopPostCommand;
 import com.bot.commands.settings.*;
 import com.bot.commands.voice.*;
@@ -83,6 +88,19 @@ public class ShardingManager {
                     new InviteCommand(),
                     new ShardStatsCommand(),
                     new PingCommand(),
+                    new GetSettingsCommand(),
+                    new PrefixesCommand(),
+                    new RollCommand(),
+
+                    // Meme Commands
+                    new KappaCommand(),
+                    new BanHammerCommand(),
+                    new FeelsCommand(),
+                    new LennyCommand(),
+                    new SaltCommand(),
+                    new AyyCommand(),
+                    new AsciiCommand(),
+                    new ShitpostCommand(),
 
                     // Reddit Commands
                     new RandomPostCommand(),
@@ -90,7 +108,6 @@ public class ShardingManager {
                     new NewPostCommand(),
 
                     // Guild Settings Commands
-                    new GetSettingsCommand(),
                     new DefaultVolumeCommand(),
                     new SetBaseRoleCommand(),
                     new SetModRoleCommand(),
@@ -98,9 +115,14 @@ public class ShardingManager {
                     new SetVoiceRoleCommand(),
                     new EnableNSFWCommand(),
                     new DisableNSFWCommand(),
-                    new PrefixesCommand(),
                     new AddPrefixCommand(),
-                    new RemovePrefixCommand()
+                    new RemovePrefixCommand(),
+
+                    // NSFW Commands
+                    new Rule34Command(),
+
+                    // Owner Commands -- All hidden
+                    new AvatarCommand()
             );
         } else {
             commandClientBuilder.useHelpBuilder(false);

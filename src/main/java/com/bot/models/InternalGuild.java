@@ -20,7 +20,7 @@ public class InternalGuild {
         this.volume = minVolume;
         this.roleRequirements = new HashMap<>();
         this.roleRequirements.put(CommandCategories.GENERAL, minBaseRole);
-        this.roleRequirements.put(CommandCategories.MOD, minModRole);
+        this.roleRequirements.put(CommandCategories.MODERATION, minModRole);
         this.roleRequirements.put(CommandCategories.NSFW, minNsfwRole);
         this.roleRequirements.put(CommandCategories.VOICE, minVoiceRole);
         this.prefixes = prefixes;
@@ -51,6 +51,11 @@ public class InternalGuild {
     }
 
     public String getRequiredPermission(Command.Category category) {
+        // Overriding the permissions for reddit and meme commands with the ones for GENERAL
+        if (category.getName().equals("reddit") || category.getName().equals("meme")) {
+            return roleRequirements.get(CommandCategories.GENERAL);
+        }
+
         return roleRequirements.get(category);
     }
 

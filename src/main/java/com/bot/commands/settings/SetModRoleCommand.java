@@ -1,11 +1,10 @@
 package com.bot.commands.settings;
 
 import com.bot.Bot;
+import com.bot.commands.ModerationCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
-import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SetModRoleCommand extends Command {
+public class SetModRoleCommand extends ModerationCommand {
 
 
     private GuildDAO guildDAO;
@@ -24,8 +23,6 @@ public class SetModRoleCommand extends Command {
         this.name = "modrole";
         this.help = "Sets the minimum role required to use a moderation command. (Mod command permission required)";
         this.arguments = "<Role mention>";
-        this.guildOnly = true;
-        this.category = CommandCategories.MOD;
         this.guildDAO = GuildDAO.getInstance();
     }
 

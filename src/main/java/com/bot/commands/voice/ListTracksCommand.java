@@ -1,24 +1,22 @@
 package com.bot.commands.voice;
 
-import com.bot.utils.CommandCategories;
+import com.bot.commands.VoiceCommand;
 import com.bot.utils.CommandPermissions;
 import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class ListTracksCommand extends Command {
+public class ListTracksCommand extends VoiceCommand {
 	private static final Logger LOGGER = Logger.getLogger(ListTracksCommand.class.getName());
 
 	public ListTracksCommand() {
 		this.name = "list";
 		this.arguments = "";
 		this.help = "Lists the tracks currently in the queue";
-		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

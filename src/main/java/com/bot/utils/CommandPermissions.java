@@ -9,6 +9,7 @@ import com.bot.models.InternalTextChannel;
 import com.bot.models.InternalVoiceChannel;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Role;
 
 import java.sql.SQLException;
@@ -29,6 +30,10 @@ public class CommandPermissions {
     }
 
     public static boolean canExecuteCommand(Command.Category commandCategory, CommandEvent commandEvent) {
+        // If its a PM then screw permissions
+        if (commandEvent.isFromType(ChannelType.PRIVATE))
+            return true;
+
         InternalGuild guild;
 
         try {
@@ -128,6 +133,16 @@ public class CommandPermissions {
             commandEvent.reply(commandEvent.getClient().getError() + " There is a problem with the text channel in the db. " +
                     "I will attempt to fix it, please try again later. If this issue persists please contact the devs on the support server.");
             channelDAO.addTextChannel(commandEvent.getTextChannel());
+            return false;
+        }
+
+        if (commandCategory == CommandCategories.NSFW && !textChannel.isNSFWEnabled()) {
+            commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW commands are not enabled on this channel. " +
+                    "To enable it, use the `~enableNSFW` command.");
+            return false;
+        } else if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {
+            commandEvent.reply(commandEvent.getClient().getWarning() + " This channel is not marked in discord as nsfw. " +
+                    "I am now honoring both discords flag and my own. To enable it, please go into the channel settings in discord and enable nsfw.");
             return false;
         }
 

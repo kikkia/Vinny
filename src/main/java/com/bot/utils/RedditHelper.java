@@ -28,6 +28,23 @@ public class RedditHelper {
                                                   boolean isChannelNSFW) throws Exception {
         String subredditName = commandEvent.getArgs();
 
+        getRandomSubmissionAndSend(redditConnection,
+                commandEvent,
+                sortType,
+                timePeriod,
+                limit,
+                isChannelNSFW,
+                subredditName);
+    }
+
+    public static void getRandomSubmissionAndSend(RedditConnection redditConnection,
+                                                  CommandEvent commandEvent,
+                                                  SubredditSort sortType,
+                                                  TimePeriod timePeriod,
+                                                  int limit,
+                                                  boolean isChannelNSFW,
+                                                  String subredditName) throws Exception {
+
         // If the subreddit name contains an invalid character throw a error response
         if (!subredditName.matches("^[^<>@!#$%^&*() ,.=+;]+$")) {
             commandEvent.reply(commandEvent.getClient().getError() + " Invalid subreddit. Please ensure you are using only the name with no symbols.");

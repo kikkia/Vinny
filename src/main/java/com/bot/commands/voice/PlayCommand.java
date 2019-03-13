@@ -1,24 +1,22 @@
 package com.bot.commands.voice;
 
 import com.bot.Bot;
-import com.bot.utils.CommandCategories;
+import com.bot.commands.VoiceCommand;
 import com.bot.utils.CommandPermissions;
 import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class PlayCommand extends Command {
+public class PlayCommand extends VoiceCommand {
 	private static final Logger LOGGER = Logger.getLogger(PlayCommand.class.getName());
 
 	private Bot bot;
@@ -28,7 +26,6 @@ public class PlayCommand extends Command {
 		this.name = "play";
 		this.arguments = "<title|URL>";
 		this.help = "plays the provided audio track";
-		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

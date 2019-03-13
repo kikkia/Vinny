@@ -1,18 +1,17 @@
 package com.bot.commands.voice;
 
 import com.bot.Bot;
+import com.bot.commands.VoiceCommand;
 import com.bot.db.PlaylistDAO;
-import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
 import com.bot.voice.QueuedAudioTrack;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class SaveMyPlaylistCommand extends Command {
+public class SaveMyPlaylistCommand extends VoiceCommand {
 	private static final Logger LOGGER = Logger.getLogger(SaveMyPlaylistCommand.class.getName());
 
 	private PlaylistDAO playlistDAO;
@@ -23,7 +22,6 @@ public class SaveMyPlaylistCommand extends Command {
 		this.name = "savemyplaylist";
 		this.arguments = "Name";
 		this.help = "Saves the current audio playlist as a playlist accessible for any server you are on.";
-		this.category = CommandCategories.VOICE;
 
 		playlistDAO = PlaylistDAO.getInstance();
 	}

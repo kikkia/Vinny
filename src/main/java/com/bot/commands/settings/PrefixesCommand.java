@@ -1,15 +1,14 @@
 package com.bot.commands.settings;
 
+import com.bot.commands.GeneralCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
-import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.List;
 
-public class PrefixesCommand extends Command {
+public class PrefixesCommand extends GeneralCommand {
 
     private GuildDAO guildDAO;
 
@@ -17,8 +16,6 @@ public class PrefixesCommand extends Command {
         this.name = "prefixes";
         this.arguments = "";
         this.help = "Lists all set prefixes for the server.";
-        this.category = CommandCategories.GENERAL;
-        this.guildOnly = true;
 
         guildDAO = GuildDAO.getInstance();
     }

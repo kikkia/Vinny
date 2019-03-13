@@ -151,7 +151,7 @@ public class PlaylistIT {
             statement.setString(2, g.getName());
             statement.setInt(3, g.getVolume());
             statement.setString(4, g.getRequiredPermission(CommandCategories.GENERAL));
-            statement.setString(5, g.getRequiredPermission(CommandCategories.MOD));
+            statement.setString(5, g.getRequiredPermission(CommandCategories.MODERATION));
             statement.setString(6, g.getRequiredPermission(CommandCategories.VOICE));
             statement.setString(7, g.getRequiredPermission(CommandCategories.NSFW));
 

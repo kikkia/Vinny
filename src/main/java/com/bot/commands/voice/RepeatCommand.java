@@ -1,21 +1,19 @@
 package com.bot.commands.voice;
 
-import com.bot.utils.CommandCategories;
+import com.bot.commands.VoiceCommand;
 import com.bot.utils.CommandPermissions;
 import com.bot.voice.VoiceSendHandler;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.logging.Logger;
 
-public class RepeatCommand extends Command {
+public class RepeatCommand extends VoiceCommand {
 	private static final Logger LOGGER = Logger.getLogger(RepeatCommand.class.getName());
 
 	public RepeatCommand() {
 		this.name = "repeat";
 		this.arguments = "";
 		this.help = "Toggles repeating the current playlist";
-		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

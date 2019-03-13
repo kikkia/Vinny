@@ -1,11 +1,11 @@
 package com.bot.commands.voice;
 
-import com.jagrosh.jdautilities.command.Command;
+import com.bot.commands.VoiceCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.logging.Logger;
 
-public class RemoveTrackCommand extends Command {
+public class RemoveTrackCommand extends VoiceCommand {
 	private static final Logger LOGGER = Logger.getLogger(RemoveTrackCommand.class.getName());
 
 	public RemoveTrackCommand() {

@@ -1,21 +1,19 @@
 package com.bot.commands.voice;
 
-import com.bot.utils.CommandCategories;
+import com.bot.commands.VoiceCommand;
 import com.bot.utils.CommandPermissions;
 import com.bot.voice.VoiceSendHandler;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.logging.Logger;
 
-public class SkipCommand extends Command {
+public class SkipCommand extends VoiceCommand {
 	private static final Logger LOGGER = Logger.getLogger(SkipCommand.class.getName());
 
 	public SkipCommand() {
 		this.name = "skip";
 		this.arguments = "";
 		this.help = "skips to the next track";
-		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

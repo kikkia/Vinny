@@ -234,13 +234,11 @@ public class Bot extends ListenerAdapter {
 		Guild guild = event.getGuild();
 		VoiceSendHandler handler = getHandler(guild);
 		AudioManager manager = guild.getAudioManager();
-		if (manager.isConnected()) {
-			if (manager.getConnectedChannel().getMembers().size() == 1) {
-				handler.stop();
-				manager.closeAudioConnection();
-				// Remove voice stream from shard tracking
-				ShardingManager.getInstance().getShards().get(event.getJDA().getShardInfo().getShardId()).removeVoiceStream();
-			}
+		if (manager.isConnected() && manager.getConnectedChannel().getMembers().size() == 1) {
+			handler.stop();
+			manager.closeAudioConnection();
+			// Remove voice stream from shard tracking
+			ShardingManager.getInstance().getShards().get(event.getJDA().getShardInfo().getShardId()).removeVoiceStream();
 		}
 	}
 

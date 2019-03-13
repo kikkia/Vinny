@@ -1,10 +1,9 @@
 package com.bot.commands.general;
 
 import com.bot.ShardingManager;
+import com.bot.commands.GeneralCommand;
 import com.bot.models.InternalShard;
-import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
@@ -15,12 +14,11 @@ import java.util.Map;
  * This is a "Dark" command. It should not be locked down to just the owner, but it is pretty
  * useless to normal users.
  */
-public class ShardStatsCommand extends Command{
+public class ShardStatsCommand extends GeneralCommand {
 
     public ShardStatsCommand() {
         this.name = "shardstats";
         this.guildOnly = false;
-        this.category = CommandCategories.GENERAL;
         this.hidden = true;
     }
 

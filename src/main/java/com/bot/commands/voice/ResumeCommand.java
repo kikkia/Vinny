@@ -1,21 +1,19 @@
 package com.bot.commands.voice;
 
-import com.bot.utils.CommandCategories;
+import com.bot.commands.VoiceCommand;
 import com.bot.utils.CommandPermissions;
 import com.bot.voice.VoiceSendHandler;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.logging.Logger;
 
-public class ResumeCommand extends Command {
+public class ResumeCommand extends VoiceCommand {
 	private static final Logger LOGGER = Logger.getLogger(ResumeCommand.class.getName());
 
 	public ResumeCommand() {
 		this.name = "resume";
 		this.arguments = "";
 		this.help = "Resumes a paused Stream";
-		this.category = CommandCategories.VOICE;
 	}
 
 	@Override

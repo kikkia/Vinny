@@ -16,7 +16,7 @@ public class TestQueuedAudioTrack {
     private AudioTrackInfo audioTrackInfo;
 
     @Before
-    public void setup() {
+    public void setUp() {
         audioTrack = mock(AudioTrack.class);
         audioTrackInfo = new AudioTrackInfo("testTitle",
                 "testAuthor",
