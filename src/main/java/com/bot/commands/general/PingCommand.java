@@ -2,7 +2,6 @@ package com.bot.commands.general;
 
 import com.bot.commands.GeneralCommand;
 import com.bot.utils.CommandPermissions;
-import com.bot.utils.MetricsManager;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 public class PingCommand extends GeneralCommand {
