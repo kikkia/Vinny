@@ -136,6 +136,16 @@ public class CommandPermissions {
             return false;
         }
 
+        if (commandCategory == CommandCategories.NSFW && !textChannel.isNSFWEnabled()) {
+            commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW commands are not enabled on this channel. " +
+                    "To enable it, use the `~enableNSFW` command.");
+            return false;
+        } else if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {
+            commandEvent.reply(commandEvent.getClient().getWarning() + " This channel is not marked in discord as nsfw. " +
+                    "I am now honoring both discords flag and my own. To enable it, please go into the channel settings in discord and enable nsfw.");
+            return false;
+        }
+
         return textChannel.isCommandsEnabled();
     }
 }

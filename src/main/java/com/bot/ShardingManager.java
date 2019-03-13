@@ -5,6 +5,7 @@ import com.bot.commands.general.PingCommand;
 import com.bot.commands.general.RollCommand;
 import com.bot.commands.general.ShardStatsCommand;
 import com.bot.commands.meme.*;
+import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.AvatarCommand;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
@@ -116,6 +117,9 @@ public class ShardingManager {
                     new DisableNSFWCommand(),
                     new AddPrefixCommand(),
                     new RemovePrefixCommand(),
+
+                    // NSFW Commands
+                    new Rule34Command(),
 
                     // Owner Commands -- All hidden
                     new AvatarCommand()
