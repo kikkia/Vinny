@@ -46,6 +46,7 @@ public class ShitpostCommand extends MemeCommand {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error thrown:" + e);
             commandEvent.reply(commandEvent.getClient().getError() + " Sorry, something went wrong getting a reddit post.");
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
     }
 }

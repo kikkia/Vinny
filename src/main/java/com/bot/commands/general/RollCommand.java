@@ -61,6 +61,7 @@ public class RollCommand extends GeneralCommand {
         } catch (Exception e) {
             LOGGER.severe("Hit an error while rolling " + e.getMessage());
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong. Please try again.");
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
     }
 }

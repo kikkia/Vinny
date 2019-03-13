@@ -50,6 +50,7 @@ public class AddPrefixCommand extends ModerationCommand {
             commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
         } else {
             commandEvent.reply(commandEvent.getClient().getError() + " Failed to update prefixes for server. Please contact a developer on the support server if this issue persists.");
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
     }
 }

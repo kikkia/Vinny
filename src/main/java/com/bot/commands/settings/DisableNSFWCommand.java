@@ -28,6 +28,7 @@ public class DisableNSFWCommand extends ModerationCommand {
             commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
         } else {
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong, please try again later or contact an admin on the support server.");
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
     }
 }

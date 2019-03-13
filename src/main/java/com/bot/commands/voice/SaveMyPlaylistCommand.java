@@ -50,6 +50,7 @@ public class SaveMyPlaylistCommand extends VoiceCommand {
 			commandEvent.reply("Playlist successfully created.");
 		} else {
 			commandEvent.reply("Something went wrong! Failed to create playlist.");
+			metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
 		}
 	}
 }

@@ -41,6 +41,7 @@ public class SetNSFWCommand extends ModerationCommand {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Problem getting guild settings " + e.getMessage());
             commandEvent.reply(commandEvent.getClient().getError() + " There was a problem getting the settings for your guild. Please contact the developer on the support server. " + Bot.SUPPORT_INVITE_LINK);
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             return;
         }
 
@@ -51,6 +52,7 @@ public class SetNSFWCommand extends ModerationCommand {
             if (!guildDAO.addGuild(commandGuild)) {
                 LOGGER.log(Level.SEVERE, "Failed to add the guild to the db");
                 commandEvent.reply(commandEvent.getClient().getError() + " Error adding the guild to the db. Please contact the developer on the support server." + Bot.SUPPORT_INVITE_LINK);
+                metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
                 return;
             }
 
@@ -69,6 +71,7 @@ public class SetNSFWCommand extends ModerationCommand {
         // Just use the first mentioned roles
         if(!guildDAO.updateMinNSFWRole(guild.getId(), mentionedRoles.get(0).getId())) {
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong! Please contact the devs on the support server. " +  Bot.SUPPORT_INVITE_LINK);
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
         commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
     }

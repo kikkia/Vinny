@@ -35,13 +35,14 @@ public class DefaultVolumeCommand extends ModerationCommand {
 
             if (!guildDAO.updateGuildVolume(commandEvent.getGuild().getId(), newVolume)) {
                 commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong updating the default volume.");
+                metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
                 return;
             }
 
             commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
         }
         catch (NumberFormatException e) {
-            commandEvent.reply(commandEvent.getClient().getError() + " You must enter a volume between 0 and 200");
+            commandEvent.reply(commandEvent.getClient().getWarning() + " You must enter a volume between 0 and 200");
         }
     }
 

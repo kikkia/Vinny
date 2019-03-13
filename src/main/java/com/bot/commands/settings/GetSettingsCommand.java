@@ -41,6 +41,7 @@ public class GetSettingsCommand extends GeneralCommand {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Problem getting guild settings " + e.getMessage());
             commandEvent.reply(commandEvent.getClient().getError() + " There was a problem getting the settings for your guild. Please contact the developer on the support server. " + Bot.SUPPORT_INVITE_LINK);
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             return;
         }
 
@@ -51,6 +52,7 @@ public class GetSettingsCommand extends GeneralCommand {
             if (!guildDAO.addGuild(commandGuild)) {
                 LOGGER.log(Level.SEVERE, "Failed to add the guild to the db");
                 commandEvent.reply(commandEvent.getClient().getError() + " Error adding the guild to the db. Please contact the developer on the support server." + Bot.SUPPORT_INVITE_LINK);
+                metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
                 return;
             }
             commandEvent.reply(commandEvent.getClient().getSuccess() + " Added the guild to the database. Retrying");

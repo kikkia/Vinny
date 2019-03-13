@@ -40,11 +40,13 @@ public class RandomPostCommand extends RedditCommand{
 
         boolean isNSFWAllowed = true;
 
+        // TODO: Move to static helper
         if (!commandEvent.isFromType(ChannelType.PRIVATE)) {
             InternalTextChannel channel = channelDAO.getTextChannelForId(commandEvent.getTextChannel().getId());
 
             if (channel == null) {
                 commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong getting the channel from the db. Please try again.");
+                metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
                 return;
             }
 
@@ -61,6 +63,7 @@ public class RandomPostCommand extends RedditCommand{
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error thrown:" + e);
             commandEvent.reply(commandEvent.getClient().getError() + " Sorry, something went wrong getting a reddit post.");
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
     }
 }
