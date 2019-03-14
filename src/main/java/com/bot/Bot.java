@@ -4,6 +4,7 @@ import com.bot.db.ChannelDAO;
 import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
 import com.bot.models.InternalGuild;
+import com.bot.utils.Config;
 import com.bot.utils.HttpUtils;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
@@ -45,6 +46,8 @@ public class Bot extends ListenerAdapter {
 	private EventWaiter waiter;
 	private final AudioPlayerManager manager;
 
+	private Config config;
+
 	private GuildDAO guildDAO;
 	private MembershipDAO membershipDAO;
 	private ChannelDAO channelDAO;
@@ -53,6 +56,7 @@ public class Bot extends ListenerAdapter {
 
 
 	Bot(EventWaiter waiter) {
+		this.config = Config.getInstance();
 		this.waiter = waiter;
 		this.manager = new DefaultAudioPlayerManager();
 		AudioSourceManagers.registerRemoteSources(manager);
@@ -100,7 +104,10 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
 		guildDAO.addFreshGuild(guildJoinEvent.getGuild());
-		HttpUtils.postGuildCountToExternalSites(guildJoinEvent.getJDA().getShardInfo().getShardId(), guildJoinEvent.getJDA().getGuilds().size());
+
+		// If we are posting stats to external discord bot sites, then do it
+		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
+			HttpUtils.postGuildCountToExternalSites(guildJoinEvent.getJDA().getShardInfo().getShardId(), guildJoinEvent.getJDA().getGuilds().size());
 	}
 
 	@Override
@@ -108,7 +115,10 @@ public class Bot extends ListenerAdapter {
 		for (Member m : guildLeaveEvent.getGuild().getMembers()) {
 			membershipDAO.removeUserMembershipToGuild(m.getUser().getId(), guildLeaveEvent.getGuild().getId());
 		}
-		HttpUtils.postGuildCountToExternalSites(guildLeaveEvent.getJDA().getShardInfo().getShardId(), guildLeaveEvent.getJDA().getGuilds().size());
+
+		// If we are posting stats to external discord bot sites, then do it
+		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
+			HttpUtils.postGuildCountToExternalSites(guildLeaveEvent.getJDA().getShardInfo().getShardId(), guildLeaveEvent.getJDA().getGuilds().size());
 	}
 
 

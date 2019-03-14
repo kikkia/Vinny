@@ -7,6 +7,7 @@ import com.bot.commands.general.ShardStatsCommand;
 import com.bot.commands.meme.*;
 import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.AvatarCommand;
+import com.bot.commands.owner.UpdateGuildCountCommand;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
 import com.bot.commands.reddit.ShitpostCommand;
@@ -123,7 +124,8 @@ public class ShardingManager {
                     new Rule34Command(),
 
                     // Owner Commands -- All hidden
-                    new AvatarCommand()
+                    new AvatarCommand(),
+                    new UpdateGuildCountCommand()
             );
         } else {
             commandClientBuilder.useHelpBuilder(false);
