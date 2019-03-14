@@ -2,6 +2,7 @@ package com.bot.preferences;
 
 import com.bot.models.InternalGuild;
 import com.bot.utils.Config;
+import com.bot.utils.MetricsManager;
 import org.apache.commons.collections4.MapIterator;
 import org.apache.commons.collections4.map.LRUMap;
 
@@ -22,6 +23,8 @@ public class GuildCache {
     private int CACHE_OBJECT_LIFETIME;
     private int CACHE_CHECK_INTERVAL;
 
+    private MetricsManager metricsManager;
+
 
     public static GuildCache getInstance() {
         if (instance == null)
@@ -30,6 +33,7 @@ public class GuildCache {
     }
 
     private GuildCache() {
+        metricsManager = MetricsManager.getInstance();
         Config config = Config.getInstance();
         // Set or default the settings for the map
         MAX_SIZE = config.getConfig(Config.GUILD_PREFS_CACHE_MAX_ITEMS) == null ? 500 : Integer.parseInt(config.getConfig(Config.GUILD_PREFS_CACHE_MAX_ITEMS));
@@ -70,11 +74,17 @@ public class GuildCache {
         synchronized (cacheMap) {
             GuildPreferencesCacheObject cacheObject = (GuildPreferencesCacheObject) cacheMap.get(key);
 
-            if (cacheObject == null)
-                return null;
-            else {
-                cacheObject.lastAccessed = System.currentTimeMillis();
-                return cacheObject.value;
+            try {
+                if (cacheObject == null) {
+                    metricsManager.markCacheMiss();
+                    return null;
+                } else {
+                    cacheObject.lastAccessed = System.currentTimeMillis();
+                    metricsManager.markCacheHit();
+                    return cacheObject.value;
+                }
+            } finally {
+                metricsManager.updateCacheSize(cacheMap.size(), cacheMap.maxSize());
             }
         }
     }

@@ -24,21 +24,36 @@ public class MetricsManager {
                 "vinny-redux.live",                          /* prefix to any stats; may be null or empty string */
                 "localhost",                        /* common case: localhost */
                 8125,                                 /* port */
-                new String[] {"tag:value"}            /* Datadog extension: Constant tags, always applied */
+                new String[] {"vinny:live"}            /* Datadog extension: Constant tags, always applied */
             );
     }
 
     public void markCommand(Command command, User user, Guild guild) {
-        statsd.incrementCounter("category." + command.getCategory().getName());
-        statsd.incrementCounter("user." + user.getId());
-        statsd.incrementCounter("command." +command.getName());
-        statsd.incrementCounter("guild." + guild.getId());
+        String userTag = "user:" + user.getId();
+        String guildTag = "guild:" + guild.getId();
+        String commandTag = "command:" + command.getName();
+        String categoryTag = "category:" + command.getCategory().getName();
+        statsd.incrementCounter("command", userTag, guildTag, commandTag, categoryTag);
     }
 
     public void markCommandFailed(Command command, User user, Guild guild) {
-        statsd.incrementCounter("category.failed." + command.getCategory().getName());
-        statsd.incrementCounter("user.failed." + user.getId());
-        statsd.incrementCounter("command.failed." +command.getName());
-        statsd.incrementCounter("guild.failed." + guild.getId());
+        String userTag = "user:" + user.getId();
+        String guildTag = "guild:" + guild.getId();
+        String commandTag = "command:" + command.getName();
+        String categoryTag = "category:" + command.getCategory().getName();
+        statsd.incrementCounter("command.failed", userTag, guildTag, commandTag, categoryTag);
+    }
+
+    public void updateCacheSize(int count, int limit) {
+        statsd.recordGaugeValue("cache.size", count);
+        statsd.recordGaugeValue("cache.max", limit);
+    }
+
+    public void markCacheHit() {
+        statsd.incrementCounter("cache.hit");
+    }
+
+    public void markCacheMiss() {
+        statsd.incrementCounter("cache.miss");
     }
 }

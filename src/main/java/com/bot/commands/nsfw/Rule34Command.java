@@ -18,8 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Rule34Command extends NSFWCommand {
-    Logger LOGGER = Logger.getLogger(Rule34Command.class.getName());
-    Random random;
+    private Logger LOGGER = Logger.getLogger(Rule34Command.class.getName());
+    private Random random;
 
     public Rule34Command() {
         this.name = "r34";
