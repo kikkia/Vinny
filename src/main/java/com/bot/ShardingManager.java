@@ -22,6 +22,7 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.Game;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -130,6 +131,7 @@ public class ShardingManager {
 
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
+        commandClientBuilder.setGame(Game.of(Game.GameType.STREAMING, "@Vinny help"));
         client = commandClientBuilder.build();
 
         for (int i = 0; i < numShards; i++) {
@@ -155,4 +157,11 @@ public class ShardingManager {
         return shards;
     }
 
+    public int getTotalGuilds() {
+        int guilds = 0;
+        for (InternalShard shard : shards.values()) {
+            guilds += shard.getServerCount();
+        }
+        return guilds;
+    }
 }

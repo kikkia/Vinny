@@ -20,7 +20,6 @@ public class Config {
     public static final String REDDIT_TOKEN = "REDDIT_TOKEN";
     public static final String REDDIT_CLIENT_ID = "REDDIT_CLIENT_ID";
     public static final String OWNER_ID = "OWNER_ID";
-    public static final String DISCORD_BOT_ID = "BOT_ID";
     public static final String BOTLIST_API_TOKEN = "BOTLIST_API";
     public static final String BOT_API_TOKEN = "BOT_PW_API";
 
@@ -38,6 +37,14 @@ public class Config {
     public static final String GUILD_PREFS_CACHE_MAX_ITEMS = "GUILD_PREFS_CACHE_MAX_ITEMS";
     public static final String GUILD_PREFS_CACHE_OBJECT_LIFETIME = "GUILD_PREFS_OBJECT_LIFETIME";
     public static final String GUILD_PREFS_CACHE_CLEANUP_INTERVAL = "GUILD_PREFS_CACHE_CLEANUP_INTERVAL";
+
+    // Configs around posting user counts to external apis
+    public static final String ENABLE_EXTERNAL_APIS = "ENABLE_EXTERNAL_APIS";
+    public static final String DISCORD_BOT_ID = "BOT_ID";
+    public static final String BOTS_FOR_DISCORD_API_TOKEN = "BOTS_FOR_DISCORD_API_TOKEN";
+    public static final String DISCORD_BOT_LIST_API_TOKEN = "DISCORD_BOT_LIST_API_TOKEN";
+    public static final String DISCORD_BOTS_ORG_API_TOKEN = "DISCORD_BOTS_ORG_API_TOKEN";
+    public static final String BOTS_ON_DISCORD_API_TOKEN = "BOTS_ON_DISCORD_API_TOKEN";
 
     private Config() {
         this.configFile = new File("res/config/config.conf");

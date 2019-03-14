@@ -4,6 +4,7 @@ import com.bot.db.ChannelDAO;
 import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
 import com.bot.models.InternalGuild;
+import com.bot.utils.HttpUtils;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -99,6 +100,7 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
 		guildDAO.addFreshGuild(guildJoinEvent.getGuild());
+		HttpUtils.postGuildCountToExternalSites(guildJoinEvent.getJDA().getShardInfo().getShardId(), guildJoinEvent.getJDA().getGuilds().size());
 	}
 
 	@Override
@@ -106,6 +108,7 @@ public class Bot extends ListenerAdapter {
 		for (Member m : guildLeaveEvent.getGuild().getMembers()) {
 			membershipDAO.removeUserMembershipToGuild(m.getUser().getId(), guildLeaveEvent.getGuild().getId());
 		}
+		HttpUtils.postGuildCountToExternalSites(guildLeaveEvent.getJDA().getShardInfo().getShardId(), guildLeaveEvent.getJDA().getGuilds().size());
 	}
 
 
