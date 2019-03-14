@@ -30,9 +30,13 @@ public class MetricsManager {
 
     public void markCommand(Command command, User user, Guild guild) {
         String userTag = "user:" + user.getId();
-        String guildTag = "guild:" + guild.getId();
         String commandTag = "command:" + command.getName();
         String categoryTag = "category:" + command.getCategory().getName();
+
+        // Support guild being null (use in PMs)
+        String guildOrPM = guild == null ? "PM" : guild.getId();
+        String guildTag = "guild:" + guildOrPM;
+
         statsd.incrementCounter("command", userTag, guildTag, commandTag, categoryTag);
     }
 

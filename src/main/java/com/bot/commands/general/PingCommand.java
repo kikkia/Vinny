@@ -10,7 +10,6 @@ public class PingCommand extends GeneralCommand {
         this.name = "ping";
         this.guildOnly = false;
         this.help = "Gets the ping from Vinny to discord.";
-
     }
 
     @Override
