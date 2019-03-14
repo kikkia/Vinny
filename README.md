@@ -10,16 +10,21 @@ Vinny is completly open-source under the MIT License. Feel free to use and modif
 ## Contributing
 If you want to help by suggesting a feature or update to Vinny the best way is to reach out to me. Either on Vinny's support sever or by making an issue on this repo.
 
+I am in the process of writing some guides to help with the process. I will put them in where relevent.
+
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
-3. Make your changes
+3. Make your changes [Create a command guide](docs/Creating_A_Command.md)
 4. Commit your changes: `git commit -m 'Add some feature'`
 5. Push to the branch: `git push origin my-new-feature`
 6. Submit a pull request :D
 
+### Dealing with configuration of the bot
+[Config guide](docs/configs.md)
+
 ### Running locally with docker-compose.
 1. Complete the docker-compose file with the appropriate denvironment variables. 
-2. `docker-compose up`
+2. `docker-compose up vinny`
 
 ### Running Vinny-Redux locally without docker requires Java 8+ and Maven.
 1. Clone repo
