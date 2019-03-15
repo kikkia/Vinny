@@ -7,6 +7,7 @@ import com.bot.commands.general.ShardStatsCommand;
 import com.bot.commands.meme.*;
 import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.AvatarCommand;
+import com.bot.commands.owner.UpdateGuildCountCommand;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
 import com.bot.commands.reddit.ShitpostCommand;
@@ -22,6 +23,7 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.Game;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -119,14 +121,18 @@ public class ShardingManager {
                     new RemovePrefixCommand(),
 
                     // NSFW Commands
-                    new Rule34Command(),
-
-                    // Owner Commands -- All hidden
-                    new AvatarCommand()
+                    new Rule34Command()
             );
         } else {
             commandClientBuilder.useHelpBuilder(false);
         }
+
+        // Owner commands are added regardless
+        commandClientBuilder.addCommands(
+                // Owner Commands -- All hidden
+                new AvatarCommand(),
+                new UpdateGuildCountCommand()
+        );
 
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
@@ -135,6 +141,7 @@ public class ShardingManager {
         for (int i = 0; i < numShards; i++) {
             JDA jda = new JDABuilder(AccountType.BOT)
                     .setToken(config.getConfig(Config.DISCORD_TOKEN))
+                    .setGame(Game.playing("@Vinny help"))
                     .useSharding(i, numShards)
                     .build();
 
@@ -155,4 +162,11 @@ public class ShardingManager {
         return shards;
     }
 
+    public int getTotalGuilds() {
+        int guilds = 0;
+        for (InternalShard shard : shards.values()) {
+            guilds += shard.getServerCount();
+        }
+        return guilds;
+    }
 }

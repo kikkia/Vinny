@@ -21,6 +21,8 @@ public class InternalShard {
         return voiceStreamsCount;
     }
 
+    public int getServerCount() {return jda.getGuilds().size();}
+
     public void addVoiceStream() {
         voiceStreamsCount++;
     }

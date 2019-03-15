@@ -4,6 +4,8 @@ import com.bot.db.ChannelDAO;
 import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
 import com.bot.models.InternalGuild;
+import com.bot.utils.Config;
+import com.bot.utils.HttpUtils;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -44,6 +46,8 @@ public class Bot extends ListenerAdapter {
 	private EventWaiter waiter;
 	private final AudioPlayerManager manager;
 
+	private Config config;
+
 	private GuildDAO guildDAO;
 	private MembershipDAO membershipDAO;
 	private ChannelDAO channelDAO;
@@ -52,6 +56,7 @@ public class Bot extends ListenerAdapter {
 
 
 	Bot(EventWaiter waiter) {
+		this.config = Config.getInstance();
 		this.waiter = waiter;
 		this.manager = new DefaultAudioPlayerManager();
 		AudioSourceManagers.registerRemoteSources(manager);
@@ -99,6 +104,10 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
 		guildDAO.addFreshGuild(guildJoinEvent.getGuild());
+
+		// If we are posting stats to external discord bot sites, then do it
+		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
+			HttpUtils.postGuildCountToExternalSites();
 	}
 
 	@Override
@@ -106,6 +115,10 @@ public class Bot extends ListenerAdapter {
 		for (Member m : guildLeaveEvent.getGuild().getMembers()) {
 			membershipDAO.removeUserMembershipToGuild(m.getUser().getId(), guildLeaveEvent.getGuild().getId());
 		}
+
+		// If we are posting stats to external discord bot sites, then do it
+		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
+			HttpUtils.postGuildCountToExternalSites();
 	}
 
 
