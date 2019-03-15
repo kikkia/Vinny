@@ -107,7 +107,7 @@ public class Bot extends ListenerAdapter {
 
 		// If we are posting stats to external discord bot sites, then do it
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
-			HttpUtils.postGuildCountToExternalSites(guildJoinEvent.getJDA().getShardInfo().getShardId(), guildJoinEvent.getJDA().getGuilds().size());
+			HttpUtils.postGuildCountToExternalSites();
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class Bot extends ListenerAdapter {
 
 		// If we are posting stats to external discord bot sites, then do it
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
-			HttpUtils.postGuildCountToExternalSites(guildLeaveEvent.getJDA().getShardInfo().getShardId(), guildLeaveEvent.getJDA().getGuilds().size());
+			HttpUtils.postGuildCountToExternalSites();
 	}
 
 

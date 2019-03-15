@@ -121,24 +121,27 @@ public class ShardingManager {
                     new RemovePrefixCommand(),
 
                     // NSFW Commands
-                    new Rule34Command(),
-
-                    // Owner Commands -- All hidden
-                    new AvatarCommand(),
-                    new UpdateGuildCountCommand()
+                    new Rule34Command()
             );
         } else {
             commandClientBuilder.useHelpBuilder(false);
         }
 
+        // Owner commands are added regardless
+        commandClientBuilder.addCommands(
+                // Owner Commands -- All hidden
+                new AvatarCommand(),
+                new UpdateGuildCountCommand()
+        );
+
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
-        commandClientBuilder.setGame(Game.of(Game.GameType.STREAMING, "@Vinny help"));
         client = commandClientBuilder.build();
 
         for (int i = 0; i < numShards; i++) {
             JDA jda = new JDABuilder(AccountType.BOT)
                     .setToken(config.getConfig(Config.DISCORD_TOKEN))
+                    .setGame(Game.playing("@Vinny help"))
                     .useSharding(i, numShards)
                     .build();
 

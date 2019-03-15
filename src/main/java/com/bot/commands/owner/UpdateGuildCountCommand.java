@@ -18,7 +18,7 @@ public class UpdateGuildCountCommand extends OwnerCommand {
     protected void execute(CommandEvent commandEvent) {
         if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS))) {
             try {
-                HttpUtils.postGuildCountToExternalSites(commandEvent.getJDA().getShardInfo().getShardId(), commandEvent.getJDA().getGuilds().size());
+                HttpUtils.postGuildCountToExternalSites();
                 commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
             } catch (Exception e) {
                 commandEvent.reply(e.getMessage());

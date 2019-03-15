@@ -45,9 +45,10 @@ public class Config {
     public static final String DISCORD_BOT_LIST_API_TOKEN = "DISCORD_BOT_LIST_API_TOKEN";
     public static final String DISCORD_BOTS_ORG_API_TOKEN = "DISCORD_BOTS_ORG_API_TOKEN";
     public static final String BOTS_ON_DISCORD_API_TOKEN = "BOTS_ON_DISCORD_API_TOKEN";
+    public static final String BOTS_GG_API_TOKEN = "BOTS_GG_API_TOKEN";
 
     private Config() {
-        this.configFile = new File("res/config/config.conf");
+        this.configFile = new File("res/config/config_live.conf");
         configs = new HashMap<>();
 
         try {
