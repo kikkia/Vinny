@@ -52,7 +52,7 @@ public class Config {
     public static final String BOTS_GG_API_TOKEN = "BOTS_GG_API_TOKEN";
 
     private Config() {
-        this.configFile = new File("res/config/config_live.conf");
+        this.configFile = new File("res/config/config.conf");
         configs = new HashMap<>();
 
         try {

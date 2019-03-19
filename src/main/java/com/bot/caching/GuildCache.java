@@ -47,4 +47,8 @@ public class GuildCache {
     public InternalGuild get(String key) {
         return cache.get(key);
     }
+
+    public void removeAll() {
+        cache.removeAll();
+    }
 }
