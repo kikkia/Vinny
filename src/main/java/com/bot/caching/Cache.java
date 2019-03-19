@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
- * This is an in-memory cache for caching guild preferences. Since we will be getting the preferences on all messages sent on all channels vinny can see,
- * this caching will be very important to help deal with the excessive load on the db.
+ * This is an in-memory cache for caching any type of objects. This can be used to cache things that may take a while to
+ * get/make or are very commonly used.
  * TODO: Eventually we should shift this off to something like redis.
  */
 public class Cache<V> {
@@ -127,6 +127,6 @@ public class Cache<V> {
             Thread.yield();
         }
 
-        LOGGER.info(name + " Cache cleanup complete. Removed " + deleteKey.size() + " stale guilds.");
+        LOGGER.info(name + " Cache cleanup complete. Removed " + deleteKey.size() + " stale objects. " + name);
     }
 }

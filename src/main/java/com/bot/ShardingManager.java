@@ -95,6 +95,7 @@ public class ShardingManager {
                     new RollCommand(),
 
                     // Meme Commands
+                    new CommentCommand(),
                     new KappaCommand(),
                     new BanHammerCommand(),
                     new FeelsCommand(),

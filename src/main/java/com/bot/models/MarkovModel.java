@@ -14,6 +14,9 @@ public class MarkovModel {
 
     public MarkovModel() {
         this.dataTable = new Hashtable<>();
+
+        dataTable.put(BEGINNING_PREFIX, new Vector<>());
+        dataTable.put(ENDING_SUFFIX, new Vector<>());
     }
 
     public void addPhrase(String phrase) {
@@ -70,13 +73,24 @@ public class MarkovModel {
         generatedPhrase.add(nextWord);
 
         // Keep looping through the words until we've reached the end
-        while (nextWord.charAt(nextWord.length()-1) != '.' || generatedPhrase.size() < 200) {
+        int tries = 0;
+        while (generatedPhrase.size() < 200 && tries < 500) {
             Vector<String> wordSelection = dataTable.get(nextWord);
+
+            if (wordSelection == null) {
+                tries++;
+                continue;
+            }
+
             int wordSelectionLen = wordSelection.size();
             nextWord = wordSelection.get(random.nextInt(wordSelectionLen));
             generatedPhrase.add(nextWord);
         }
 
-        return generatedPhrase.toString();
+        StringBuilder builder = new StringBuilder();
+        for (String s : generatedPhrase) {
+            builder.append(s).append(" ");
+        }
+        return builder.toString();
     }
 }
