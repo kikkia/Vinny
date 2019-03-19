@@ -1,5 +1,6 @@
 package com.bot.preferences;
 
+import com.bot.caching.GuildCache;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.GuildSettingsManager;

@@ -2,7 +2,7 @@ package com.bot.db;
 
 import com.bot.db.mappers.GuildMapper;
 import com.bot.models.InternalGuild;
-import com.bot.preferences.GuildCache;
+import com.bot.caching.GuildCache;
 import com.bot.utils.DbHelpers;
 import com.bot.utils.GuildUtils;
 import com.zaxxer.hikari.HikariDataSource;

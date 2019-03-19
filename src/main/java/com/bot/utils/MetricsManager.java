@@ -48,16 +48,16 @@ public class MetricsManager {
         statsd.incrementCounter("command.failed", userTag, guildTag, commandTag, categoryTag);
     }
 
-    public void updateCacheSize(int count, int limit) {
-        statsd.recordGaugeValue("cache.size", count);
-        statsd.recordGaugeValue("cache.max", limit);
+    public void updateCacheSize(String name, int count, int limit) {
+        statsd.recordGaugeValue("cache." + name + ".size", count);
+        statsd.recordGaugeValue("cache." + name + ".max", limit);
     }
 
-    public void markCacheHit() {
-        statsd.incrementCounter("cache.hit");
+    public void markCacheHit(String name) {
+        statsd.incrementCounter("cache." + name + ".hit");
     }
 
-    public void markCacheMiss() {
-        statsd.incrementCounter("cache.miss");
+    public void markCacheMiss(String name) {
+        statsd.incrementCounter("cache." + name + ".miss");
     }
 }
