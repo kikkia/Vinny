@@ -11,7 +11,7 @@ import com.bot.utils.Logger;
  * TODO: Eventually we should shift this off to something like redis.
  */
 public class GuildCache {
-    private static final Logger LOGGER = new Logger(GuildCache.class.getName());
+    private final Logger LOGGER;
 
     private static GuildCache instance;
     private Cache<InternalGuild> cache;
@@ -33,6 +33,8 @@ public class GuildCache {
         CACHE_CHECK_INTERVAL = config.getConfig(Config.GUILD_PREFS_CACHE_CLEANUP_INTERVAL) == null ? 300 : Integer.parseInt(config.getConfig(Config.GUILD_PREFS_CACHE_CLEANUP_INTERVAL));
 
         cache = new Cache<>("guild", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
+
+        LOGGER = new Logger(GuildCache.class.getName());
 
         LOGGER.info("Guild Cache successfully initialized.");
     }

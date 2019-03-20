@@ -40,7 +40,7 @@ import net.dv8tion.jda.core.managers.AudioManager;
 import java.util.logging.Level;
 
 public class Bot extends ListenerAdapter {
-	private static final Logger LOGGER = new Logger(Bot.class.getName());
+	private final Logger LOGGER;
 	private EventWaiter waiter;
 	private final AudioPlayerManager manager;
 
@@ -62,6 +62,8 @@ public class Bot extends ListenerAdapter {
 		guildDAO = GuildDAO.getInstance();
 		membershipDAO = MembershipDAO.getInstance();
 		channelDAO = ChannelDAO.getInstance();
+
+		LOGGER =  new Logger(Bot.class.getName());
 	}
 
 	// This code runs every time a message is received by the bot
