@@ -2,7 +2,6 @@ package com.bot.caching;
 
 import com.bot.models.InternalGuild;
 import com.bot.utils.Config;
-import com.bot.utils.MetricsManager;
 
 import java.util.logging.Logger;
 
