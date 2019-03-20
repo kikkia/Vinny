@@ -3,7 +3,7 @@ package db;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalGuildMembership;
-import com.bot.preferences.GuildCache;
+import com.bot.caching.GuildCache;
 import com.bot.utils.CommandCategories;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

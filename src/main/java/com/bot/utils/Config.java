@@ -38,6 +38,10 @@ public class Config {
     public static final String GUILD_PREFS_CACHE_OBJECT_LIFETIME = "GUILD_PREFS_OBJECT_LIFETIME";
     public static final String GUILD_PREFS_CACHE_CLEANUP_INTERVAL = "GUILD_PREFS_CACHE_CLEANUP_INTERVAL";
 
+    public static final String MARKOV_CACHE_MAX_ITEMS = "MARKOV_CACHE_MAX_ITEMS";
+    public static final String MARKOV_CACHE_OBJECT_LIFETIME = "MARKOV_CACHE_OBJECT_LIFETIME";
+    public static final String MARKOV_CACHE_CLEANUP_INTERVAL = "MARKOV_CACHE_CLEANUP_INTERVAL";
+
     // Configs around posting user counts to external apis
     public static final String ENABLE_EXTERNAL_APIS = "ENABLE_EXTERNAL_APIS";
     public static final String DISCORD_BOT_ID = "BOT_ID";
@@ -48,7 +52,7 @@ public class Config {
     public static final String BOTS_GG_API_TOKEN = "BOTS_GG_API_TOKEN";
 
     private Config() {
-        this.configFile = new File("res/config/config_live.conf");
+        this.configFile = new File("res/config/config.conf");
         configs = new HashMap<>();
 
         try {
