@@ -5,19 +5,18 @@ import com.bot.commands.ModerationCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.utils.CommandPermissions;
+import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
 
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SetNSFWCommand extends ModerationCommand {
-
+    private static Logger LOGGER = new Logger(SetNSFWCommand.class.getName());
 
     private GuildDAO guildDAO;
-    private static Logger LOGGER = Logger.getLogger(SetNSFWCommand.class.getName());
 
     public SetNSFWCommand() {
         this.name = "nsfwrole";

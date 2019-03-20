@@ -7,15 +7,15 @@ import com.bot.db.PlaylistDAO;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
 import com.bot.utils.CommandPermissions;
+import com.bot.utils.Logger;
 import com.bot.voice.LoadHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class LoadGuildPlaylistCommand extends VoiceCommand {
-    private static final Logger LOGGER = Logger.getLogger(LoadGuildPlaylistCommand.class.getName());
+    private static final Logger LOGGER = new Logger(LoadGuildPlaylistCommand.class.getName());
     private PlaylistDAO playlistDAO;
     private Bot bot;
 

@@ -5,8 +5,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import java.util.logging.Logger;
 
 public class QueuedAudioTrack {
-    private static final Logger LOGGER = Logger.getLogger(QueuedAudioTrack.class.getName());
-
     private long requesterID;
     private AudioTrack track;
 

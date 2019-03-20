@@ -2,6 +2,7 @@ package com.bot.commands.nsfw;
 
 import com.bot.commands.NSFWCommand;
 import com.bot.utils.CommandPermissions;
+import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -13,12 +14,11 @@ import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Rule34Command extends NSFWCommand {
-    private Logger LOGGER = Logger.getLogger(Rule34Command.class.getName());
+    private Logger LOGGER = new Logger(Rule34Command.class.getName());
     private Random random;
 
     public Rule34Command() {
@@ -47,7 +47,7 @@ public class Rule34Command extends NSFWCommand {
         } catch (IllegalArgumentException e) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " I couldn't find any results for that search.");
         } catch (Exception e) {
-            LOGGER.severe("Something went wrong getting r34 post: " + e.getMessage());
+            LOGGER.severe("Something went wrong getting r34 post: ", e);
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong getting the image, please try again.");
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }

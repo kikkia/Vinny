@@ -8,7 +8,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.logging.Logger;
 
 public class RepeatCommand extends VoiceCommand {
-	private static final Logger LOGGER = Logger.getLogger(RepeatCommand.class.getName());
 
 	public RepeatCommand() {
 		this.name = "repeat";

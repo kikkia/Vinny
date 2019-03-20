@@ -2,8 +2,8 @@ package com.bot.caching;
 
 import com.bot.models.InternalGuild;
 import com.bot.utils.Config;
+import com.bot.utils.Logger;
 
-import java.util.logging.Logger;
 
 /**
  * This is an in-memory cache for caching guild preferences. Since we will be getting the preferences on all messages sent on all channels vinny can see,
@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  * TODO: Eventually we should shift this off to something like redis.
  */
 public class GuildCache {
-    private static final Logger LOGGER = Logger.getLogger(GuildCache.class.getName());
+    private static final Logger LOGGER = new Logger(GuildCache.class.getName());
 
     private static GuildCache instance;
     private Cache<InternalGuild> cache;

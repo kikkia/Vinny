@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class ListGuildPlaylistCommand extends VoiceCommand {
-    private static final Logger LOGGER = Logger.getLogger(ListGuildPlaylistCommand.class.getName());
 
     private PlaylistDAO playlistDAO;
 

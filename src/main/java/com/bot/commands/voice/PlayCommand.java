@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class PlayCommand extends VoiceCommand {
-	private static final Logger LOGGER = Logger.getLogger(PlayCommand.class.getName());
 
 	private Bot bot;
 

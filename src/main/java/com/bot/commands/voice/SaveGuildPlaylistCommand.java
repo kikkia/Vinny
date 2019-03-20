@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class SaveGuildPlaylistCommand extends VoiceCommand {
-	private static final Logger LOGGER = Logger.getLogger(SaveGuildPlaylistCommand.class.getName());
 	private PlaylistDAO playlistDAO;
 	private Bot bot;
 

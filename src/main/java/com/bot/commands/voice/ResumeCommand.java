@@ -8,7 +8,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.logging.Logger;
 
 public class ResumeCommand extends VoiceCommand {
-	private static final Logger LOGGER = Logger.getLogger(ResumeCommand.class.getName());
 
 	public ResumeCommand() {
 		this.name = "resume";

@@ -2,11 +2,11 @@ package com.bot.caching;
 
 import com.bot.models.MarkovModel;
 import com.bot.utils.Config;
+import com.bot.utils.Logger;
 
-import java.util.logging.Logger;
 
 public class MarkovModelCache {
-    private static final Logger LOGGER = Logger.getLogger(MarkovModelCache.class.getName());
+    private static final Logger LOGGER = new Logger(MarkovModelCache.class.getName());
 
     private static MarkovModelCache instance;
     private Cache<MarkovModel> cache;

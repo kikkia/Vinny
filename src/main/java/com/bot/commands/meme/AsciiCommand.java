@@ -2,14 +2,14 @@ package com.bot.commands.meme;
 
 import com.bot.commands.MemeCommand;
 import com.bot.utils.CommandPermissions;
+import com.bot.utils.Logger;
 import com.github.lalyos.jfiglet.FigletFont;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 public class AsciiCommand extends MemeCommand {
-    private Logger LOGGER = Logger.getLogger(this.getClass().getName());
+    private Logger LOGGER = new Logger(this.getClass().getName());
 
     public AsciiCommand() {
         this.name = "ascii";
@@ -33,7 +33,7 @@ public class AsciiCommand extends MemeCommand {
             commandEvent.reply("```" + ascii + "```");
         } catch (IOException e) {
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong. Please try again.");
-            LOGGER.severe("Error generating ascii: " + e.getMessage());
+            LOGGER.severe("Error generating ascii: ", e);
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         } catch (Exception e) {
             commandEvent.reply(commandEvent.getClient().getWarning() + "Failed to generate ascii. Make sure you are only using unicode characters.");

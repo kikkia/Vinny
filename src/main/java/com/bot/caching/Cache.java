@@ -1,11 +1,11 @@
 package com.bot.caching;
 
+import com.bot.utils.Logger;
 import com.bot.utils.MetricsManager;
 import org.apache.commons.collections4.MapIterator;
 import org.apache.commons.collections4.map.LRUMap;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 /**
  * This is an in-memory cache for caching any type of objects. This can be used to cache things that may take a while to
@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * TODO: Eventually we should shift this off to something like redis.
  */
 public class Cache<V> {
-    private static final Logger LOGGER = Logger.getLogger(GuildCache.class.getName());
+    private static final Logger LOGGER = new Logger(GuildCache.class.getName());
 
     private final LRUMap cacheMap;
     private MetricsManager metricsManager;

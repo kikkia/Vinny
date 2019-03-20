@@ -6,6 +6,7 @@ import com.bot.db.ChannelDAO;
 import com.bot.models.InternalTextChannel;
 import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
+import com.bot.utils.Logger;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dean.jraw.models.SubredditSort;
@@ -13,10 +14,9 @@ import net.dean.jraw.models.TimePeriod;
 import net.dv8tion.jda.core.entities.ChannelType;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class RandomPostCommand extends RedditCommand{
-    private static final Logger LOGGER = Logger.getLogger(RandomPostCommand.class.getName());
+    private static final Logger LOGGER = new Logger(RandomPostCommand.class.getName());
 
     private RedditConnection redditConnection;
     private ChannelDAO channelDAO;

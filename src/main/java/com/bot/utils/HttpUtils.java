@@ -8,10 +8,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONObject;
 
-import java.util.logging.Logger;
 
 public class HttpUtils {
-    private static Logger logger = Logger.getLogger(HttpUtils.class.getName());
+    private static Logger logger = new Logger(HttpUtils.class.getName());
     private static Config config = Config.getInstance();
 
     public static void postGuildCountToExternalSites() {
@@ -76,7 +75,7 @@ public class HttpUtils {
             if (response.getStatusLine().getStatusCode() != 200 && response.getStatusLine().getStatusCode() != 204)
                 throw new Exception("Status code not 200: " + response);
         } catch (Exception e) {
-            logger.severe("Failed to post stats. msg: " + e.getMessage() +"\n" + body + "\n" + url);
+            logger.severe("Failed to post stats. url: " + url, e);
         }
     }
 }

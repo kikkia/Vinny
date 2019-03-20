@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 
 public class ShardingManager {
 
-    private static final Logger LOGGER = Logger.getLogger(ShardingManager.class.getName());
     private static ShardingManager instance;
 
     private Map<Integer, InternalShard> shards;
