@@ -9,8 +9,6 @@ import java.util.logging.Level;
 
 public class Config {
 
-    private static final Logger LOGGER = new Logger(Config.class.getName());
-
     private static Config config = null;
     private final File configFile;
     private Map<String, String> configs;
@@ -64,7 +62,6 @@ public class Config {
         catch (FileNotFoundException f) {
             // If config file is gone we can try using env vars
             configs = System.getenv();
-            LOGGER.log(Level.WARNING, "Config file not found, defaulting to env vars");
         }
     }
 
