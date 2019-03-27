@@ -41,4 +41,6 @@ public class MarkovModelCache {
     public MarkovModel get(String key) {
         return cache.get(key);
     }
+
+    public int getSize() {return cache.size();}
 }

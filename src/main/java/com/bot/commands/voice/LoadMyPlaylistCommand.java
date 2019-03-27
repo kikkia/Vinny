@@ -1,7 +1,6 @@
 package com.bot.commands.voice;
 
 import com.bot.Bot;
-import com.bot.ShardingManager;
 import com.bot.commands.VoiceCommand;
 import com.bot.db.PlaylistDAO;
 import com.bot.models.AudioTrack;
@@ -74,8 +73,6 @@ public class LoadMyPlaylistCommand extends VoiceCommand {
         // If not in voice, join
         if (!commandEvent.getGuild().getAudioManager().isConnected()) {
             commandEvent.getGuild().getAudioManager().openAudioConnection(commandEvent.getMember().getVoiceState().getChannel());
-            // Add the stream to the per shard tracking
-            ShardingManager.getInstance().getShards().get(commandEvent.getJDA().getShardInfo().getShardId()).addVoiceStream();
         }
 
         // Queue up the tracks

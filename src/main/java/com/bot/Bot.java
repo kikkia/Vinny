@@ -209,8 +209,6 @@ public class Bot extends ListenerAdapter {
 			getHandler(event.getGuild()).queueTrack(track, event.getAuthor().getIdLong());
 			if (!event.getGuild().getAudioManager().isConnected()) {
 				event.getGuild().getAudioManager().openAudioConnection(event.getMember().getVoiceState().getChannel());
-				// Add the stream to the shard tracking info
-				ShardingManager.getInstance().getShards().get(event.getJDA().getShardInfo().getShardId()).addVoiceStream();
 			}
 			return true;
 		}
@@ -250,8 +248,6 @@ public class Bot extends ListenerAdapter {
 		if (manager.isConnected() && manager.getConnectedChannel().getMembers().size() == 1) {
 			handler.stop();
 			manager.closeAudioConnection();
-			// Remove voice stream from shard tracking
-			ShardingManager.getInstance().getShards().get(event.getJDA().getShardInfo().getShardId()).removeVoiceStream();
 		}
 	}
 

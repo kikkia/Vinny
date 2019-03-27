@@ -1,4 +1,4 @@
-package com.bot.utils;
+package com.bot.metrics;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.timgroup.statsd.NonBlockingStatsDClient;
@@ -60,4 +60,12 @@ public class MetricsManager {
     public void markCacheMiss(String name) {
         statsd.incrementCounter("cache." + name + ".miss");
     }
+
+    public void updateGuildCount(int count) {statsd.recordGaugeValue("guild.count", count);}
+
+    public void updateUserCount(int count) {statsd.recordGaugeValue("users.count", count);}
+
+    public void updateActiveVoiceConnectionsCount(int count) {statsd.recordGaugeValue("connections.voice.active", count);}
+
+    public void updateIdleVoiceConnectionsCount(int count) {statsd.recordGaugeValue("connections.voice.idle", count);}
 }
