@@ -1,6 +1,5 @@
 package com.bot.commands.voice;
 
-import com.bot.ShardingManager;
 import com.bot.commands.VoiceCommand;
 import com.bot.utils.CommandPermissions;
 import com.bot.voice.VoiceSendHandler;
@@ -29,8 +28,6 @@ public class StopCommand extends VoiceCommand {
 			handler.stop();
 			commandEvent.reply(commandEvent.getClient().getSuccess() + " Stopped audio stream");
 			commandEvent.getGuild().getAudioManager().closeAudioConnection();
-			// Remove voice stream from shard object
-			ShardingManager.getInstance().getShards().get(commandEvent.getJDA().getShardInfo().getShardId()).removeVoiceStream();
 		}
 	}
 }

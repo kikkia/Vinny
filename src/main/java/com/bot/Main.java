@@ -2,6 +2,7 @@ package com.bot;
 
 import com.bot.db.ConnectionPool;
 import com.bot.db.DataLoader;
+import com.bot.metrics.MetricsReporter;
 import com.bot.utils.Config;
 import org.flywaydb.core.Flyway;
 
@@ -46,6 +47,10 @@ public class Main {
 			LOGGER.log(Level.INFO, "Starting a data loader");
 			DataLoader loader = new DataLoader(shardingManager);
 		}
+
+		// Start a metrics reporter to keeps the metrics that are not frequently updates flowing to datadog
+		MetricsReporter metricsReporter = new MetricsReporter();
+		metricsReporter.start();
 
 		System.out.println("Successfully started.");
 	}

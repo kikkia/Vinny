@@ -34,7 +34,7 @@ public class ShardStatsCommand extends GeneralCommand {
             JDA jda = entry.getValue().getJda();
             EmbedBuilder builder = new EmbedBuilder();
             builder.setTitle("Shard: " + entry.getKey());
-            builder.addField("Voice Streams", entry.getValue().getVoiceStreamsCount() + "", true);
+            builder.addField("Voice Streams", entry.getValue().getActiveVoiceConnectionsCount() + "", true);
             builder.addField("Guilds", jda.getGuilds().size() + "", true);
             builder.addField("Users", jda.getUsers().size() + "", true);
             builder.addField("Ping", jda.getPing() + "ms", true);

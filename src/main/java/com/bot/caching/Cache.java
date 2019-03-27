@@ -1,7 +1,7 @@
 package com.bot.caching;
 
 import com.bot.utils.Logger;
-import com.bot.utils.MetricsManager;
+import com.bot.metrics.MetricsManager;
 import org.apache.commons.collections4.MapIterator;
 import org.apache.commons.collections4.map.LRUMap;
 

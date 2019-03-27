@@ -129,7 +129,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     }
 
     public boolean isPlaying() {
-        return nowPlaying != null;
+        return nowPlaying != null && !player.isPaused();
     }
 
     public Queue<QueuedAudioTrack> getTracks() {
