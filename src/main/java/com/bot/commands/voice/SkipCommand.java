@@ -5,10 +5,7 @@ import com.bot.utils.CommandPermissions;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import java.util.logging.Logger;
-
 public class SkipCommand extends VoiceCommand {
-	private static final Logger LOGGER = Logger.getLogger(SkipCommand.class.getName());
 
 	public SkipCommand() {
 		this.name = "skip";

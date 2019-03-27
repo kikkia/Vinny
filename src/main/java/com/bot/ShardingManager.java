@@ -27,11 +27,9 @@ import net.dv8tion.jda.core.entities.Game;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class ShardingManager {
 
-    private static final Logger LOGGER = Logger.getLogger(ShardingManager.class.getName());
     private static ShardingManager instance;
 
     private Map<Integer, InternalShard> shards;

@@ -5,11 +5,7 @@ import com.bot.utils.CommandPermissions;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import java.util.logging.Logger;
-
 public class VolumeCommand extends VoiceCommand {
-	private static final Logger LOGGER = Logger.getLogger(VolumeCommand.class.getName());
-
 
 	public VolumeCommand() {
 		this.name = "volume";

@@ -8,10 +8,8 @@ import net.dv8tion.jda.core.managers.AccountManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 public class AvatarCommand extends OwnerCommand {
-    private Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
     public AvatarCommand() {
         this.name = "avatar";

@@ -6,6 +6,7 @@ import com.bot.db.MembershipDAO;
 import com.bot.models.InternalGuild;
 import com.bot.utils.Config;
 import com.bot.utils.HttpUtils;
+import com.bot.utils.Logger;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -37,10 +38,9 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Bot extends ListenerAdapter {
-	private static final Logger LOGGER = Logger.getLogger(Bot.class.getName());
+	private final Logger LOGGER;
 	private EventWaiter waiter;
 	private final AudioPlayerManager manager;
 
@@ -62,6 +62,8 @@ public class Bot extends ListenerAdapter {
 		guildDAO = GuildDAO.getInstance();
 		membershipDAO = MembershipDAO.getInstance();
 		channelDAO = ChannelDAO.getInstance();
+
+		LOGGER =  new Logger(Bot.class.getName());
 	}
 
 	// This code runs every time a message is received by the bot
@@ -257,7 +259,7 @@ public class Bot extends ListenerAdapter {
 		InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
 
 		if (guild == null) {
-			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild {}", event.getGuild().getId());
+			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild " + event.getGuild().getId());
 			return guildDAO.addGuild(event.getGuild());
 		}
 		return true;
@@ -267,7 +269,7 @@ public class Bot extends ListenerAdapter {
 		InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
 
 		if (guild == null) {
-			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild {}", event.getGuild().getId());
+			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild " + event.getGuild().getId());
 			return guildDAO.addGuild(event.getGuild());
 		}
 		return true;
@@ -277,7 +279,7 @@ public class Bot extends ListenerAdapter {
 		InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
 
 		if (guild == null) {
-			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild {}", event.getGuild().getId());
+			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild " + event.getGuild().getId());
 			return guildDAO.addGuild(event.getGuild());
 		}
 		return true;

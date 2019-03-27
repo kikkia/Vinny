@@ -5,12 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Config {
-
-    private static final Logger LOGGER = Logger.getLogger(Config.class.getName());
 
     private static Config config = null;
     private final File configFile;
@@ -51,6 +47,10 @@ public class Config {
     public static final String BOTS_ON_DISCORD_API_TOKEN = "BOTS_ON_DISCORD_API_TOKEN";
     public static final String BOTS_GG_API_TOKEN = "BOTS_GG_API_TOKEN";
 
+    public static final String ENABLE_LOGGING_CHANNELS = "ENABLE_LOGGING_CHANNELS";
+    public static final String DEBUG_CHANNEL_ID = "DEBUG_CHANNEL_ID";
+    public static final String ERROR_CHANNEL_ID = "ERROR_CHANNEL_ID";
+
     private Config() {
         this.configFile = new File("res/config/config.conf");
         configs = new HashMap<>();
@@ -61,7 +61,6 @@ public class Config {
         catch (FileNotFoundException f) {
             // If config file is gone we can try using env vars
             configs = System.getenv();
-            LOGGER.log(Level.WARNING, "Config file not found, defaulting to env vars");
         }
     }
 

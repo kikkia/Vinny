@@ -2,13 +2,13 @@ package com.bot.commands.general;
 
 import com.bot.commands.GeneralCommand;
 import com.bot.utils.CommandPermissions;
+import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class RollCommand extends GeneralCommand {
-    private Logger LOGGER = Logger.getLogger(RollCommand.class.getName());
+    private Logger LOGGER = new Logger(RollCommand.class.getName());
 
     private Random random;
 
@@ -59,7 +59,7 @@ public class RollCommand extends GeneralCommand {
         } catch (NumberFormatException e) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " Please only include a positive number or two numbers separated by a hyphen.");
         } catch (Exception e) {
-            LOGGER.severe("Hit an error while rolling " + e.getMessage());
+            LOGGER.severe("Hit an error while rolling ", e);
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong. Please try again.");
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }

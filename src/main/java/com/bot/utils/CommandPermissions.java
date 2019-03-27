@@ -15,10 +15,9 @@ import net.dv8tion.jda.core.entities.Role;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CommandPermissions {
-    private static Logger LOGGER = Logger.getLogger("Command Permissions");
+    private static Logger LOGGER = new Logger("Command Permissions");
 
     private static ChannelDAO channelDAO = ChannelDAO.getInstance();
     private static MembershipDAO membershipDAO = MembershipDAO.getInstance();
@@ -42,7 +41,7 @@ public class CommandPermissions {
                 throw new SQLException("Guild is missing");
             }
         }  catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to get guild from db: " + commandEvent.getGuild().getId() + " attempting to add", e.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to get guild from db: " + commandEvent.getGuild().getId() + " attempting to add", e);
             // Alert the user that there is an issue and that we will need to start an emergency sync
             commandEvent.reply(commandEvent.getClient().getError() + " There is a problem with this guild in the db. " +
                     "I will attempt to fix it, please try again later. If this issue persists please contact the devs on the support server.");
@@ -77,7 +76,7 @@ public class CommandPermissions {
                 throw new SQLException("Membership is missing");
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to get membership from db when checking command perms. " + e.getMessage());
+            LOGGER.severe("Failed to get membership from db when checking command perms. ", e);
             commandEvent.reply(commandEvent.getClient().getError() + " There is a problem with your association to the guild in the db. " +
                     "I will attempt to fix it, please try again later. If this issue persists please contact the devs on the support server.");
             membershipDAO.addUserToGuild(commandEvent.getAuthor(), commandEvent.getGuild());
@@ -103,7 +102,7 @@ public class CommandPermissions {
                         throw new SQLException("Voice channel is missing");
                     }
                 } catch (SQLException e) {
-                    LOGGER.severe("Failed to get voice channel: " + e.getMessage());
+                    LOGGER.severe("Failed to get voice channel: ", e);
                     commandEvent.reply(commandEvent.getClient().getError() + " There is a problem with the voice channel in the db. " +
                             "I will attempt to fix it, please try again later. If this issue persists please contact the devs on the support server.");
                     channelDAO.addVoiceChannel(commandEvent.getMember().getVoiceState().getChannel());
@@ -129,7 +128,7 @@ public class CommandPermissions {
                 throw new SQLException("Text channel is missing");
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to get text channel: " + e.getMessage());
+            LOGGER.severe("Failed to get text channel: ", e);
             commandEvent.reply(commandEvent.getClient().getError() + " There is a problem with the text channel in the db. " +
                     "I will attempt to fix it, please try again later. If this issue persists please contact the devs on the support server.");
             channelDAO.addTextChannel(commandEvent.getTextChannel());

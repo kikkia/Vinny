@@ -1,11 +1,8 @@
 package com.bot.models;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 public class Playlist {
-	private static final Logger LOGGER = Logger.getLogger(Playlist.class.getName());
-
 	private int id;
 	private String ownerID;
 	private String Name;

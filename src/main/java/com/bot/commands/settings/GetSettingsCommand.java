@@ -6,15 +6,15 @@ import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
+import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class GetSettingsCommand extends GeneralCommand {
-    private static final Logger LOGGER = Logger.getLogger(GetSettingsCommand.class.getName());
+    private static final Logger LOGGER = new Logger(GetSettingsCommand.class.getName());
     private GuildDAO guildDAO;
 
     public GetSettingsCommand() {
