@@ -6,8 +6,6 @@ import com.bot.utils.CommandPermissions;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import java.util.logging.Logger;
-
 public class StopCommand extends VoiceCommand {
 
 	public StopCommand() {

@@ -9,7 +9,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class SaveGuildPlaylistCommand extends VoiceCommand {
 	private PlaylistDAO playlistDAO;

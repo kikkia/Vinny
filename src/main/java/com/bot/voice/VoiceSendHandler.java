@@ -10,7 +10,6 @@ import net.dv8tion.jda.core.audio.AudioSendHandler;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
 
 public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHandler {
     // Max Duration is in seconds

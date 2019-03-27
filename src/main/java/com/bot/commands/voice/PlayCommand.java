@@ -14,7 +14,6 @@ import net.dv8tion.jda.core.entities.Message;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class PlayCommand extends VoiceCommand {
 

@@ -2,8 +2,6 @@ package com.bot.voice;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
-import java.util.logging.Logger;
-
 public class QueuedAudioTrack {
     private long requesterID;
     private AudioTrack track;

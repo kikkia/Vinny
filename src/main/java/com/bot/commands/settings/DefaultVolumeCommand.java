@@ -5,8 +5,6 @@ import com.bot.db.GuildDAO;
 import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import java.util.logging.Logger;
-
 public class DefaultVolumeCommand extends ModerationCommand {
 
     private GuildDAO guildDAO;
