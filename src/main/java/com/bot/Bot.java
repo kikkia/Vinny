@@ -9,14 +9,15 @@ import com.bot.utils.HttpUtils;
 import com.bot.utils.Logger;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.channel.text.GenericTextChannelEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelCreateEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
@@ -41,7 +42,6 @@ import java.util.logging.Level;
 
 public class Bot extends ListenerAdapter {
 	private final Logger LOGGER;
-	private EventWaiter waiter;
 	private final AudioPlayerManager manager;
 
 	private Config config;
@@ -53,9 +53,8 @@ public class Bot extends ListenerAdapter {
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 
 
-	Bot(EventWaiter waiter) {
+	Bot() {
 		this.config = Config.getInstance();
-		this.waiter = waiter;
 		this.manager = new DefaultAudioPlayerManager();
 		AudioSourceManagers.registerRemoteSources(manager);
 

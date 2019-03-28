@@ -163,7 +163,7 @@
     <dependencies>
         <dependency>
             <groupId>com.jagrosh</groupId>
-            <artifactId>jda-utilities-command</artifactId>
+            <artifactId>jda-utilities</artifactId>
             <version>2.1.5</version>
             <scope>compile</scope>
         </dependency>
