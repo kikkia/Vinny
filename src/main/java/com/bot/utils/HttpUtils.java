@@ -1,17 +1,24 @@
 package com.bot.utils;
 
 import com.bot.ShardingManager;
+import net.dv8tion.jda.core.EmbedBuilder;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Random;
 
 
 public class HttpUtils {
     private static Logger logger = new Logger(HttpUtils.class.getName());
     private static Config config = Config.getInstance();
+    private static Random random = new Random(System.currentTimeMillis());
 
     public static void postGuildCountToExternalSites() {
         ShardingManager shardingManager = ShardingManager.getInstance();
@@ -76,6 +83,31 @@ public class HttpUtils {
                 throw new Exception("Status code not 200: " + response);
         } catch (Exception e) {
             logger.severe("Failed to post stats. url: " + url, e);
+        }
+    }
+
+     //  |****************************************************|
+     //  |                       4chan                        |
+     //  |****************************************************|
+
+    public static JSONObject getRandom4chanThreadFromBoard(String board) {
+        try(CloseableHttpClient client = HttpClients.createDefault()) {
+            String boardUrl = "https://a.4cdn.org/" + board + "/threads.json";
+            HttpGet get = new HttpGet(boardUrl);
+
+            HttpResponse response = client.execute(get);
+            // Convert response into a json array
+            String json = IOUtils.toString(response.getEntity().getContent());
+            JSONArray array = new JSONArray(json);
+            // Choose a random thread in the array
+            JSONObject thread = array.getJSONObject(random.nextInt(array.length()));
+            String filename = thread.getString("filename");
+            String imageUrl = "http://i.4cdn.org/" + board + "/" + filename + thread.getString("ext");
+
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle(thread.getString(""));
+        } catch (Exception e) {
+            return null;
         }
     }
 }
