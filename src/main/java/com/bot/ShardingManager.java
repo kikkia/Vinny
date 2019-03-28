@@ -34,6 +34,8 @@ public class ShardingManager {
 
     private Map<Integer, InternalShard> shards;
 
+    private EventWaiter waiter;
+
     public static ShardingManager getInstance() {
         return instance;
     }
@@ -48,6 +50,7 @@ public class ShardingManager {
     // supportScript disables commands. Useful for running a supportScript simultaneously while the bot is going on prod
     private ShardingManager(int numShards) throws Exception {
         Config config = Config.getInstance();
+        waiter = new EventWaiter();
 
         // Check if we are just doing a silent deploy (For debug and stress testing purposes)
         boolean silentDeploy = Boolean.parseBoolean(config.getConfig(Config.SILENT_DEPLOY));
@@ -55,7 +58,7 @@ public class ShardingManager {
         shards = new HashMap<>();
         Bot bot = null;
         CommandClient client = null;
-        bot = new Bot(new EventWaiter());
+        bot = new Bot();
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
         commandClientBuilder.setPrefix("~");
@@ -67,6 +70,7 @@ public class ShardingManager {
             commandClientBuilder.addCommands(
                     // Voice Commands
                     new PlayCommand(bot),
+                    new SearchCommand(bot, waiter),
                     new PauseCommand(),
                     new RepeatCommand(),
                     new StopCommand(),
@@ -146,7 +150,6 @@ public class ShardingManager {
 
             jda.awaitReady();
 
-            EventWaiter waiter = new EventWaiter();
             jda.addEventListener(waiter);
             jda.addEventListener(client);
             jda.addEventListener(bot);
