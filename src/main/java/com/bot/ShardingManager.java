@@ -1,9 +1,6 @@
 package com.bot;
 
-import com.bot.commands.general.InviteCommand;
-import com.bot.commands.general.PingCommand;
-import com.bot.commands.general.RollCommand;
-import com.bot.commands.general.ShardStatsCommand;
+import com.bot.commands.general.*;
 import com.bot.commands.meme.*;
 import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.AvatarCommand;
@@ -90,6 +87,7 @@ public class ShardingManager {
 
                     // General Commands
                     new InviteCommand(),
+                    new StatsCommand(),
                     new ShardStatsCommand(),
                     new PingCommand(),
                     new GetSettingsCommand(),
