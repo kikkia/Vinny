@@ -1,7 +1,6 @@
 package com.bot.utils;
 
 import com.bot.ShardingManager;
-import net.dv8tion.jda.core.EmbedBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -100,12 +99,11 @@ public class HttpUtils {
             String json = IOUtils.toString(response.getEntity().getContent());
             JSONArray array = new JSONArray(json);
             // Choose a random thread in the array
+            JSONObject page = array.getJSONObject(random.nextInt(array.length()));
+            array = page.getJSONArray("threads");
             JSONObject thread = array.getJSONObject(random.nextInt(array.length()));
-            String filename = thread.getString("filename");
-            String imageUrl = "http://i.4cdn.org/" + board + "/" + filename + thread.getString("ext");
 
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle(thread.getString(""));
+            return thread;
         } catch (Exception e) {
             return null;
         }
