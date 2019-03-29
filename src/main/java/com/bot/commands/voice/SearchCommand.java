@@ -104,7 +104,7 @@ public class SearchCommand extends VoiceCommand {
 						}
 
 						bot.queueTrack(track, commandEvent, message);
-						commandEvent.replySuccess("Added `" + track.getInfo().title + "` to the queue`");
+						commandEvent.replySuccess("Added `" + track.getInfo().title + "` to the queue");
 					})
 					.setUsers(commandEvent.getAuthor());
 
