@@ -1,5 +1,6 @@
 package com.bot;
 
+import com.bot.commands.chan.R4cCommand;
 import com.bot.commands.general.*;
 import com.bot.commands.meme.*;
 import com.bot.commands.nsfw.Rule34Command;
@@ -122,7 +123,10 @@ public class ShardingManager {
                     new RemovePrefixCommand(),
 
                     // NSFW Commands
-                    new Rule34Command()
+                    new Rule34Command(),
+
+                    // 4chan commands
+                    new R4cCommand()
             );
         } else {
             commandClientBuilder.useHelpBuilder(false);
@@ -135,6 +139,7 @@ public class ShardingManager {
                 new UpdateGuildCountCommand()
         );
 
+        commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ");
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
         client = commandClientBuilder.build();

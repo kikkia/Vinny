@@ -1,17 +1,23 @@
 package com.bot.utils;
 
 import com.bot.ShardingManager;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Random;
 
 
 public class HttpUtils {
     private static Logger logger = new Logger(HttpUtils.class.getName());
     private static Config config = Config.getInstance();
+    private static Random random = new Random(System.currentTimeMillis());
 
     public static void postGuildCountToExternalSites() {
         ShardingManager shardingManager = ShardingManager.getInstance();
@@ -76,6 +82,46 @@ public class HttpUtils {
                 throw new Exception("Status code not 200: " + response);
         } catch (Exception e) {
             logger.severe("Failed to post stats. url: " + url, e);
+        }
+    }
+
+     //  |****************************************************|
+     //  |                       4chan                        |
+     //  |****************************************************|
+
+    public static JSONObject getRandom4chanThreadFromBoard(String board) {
+        try(CloseableHttpClient client = HttpClients.createDefault()) {
+            String boardUrl = "https://a.4cdn.org/" + board + "/threads.json";
+            HttpGet get = new HttpGet(boardUrl);
+
+            HttpResponse response = client.execute(get);
+            // Convert response into a json array
+            String json = IOUtils.toString(response.getEntity().getContent());
+            JSONArray array = new JSONArray(json);
+            // Choose a random thread in the array
+            JSONObject page = array.getJSONObject(random.nextInt(array.length()));
+            array = page.getJSONArray("threads");
+            JSONObject thread = array.getJSONObject(random.nextInt(array.length()));
+
+            return getInfoForThread(thread.getLong("no"), board);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static JSONObject getInfoForThread(long id, String board) {
+        try(CloseableHttpClient client = HttpClients.createDefault()) {
+            String threadUrl = "http://a.4cdn.org/" + board + "/thread/" + id + ".json";
+            HttpGet get = new HttpGet(threadUrl);
+            HttpResponse response = client.execute(get);
+            // Convert response into a json array
+            String json = IOUtils.toString(response.getEntity().getContent());
+            JSONObject thread = new JSONObject(json);
+            JSONArray array = thread.getJSONArray("posts");
+
+            return array.getJSONObject(0);
+        } catch (Exception e) {
+            return null;
         }
     }
 }
