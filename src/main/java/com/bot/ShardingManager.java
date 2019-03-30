@@ -139,6 +139,7 @@ public class ShardingManager {
                 new UpdateGuildCountCommand()
         );
 
+        commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ");
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
         client = commandClientBuilder.build();

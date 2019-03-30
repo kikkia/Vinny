@@ -103,7 +103,23 @@ public class HttpUtils {
             array = page.getJSONArray("threads");
             JSONObject thread = array.getJSONObject(random.nextInt(array.length()));
 
-            return thread;
+            return getInfoForThread(thread.getLong("no"), board);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static JSONObject getInfoForThread(long id, String board) {
+        try(CloseableHttpClient client = HttpClients.createDefault()) {
+            String threadUrl = "http://a.4cdn.org/" + board + "/thread/" + id + ".json";
+            HttpGet get = new HttpGet(threadUrl);
+            HttpResponse response = client.execute(get);
+            // Convert response into a json array
+            String json = IOUtils.toString(response.getEntity().getContent());
+            JSONObject thread = new JSONObject(json);
+            JSONArray array = thread.getJSONArray("posts");
+
+            return array.getJSONObject(0);
         } catch (Exception e) {
             return null;
         }

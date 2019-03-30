@@ -22,7 +22,7 @@ public class CommentCommand extends MemeCommand {
         this.help = "Generates a comment from the post history of a user or a channel";
         this.arguments = "<@user or userID> or <#channel>";
         this.cooldownScope = CooldownScope.USER;
-        this.cooldown = 5;
+        this.cooldown = 2;
         this.botPermissions = new Permission[]{Permission.MESSAGE_HISTORY, Permission.MESSAGE_WRITE};
 
         markovCache = MarkovModelCache.getInstance();
