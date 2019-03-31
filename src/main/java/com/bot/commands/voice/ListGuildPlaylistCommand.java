@@ -3,7 +3,6 @@ package com.bot.commands.voice;
 import com.bot.commands.VoiceCommand;
 import com.bot.db.PlaylistDAO;
 import com.bot.models.Playlist;
-import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 
@@ -20,11 +19,8 @@ public class ListGuildPlaylistCommand extends VoiceCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
         List<Playlist> playlistList = playlistDAO.getPlaylistsForGuild(commandEvent.getGuild().getId());
 

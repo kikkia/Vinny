@@ -15,7 +15,7 @@ public class UpdateGuildCountCommand extends OwnerCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS))) {
             try {
                 HttpUtils.postGuildCountToExternalSites();

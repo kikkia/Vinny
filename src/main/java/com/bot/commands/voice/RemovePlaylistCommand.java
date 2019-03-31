@@ -10,7 +10,7 @@ public class RemovePlaylistCommand extends VoiceCommand {
 	}
 
 	@Override
-	protected void execute(CommandEvent commandEvent) {
+	protected void executeCommand(CommandEvent commandEvent) {
 		// TODO: Remove from DB for user/guild?
 	}
 }

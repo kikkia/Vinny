@@ -5,7 +5,6 @@ import com.bot.commands.VoiceCommand;
 import com.bot.db.PlaylistDAO;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
-import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.bot.voice.LoadHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -28,11 +27,8 @@ public class LoadMyPlaylistCommand extends VoiceCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
         int playlistId = -1;
         String playlistName = null;

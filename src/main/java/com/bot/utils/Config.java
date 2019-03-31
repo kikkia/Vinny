@@ -51,6 +51,11 @@ public class Config {
     public static final String DEBUG_CHANNEL_ID = "DEBUG_CHANNEL_ID";
     public static final String ERROR_CHANNEL_ID = "ERROR_CHANNEL_ID";
 
+    public static final String ONLINE_EMOJI = "ONLINE_EMOJI";
+    public static final String IDLE_EMOJI = "IDLE_EMOJI";
+    public static final String DND_EMOJI = "DND_EMOJI";
+    public static final String OFFLINE_EMOJI = "OFFLINE_EMOJI";
+
     private Config() {
         this.configFile = new File("res/config/config.conf");
         configs = new HashMap<>();

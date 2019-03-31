@@ -1,11 +1,10 @@
 package com.bot.commands.reddit;
 
-import com.bot.commands.RedditCommand;
 import com.bot.RedditConnection;
+import com.bot.commands.RedditCommand;
 import com.bot.db.ChannelDAO;
 import com.bot.models.InternalTextChannel;
 import com.bot.utils.CommandCategories;
-import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -31,11 +30,8 @@ public class NewPostCommand extends RedditCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
         boolean isNSFWAllowed = true;
 

@@ -11,7 +11,7 @@ public class VoiceStatsCommand extends VoiceCommand {
 	}
 
 	@Override
-	protected void execute(CommandEvent commandEvent) {
+	protected void executeCommand(CommandEvent commandEvent) {
 		// TODO: Go through the shards and get some stats about the current playing streams
 	}
 }

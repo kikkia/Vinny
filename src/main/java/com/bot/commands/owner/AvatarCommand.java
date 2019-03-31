@@ -16,7 +16,7 @@ public class AvatarCommand extends OwnerCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
 
         if (commandEvent.getMessage().getAttachments().isEmpty()) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " You need to give a picture attachment.");

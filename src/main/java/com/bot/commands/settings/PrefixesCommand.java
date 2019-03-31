@@ -3,7 +3,6 @@ package com.bot.commands.settings;
 import com.bot.commands.GeneralCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
-import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.List;
@@ -21,11 +20,8 @@ public class PrefixesCommand extends GeneralCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
         List<String> prefixes = guild.getPrefixList();

@@ -2,7 +2,6 @@ package com.bot.commands.voice;
 
 import com.bot.Bot;
 import com.bot.commands.VoiceCommand;
-import com.bot.utils.CommandPermissions;
 import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -27,11 +26,8 @@ public class PlayCommand extends VoiceCommand {
 	}
 
 	@Override
-	protected void execute(CommandEvent commandEvent) {
+	protected void executeCommand(CommandEvent commandEvent) {
 		metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-		// Check the permissions to do the command
-		if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-			return;
 
 		if (commandEvent.getArgs().isEmpty()) {
 			VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
