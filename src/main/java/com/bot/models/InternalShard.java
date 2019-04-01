@@ -7,6 +7,10 @@ import net.dv8tion.jda.core.managers.AudioManager;
 public class InternalShard {
     private int id;
     private JDA jda;
+    private int activeVoiceConnectionsCount = 0;
+    private int idleVoiceConnectionCount = 0;
+    private int queuedTracksCount = 0;
+    private int usersInVoiceCount = 0;
 
     public InternalShard(int id, JDA jda) {
         this.id = id;
@@ -18,29 +22,43 @@ public class InternalShard {
     }
 
     public int getActiveVoiceConnectionsCount() {
-        int count = 0;
-
-        for (AudioManager manager : jda.getAudioManagers()) {
-            VoiceSendHandler handler = (VoiceSendHandler) manager.getSendingHandler();
-            if (manager.isConnected() && handler.isPlaying()) {
-                count++;
-            }
-        }
-
-        return count;
+        return activeVoiceConnectionsCount;
     }
 
-    public int getIdleVoiceConnectionsCount() {
-        int count = 0;
+    public int getIdleVoiceConnectionCount() {
+        return idleVoiceConnectionCount;
+    }
+
+    public int getUsersInVoiceCount() {
+        return usersInVoiceCount;
+    }
+
+    public int getQueuedTracksCount() {
+        return queuedTracksCount;
+    }
+
+    public synchronized void updateStatistics() {
+        activeVoiceConnectionsCount = 0;
+        idleVoiceConnectionCount = 0;
+        usersInVoiceCount = 0;
+        queuedTracksCount = 0;
 
         for (AudioManager manager : jda.getAudioManagers()) {
             VoiceSendHandler handler = (VoiceSendHandler) manager.getSendingHandler();
-            if (manager.isConnected() && !handler.isPlaying()) {
-                count++;
+            // Update active connections
+            if (manager.isConnected() && handler.isPlaying()) {
+                activeVoiceConnectionsCount++;
             }
-        }
 
-        return count;
+            // Update idle connection count
+            if (manager.isConnected() && !handler.isPlaying()) {
+                idleVoiceConnectionCount++;
+            }
+
+            // Update voice user count (minus one to discount vinny)
+            usersInVoiceCount += manager.getConnectedChannel().getMembers().size() - 1;
+            queuedTracksCount += handler.getTracks().size();
+        }
     }
 
     public int getServerCount() {return jda.getGuilds().size();}

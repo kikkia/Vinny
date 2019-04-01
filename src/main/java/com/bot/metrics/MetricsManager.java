@@ -68,4 +68,8 @@ public class MetricsManager {
     public void updateActiveVoiceConnectionsCount(int count) {statsd.recordGaugeValue("connections.voice.active", count);}
 
     public void updateIdleVoiceConnectionsCount(int count) {statsd.recordGaugeValue("connections.voice.idle", count);}
+
+    public void updateUsersInVoice(int count) {statsd.recordGaugeValue("connections.voice.users", count);}
+
+    public void updateQueuedTracks(int count) {statsd.recordGaugeValue("connections.voice.tracks", count);}
 }
