@@ -24,18 +24,26 @@ public class MetricsReporter extends Thread {
         while(true) {
             int activeVoiceConnectionCount = 0;
             int idleVoiceConnectionCount = 0;
+            int totalQueuedTracks = 0;
+            int totalVoiceUsers = 0;
             int guildCount = 0;
             int userCount = 0;
 
             for (InternalShard shard : shardManager.getShards().values()) {
+                shard.updateStatistics();
+
                 activeVoiceConnectionCount += shard.getActiveVoiceConnectionsCount();
-                idleVoiceConnectionCount += shard.getIdleVoiceConnectionsCount();
+                idleVoiceConnectionCount += shard.getIdleVoiceConnectionCount();
+                totalQueuedTracks += shard.getQueuedTracksCount();
+                totalVoiceUsers += shard.getUsersInVoiceCount();
                 guildCount += shard.getServerCount();
                 userCount += shard.getUserCount();
             }
 
             metricsManager.updateActiveVoiceConnectionsCount(activeVoiceConnectionCount);
             metricsManager.updateIdleVoiceConnectionsCount(idleVoiceConnectionCount);
+            metricsManager.updateQueuedTracks(totalQueuedTracks);
+            metricsManager.updateUsersInVoice(totalVoiceUsers);
             metricsManager.updateGuildCount(guildCount);
             metricsManager.updateUserCount(userCount);
             // TODO: get max size

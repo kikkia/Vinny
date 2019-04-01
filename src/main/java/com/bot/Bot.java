@@ -104,6 +104,8 @@ public class Bot extends ListenerAdapter {
 	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
 		guildDAO.addFreshGuild(guildJoinEvent.getGuild());
 
+		LOGGER.info("Joining guild: " + guildJoinEvent.getGuild().getName() + "with " + guildJoinEvent.getGuild().getMembers().size() + " members");
+
 		// If we are posting stats to external discord bot sites, then do it
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
 			HttpUtils.postGuildCountToExternalSites();
@@ -114,6 +116,8 @@ public class Bot extends ListenerAdapter {
 		for (Member m : guildLeaveEvent.getGuild().getMembers()) {
 			membershipDAO.removeUserMembershipToGuild(m.getUser().getId(), guildLeaveEvent.getGuild().getId());
 		}
+
+		LOGGER.info("Leaving guild: " + guildLeaveEvent.getGuild().getName() + "with " + guildLeaveEvent.getGuild().getMembers().size() + " members");
 
 		// If we are posting stats to external discord bot sites, then do it
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
@@ -244,7 +248,15 @@ public class Bot extends ListenerAdapter {
 		Guild guild = event.getGuild();
 		VoiceSendHandler handler = getHandler(guild);
 		AudioManager manager = guild.getAudioManager();
-		if (manager.isConnected() && manager.getConnectedChannel().getMembers().size() == 1) {
+
+		// if there are no humans left, then leave
+		int users = 0;
+		for (Member member : manager.getConnectedChannel().getMembers()) {
+			if (!member.getUser().isBot())
+				users++;
+		}
+
+		if (manager.isConnected() && users < 1) {
 			handler.stop();
 			manager.closeAudioConnection();
 		}
