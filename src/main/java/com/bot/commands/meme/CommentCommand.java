@@ -3,11 +3,13 @@ package com.bot.commands.meme;
 import com.bot.caching.MarkovModelCache;
 import com.bot.commands.MemeCommand;
 import com.bot.models.MarkovModel;
-import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Channel;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -29,11 +31,8 @@ public class CommentCommand extends MemeCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
         List<User> mentionedUsers = new ArrayList<>(commandEvent.getMessage().getMentionedUsers());
 

@@ -2,7 +2,6 @@ package com.bot.commands.settings;
 
 import com.bot.commands.ModerationCommand;
 import com.bot.db.GuildDAO;
-import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 public class DefaultVolumeCommand extends ModerationCommand {
@@ -17,11 +16,8 @@ public class DefaultVolumeCommand extends ModerationCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
         int newVolume;
         try{

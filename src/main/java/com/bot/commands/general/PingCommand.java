@@ -1,7 +1,6 @@
 package com.bot.commands.general;
 
 import com.bot.commands.GeneralCommand;
-import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 public class PingCommand extends GeneralCommand {
@@ -13,11 +12,8 @@ public class PingCommand extends GeneralCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
         commandEvent.reply(commandEvent.getJDA().getPing() + "ms");
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());

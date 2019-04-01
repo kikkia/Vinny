@@ -1,7 +1,6 @@
 package com.bot.commands.voice;
 
 import com.bot.commands.VoiceCommand;
-import com.bot.utils.CommandPermissions;
 import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -15,14 +14,12 @@ public class ListTracksCommand extends VoiceCommand {
 		this.name = "list";
 		this.arguments = "";
 		this.help = "Lists the tracks currently in the queue";
+		this.aliases = new String[]{"playlist", "lists", "queue"} ;
 	}
 
 	@Override
-	protected void execute(CommandEvent commandEvent) {
+	protected void executeCommand(CommandEvent commandEvent) {
 		metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-		// Check the permissions to do the command
-		if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-			return;
 
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 

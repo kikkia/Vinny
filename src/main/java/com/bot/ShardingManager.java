@@ -2,7 +2,8 @@ package com.bot;
 
 import com.bot.commands.chan.R4cCommand;
 import com.bot.commands.general.*;
-import com.bot.commands.meme.*;
+import com.bot.commands.meme.AsciiCommand;
+import com.bot.commands.meme.CommentCommand;
 import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.AvatarCommand;
 import com.bot.commands.owner.UpdateGuildCountCommand;
@@ -15,6 +16,7 @@ import com.bot.commands.voice.*;
 import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
 import com.bot.utils.Config;
+import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -23,7 +25,9 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ShardingManager {
@@ -33,6 +37,8 @@ public class ShardingManager {
     private Map<Integer, InternalShard> shards;
 
     private EventWaiter waiter;
+    private List<Command.Category> commandCategories;
+    private CommandClient client = null;
 
     public static ShardingManager getInstance() {
         return instance;
@@ -55,7 +61,6 @@ public class ShardingManager {
 
         shards = new HashMap<>();
         Bot bot = null;
-        CommandClient client = null;
         bot = new Bot();
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
@@ -88,21 +93,18 @@ public class ShardingManager {
 
                     // General Commands
                     new InviteCommand(),
+                    new SupportCommand(),
                     new StatsCommand(),
                     new ShardStatsCommand(),
                     new PingCommand(),
                     new GetSettingsCommand(),
                     new PrefixesCommand(),
                     new RollCommand(),
+                    new UserCommand(),
+                    new PermissionsCommand(waiter),
 
                     // Meme Commands
                     new CommentCommand(),
-                    new KappaCommand(),
-                    new BanHammerCommand(),
-                    new FeelsCommand(),
-                    new LennyCommand(),
-                    new SaltCommand(),
-                    new AyyCommand(),
                     new AsciiCommand(),
                     new ShitpostCommand(),
 
@@ -173,5 +175,19 @@ public class ShardingManager {
             guilds += shard.getServerCount();
         }
         return guilds;
+    }
+
+    public List<Command.Category> getCommandCategories() {
+        if (commandCategories == null) {
+            commandCategories = new ArrayList<>();
+            for (Command c: client.getCommands()) {
+                if (c.getCategory() == null)
+                    continue;
+                if (!commandCategories.contains(c.getCategory())) {
+                    commandCategories.add(c.getCategory());
+                }
+            }
+        }
+        return commandCategories;
     }
 }

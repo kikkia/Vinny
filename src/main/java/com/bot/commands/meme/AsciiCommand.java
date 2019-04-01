@@ -1,7 +1,6 @@
 package com.bot.commands.meme;
 
 import com.bot.commands.MemeCommand;
-import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.github.lalyos.jfiglet.FigletFont;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -18,11 +17,8 @@ public class AsciiCommand extends MemeCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
         if (commandEvent.getArgs().length() > 500) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " Please keep the input to under 500 characters.");

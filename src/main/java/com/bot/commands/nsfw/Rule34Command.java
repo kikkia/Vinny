@@ -1,7 +1,6 @@
 package com.bot.commands.nsfw;
 
 import com.bot.commands.NSFWCommand;
-import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import org.apache.http.HttpEntity;
@@ -32,11 +31,8 @@ public class Rule34Command extends NSFWCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
         // Get the tags
         String url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + commandEvent.getArgs();

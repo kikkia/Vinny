@@ -4,7 +4,6 @@ import com.bot.Bot;
 import com.bot.commands.ModerationCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
-import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.entities.Guild;
@@ -26,13 +25,10 @@ public class SetBaseRoleCommand extends ModerationCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
-        InternalGuild guild = null;
+        InternalGuild guild;
         Guild commandGuild = commandEvent.getGuild();
 
         try {

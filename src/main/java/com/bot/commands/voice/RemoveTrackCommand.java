@@ -10,7 +10,7 @@ public class RemoveTrackCommand extends VoiceCommand {
 	}
 
 	@Override
-	protected void execute(CommandEvent commandEvent) {
+	protected void executeCommand(CommandEvent commandEvent) {
 		// TODO: take track # and remove from current list
 	}
 }

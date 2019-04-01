@@ -3,7 +3,6 @@ package com.bot.commands.general;
 import com.bot.ShardingManager;
 import com.bot.commands.GeneralCommand;
 import com.bot.models.InternalShard;
-import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
@@ -23,11 +22,8 @@ public class ShardStatsCommand extends GeneralCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
         // Scan all shards and make some relevant info.
         for (Map.Entry<Integer, InternalShard> entry : ShardingManager.getInstance().getShards().entrySet()) {

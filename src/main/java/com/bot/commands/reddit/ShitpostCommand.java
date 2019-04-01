@@ -2,7 +2,6 @@ package com.bot.commands.reddit;
 
 import com.bot.RedditConnection;
 import com.bot.commands.MemeCommand;
-import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -29,11 +28,8 @@ public class ShitpostCommand extends MemeCommand {
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-        // Check the permissions to do the command
-        if (!CommandPermissions.canExecuteCommand(this, commandEvent))
-            return;
 
         try{
             RedditHelper.getRandomSubmissionAndSend(redditConnection,
