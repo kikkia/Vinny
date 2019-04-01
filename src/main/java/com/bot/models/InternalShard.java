@@ -48,16 +48,19 @@ public class InternalShard {
             // Update active connections
             if (manager.isConnected() && handler.isPlaying()) {
                 activeVoiceConnectionsCount++;
+                usersInVoiceCount += manager.getConnectedChannel().getMembers().size() - 1;
             }
 
             // Update idle connection count
             if (manager.isConnected() && !handler.isPlaying()) {
                 idleVoiceConnectionCount++;
+                usersInVoiceCount += manager.getConnectedChannel().getMembers().size() - 1;
             }
 
-            // Update voice user count (minus one to discount vinny)
-            usersInVoiceCount += manager.getConnectedChannel().getMembers().size() - 1;
-            queuedTracksCount += handler.getTracks().size();
+            if (handler != null) {
+                // Update voice user count (minus one to discount vinny)
+                queuedTracksCount += handler.getTracks().size();
+            }
         }
     }
 
