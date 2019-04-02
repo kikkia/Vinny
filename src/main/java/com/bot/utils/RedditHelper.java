@@ -1,6 +1,7 @@
 package com.bot.utils;
 
 import com.bot.RedditConnection;
+import com.bot.exceptions.ForbiddenCommandException;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
@@ -43,7 +44,7 @@ public class RedditHelper {
                                                   TimePeriod timePeriod,
                                                   int limit,
                                                   boolean isChannelNSFW,
-                                                  String subredditName) throws Exception {
+                                                  String subredditName) {
 
         // If the subreddit name contains an invalid character throw a error response
         if (!subredditName.matches("^[^<>@!#$%^&*() ,.=+;]+$")) {
@@ -54,14 +55,19 @@ public class RedditHelper {
         SubredditReference subreddit = redditConnection.getClient()
                 .subreddit(subredditName);
 
-        if (subreddit.about().isNsfw()) {
-            if (!isChannelNSFW) {
-                commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW subreddit detected and NSFW is not enabled on this channel. " +
-                        "To enable it, use the `~enableNSFW` command.");
-                return;
-            } else if (!CommandPermissions.canExecuteCommand(CommandCategories.NSFW, commandEvent)) {
-                return;
+        try {
+            if (subreddit.about().isNsfw()) {
+                if (!isChannelNSFW) {
+                    commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW subreddit detected and NSFW is not enabled on this channel. " +
+                            "To enable it, use the `~enableNSFW` command.");
+                    return;
+                } else if (!CommandPermissions.canExecuteCommand(CommandCategories.NSFW, commandEvent)) {
+                    return;
+                }
             }
+        } catch (ForbiddenCommandException exception) {
+            commandEvent.replyWarning(exception.getMessage());
+            return;
         }
 
         DefaultPaginator<Submission> paginator = subreddit
