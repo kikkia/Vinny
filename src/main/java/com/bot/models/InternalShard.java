@@ -58,7 +58,9 @@ public class InternalShard {
             }
 
             if (handler != null) {
-                // Update voice user count (minus one to discount vinny)
+                if (handler.getNowPlaying() != null)
+                    queuedTracksCount++;
+
                 queuedTracksCount += handler.getTracks().size();
             }
         }
