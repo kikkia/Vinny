@@ -25,6 +25,7 @@ public class HttpUtils {
         postBotsForDiscord(totalGuilds);
         postBotsGG(totalGuilds, shardingManager.getShards().size());
         postDiscordBotList(totalGuilds);
+        postDiscordBoats(totalGuilds);
         postBotsOnDiscord(totalGuilds);
     }
 
@@ -48,6 +49,15 @@ public class HttpUtils {
 
     private static void postDiscordBotsOrg() {
 
+    }
+
+    private static void postDiscordBoats(int count) {
+        String url = "https://discord.boats/api/bot/" + config.getConfig(Config.DISCORD_BOT_ID);
+        String token = config.getConfig(Config.DISCORD_BOATS_TOKEN);
+        JSONObject object = new JSONObject();
+        object.put("server_count", count);
+
+        sendPost(token, url, object);
     }
 
     private static void postBotsGG(int serverCount, int shards) {

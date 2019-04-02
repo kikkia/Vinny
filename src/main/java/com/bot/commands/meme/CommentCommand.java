@@ -80,7 +80,7 @@ public class CommentCommand extends MemeCommand {
             // Fill the model with messages from all channels who have the right author
             try {
                 for (TextChannel t : commandEvent.getGuild().getTextChannels()) {
-                    if (t.canTalk(commandEvent.getGuild().getMember(user))) {
+                    if (t.canTalk(commandEvent.getGuild().getMember(user)) && commandEvent.getSelfMember().hasPermission(t, Permission.MESSAGE_HISTORY)) {
                         int msg_limit = 2000;
                         for (Message m : t.getIterableHistory().cache(false)) {
                             // Check that message is the right author and has content.
