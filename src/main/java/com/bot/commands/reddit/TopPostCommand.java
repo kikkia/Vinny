@@ -8,6 +8,7 @@ import com.bot.utils.CommandCategories;
 import com.bot.utils.Logger;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dean.jraw.ApiException;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -55,9 +56,17 @@ public class TopPostCommand extends RedditCommand{
                     TimePeriod.ALL,
                     200,
                     isNSFWAllowed);
+        } catch (NullPointerException e) {
+            commandEvent.replyWarning("I could not find that subreddit, please make sure it is public, and spelled correctly.");
+        } catch (ApiException e) {
+            if (e.getCode().equals("403")) {
+                commandEvent.replyWarning("Subreddit is private, please stick to public subreddits.");
+            } else {
+                commandEvent.replyError("Recieved error: " + e.getCode() + " from reddit.");
+            }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error thrown:" + e);
-            commandEvent.reply(commandEvent.getClient().getError() + " Sorry, something went wrong getting a reddit post.");
+            LOGGER.log(Level.SEVERE, "Error thrown: " + e);
+            commandEvent.replyError("Sorry, something went wrong getting a reddit post.");
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
     }
