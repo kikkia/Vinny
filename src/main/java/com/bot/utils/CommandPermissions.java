@@ -60,7 +60,7 @@ public class CommandPermissions {
         else
             highestRole = commandEvent.getMember().getRoles().get(0);
 
-        if (highestRole.getPosition() < requiredRole.getPosition()) {
+        if (highestRole.getPosition() < requiredRole.getPosition() && !commandEvent.getMember().isOwner()) {
             throw new ForbiddenCommandException("You do not have the required role to use this command. You must have at least the " +
                     requiredRole.getName() + " role or higher to use " + commandCategory.getName() + " commands.");
         }
