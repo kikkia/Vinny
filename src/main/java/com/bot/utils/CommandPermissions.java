@@ -4,6 +4,7 @@ import com.bot.db.ChannelDAO;
 import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
 import com.bot.exceptions.ForbiddenCommandException;
+import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalGuildMembership;
 import com.bot.models.InternalTextChannel;
@@ -25,11 +26,11 @@ public class CommandPermissions {
     private static GuildDAO guildDAO = GuildDAO.getInstance();
 
 
-    public static boolean canExecuteCommand(Command command, CommandEvent commandEvent) throws ForbiddenCommandException {
+    public static boolean canExecuteCommand(Command command, CommandEvent commandEvent) throws ForbiddenCommandException, PermsOutOfSyncException {
         return canExecuteCommand(command.getCategory(), commandEvent);
     }
 
-    public static boolean canExecuteCommand(Command.Category commandCategory, CommandEvent commandEvent) throws ForbiddenCommandException {
+    public static boolean canExecuteCommand(Command.Category commandCategory, CommandEvent commandEvent) throws ForbiddenCommandException, PermsOutOfSyncException {
         // If its a PM then screw permissions
         if (commandEvent.isFromType(ChannelType.PRIVATE))
             return true;
@@ -52,6 +53,11 @@ public class CommandPermissions {
         // Check the roles returned
         Role requiredRole = commandEvent.getGuild().getRoleById(guild.getRequiredPermission(commandCategory));
 
+        // We check owner as well, because if they are the owner they get around this check
+        if (requiredRole == null && !commandEvent.getMember().isOwner()) {
+            throw new PermsOutOfSyncException("Role required for permission not found.");
+        }
+
         // Get users role, if they have none then use default
         List<Role> roleList = commandEvent.getMember().getRoles();
         Role highestRole;
@@ -60,7 +66,7 @@ public class CommandPermissions {
         else
             highestRole = commandEvent.getMember().getRoles().get(0);
 
-        if (highestRole.getPosition() < requiredRole.getPosition() && !commandEvent.getMember().isOwner()) {
+        if (!commandEvent.getMember().isOwner() && highestRole.getPosition() < requiredRole.getPosition()) {
             throw new ForbiddenCommandException("You do not have the required role to use this command. You must have at least the " +
                     requiredRole.getName() + " role or higher to use " + commandCategory.getName() + " commands.");
         }

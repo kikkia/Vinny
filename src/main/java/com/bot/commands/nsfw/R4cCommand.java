@@ -1,4 +1,4 @@
-package com.bot.commands.chan;
+package com.bot.commands.nsfw;
 
 import com.bot.commands.NSFWCommand;
 import com.bot.utils.HttpUtils;
@@ -36,6 +36,10 @@ public class R4cCommand extends NSFWCommand {
         body = StringEscapeUtils.unescapeHtml4(body);
         body = body.replaceAll("<br>", "\n");
         body = body.replaceAll("<[^>]*>", "");
+
+        if (body.length() > 250) {
+            body = body.substring(0, 250) + "...";
+        }
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setImage(imageUrl);
