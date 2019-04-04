@@ -24,6 +24,11 @@ public class R4cCommand extends NSFWCommand {
 
         JSONObject thread = HttpUtils.getRandom4chanThreadFromBoard(commandEvent.getArgs());
 
+        if (thread == null) {
+            commandEvent.replyWarning("Something went wrong, make sure you have a correct board name");
+            return;
+        }
+
         long imageNum = thread.getLong("tim");
         String imageUrl = "http://i.4cdn.org/" + commandEvent.getArgs() + "/" + imageNum + thread.getString("ext");
 
