@@ -1,12 +1,14 @@
 package com.bot.commands;
 
 import com.bot.exceptions.ForbiddenCommandException;
+import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.utils.CommandCategories;
 import com.bot.metrics.MetricsManager;
 import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.core.Permission;
 
 public abstract class ModerationCommand extends Command {
     protected MetricsManager metricsManager;
@@ -14,6 +16,7 @@ public abstract class ModerationCommand extends Command {
     public ModerationCommand() {
         this.category = CommandCategories.MODERATION;
         this.guildOnly = true;
+        this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION};
 
         this.metricsManager = MetricsManager.getInstance();
     }
@@ -27,11 +30,17 @@ public abstract class ModerationCommand extends Command {
         } catch (ForbiddenCommandException e) {
             commandEvent.replyWarning(e.getMessage());
             return;
-        } catch (Exception e) {
-            commandEvent.replyError("Something went wrong parsing permissions, please try again later.");
+        } catch (PermsOutOfSyncException e) {
+            commandEvent.replyError("Could not find the role required for " + this.category.getName() + " commands. Please have the owner of the server set a new role.");
             Logger logger = new Logger(this.getClass().getName());
-            logger.severe("Failed command " + this.getClass().getName() + ": ", e);
+            logger.warning(e.getMessage() + " " + commandEvent.getGuild().getId());
+            return;
+        } catch (Exception e) {
+            commandEvent.replyError("Something went wrong with permissions, please try again or go checkout the support server and report the bug.");
             e.printStackTrace();
+            Logger logger = new Logger(this.getClass().getName());
+            logger.severe("Failed to get perms for " + this.getClass().getName(), e);
+            return;
         }
 
         try {

@@ -1,6 +1,6 @@
 package com.bot;
 
-import com.bot.commands.chan.R4cCommand;
+import com.bot.commands.nsfw.R4cCommand;
 import com.bot.commands.general.*;
 import com.bot.commands.meme.AsciiCommand;
 import com.bot.commands.meme.CommentCommand;

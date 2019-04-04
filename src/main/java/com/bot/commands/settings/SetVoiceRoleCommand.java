@@ -19,8 +19,8 @@ public class SetVoiceRoleCommand extends ModerationCommand {
 
     public SetVoiceRoleCommand() {
         this.name = "voicerole";
-        this.help = "Sets the minimum role required to use a voice command. (Mod command permission required)";
-        this.arguments = "<Role mention>";
+        this.help = "Sets the minimum role required to use voice commands.";
+        this.arguments = "<Role mention or empty for everyone>";
         this.guildDAO = GuildDAO.getInstance();
     }
 
@@ -50,9 +50,21 @@ public class SetVoiceRoleCommand extends ModerationCommand {
                 return;
             }
             commandEvent.reply(commandEvent.getClient().getSuccess() + " Added the guild to the database. Retrying");
-            execute(commandEvent);
+            executeCommand(commandEvent);
             return;
         }
+
+        // If nothing then set to all
+        if (commandEvent.getArgs().isEmpty()) {
+            if (!guildDAO.updateMinVoiceRole(guild.getId(), commandEvent.getGuild().getPublicRole().getId())) {
+                LOGGER.log(Level.SEVERE, "Failed to update voice role for guild " + guild.getId());
+                commandEvent.reply("Something went wrong. Please contact the developers on the support server. " + Bot.SUPPORT_INVITE_LINK);
+                metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
+            }
+            commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
+            return;
+        }
+
 
         List<Role> mentionedRoles = commandEvent.getMessage().getMentionedRoles();
         if (mentionedRoles == null || mentionedRoles.isEmpty()) {

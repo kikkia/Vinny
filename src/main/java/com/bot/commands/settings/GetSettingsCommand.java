@@ -9,6 +9,7 @@ import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Role;
 
 import java.util.logging.Level;
 
@@ -56,13 +57,23 @@ public class GetSettingsCommand extends GeneralCommand {
             return;
         }
 
+        Role generalRole = commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.GENERAL));
+        Role modRole = commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.MODERATION));
+        Role voiceRole = commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.VOICE));
+        Role nsfwRole = commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.NSFW));
+
+        String generalName = generalRole != null ? generalRole.getName() : "Role not found";
+        String modName = modRole != null ? modRole.getName() : "Role not found";
+        String voiceName = voiceRole != null ? voiceRole.getName() : "Role not found";
+        String nsfwName = nsfwRole != null ? nsfwRole.getName() : "Role not found";
+
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Settings for " + guild.getName());
         builder.addField("Default Volume", guild.getVolume() + "", true);
-        builder.addField("Min Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.GENERAL)).getName(), false);
-        builder.addField("Min Mod Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.MODERATION)).getName(), false);
-        builder.addField("Min Voice Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.VOICE)).getName(), false);
-        builder.addField("Min NSFW Command Role", commandGuild.getRoleById(guild.getRequiredPermission(CommandCategories.NSFW)).getName(), false);
+        builder.addField("Min Command Role", generalName, false);
+        builder.addField("Min Mod Command Role", modName, false);
+        builder.addField("Min Voice Command Role", voiceName, false);
+        builder.addField("Min NSFW Command Role", nsfwName, false);
 
         commandEvent.reply(builder.build());
     }

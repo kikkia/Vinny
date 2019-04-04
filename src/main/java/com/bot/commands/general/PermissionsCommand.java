@@ -3,6 +3,7 @@ package com.bot.commands.general;
 import com.bot.ShardingManager;
 import com.bot.commands.GeneralCommand;
 import com.bot.exceptions.ForbiddenCommandException;
+import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.utils.CommandPermissions;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -25,7 +26,6 @@ public class PermissionsCommand extends GeneralCommand {
         this.arguments = "<User ID> or nothing for self";
         this.guildOnly = true;
         this.aliases = new String[]{"perm", "permissions", "permission"};
-        this.botPermissions = new Permission[]{Permission.MESSAGE_ADD_REACTION};
 
         builder = new Paginator.Builder()
                 .setColumns(1)
@@ -93,6 +93,8 @@ public class PermissionsCommand extends GeneralCommand {
                 }
             } catch (ForbiddenCommandException e) {
                 b.append(":x:");
+            } catch (PermsOutOfSyncException e) {
+                commandEvent.replyError("Could not find the role required for " + c.getName() + " commands. Please have the owner of the server set a new role or reset the roles with the `~reset` command");
             }
 
             b.append(c.getName());

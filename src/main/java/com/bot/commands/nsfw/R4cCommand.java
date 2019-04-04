@@ -1,4 +1,4 @@
-package com.bot.commands.chan;
+package com.bot.commands.nsfw;
 
 import com.bot.commands.NSFWCommand;
 import com.bot.utils.HttpUtils;
@@ -24,6 +24,11 @@ public class R4cCommand extends NSFWCommand {
 
         JSONObject thread = HttpUtils.getRandom4chanThreadFromBoard(commandEvent.getArgs());
 
+        if (thread == null) {
+            commandEvent.replyWarning("Something went wrong, make sure you have a correct board name");
+            return;
+        }
+
         long imageNum = thread.getLong("tim");
         String imageUrl = "http://i.4cdn.org/" + commandEvent.getArgs() + "/" + imageNum + thread.getString("ext");
 
@@ -36,6 +41,10 @@ public class R4cCommand extends NSFWCommand {
         body = StringEscapeUtils.unescapeHtml4(body);
         body = body.replaceAll("<br>", "\n");
         body = body.replaceAll("<[^>]*>", "");
+
+        if (body.length() > 250) {
+            body = body.substring(0, 250) + "...";
+        }
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setImage(imageUrl);
