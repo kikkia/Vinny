@@ -20,7 +20,6 @@ import java.util.logging.Level;
 public class MembershipDAO {
     private static final Logger LOGGER = Logger.getLogger(MembershipDAO.class.getName());
 
-    private HikariDataSource read;
     private HikariDataSource write;
     private static MembershipDAO instance;
 
@@ -34,7 +33,6 @@ public class MembershipDAO {
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
     public MembershipDAO(HikariDataSource dataSource) {
-        read = dataSource;
         write = dataSource;
     }
 
@@ -47,7 +45,6 @@ public class MembershipDAO {
     }
 
     private void initialize() throws SQLException {
-        this.read = ReadConnectionPool.getDataSource();
         this.write = ConnectionPool.getDataSource();
     }
 
@@ -59,7 +56,7 @@ public class MembershipDAO {
         ResultSet set = null;
 
         try {
-            connection = read.getConnection();
+            connection = write.getConnection();
 
             statement = connection.prepareStatement(query);
             statement.setString(1, userId);
@@ -85,7 +82,7 @@ public class MembershipDAO {
         List<InternalGuildMembership> memberships = null;
 
         try {
-            connection = read.getConnection();
+            connection = write.getConnection();
 
             statement = connection.prepareStatement(query);
             statement.setString(1, userId);

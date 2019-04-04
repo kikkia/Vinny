@@ -23,7 +23,6 @@ public class GuildDAO {
     private static final Logger LOGGER = Logger.getLogger(PlaylistDAO.class.getName());
     private final int DEFAULT_VOLUME = 100;
 
-    private HikariDataSource read;
     private HikariDataSource write;
     private GuildCache cache;
     private static GuildDAO instance;
@@ -39,7 +38,6 @@ public class GuildDAO {
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
     public GuildDAO(HikariDataSource dataSource) {
-        read = dataSource;
         write = dataSource;
         cache = GuildCache.getInstance();
     }
@@ -51,7 +49,6 @@ public class GuildDAO {
     }
 
     private void initialize() throws SQLException {
-        this.read = ReadConnectionPool.getDataSource();
         this.write = ConnectionPool.getDataSource();
         cache = GuildCache.getInstance();
     }
@@ -76,7 +73,7 @@ public class GuildDAO {
         ResultSet set = null;
 
         try {
-            connection = read.getConnection();
+            connection = write.getConnection();
             statement = connection.prepareStatement(query);
             statement.setString(1, guildId);
             set = statement.executeQuery();
@@ -279,7 +276,7 @@ public class GuildDAO {
     }
 
     private ResultSet executeGetQuery(String query, String guildId) throws SQLException {
-        Connection connection = read.getConnection();
+        Connection connection = write.getConnection();
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, guildId);
         ResultSet set = statement.executeQuery();
