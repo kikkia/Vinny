@@ -144,7 +144,12 @@ public class CommentCommand extends MemeCommand {
         if (channel != null)
             builder.setAuthor(channel.getName(), commandEvent.getGuild().getIconUrl(), commandEvent.getGuild().getIconUrl());
 
-        builder.addField("", markovModel.getPhrase(), false);
+        String phrase = markovModel.getPhrase();
+        if (phrase.length() > 1020) {
+            phrase = phrase.substring(0, 1018) + ".";
+        }
+
+        builder.addField("", phrase, false);
         builder.setColor(new Color(0, 255, 0));
         commandEvent.reply(builder.build());
     }

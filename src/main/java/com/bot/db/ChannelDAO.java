@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 public class ChannelDAO {
     private static final Logger LOGGER = Logger.getLogger(ChannelDAO.class.getName());
 
-    private HikariDataSource read;
     private HikariDataSource write;
     private static ChannelDAO instance;
 
@@ -35,7 +34,6 @@ public class ChannelDAO {
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
     public ChannelDAO(HikariDataSource dataSource) {
-        read = dataSource;
         write = dataSource;
     }
 
@@ -49,7 +47,6 @@ public class ChannelDAO {
 
     private void initialize() throws SQLException {
         this.write = ConnectionPool.getDataSource();
-        this.read = ReadConnectionPool.getDataSource();
     }
 
     public void addVoiceChannel(VoiceChannel voiceChannel) {
@@ -185,7 +182,7 @@ public class ChannelDAO {
         Connection connection = null;
         ResultSet set = null;
         try {
-            connection = read.getConnection();
+            connection = write.getConnection();
             statement = connection.prepareStatement(query);
             statement.setString(1, channelId);
             set = statement.executeQuery();
@@ -210,7 +207,7 @@ public class ChannelDAO {
         ResultSet set = null;
 
         try {
-            connection = read.getConnection();
+            connection = write.getConnection();
             statement = connection.prepareStatement(query);
             statement.setString(1, channelId);
             set = statement.executeQuery();
@@ -233,7 +230,7 @@ public class ChannelDAO {
         Connection connection = null;
 
         try {
-            connection = read.getConnection();
+            connection = write.getConnection();
             statement = connection.prepareStatement(query);
             statement.setString(1, guildId);
             set = statement.executeQuery();
@@ -257,7 +254,7 @@ public class ChannelDAO {
         Connection connection = null;
 
         try {
-            connection = read.getConnection();
+            connection = write.getConnection();
             statement = connection.prepareStatement(query);
             statement.setString(1, guildId);
             set = statement.executeQuery();

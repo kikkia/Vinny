@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 public class PlaylistDAO {
     private static final Logger LOGGER = Logger.getLogger(PlaylistDAO.class.getName());
 
-    private HikariDataSource read;
 	private HikariDataSource write;
 	private static PlaylistDAO instance;
 
@@ -29,7 +28,6 @@ public class PlaylistDAO {
 
 	// This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
 	public PlaylistDAO(HikariDataSource dataSource) {
-		read = dataSource;
 		write = dataSource;
 	}
 
@@ -41,7 +39,6 @@ public class PlaylistDAO {
 	}
 
 	private void initialize() throws SQLException {
-		this.read = ReadConnectionPool.getDataSource();
 		this.write = ConnectionPool.getDataSource();
 	}
 
@@ -175,7 +172,7 @@ public class PlaylistDAO {
 		Connection conn = null;
 
 		try {
-			conn = read.getConnection();
+			conn = write.getConnection();
 			statement = conn.prepareStatement(query);
 			statement.setString(1, ownerId);
 			set = statement.executeQuery();
@@ -219,7 +216,7 @@ public class PlaylistDAO {
 		List<AudioTrack> tracks = new ArrayList<>();
 
 		try {
-			conn = read.getConnection();
+			conn = write.getConnection();
 			statement = conn.prepareStatement(query);
 			statement.setString(1, ownerId);
 			statement.setString(2, name);
@@ -346,7 +343,7 @@ public class PlaylistDAO {
 		Connection conn = null;
 
 		try {
-			conn = read.getConnection();
+			conn = write.getConnection();
 			statement = conn.prepareStatement("SELECT * FROM playlist");
 			set = statement.executeQuery();
 			set.first();
