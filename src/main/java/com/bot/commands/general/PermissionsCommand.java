@@ -26,7 +26,6 @@ public class PermissionsCommand extends GeneralCommand {
         this.arguments = "<User ID> or nothing for self";
         this.guildOnly = true;
         this.aliases = new String[]{"perm", "permissions", "permission"};
-        this.botPermissions = new Permission[]{Permission.MESSAGE_ADD_REACTION};
 
         builder = new Paginator.Builder()
                 .setColumns(1)

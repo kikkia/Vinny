@@ -5,11 +5,7 @@ import com.bot.utils.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import java.util.logging.Logger;
-
 public class ReadConnectionPool {
-	private static final Logger LOGGER = Logger.getLogger(ReadConnectionPool.class.getName());
-
 	private HikariDataSource dataSource;
 	private static ReadConnectionPool connectionPool;
 
@@ -22,7 +18,7 @@ public class ReadConnectionPool {
 		hikariConfig.setPassword(config.getConfig(Config.DB_PASSWORD));
 		hikariConfig.setIdleTimeout(600*1000);
 		hikariConfig.setMaxLifetime(900*1000);
-		hikariConfig.setMaximumPoolSize(12);
+		hikariConfig.setMaximumPoolSize(10);
 		hikariConfig.setMinimumIdle(2);
 		hikariConfig.setLeakDetectionThreshold(5 * 1000);
 		hikariConfig.addDataSourceProperty("cachePrepStmts", "true");

@@ -9,12 +9,12 @@ public class DbHelpers {
 
     public static void close(PreparedStatement preparedStatement, ResultSet resultSet, Connection connection) {
         try {
+            if (connection != null)
+                connection.close();
             if (preparedStatement != null)
                 preparedStatement.close();
             if (resultSet != null)
                 resultSet.close();
-            if (connection != null)
-                connection.close();
 
         } catch (SQLException e) {
             e.printStackTrace();

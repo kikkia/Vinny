@@ -19,8 +19,8 @@ public class SetModRoleCommand extends ModerationCommand {
 
     public SetModRoleCommand() {
         this.name = "modrole";
-        this.help = "Sets the minimum role required to use a moderation command. (Mod command permission required)";
-        this.arguments = "<Role mention>";
+        this.help = "Sets the minimum role for moderation command.";
+        this.arguments = "<Role mention or nothing for everyone>";
         this.guildDAO = GuildDAO.getInstance();
     }
 
@@ -51,9 +51,21 @@ public class SetModRoleCommand extends ModerationCommand {
                 return;
             }
             commandEvent.reply(commandEvent.getClient().getSuccess() + " Added the guild to the database. Retrying");
-            execute(commandEvent);
+            executeCommand(commandEvent);
             return;
         }
+
+        // If nothing then set to all
+        if (commandEvent.getArgs().isEmpty()) {
+            if (!guildDAO.updateMinModRole(guild.getId(), commandEvent.getGuild().getPublicRole().getId())) {
+                LOGGER.log(Level.SEVERE, "Failed to update mod role for guild " + guild.getId());
+                commandEvent.reply("Something went wrong. Please contact the developers on the support server. " + Bot.SUPPORT_INVITE_LINK);
+                metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
+            }
+            commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
+            return;
+        }
+
 
         List<Role> mentionedRoles = commandEvent.getMessage().getMentionedRoles();
         if (mentionedRoles == null || mentionedRoles.isEmpty()) {

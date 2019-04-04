@@ -246,7 +246,7 @@ public class GuildDAO {
             LOGGER.log(Level.SEVERE, "Failed to update min mod role for guild: " + guildId + " " + e.getMessage());
             return false;
         } finally {
-            DbHelpers.close(statement, null,connection);
+            DbHelpers.close(statement, null, connection);
         }
 
         updateGuildInCache(guildId);
@@ -270,7 +270,7 @@ public class GuildDAO {
             LOGGER.log(Level.SEVERE, "Failed to update prefixes for guild: " + guildId + " " + e.getMessage());
             return false;
         } finally {
-            DbHelpers.close(statement, null,connection);
+            DbHelpers.close(statement, null, connection);
         }
 
         updateGuildInCache(guildId);
