@@ -23,16 +23,12 @@ public class GuildPreferencesManager implements GuildSettingsManager {
     @Nullable
     @Override
     public GuildPreferencesProvider getSettings(Guild g) {
-        InternalGuild guild = cache.get(g.getId());
 
+        InternalGuild guild = guildDAO.getGuildById(g.getId(), false);
         if (guild == null) {
-            guild = guildDAO.getGuildById(g.getId(), false);
-            if (guild == null) {
-                // If guild is not in the db return nothing
-                LOGGER.warning("Guild not found in db when getting settings: " + g.getId());
-                return null;
-            }
-            cache.put(g.getId(), guild);
+            // If guild is not in the db return nothing
+            LOGGER.warning("Guild not found in db when getting settings: " + g.getId());
+            return null;
         }
         return guild.getGuildPreferencesProvider();
     }

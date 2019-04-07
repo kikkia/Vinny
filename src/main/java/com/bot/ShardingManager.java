@@ -102,6 +102,7 @@ public class ShardingManager {
                     new RollCommand(),
                     new UserCommand(),
                     new PermissionsCommand(waiter),
+                    new ServerInfoCommand(),
 
                     // Meme Commands
                     new CommentCommand(),
