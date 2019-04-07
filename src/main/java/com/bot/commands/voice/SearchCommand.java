@@ -102,7 +102,8 @@ public class SearchCommand extends VoiceCommand {
 						bot.queueTrack(track, commandEvent, message);
 						commandEvent.replySuccess("Added `" + track.getInfo().title + "` to the queue");
 					})
-					.setUsers(commandEvent.getAuthor());
+					.setUsers(commandEvent.getAuthor())
+					.setTimeout(2, TimeUnit.MINUTES);
 
 			for(int i = 0; i < 5 && i < audioPlaylist.getTracks().size(); i++) {
 				AudioTrack track = audioPlaylist.getTracks().get(i);

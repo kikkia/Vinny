@@ -86,6 +86,10 @@ public class GuildDAO {
             DbHelpers.close(statement, set, connection);
         }
 
+        if (returned != null) {
+            cache.put(returned.getId(), returned);
+        }
+
         return returned;
     }
 
