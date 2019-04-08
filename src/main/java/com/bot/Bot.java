@@ -51,7 +51,7 @@ public class Bot extends ListenerAdapter {
 	private GuildDAO guildDAO;
 	private MembershipDAO membershipDAO;
 	private ChannelDAO channelDAO;
-	MetricsManager metricsManager;
+	private MetricsManager metricsManager;
 
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 
