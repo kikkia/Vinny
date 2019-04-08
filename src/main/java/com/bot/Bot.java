@@ -3,6 +3,7 @@ package com.bot;
 import com.bot.db.ChannelDAO;
 import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
+import com.bot.metrics.MetricsManager;
 import com.bot.models.InternalGuild;
 import com.bot.utils.Config;
 import com.bot.utils.HttpUtils;
@@ -18,6 +19,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.channel.text.GenericTextChannelEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelCreateEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
@@ -49,6 +51,7 @@ public class Bot extends ListenerAdapter {
 	private GuildDAO guildDAO;
 	private MembershipDAO membershipDAO;
 	private ChannelDAO channelDAO;
+	private MetricsManager metricsManager;
 
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 
@@ -63,6 +66,13 @@ public class Bot extends ListenerAdapter {
 		channelDAO = ChannelDAO.getInstance();
 
 		LOGGER =  new Logger(Bot.class.getName());
+		metricsManager = MetricsManager.getInstance();
+	}
+
+	@Override
+	public void onGenericEvent(Event event) {
+		metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId());
+		super.onGenericEvent(event);
 	}
 
 	// This code runs every time a message is received by the bot
