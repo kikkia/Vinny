@@ -53,6 +53,11 @@ public class MetricsManager {
         statsd.recordGaugeValue("cache." + name + ".max", limit);
     }
 
+    public void markDiscordEvent(int shard) {
+        String shardTag = "shard:" + shard;
+        statsd.incrementCounter("discord.event", shardTag);
+    }
+
     public void markCacheHit(String name) {
         statsd.incrementCounter("cache." + name + ".hit");
     }
