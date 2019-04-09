@@ -20,8 +20,6 @@ public class ListMyPlaylistCommand extends VoiceCommand {
 
 	@Override
 	protected void executeCommand(CommandEvent commandEvent) {
-		metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
 		List<Playlist> playlistList = playlistDAO.getPlaylistsForUser(commandEvent.getAuthor().getId());
 
 		if (playlistList.size() == 0) {

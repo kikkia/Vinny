@@ -20,8 +20,6 @@ public class R4cCommand extends NSFWCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         JSONObject thread = HttpUtils.getRandom4chanThreadFromBoard(commandEvent.getArgs());
 
         if (thread == null) {

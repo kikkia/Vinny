@@ -18,7 +18,6 @@ public class AsciiCommand extends MemeCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
 
         if (commandEvent.getArgs().length() > 500) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " Please keep the input to under 500 characters.");

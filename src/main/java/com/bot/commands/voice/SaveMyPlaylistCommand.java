@@ -25,8 +25,6 @@ public class SaveMyPlaylistCommand extends VoiceCommand {
 
 	@Override
 	protected void executeCommand(CommandEvent commandEvent) {
-		metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
 		String args = commandEvent.getArgs();
 		if (args.equals("")) {
 			commandEvent.reply("You need to specify a name for the playlist.");

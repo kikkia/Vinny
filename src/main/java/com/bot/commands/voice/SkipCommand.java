@@ -14,8 +14,6 @@ public class SkipCommand extends VoiceCommand {
 
 	@Override
 	protected void executeCommand(CommandEvent commandEvent) {
-		metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		if (handler == null) {
 			commandEvent.reply(commandEvent.getClient().getWarning() + " I am not connected to a voice channel.");

@@ -18,6 +18,8 @@ public abstract class OwnerCommand extends Command {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
+
         try {
             executeCommand(commandEvent);
         } catch (Exception e) {

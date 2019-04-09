@@ -18,8 +18,6 @@ public class DisableNSFWCommand extends ModerationCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         if (channelDAO.setTextChannelNSFW(commandEvent.getTextChannel(), false)) {
             commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
         } else {

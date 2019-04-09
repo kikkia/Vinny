@@ -20,7 +20,6 @@ public class ServerInfoCommand extends GeneralCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getMember().getUser(), commandEvent.getGuild());
 
         Guild g = commandEvent.getGuild();
 

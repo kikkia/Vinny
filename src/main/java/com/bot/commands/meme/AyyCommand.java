@@ -29,8 +29,6 @@ public class AyyCommand extends MemeCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         commandEvent.reply(lmao);
     }
 }

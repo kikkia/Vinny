@@ -25,8 +25,6 @@ public class SaltCommand extends MemeCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         commandEvent.reply(salt);
     }
 }

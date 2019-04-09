@@ -28,8 +28,6 @@ public class LoadGuildPlaylistCommand extends VoiceCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         int playlistId = -1;
         String playlistName = null;
         Playlist playlist;

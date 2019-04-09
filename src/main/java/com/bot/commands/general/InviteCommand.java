@@ -16,11 +16,10 @@ public class InviteCommand extends GeneralCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
 
         // No need to check perms here
         User user = commandEvent.getAuthor();
         PrivateChannel privateChannel = user.openPrivateChannel().complete();
-        privateChannel.sendMessage("https://discordapp.com/oauth2/authorize?client_id=276855867796881408&scope=bot&permissions=523365751").queue();
+        privateChannel.sendMessage("https://discordapp.com/oauth2/authorize?client_id=276855867796881408&scope=bot&permissions=1744305473").queue();
     }
 }

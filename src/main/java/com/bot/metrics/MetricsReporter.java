@@ -38,6 +38,8 @@ public class MetricsReporter extends Thread {
                 totalVoiceUsers += shard.getUsersInVoiceCount();
                 guildCount += shard.getServerCount();
                 userCount += shard.getUserCount();
+
+                metricsManager.updatePing(shard.getId(), shard.getJda().getPing());
             }
 
             metricsManager.updateActiveVoiceConnectionsCount(activeVoiceConnectionCount);

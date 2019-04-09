@@ -26,6 +26,8 @@ public abstract class GeneralCommand extends Command {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
+
         // Check the permissions to do the command
         try {
             if (!CommandPermissions.canExecuteCommand(this, commandEvent))

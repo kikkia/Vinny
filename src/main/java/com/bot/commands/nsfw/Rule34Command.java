@@ -32,8 +32,6 @@ public class Rule34Command extends NSFWCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         // Get the tags
         String url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + commandEvent.getArgs();
 
