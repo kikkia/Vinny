@@ -2,6 +2,8 @@
 [![Discord](https://img.shields.io/badge/Discord-Support-blue.svg)](https://discord.gg/XMwyzxZ)
 ![Build](https://travis-ci.org/JessWalters/Vinny-Redux.svg?branch=master)
 
+### Click [here](https://discordapp.com/oauth2/authorize?client_id=276855867796881408&scope=bot&permissions=523365751) to add Vinny to your server.  
+  
 A complete rewrite and overhaul of VinnyBot.
 
 ## Usage of code
