@@ -13,9 +13,7 @@ public class PingCommand extends GeneralCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
 
         commandEvent.reply(commandEvent.getJDA().getPing() + "ms");
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
     }
 }

@@ -32,8 +32,6 @@ public class NewPostCommand extends RedditCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         boolean isNSFWAllowed = true;
 
         // TODO: Move to static helper

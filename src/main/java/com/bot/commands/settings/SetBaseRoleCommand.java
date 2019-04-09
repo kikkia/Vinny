@@ -26,8 +26,6 @@ public class SetBaseRoleCommand extends ModerationCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         InternalGuild guild;
         Guild commandGuild = commandEvent.getGuild();
 

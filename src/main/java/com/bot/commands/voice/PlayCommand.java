@@ -27,8 +27,6 @@ public class PlayCommand extends VoiceCommand {
 
 	@Override
 	protected void executeCommand(CommandEvent commandEvent) {
-		metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
 		if (commandEvent.getArgs().isEmpty()) {
 			VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 			

@@ -19,8 +19,6 @@ public class ListTracksCommand extends VoiceCommand {
 
 	@Override
 	protected void executeCommand(CommandEvent commandEvent) {
-		metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 
 		if (handler == null) {

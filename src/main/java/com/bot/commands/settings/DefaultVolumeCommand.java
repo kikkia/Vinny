@@ -17,8 +17,6 @@ public class DefaultVolumeCommand extends ModerationCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         int newVolume;
         try{
             newVolume = Integer.parseInt(commandEvent.getArgs().split(" ")[0]);

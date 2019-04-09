@@ -29,8 +29,6 @@ public class ShitpostCommand extends MemeCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         try{
             RedditHelper.getRandomSubmissionAndSend(redditConnection,
                     commandEvent,

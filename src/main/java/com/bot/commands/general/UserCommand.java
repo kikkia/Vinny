@@ -18,7 +18,6 @@ public class UserCommand extends GeneralCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
 
         long userId;
         User user;

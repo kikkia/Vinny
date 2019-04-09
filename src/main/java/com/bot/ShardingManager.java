@@ -92,6 +92,7 @@ public class ShardingManager {
                     //new BattleRoyaleCommand(),
 
                     // General Commands
+                    new InfoCommand(),
                     new InviteCommand(),
                     new SupportCommand(),
                     new StatsCommand(),

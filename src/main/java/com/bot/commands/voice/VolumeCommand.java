@@ -14,8 +14,6 @@ public class VolumeCommand extends VoiceCommand {
 
 	@Override
 	protected void executeCommand(CommandEvent commandEvent) {
-		metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		int newVolume;
 		try{

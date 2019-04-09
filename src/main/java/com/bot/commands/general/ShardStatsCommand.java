@@ -23,7 +23,6 @@ public class ShardStatsCommand extends GeneralCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
 
         // Scan all shards and make some relevant info.
         for (Map.Entry<Integer, InternalShard> entry : ShardingManager.getInstance().getShards().entrySet()) {

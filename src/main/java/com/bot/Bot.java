@@ -114,7 +114,7 @@ public class Bot extends ListenerAdapter {
 	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
 		guildDAO.addFreshGuild(guildJoinEvent.getGuild());
 
-		LOGGER.info("Joining guild: " + guildJoinEvent.getGuild().getName() + "with " + guildJoinEvent.getGuild().getMembers().size() + " members");
+		LOGGER.info("Joining guild: " + guildJoinEvent.getGuild().getName() + " with " + guildJoinEvent.getGuild().getMembers().size() + " members");
 
 		// If we are posting stats to external discord bot sites, then do it
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
@@ -127,7 +127,7 @@ public class Bot extends ListenerAdapter {
 			membershipDAO.removeUserMembershipToGuild(m.getUser().getId(), guildLeaveEvent.getGuild().getId());
 		}
 
-		LOGGER.info("Leaving guild: " + guildLeaveEvent.getGuild().getName() + "with " + guildLeaveEvent.getGuild().getMembers().size() + " members");
+		LOGGER.info("Leaving guild: " + guildLeaveEvent.getGuild().getName() + " with " + guildLeaveEvent.getGuild().getMembers().size() + " members");
 
 		// If we are posting stats to external discord bot sites, then do it
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))

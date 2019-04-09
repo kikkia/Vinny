@@ -21,8 +21,6 @@ public class RollCommand extends GeneralCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         String args = commandEvent.getArgs();
 
         try {

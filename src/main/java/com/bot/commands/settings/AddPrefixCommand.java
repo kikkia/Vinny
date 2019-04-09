@@ -23,8 +23,6 @@ public class AddPrefixCommand extends ModerationCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
 
         if (commandEvent.getArgs().isEmpty()) {

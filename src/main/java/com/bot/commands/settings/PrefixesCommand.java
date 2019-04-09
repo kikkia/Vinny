@@ -21,8 +21,6 @@ public class PrefixesCommand extends GeneralCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
         List<String> prefixes = guild.getPrefixList();
 

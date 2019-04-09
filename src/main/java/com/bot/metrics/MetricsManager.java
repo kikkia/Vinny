@@ -77,4 +77,9 @@ public class MetricsManager {
     public void updateUsersInVoice(int count) {statsd.recordGaugeValue("connections.voice.users", count);}
 
     public void updateQueuedTracks(int count) {statsd.recordGaugeValue("connections.voice.tracks", count);}
+
+    public void updatePing(int shard, long ping) {
+        String shardTag = "shard:" + shard;
+        statsd.recordGaugeValue("discord.ping", ping, shardTag);
+    }
 }

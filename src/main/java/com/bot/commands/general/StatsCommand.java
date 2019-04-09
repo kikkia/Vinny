@@ -14,7 +14,6 @@ public class StatsCommand extends GeneralCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
 
         commandEvent.reply("To find detailed stats, you can find the stats dashboard here: " + DASHBOARD_LINK);
     }

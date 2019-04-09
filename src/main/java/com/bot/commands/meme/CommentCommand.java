@@ -32,8 +32,6 @@ public class CommentCommand extends MemeCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
-
         List<User> mentionedUsers = new ArrayList<>(commandEvent.getMessage().getMentionedUsers());
 
         // In case the user is using the @ prefix, then get rid of the bot in the list.
