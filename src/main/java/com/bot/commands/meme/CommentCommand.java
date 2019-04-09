@@ -66,8 +66,8 @@ public class CommentCommand extends MemeCommand {
         }
 
 
-        // See if we have the model cached. If so we can skip rebuilding it.
-        markov = markovCache.get(user.getId());
+        // See if we have the model cached. If so we can skip rebuilding it. (We user server+user so that it does not go across servers)
+        markov = markovCache.get(commandEvent.getGuild().getId() + user.getId());
 
         if (markov == null) {
             // No cached model found. Make a new one.
@@ -95,7 +95,7 @@ public class CommentCommand extends MemeCommand {
                 e.printStackTrace();
             }
             // Cache it
-            markovCache.put(user.getId(), markov);
+            markovCache.put(commandEvent.getGuild().getId() + user.getId(), markov);
         }
         sendComment(commandEvent, markov, user, null);
     }
