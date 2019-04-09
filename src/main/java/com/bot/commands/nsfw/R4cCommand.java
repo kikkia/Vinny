@@ -35,10 +35,15 @@ public class R4cCommand extends NSFWCommand {
             title = thread.getString("sub");
         }
 
-        String body = thread.getString("com");
-        body = StringEscapeUtils.unescapeHtml4(body);
-        body = body.replaceAll("<br>", "\n");
-        body = body.replaceAll("<[^>]*>", "");
+        String body = "";
+        if (thread.has("com")) {
+            body = thread.getString("com");
+            body = StringEscapeUtils.unescapeHtml4(body);
+            body = body.replaceAll("<br>", "\n");
+            body = body.replaceAll("<[^>]*>", "");
+        } else {
+            body = "No comment found";
+        }
 
         if (body.length() > 250) {
             body = body.substring(0, 250) + "...";
@@ -49,7 +54,7 @@ public class R4cCommand extends NSFWCommand {
         builder.setAuthor(title);
         builder.setDescription("Replies: " + thread.getInt("replies") + " Images: " + thread.getInt("images"));
         builder.setTitle(body);
-        builder.setFooter("http://boards.4channel.org/" + commandEvent.getArgs() + "/thread/" + thread.getInt("no"), null);
+        builder.addField("link", "[Thread](http://boards.4channel.org/" + commandEvent.getArgs() + "/thread/" + thread.getInt("no") + ")", false);
         commandEvent.reply(builder.build());
 
         if (thread.getString("ext").equals(".webm")) {
