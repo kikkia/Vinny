@@ -39,12 +39,10 @@ public class GuildCache {
         LOGGER.info("Guild Cache successfully initialized.");
     }
 
-    @SuppressWarnings("unchecked")
     public void put(String key, InternalGuild value) {
         cache.put(key, value);
     }
 
-    @SuppressWarnings("unchecked")
     public InternalGuild get(String key) {
         return cache.get(key);
     }
@@ -52,4 +50,6 @@ public class GuildCache {
     public void removeAll() {
         cache.removeAll();
     }
+
+    public int getSize() {return cache.size();}
 }

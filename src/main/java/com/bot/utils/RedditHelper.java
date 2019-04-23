@@ -1,6 +1,7 @@
 package com.bot.utils;
 
 import com.bot.RedditConnection;
+import com.bot.caching.SubredditCache;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -14,7 +15,6 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 public class RedditHelper {
@@ -57,8 +57,8 @@ public class RedditHelper {
                 .subreddit(subredditName);
 
         try {
-            if (subreddit.about().isNsfw()) {
-                if (!isChannelNSFW) {
+            if (!isChannelNSFW) {
+                if (subreddit.about().isNsfw()) {
                     commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW subreddit detected and NSFW is not enabled on this channel. " +
                             "To enable it, use the `~enableNSFW` command.");
                     return;
@@ -81,16 +81,24 @@ public class RedditHelper {
                 .sorting(sortType)
                 .build();
 
-        List<Listing<Submission>> submissions = paginator.accumulate(1);
+        SubredditCache cache = SubredditCache.getInstance();
+        List<Listing<Submission>> submissions = cache.get(subredditName);
+
+        if (submissions == null) {
+            submissions = paginator.accumulate(1);
+            cache.put(subredditName, submissions);
+        }
+
         Listing<Submission> page = submissions.get(0); // Get the only page
         Submission submission =  getRandomSubmission(page, false);// Get random child post from the page
 
-
-        if (submission.isNsfw() && !isChannelNSFW) {
+        boolean isNsfwSubmission = submission.isNsfw();
+        if (isNsfwSubmission && !isChannelNSFW) {
             // Submission is nsfw but sub is not. Try 10 times to find non nsfw-post
             int tries = 0;
-            while (submission.isNsfw()) {
+            while (isNsfwSubmission) {
                 submission = getRandomSubmission(page, false);
+                isNsfwSubmission = submission.isNsfw();
                 tries++;
                 if (tries == 10) {
                     commandEvent.reply(commandEvent.getClient().getWarning() + " I only found NSFW posts and NSFW is not enabled on this channel. " +
@@ -103,16 +111,17 @@ public class RedditHelper {
         // Send the embed, content will be sent separatly below
         commandEvent.reply(buildEmbedForSubmission(submission));
 
-        if (submission.isSelfPost() && !Objects.requireNonNull(submission.getSelfText()).isEmpty()) {
+        String text = submission.getSelfText();
+        if (submission.isSelfPost() && text != null && !text.isEmpty()) {
             // Since discord only allows us to send 2000 characters we need to break long posts down
-            if (submission.getSelfText().length() > 1900) {
+            if (text.length() > 1900) {
                 // Split message into parts and send them all separately
-                for (String part: FormattingUtils.splitTextIntoChunksByWords(submission.getSelfText(), 1500)) {
+                for (String part: FormattingUtils.splitTextIntoChunksByWords(text, 1500)) {
                     commandEvent.reply("```" + part + "```");
                 }
             } else {
                 // Its short enough so just send it
-                commandEvent.reply("```" + submission.getSelfText() + " ```");
+                commandEvent.reply("```" + text + " ```");
             }
         } else {
             commandEvent.reply(submission.getUrl());
@@ -141,7 +150,8 @@ public class RedditHelper {
         builder.setFooter(submission.getUrl(), REDDIT_SNOO_ICON_URL);
 
         // If the title is more than 256 characters then trim it
-        String title = submission.getTitle().length() <= 256 ? submission.getTitle() : submission.getTitle().substring(0, 252) + "...";
+        String title = submission.getTitle();
+        title = title.length() <= 256 ? title : title.substring(0, 252) + "...";
         builder.setTitle(title);
 
         // If there is a thumbnail and it does match a url to an image

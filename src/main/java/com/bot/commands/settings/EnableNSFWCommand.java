@@ -3,6 +3,7 @@ package com.bot.commands.settings;
 import com.bot.commands.ModerationCommand;
 import com.bot.db.ChannelDAO;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.core.Permission;
 
 public class EnableNSFWCommand extends ModerationCommand {
 
@@ -12,6 +13,7 @@ public class EnableNSFWCommand extends ModerationCommand {
         this.name = "enablensfw";
         this.arguments = "";
         this.help = "Enables NSFW commands in the text channel it is posted in.";
+        this.botPermissions = new Permission[]{Permission.MESSAGE_HISTORY};
 
         this.channelDAO = ChannelDAO.getInstance();
     }

@@ -8,7 +8,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
 
-import java.util.*;
+import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHandler {
