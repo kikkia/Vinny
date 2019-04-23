@@ -72,7 +72,7 @@ public class PlaylistDAO {
 			return getPlaylistsFromQuery(userId, query).get(0);
 		}
 		// Catches if no results returned then the list will be null, nullpointer will be caught and passed up.
-		catch (NullPointerException e) {
+		catch (NullPointerException | IndexOutOfBoundsException e) {
 			return null;
 		}
 	}
@@ -96,7 +96,7 @@ public class PlaylistDAO {
 			return getPlaylistsFromQuery(guildId, query).get(0);
 		}
 		// Catches if no results returned then the list will be null, nullpointer will be caught and passed up.
-		catch (NullPointerException e) {
+		catch (NullPointerException | IndexOutOfBoundsException e) {
 			return null;
 		}
 	}
@@ -199,6 +199,7 @@ public class PlaylistDAO {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return null;
 		} finally {
 			DbHelpers.close(statement, set, conn);
 		}
@@ -237,6 +238,10 @@ public class PlaylistDAO {
 		} finally {
 			DbHelpers.close(statement, set, conn);
 		}
+
+		// Signifies a not found playlist
+		if (tracks.isEmpty())
+			return null;
 
 		return new Playlist(playlistId, ownerId, playlistName, tracks);
 	}

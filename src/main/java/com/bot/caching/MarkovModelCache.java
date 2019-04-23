@@ -32,12 +32,10 @@ public class MarkovModelCache {
         LOGGER.info("Markov Cache successfully initialized.");
     }
 
-    @SuppressWarnings("unchecked")
     public void put(String key, MarkovModel value) {
         cache.put(key, value);
     }
 
-    @SuppressWarnings("unchecked")
     public MarkovModel get(String key) {
         return cache.get(key);
     }

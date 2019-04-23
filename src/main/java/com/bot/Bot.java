@@ -241,8 +241,9 @@ public class Bot extends ListenerAdapter {
 				LOGGER.warning("Failed to get guild when looking for volume. Attempting an add");
 				guildDAO.addFreshGuild(guild);
 				// Just play, no need to return
+			} else {
+				dVolume = g.getVolume();
 			}
-
 
 			handler.getPlayer().setVolume(dVolume);
 			player.addListener(handler);

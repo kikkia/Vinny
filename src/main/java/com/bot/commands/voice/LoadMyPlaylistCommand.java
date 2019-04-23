@@ -38,6 +38,11 @@ public class LoadMyPlaylistCommand extends VoiceCommand {
             // if number parsing fails we look for the name;
             playlistName = commandEvent.getArgs();
         }
+
+        if (playlistName != null && playlistName.isEmpty()) {
+            commandEvent.replyWarning("You must specify a playlist name or id to load it.");
+            return;
+        }
         String userId = commandEvent.getAuthor().getId();
         playlist = playlistName != null ? playlistDAO.getPlaylistForUserByName(userId, playlistName) :
                 playlistDAO.getPlaylistForUserById(userId, playlistId);

@@ -3,6 +3,7 @@ package com.bot.utils;
 import com.bot.ShardingManager;
 import com.bot.models.InternalShard;
 import net.dv8tion.jda.core.entities.TextChannel;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.Map;
 import java.util.logging.Level;
@@ -113,6 +114,7 @@ public class Logger {
             errorChannel.sendMessage("`Error:`\n" + s).queue();
             if (e != null)
                 errorChannel.sendMessage("`Exception:`\n```" + e.toString() + "```").queue();
+                errorChannel.sendMessage("StackTrace: ```" + ExceptionUtils.getStackTrace(e) + "```").queue();
         }
     }
 
