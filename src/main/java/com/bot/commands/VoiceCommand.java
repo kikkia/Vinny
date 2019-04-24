@@ -45,7 +45,7 @@ public abstract class VoiceCommand extends Command {
             return;
         }
         try {
-            executeCommand(commandEvent);
+            commandEvent.async(() -> executeCommand(commandEvent));
         } catch (Exception e) {
             commandEvent.replyError("Something went wrong, please try again later");
             Logger logger = new Logger(this.getClass().getName());

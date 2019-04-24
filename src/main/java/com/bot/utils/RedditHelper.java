@@ -129,6 +129,10 @@ public class RedditHelper {
     }
 
     private static Submission getRandomSubmission(Listing<Submission> submissions, boolean stickyAllowed) {
+        if (submissions.getChildren().isEmpty()) {
+            return null;
+        }
+
         Submission toReturn = submissions.getChildren().get(random.nextInt(submissions.getChildren().size()));
 
         if (!stickyAllowed && toReturn.isStickied()) {

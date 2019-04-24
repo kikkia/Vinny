@@ -47,7 +47,7 @@ public abstract class RedditCommand extends Command {
         }
 
         try {
-            executeCommand(commandEvent);
+            commandEvent.async(() -> executeCommand(commandEvent));
         } catch (Exception e) {
             commandEvent.replyError("Something went wrong, please try again later");
             Logger logger = new Logger(this.getClass().getName());

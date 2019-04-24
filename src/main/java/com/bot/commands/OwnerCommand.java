@@ -21,7 +21,7 @@ public abstract class OwnerCommand extends Command {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
 
         try {
-            executeCommand(commandEvent);
+            commandEvent.async(() -> executeCommand(commandEvent));
         } catch (Exception e) {
             commandEvent.replyError("Something went wrong, please try again later");
             Logger logger = new Logger(this.getClass().getName());
