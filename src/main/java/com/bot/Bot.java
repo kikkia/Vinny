@@ -5,6 +5,8 @@ import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.InternalGuild;
+import com.bot.tasks.AddFreshGuildDeferredTask;
+import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.utils.Config;
 import com.bot.utils.HttpUtils;
 import com.bot.utils.Logger;
@@ -36,7 +38,6 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceUpdateEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
 
@@ -75,17 +76,6 @@ public class Bot extends ListenerAdapter {
 		super.onGenericEvent(event);
 	}
 
-	// This code runs every time a message is received by the bot
-	@Override
-	public void onMessageReceived(MessageReceivedEvent event) {
-//		String[] command = event.getMessage().getContentRaw().split(" ", 2);
-//
-//		if ("hi".equals(command[0])){
-//			event.getTextChannel().sendMessage("yo").queue();
-//			waiter.waitForEvent(MessageReceivedEvent.class, getResponseFromSender(event), responseConsumer(event), 10, TimeUnit.SECONDS, new exampleTimeout(event));
-//		}
-	}
-
 	@Override
 	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
 		checkVoiceLobby(event);
@@ -112,9 +102,8 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
-		guildDAO.addFreshGuild(guildJoinEvent.getGuild());
-
-		LOGGER.info("Joining guild: " + guildJoinEvent.getGuild().getName() + " with " + guildJoinEvent.getGuild().getMembers().size() + " members");
+		AddFreshGuildDeferredTask defferedTask = new AddFreshGuildDeferredTask(guildJoinEvent);
+		defferedTask.start();
 
 		// If we are posting stats to external discord bot sites, then do it
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
@@ -123,11 +112,8 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildLeave(GuildLeaveEvent guildLeaveEvent) {
-		for (Member m : guildLeaveEvent.getGuild().getMembers()) {
-			membershipDAO.removeUserMembershipToGuild(m.getUser().getId(), guildLeaveEvent.getGuild().getId());
-		}
-
-		LOGGER.info("Leaving guild: " + guildLeaveEvent.getGuild().getName() + " with " + guildLeaveEvent.getGuild().getMembers().size() + " members");
+		LeaveGuildDeferredTask defferedTask = new LeaveGuildDeferredTask(guildLeaveEvent);
+		defferedTask.start();
 
 		// If we are posting stats to external discord bot sites, then do it
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
@@ -174,32 +160,6 @@ public class Bot extends ListenerAdapter {
 		// This should trip the on duplicate sync the names
 		channelDAO.addVoiceChannel(event.getChannel());
 	}
-
-//
-//	// Predicate defines the condition we need to fulfill
-//	private Predicate<MessageReceivedEvent> getResponseFromSender(MessageReceivedEvent original) {
-//		return p -> p.getAuthor() == original.getAuthor() && p.getMessage().getContentRaw().equals("sup");
-//	}
-//
-//	// This code will run when the predicate is met
-//	private Consumer<MessageReceivedEvent> responseConsumer(MessageReceivedEvent event) {
-//		return x -> event.getTextChannel().sendMessage("not much fam hbu").queue();
-//	}
-//
-//	// Runnable to execute when timeout is met.
-//	public class exampleTimeout implements Runnable {
-//		TextChannel channel;
-//
-//		public exampleTimeout(MessageReceivedEvent event) {
-//			channel = event.getTextChannel();
-//		}
-//
-//		@Override
-//		public void run() {
-//			channel.sendMessage("oops out of time!").queue();
-//		}
-//	}
-
 
 	public AudioPlayerManager getManager() {
 		return manager;

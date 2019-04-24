@@ -48,7 +48,7 @@ public abstract class GeneralCommand extends Command {
             return;
         }
 
-        executeCommand(commandEvent);
+        commandEvent.async(() -> executeCommand(commandEvent));
     }
 
     protected abstract void executeCommand(CommandEvent commandEvent);
