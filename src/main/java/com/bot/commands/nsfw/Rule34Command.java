@@ -1,5 +1,6 @@
 package com.bot.commands.nsfw;
 
+import com.bot.caching.R34Cache;
 import com.bot.commands.NSFWCommand;
 import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -12,6 +13,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +21,7 @@ import java.util.regex.Pattern;
 public class Rule34Command extends NSFWCommand {
     private Logger LOGGER = new Logger(Rule34Command.class.getName());
     private Random random;
+    private R34Cache cache;
 
     public Rule34Command() {
         this.name = "r34";
@@ -27,17 +30,27 @@ public class Rule34Command extends NSFWCommand {
         this.cooldown = 1;
         this.help = "Gets rule 34 for the given tags";
 
-        random = new Random(System.currentTimeMillis());
+        this.random = new Random(System.currentTimeMillis());
+        this.cache = R34Cache.getInstance();
     }
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
         // Get the tags
-        String url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + commandEvent.getArgs();
+        String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + commandEvent.getArgs();
+        String booruUrl = "https://yande.re/post.xml?limit=100?tags=" + commandEvent.getArgs();
+        List<String> imageUrls = cache.get(commandEvent.getArgs());
 
         try {
-            String imgUrl = getImageURLFromSearch(url);
-            commandEvent.reply(imgUrl);
+            if (imageUrls == null) {
+                commandEvent.getTextChannel().sendTyping().queue();
+                imageUrls = new ArrayList<>();
+                imageUrls.addAll(getImageURLFromSearch(r34url));
+                imageUrls.addAll(getImageURLFromSearch(booruUrl));
+                cache.put(commandEvent.getArgs(), imageUrls);
+            }
+            String selected = imageUrls.get(random.nextInt(imageUrls.size()));
+            commandEvent.reply(selected);
         } catch (IllegalArgumentException e) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " I couldn't find any results for that search.");
         } catch (Exception e) {
@@ -47,7 +60,7 @@ public class Rule34Command extends NSFWCommand {
         }
     }
 
-    private String getImageURLFromSearch(String url) throws Exception{
+    private List<String> getImageURLFromSearch(String url) throws Exception{
         HttpGet get = new HttpGet(url);
         try (CloseableHttpClient client = HttpClients.createDefault()) {
 
@@ -74,7 +87,7 @@ public class Rule34Command extends NSFWCommand {
                 possibleLinks.add(matcher.group(2));
             }
 
-            return possibleLinks.get(random.nextInt(possibleLinks.size()));
+            return possibleLinks;
         }
     }
 }

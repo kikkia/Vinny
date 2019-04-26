@@ -81,8 +81,8 @@ public class CommandPermissions {
         } catch (SQLException e) {
             LOGGER.severe("Failed to get membership from db when checking command perms. ", e);
             membershipDAO.addUserToGuild(commandEvent.getAuthor(), commandEvent.getGuild());
-            throw new ForbiddenCommandException("There is a problem with your association to the guild in the db. " +
-                    "I will attempt to fix it, please try again later. If this issue persists please contact the devs on the support server.");
+            throw new ForbiddenCommandException("There is a problem with your association to the guild in the db. This can happen right after adding me to your server. " +
+                    "I will attempt to fix it, please try again. If this issue persists please contact the devs on the support server.");
         }
 
         if (!membership.canUseBot()) {
