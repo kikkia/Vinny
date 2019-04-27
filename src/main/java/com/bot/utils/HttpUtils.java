@@ -27,6 +27,7 @@ public class HttpUtils {
         postDiscordBotList(totalGuilds);
         postDiscordBoats(totalGuilds);
         postBotsOnDiscord(totalGuilds);
+        postDiscordBotsOrg(totalGuilds);
     }
 
     private static void postBotsOnDiscord(int serverCount) {
@@ -47,8 +48,14 @@ public class HttpUtils {
         sendPost(token, url, object);
     }
 
-    private static void postDiscordBotsOrg() {
+    private static void postDiscordBotsOrg(int serverCount) {
+        String url = "https://discordbots.org/api/bots/" + config.getConfig(Config.DISCORD_BOT_ID) + "/stats";
+        String token = config.getConfig(Config.DISCORD_BOTS_ORG_API_TOKEN);
+        JSONObject object = new JSONObject();
+        object.put("server_count", serverCount);
+        object.put("shard_count", config.getConfig(Config.NUM_SHARDS));
 
+        sendPost(token, url, object);
     }
 
     private static void postDiscordBoats(int count) {
