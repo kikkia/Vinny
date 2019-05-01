@@ -48,3 +48,5 @@ I am in the process of writing some guides to help with the process. I will put 
 Alternatively you can use ENV variables with the same field names (without *)
 
 The only mandatory fields in here are Discord, OwnerID and BotID. Leaving the others out will possibly disable some commands and spit out some non-fatal errors.
+
+![Discord Boats](https://discord.boats/api/widget/276855867796881408)
