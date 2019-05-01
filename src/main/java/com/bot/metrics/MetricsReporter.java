@@ -2,6 +2,7 @@ package com.bot.metrics;
 
 import com.bot.ShardingManager;
 import com.bot.caching.MarkovModelCache;
+import com.bot.caching.R34Cache;
 import com.bot.caching.SubredditCache;
 import com.bot.models.InternalShard;
 
@@ -14,12 +15,14 @@ public class MetricsReporter extends Thread {
     private MarkovModelCache markovModelCache;
     private MetricsManager metricsManager;
     private SubredditCache subredditCache;
+    private R34Cache r34Cache;
 
     public MetricsReporter() {
         shardManager = ShardingManager.getInstance();
         markovModelCache = MarkovModelCache.getInstance();
         metricsManager = MetricsManager.getInstance();
         subredditCache = SubredditCache.getInstance();
+        r34Cache = R34Cache.getInstance();
     }
 
     @Override
@@ -54,6 +57,7 @@ public class MetricsReporter extends Thread {
             // TODO: get max size
             metricsManager.updateCacheSize("markov", markovModelCache.getSize(), 0);
             metricsManager.updateCacheSize("subreddit", subredditCache.getSize(), 0);
+            metricsManager.updateCacheSize("r34", r34Cache.getSize(), 0);
 
             try {
                 Thread.sleep(5000);

@@ -118,8 +118,7 @@ public class PlayCommand extends VoiceCommand {
 				return;
 			}
 			if (commandEvent.getArgs().split(" ").length < 2) {
-				message.editMessage(commandEvent.getClient().getWarning() + " Playlist detected. Please try again but include the songs you want included." +
-						" Example: `~play *playlist url* 1-5` This would load songs 1-5 on the playlist. Limited to loading up to 10 songs at a time.").queue();
+				loadTracks(null, audioPlaylist.getTracks());
 			} else {
 				// They gave multiple args, assume one is the tracks.
 				String[] trackNums = commandEvent.getArgs().split(" ")[1].split("-");

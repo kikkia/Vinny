@@ -1,9 +1,9 @@
 package com.bot;
 
-import com.bot.commands.nsfw.R4cCommand;
 import com.bot.commands.general.*;
 import com.bot.commands.meme.AsciiCommand;
 import com.bot.commands.meme.CommentCommand;
+import com.bot.commands.nsfw.R4cCommand;
 import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.AvatarCommand;
 import com.bot.commands.owner.UpdateGuildCountCommand;

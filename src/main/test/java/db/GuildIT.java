@@ -1,9 +1,9 @@
 package db;
 
+import com.bot.caching.GuildCache;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalGuildMembership;
-import com.bot.caching.GuildCache;
 import com.bot.utils.CommandCategories;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -24,7 +24,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 public class GuildIT {
 

@@ -1,14 +1,19 @@
 package com.bot.db;
 
+import com.bot.ShardingManager;
 import com.bot.models.InternalShard;
 import com.bot.utils.Config;
-import com.bot.ShardingManager;
 import com.bot.utils.GuildUtils;
 import com.bot.voice.QueuedAudioTrack;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;

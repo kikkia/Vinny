@@ -2,8 +2,8 @@ package com.bot.commands;
 
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
-import com.bot.utils.CommandCategories;
 import com.bot.metrics.MetricsManager;
+import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.Command;

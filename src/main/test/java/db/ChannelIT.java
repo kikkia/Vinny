@@ -1,7 +1,9 @@
 package db;
 
 import com.bot.db.ChannelDAO;
-import com.bot.models.*;
+import com.bot.models.InternalGuild;
+import com.bot.models.InternalTextChannel;
+import com.bot.models.InternalVoiceChannel;
 import com.bot.utils.CommandCategories;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
