@@ -22,7 +22,6 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.JDA;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -158,15 +157,13 @@ public class ShardingManager {
                 .addEventListeners(client, waiter, bot)
                 .setGame(null)
                 .build();
-
-        for (JDA j : shardManager.getShards()) {
-            shards.put(j.getShardInfo().getShardId(), new InternalShard(j));
-        }
     }
 
     public Map<Integer, InternalShard> getShards() {
         return shards;
     }
+
+    public void putShard(InternalShard shard) {shards.put(shard.getId(), shard);}
 
     public int getTotalGuilds() {
         int guilds = 0;

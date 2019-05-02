@@ -5,6 +5,7 @@ import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.InternalGuild;
+import com.bot.models.InternalShard;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.utils.Config;
@@ -22,6 +23,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.Event;
+import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.channel.text.GenericTextChannelEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelCreateEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
@@ -68,6 +70,14 @@ public class Bot extends ListenerAdapter {
 
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
+	}
+
+	@Override
+	public void onReady(ReadyEvent event) {
+		ShardingManager shardingManager = ShardingManager.getInstance();
+		shardingManager.putShard(new InternalShard(event.getJDA()));
+		System.out.println("Shard: " + event.getJDA().getShardInfo().getShardId() + " ready");
+		super.onReady(event);
 	}
 
 	@Override
