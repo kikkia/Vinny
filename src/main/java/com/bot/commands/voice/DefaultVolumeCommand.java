@@ -1,10 +1,10 @@
-package com.bot.commands.settings;
+package com.bot.commands.voice;
 
-import com.bot.commands.ModerationCommand;
+import com.bot.commands.VoiceCommand;
 import com.bot.db.GuildDAO;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-public class DefaultVolumeCommand extends ModerationCommand {
+public class DefaultVolumeCommand extends VoiceCommand {
 
     private GuildDAO guildDAO;
 
