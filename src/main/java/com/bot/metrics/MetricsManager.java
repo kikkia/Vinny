@@ -82,4 +82,9 @@ public class MetricsManager {
         String shardTag = "shard:" + shard;
         statsd.recordGaugeValue("discord.ping", ping, shardTag);
     }
+
+    public void updateShards(int healthy, int unhealthy) {
+        statsd.recordGaugeValue("shards.healthy", healthy);
+        statsd.recordGaugeValue("shards.unhealthy", unhealthy);
+    }
 }

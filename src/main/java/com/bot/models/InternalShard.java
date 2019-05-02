@@ -12,8 +12,8 @@ public class InternalShard {
     private int queuedTracksCount = 0;
     private int usersInVoiceCount = 0;
 
-    public InternalShard(int id, JDA jda) {
-        this.id = id;
+    public InternalShard(JDA jda) {
+        this.id = jda.getShardInfo().getShardId();
         this.jda = jda;
     }
 

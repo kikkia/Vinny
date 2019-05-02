@@ -82,11 +82,11 @@ public class RedditHelper {
                 .build();
 
         SubredditCache cache = SubredditCache.getInstance();
-        List<Listing<Submission>> submissions = cache.get(subredditName);
+        List<Listing<Submission>> submissions = cache.get(sortType.toString() + subredditName);
 
         if (submissions == null) {
             submissions = paginator.accumulate(1);
-            cache.put(subredditName, submissions);
+            cache.put(sortType.toString() + subredditName, submissions);
         }
 
         Listing<Submission> page = submissions.get(0); // Get the only page

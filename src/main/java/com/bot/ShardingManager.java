@@ -20,10 +20,9 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.Game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +34,7 @@ public class ShardingManager {
     private static ShardingManager instance;
 
     private Map<Integer, InternalShard> shards;
+    public ShardManager shardManager;
 
     private EventWaiter waiter;
     private List<Command.Category> commandCategories;
@@ -79,6 +79,7 @@ public class ShardingManager {
                     new StopCommand(),
                     new ResumeCommand(),
                     new VolumeCommand(),
+                    new DefaultVolumeCommand(),
                     new ListTracksCommand(),
                     new SkipCommand(),
                     new SaveMyPlaylistCommand(bot),
@@ -93,6 +94,7 @@ public class ShardingManager {
 
                     // General Commands
                     new InfoCommand(),
+                    new VoteCommand(),
                     new InviteCommand(),
                     new SupportCommand(),
                     new StatsCommand(),
@@ -116,7 +118,6 @@ public class ShardingManager {
                     new NewPostCommand(),
 
                     // Guild Settings Commands
-                    new DefaultVolumeCommand(),
                     new SetBaseRoleCommand(),
                     new SetModRoleCommand(),
                     new SetNSFWCommand(),
@@ -146,24 +147,20 @@ public class ShardingManager {
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ");
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
+        commandClientBuilder.setGame(null);
         client = commandClientBuilder.build();
 
-        for (int i = 0; i < numShards; i++) {
-            JDA jda = new JDABuilder(AccountType.BOT)
-                    .setToken(config.getConfig(Config.DISCORD_TOKEN))
-                    .setGame(Game.playing("@Vinny help"))
-                    .useSharding(i, numShards)
-                    .build();
+        shardManager = new DefaultShardManagerBuilder()
+                .setToken(config.getConfig(Config.DISCORD_TOKEN))
+                .setShardsTotal(numShards)
+                .setShards(0, numShards-1)
+                .setAudioEnabled(true)
+                .addEventListeners(client, waiter, bot)
+                .setGame(null)
+                .build();
 
-            jda.awaitReady();
-
-            jda.addEventListener(waiter);
-            jda.addEventListener(client);
-            jda.addEventListener(bot);
-            int shardId = jda.getShardInfo().getShardId();
-            shards.put(shardId, new InternalShard(shardId, jda));
-
-            System.out.println("Shard " + i + " built.");
+        for (JDA j : shardManager.getShards()) {
+            shards.put(j.getShardInfo().getShardId(), new InternalShard(j));
         }
     }
 
