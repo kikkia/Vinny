@@ -23,7 +23,6 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -148,15 +147,16 @@ public class ShardingManager {
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ");
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
+        commandClientBuilder.setGame(null);
         client = commandClientBuilder.build();
 
         shardManager = new DefaultShardManagerBuilder()
                 .setToken(config.getConfig(Config.DISCORD_TOKEN))
                 .setShardsTotal(numShards)
                 .setShards(0, numShards-1)
-                .setGame(Game.playing("@Vinny help"))
                 .setAudioEnabled(true)
                 .addEventListeners(client, waiter, bot)
+                .setGame(null)
                 .build();
 
         for (JDA j : shardManager.getShards()) {

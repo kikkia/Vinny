@@ -5,6 +5,7 @@ import com.bot.caching.MarkovModelCache;
 import com.bot.caching.R34Cache;
 import com.bot.caching.SubredditCache;
 import com.bot.models.InternalShard;
+import net.dv8tion.jda.core.entities.Game;
 
 /**
  * Thread that just reports some less active stats every 5 seconds
@@ -58,6 +59,11 @@ public class MetricsReporter extends Thread {
             metricsManager.updateCacheSize("markov", markovModelCache.getSize(), 0);
             metricsManager.updateCacheSize("subreddit", subredditCache.getSize(), 0);
             metricsManager.updateCacheSize("r34", r34Cache.getSize(), 0);
+
+            metricsManager.updateShards(shardManager.shardManager.getShardsRunning(), shardManager.shardManager.getShardsQueued());
+
+            // We need to set this status after the sharding manager is built. This will ensure that it is set to this, not the default
+            shardManager.shardManager.setGame(Game.playing("@Vinny help"));
 
             try {
                 Thread.sleep(5000);
