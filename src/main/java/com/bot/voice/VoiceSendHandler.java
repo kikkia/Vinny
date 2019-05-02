@@ -95,6 +95,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason == AudioTrackEndReason.FINISHED && repeat) {
             queueTrack(track.makeClone(), requester);
+            return;
         }
         else if (endReason != AudioTrackEndReason.FINISHED) {
             return;
@@ -105,7 +106,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         if (nextTrack == null) {
             stop();
         }
-        else {
+        else if (endReason.mayStartNext){
             requester = nextTrack.getRequesterID();
             player.playTrack(nextTrack.getTrack());
             nowPlaying = nextTrack;
