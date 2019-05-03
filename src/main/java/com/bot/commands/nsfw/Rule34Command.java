@@ -4,6 +4,7 @@ import com.bot.caching.R34Cache;
 import com.bot.commands.NSFWCommand;
 import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.core.entities.ChannelType;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -43,7 +44,8 @@ public class Rule34Command extends NSFWCommand {
 
         try {
             if (imageUrls == null) {
-                commandEvent.getTextChannel().sendTyping().queue();
+                if (!commandEvent.isFromType(ChannelType.PRIVATE))
+                    commandEvent.getTextChannel().sendTyping().queue();
                 imageUrls = new ArrayList<>();
                 imageUrls.addAll(getImageURLFromSearch(r34url));
                 imageUrls.addAll(getImageURLFromSearch(booruUrl));

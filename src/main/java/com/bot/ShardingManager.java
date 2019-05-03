@@ -27,12 +27,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class ShardingManager {
 
     private static ShardingManager instance;
 
     private Map<Integer, InternalShard> shards;
+    private ScheduledExecutorService executor;
     public ShardManager shardManager;
 
     private EventWaiter waiter;
@@ -59,8 +62,8 @@ public class ShardingManager {
         boolean silentDeploy = Boolean.parseBoolean(config.getConfig(Config.SILENT_DEPLOY));
 
         shards = new HashMap<>();
-        Bot bot = null;
-        bot = new Bot();
+        executor = Executors.newScheduledThreadPool(10);
+        Bot bot = new Bot();
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
         commandClientBuilder.setPrefix("~");
@@ -147,6 +150,7 @@ public class ShardingManager {
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
         commandClientBuilder.setGame(null);
+        commandClientBuilder.setScheduleExecutor(executor);
         client = commandClientBuilder.build();
 
         shardManager = new DefaultShardManagerBuilder()
@@ -164,6 +168,8 @@ public class ShardingManager {
     }
 
     public void putShard(InternalShard shard) {shards.put(shard.getId(), shard);}
+
+    public ScheduledExecutorService getExecutor() {return executor;}
 
     public int getTotalGuilds() {
         int guilds = 0;
