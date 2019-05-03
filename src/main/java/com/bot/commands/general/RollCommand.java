@@ -40,7 +40,10 @@ public class RollCommand extends GeneralCommand {
                 int first = Integer.parseInt(args.split("-")[0]);
                 int second = Integer.parseInt(args.split("-")[1]);
 
-                if (second < first) {
+                if (first == second) {
+                    commandEvent.reply("HMMMM I wonder what number could come up... Maybe if the stars align, it would be " + first);
+                    return;
+                } else if (second < first) {
                     int temp = first;
                     first = second;
                     second = temp;

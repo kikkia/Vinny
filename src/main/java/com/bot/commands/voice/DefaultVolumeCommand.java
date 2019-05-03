@@ -30,7 +30,7 @@ public class DefaultVolumeCommand extends VoiceCommand {
                 return;
             }
 
-            commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
+            commandEvent.reactSuccess();
         }
         catch (NumberFormatException e) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " You must enter a volume between 0 and 200");

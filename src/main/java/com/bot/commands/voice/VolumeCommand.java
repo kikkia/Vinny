@@ -32,6 +32,7 @@ public class VolumeCommand extends VoiceCommand {
 		}
 		else {
 			handler.getPlayer().setVolume(newVolume);
+			commandEvent.reactSuccess();
 		}
 	}
 }
