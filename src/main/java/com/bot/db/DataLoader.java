@@ -47,8 +47,8 @@ public class DataLoader {
 		}
 
 		try {
-			for (Map.Entry<Integer, InternalShard> entry: shardingManager.getShards().entrySet()){
-				LoadThread thread = new LoadThread(entry.getValue().getJda(), startTime);
+			for (JDA jda: shardingManager.shardManager.getShards()){
+				LoadThread thread = new LoadThread(jda, startTime);
 				thread.start();
 			}
 		}
