@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class SetNSFWCommand extends ModerationCommand {
-    private static Logger LOGGER = new Logger(SetNSFWCommand.class.getName());
-
     private GuildDAO guildDAO;
 
     public SetNSFWCommand() {
@@ -32,18 +30,18 @@ public class SetNSFWCommand extends ModerationCommand {
         try {
             guild = guildDAO.getGuildById(commandGuild.getId());
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Problem getting guild settings " + e.getMessage());
+            logger.log(Level.SEVERE, "Problem getting guild settings " + e.getMessage());
             commandEvent.reply(commandEvent.getClient().getError() + " There was a problem getting the settings for your guild. Please contact the developer on the support server. " + Bot.SUPPORT_INVITE_LINK);
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             return;
         }
 
         if (guild == null) {
-            LOGGER.log(Level.WARNING, "Guild not found in db, attempting to add: " + commandGuild.getId());
+            logger.log(Level.WARNING, "Guild not found in db, attempting to add: " + commandGuild.getId());
             commandEvent.reply(commandEvent.getClient().getWarning() + " This guild was not found in my database. I am going to try to add it. Please standby.");
 
             if (!guildDAO.addGuild(commandGuild)) {
-                LOGGER.log(Level.SEVERE, "Failed to add the guild to the db");
+                logger.log(Level.SEVERE, "Failed to add the guild to the db");
                 commandEvent.reply(commandEvent.getClient().getError() + " Error adding the guild to the db. Please contact the developer on the support server." + Bot.SUPPORT_INVITE_LINK);
                 metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
                 return;
@@ -58,7 +56,7 @@ public class SetNSFWCommand extends ModerationCommand {
         // If nothing then set to all
         if (commandEvent.getArgs().isEmpty()) {
             if (!guildDAO.updateMinNSFWRole(guild.getId(), commandEvent.getGuild().getPublicRole().getId())) {
-                LOGGER.log(Level.SEVERE, "Failed to update nsfw role for guild " + guild.getId());
+                logger.log(Level.SEVERE, "Failed to update nsfw role for guild " + guild.getId());
                 commandEvent.reply("Something went wrong. Please contact the developers on the support server. " + Bot.SUPPORT_INVITE_LINK);
                 metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             }

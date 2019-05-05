@@ -28,6 +28,7 @@ public class GuildPreferencesManager implements GuildSettingsManager {
         if (guild == null) {
             // If guild is not in the db return nothing
             LOGGER.warning("Guild not found in db when getting settings: " + g.getId());
+            guildDAO.addFreshGuild(g);
             return null;
         }
         return guild.getGuildPreferencesProvider();

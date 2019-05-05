@@ -12,6 +12,7 @@ import net.dv8tion.jda.core.Permission;
 
 public abstract class GeneralCommand extends Command {
     protected MetricsManager metricsManager;
+    protected Logger logger;
 
     public GeneralCommand() {
         this.category = CommandCategories.GENERAL;
@@ -21,12 +22,14 @@ public abstract class GeneralCommand extends Command {
         this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION};
 
 
-        metricsManager = MetricsManager.getInstance();
+        this.metricsManager = MetricsManager.getInstance();
+        this.logger = new Logger(this.getClass().getSimpleName());
     }
 
     @Override
     protected void execute(CommandEvent commandEvent) {
         metricsManager.markCommand(this, commandEvent.getAuthor(), commandEvent.getGuild());
+
 
         // Check the permissions to do the command
         try {

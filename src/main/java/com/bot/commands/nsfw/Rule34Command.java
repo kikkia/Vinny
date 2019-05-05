@@ -20,7 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Rule34Command extends NSFWCommand {
-    private Logger LOGGER = new Logger(Rule34Command.class.getName());
     private Random random;
     private R34Cache cache;
 
@@ -56,7 +55,7 @@ public class Rule34Command extends NSFWCommand {
         } catch (IllegalArgumentException e) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " I couldn't find any results for that search.");
         } catch (Exception e) {
-            LOGGER.severe("Something went wrong getting r34 post: ", e);
+            logger.severe("Something went wrong getting r34 post: ", e);
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong getting the image, please try again.");
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
