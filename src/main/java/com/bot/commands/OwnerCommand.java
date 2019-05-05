@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 public abstract class OwnerCommand extends Command {
     protected MetricsManager metricsManager;
+    protected Logger logger;
 
     public OwnerCommand() {
         this.ownerCommand = true;
@@ -14,6 +15,7 @@ public abstract class OwnerCommand extends Command {
         this.hidden = true;
 
         this.metricsManager = MetricsManager.getInstance();
+        this.logger = new Logger(this.getClass().getSimpleName());
     }
 
     @Override
@@ -24,7 +26,6 @@ public abstract class OwnerCommand extends Command {
             commandEvent.async(() -> executeCommand(commandEvent));
         } catch (Exception e) {
             commandEvent.replyError("Something went wrong, please try again later");
-            Logger logger = new Logger(this.getClass().getName());
             logger.severe("Failed command " + this.getClass().getName() + ": ", e);
             e.printStackTrace();
         }

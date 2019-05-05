@@ -14,7 +14,6 @@ import net.dv8tion.jda.core.entities.Role;
 import java.util.logging.Level;
 
 public class GetSettingsCommand extends GeneralCommand {
-    private static final Logger LOGGER = new Logger(GetSettingsCommand.class.getName());
     private GuildDAO guildDAO;
 
     public GetSettingsCommand() {
@@ -34,18 +33,18 @@ public class GetSettingsCommand extends GeneralCommand {
         try {
             guild = guildDAO.getGuildById(commandGuild.getId());
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Problem getting guild settings " + e.getMessage());
+            logger.log(Level.SEVERE, "Problem getting guild settings " + e.getMessage());
             commandEvent.reply(commandEvent.getClient().getError() + " There was a problem getting the settings for your guild. Please contact the developer on the support server. " + Bot.SUPPORT_INVITE_LINK);
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             return;
         }
 
         if (guild == null) {
-            LOGGER.log(Level.WARNING, "Guild not found in db, attempting to add: " + commandGuild.getId());
+            logger.log(Level.WARNING, "Guild not found in db, attempting to add: " + commandGuild.getId());
             commandEvent.reply(commandEvent.getClient().getWarning() + " This guild was not found in my database. I am going to try to add it. Please standby.");
 
             if (!guildDAO.addGuild(commandGuild)) {
-                LOGGER.log(Level.SEVERE, "Failed to add the guild to the db");
+                logger.log(Level.SEVERE, "Failed to add the guild to the db");
                 commandEvent.reply(commandEvent.getClient().getError() + " Error adding the guild to the db. Please contact the developer on the support server." + Bot.SUPPORT_INVITE_LINK);
                 metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
                 return;

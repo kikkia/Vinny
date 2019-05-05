@@ -18,12 +18,13 @@ public class Cache<V> {
     private final LRUMap cacheMap;
     private MetricsManager metricsManager;
     private String name;
-    private int maxLifetime;
+    private int maxIdleLifetime;
+    private final int maxTotalLifetime = 3600; // 60 Mins, JDA caching does timeout eventually, we want to refresh this before it craps out
     private int maxSize;
     private int cleanupInterval;
 
-    protected Cache(String name, int max, int maxLifetime, int cleanupInterval) {
-        this.maxLifetime = maxLifetime;
+    protected Cache(String name, int max, int maxIdleLifetime, int cleanupInterval) {
+        this.maxIdleLifetime = maxIdleLifetime;
         this.maxSize = max;
         this.cleanupInterval = cleanupInterval;
 
@@ -32,7 +33,7 @@ public class Cache<V> {
         metricsManager = MetricsManager.getInstance();
 
         // Starts a thread that will cleanup the cache every CHECK_INTERVAL seconds
-        if (this.maxLifetime > 0 && this.cleanupInterval > 0) {
+        if (this.maxIdleLifetime > 0 && this.cleanupInterval > 0) {
 
             Thread t = new Thread(() -> {
                 while (true) {
@@ -113,7 +114,7 @@ public class Cache<V> {
                 key = (String) itr.next();
                 cacheObject = (CacheObject<V>) itr.getValue();
 
-                if (cacheObject != null && (now > ((maxLifetime * 1000) + cacheObject.lastAccessed))) {
+                if (cacheObject != null && (((now > ((maxIdleLifetime * 1000) + cacheObject.lastAccessed))) || (now > (maxTotalLifetime * 1000) + cacheObject.addedTime))) {
                     deleteKey.add(key);
                 }
             }

@@ -79,6 +79,7 @@ public class DataLoader {
 		@Override
 		public void run() {
 			try {
+				bot.awaitReady();
 				LOGGER.log(Level.INFO, "Starting shard: " + bot.getShardInfo().getShardId() + " for " + bot.getGuilds().size() + " guilds");
 				PreparedStatement statement;
 				int guildCount = 0;
