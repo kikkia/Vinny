@@ -13,7 +13,6 @@ import net.dv8tion.jda.core.Permission;
 import java.util.logging.Level;
 
 public class LoadMyPlaylistCommand extends VoiceCommand {
-    private static final Logger LOGGER = new Logger(LoadMyPlaylistCommand.class.getName());
     private PlaylistDAO playlistDAO;
     private Bot bot;
 
@@ -50,7 +49,7 @@ public class LoadMyPlaylistCommand extends VoiceCommand {
         // If no playlist found then return
         // TODO: Custom exception classes for this stuff.
         if (playlist == null) {
-            LOGGER.log(Level.WARNING, "No playlist found for id: " + playlistId + " or name: " + playlistName);
+            logger.log(Level.WARNING, "No playlist found for id: " + playlistId + " or name: " + playlistName);
             commandEvent.reply(commandEvent.getClient().getWarning() + " Playlist not found! Please check the id/name.");
             return;
         }

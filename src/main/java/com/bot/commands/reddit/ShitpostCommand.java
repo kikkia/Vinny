@@ -14,9 +14,6 @@ import java.util.logging.Level;
  * This class is technically a reddit command but because of its nature we are calling it a meme category commande
  */
 public class ShitpostCommand extends MemeCommand {
-
-    private static final Logger LOGGER = new Logger(ShitpostCommand.class.getName());
-
     private RedditConnection redditConnection;
 
     public ShitpostCommand() {
@@ -38,7 +35,7 @@ public class ShitpostCommand extends MemeCommand {
                     true,
                     "shitpost");
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error thrown:" + e);
+            logger.log(Level.SEVERE, "Error thrown:" + e);
             commandEvent.reply(commandEvent.getClient().getError() + " Sorry, something went wrong getting a reddit post.");
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }

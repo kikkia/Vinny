@@ -12,6 +12,7 @@ import net.dv8tion.jda.core.Permission;
 
 public abstract class VoiceCommand extends Command {
     protected MetricsManager metricsManager;
+    protected Logger logger;
 
     public VoiceCommand() {
         this.category = CommandCategories.VOICE;
@@ -19,6 +20,7 @@ public abstract class VoiceCommand extends Command {
         this.botPermissions = new Permission[]{Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.MESSAGE_WRITE, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ADD_REACTION};
 
         this.metricsManager = MetricsManager.getInstance();
+        this.logger = new Logger(this.getClass().getSimpleName());
     }
 
     @Override
@@ -34,13 +36,11 @@ public abstract class VoiceCommand extends Command {
             return;
         } catch (PermsOutOfSyncException e) {
             commandEvent.replyError("Could not find the role required for " + this.category.getName() + " commands. Please have a mod set a new role.");
-            Logger logger = new Logger(this.getClass().getName());
             logger.warning(e.getMessage() + " " + commandEvent.getGuild().getId());
             return;
         } catch (Exception e) {
             commandEvent.replyError("Something went wrong with permissions, please try again or go checkout the support server and report the bug.");
             e.printStackTrace();
-            Logger logger = new Logger(this.getClass().getName());
             logger.severe("Failed to get perms for " + this.getClass().getName(), e);
             return;
         }
@@ -48,7 +48,6 @@ public abstract class VoiceCommand extends Command {
             commandEvent.async(() -> executeCommand(commandEvent));
         } catch (Exception e) {
             commandEvent.replyError("Something went wrong, please try again later");
-            Logger logger = new Logger(this.getClass().getName());
             logger.severe("Failed command " + this.getClass().getName() + ": ", e);
             e.printStackTrace();
         }

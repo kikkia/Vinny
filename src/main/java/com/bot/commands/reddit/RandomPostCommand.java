@@ -16,8 +16,6 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import java.util.logging.Level;
 
 public class RandomPostCommand extends RedditCommand{
-    private static final Logger LOGGER = new Logger(RandomPostCommand.class.getName());
-
     private RedditConnection redditConnection;
     private ChannelDAO channelDAO;
 
@@ -64,7 +62,7 @@ public class RandomPostCommand extends RedditCommand{
                 commandEvent.replyError("Recieved error: " + e.getCode() + " from reddit.");
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error thrown: " + e);
+            logger.log(Level.SEVERE, "Error thrown: " + e);
             commandEvent.replyError("Sorry, something went wrong getting a reddit post.");
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }

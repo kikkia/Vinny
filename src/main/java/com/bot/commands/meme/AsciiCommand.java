@@ -8,7 +8,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.io.IOException;
 
 public class AsciiCommand extends MemeCommand {
-    private Logger LOGGER = new Logger(this.getClass().getName());
 
     public AsciiCommand() {
         this.name = "ascii";
@@ -28,7 +27,7 @@ public class AsciiCommand extends MemeCommand {
             commandEvent.reply("```" + ascii + "```");
         } catch (IOException e) {
             commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong. Please try again.");
-            LOGGER.severe("Error generating ascii: ", e);
+            logger.severe("Error generating ascii: ", e);
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         } catch (Exception e) {
             commandEvent.reply(commandEvent.getClient().getWarning() + "Failed to generate ascii. Make sure you are only using unicode characters.");
