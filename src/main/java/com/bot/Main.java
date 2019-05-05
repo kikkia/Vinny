@@ -40,13 +40,7 @@ public class Main {
 		LOGGER.log(Level.INFO, "Flyway migrations completed");
 
 		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));
-		boolean dataLoader = Boolean.parseBoolean(config.getConfig(Config.DATA_LOADER));
 		ShardingManager shardingManager = ShardingManager.getInstance(numShards);
-
-		if (dataLoader) {
-			LOGGER.log(Level.INFO, "Starting a data loader");
-			DataLoader loader = new DataLoader(shardingManager);
-		}
 
 		// Start a metrics reporter to keeps the metrics that are not frequently updates flowing to datadog
 		MetricsReporter metricsReporter = new MetricsReporter();

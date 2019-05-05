@@ -1,6 +1,7 @@
 package com.bot;
 
 import com.bot.db.ChannelDAO;
+import com.bot.db.DataLoader;
 import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
 import com.bot.metrics.MetricsManager;
@@ -43,6 +44,7 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
 
+import java.sql.SQLException;
 import java.util.logging.Level;
 
 public class Bot extends ListenerAdapter {
@@ -77,6 +79,17 @@ public class Bot extends ListenerAdapter {
 		ShardingManager shardingManager = ShardingManager.getInstance();
 		shardingManager.putShard(new InternalShard(event.getJDA()));
 		System.out.println("Shard: " + event.getJDA().getShardInfo().getShardId() + " ready");
+
+		if (Boolean.parseBoolean(config.getConfig(Config.DATA_LOADER))) {
+			DataLoader.LoadThread t = null;
+			try {
+				t = new DataLoader.LoadThread(event.getJDA(), System.currentTimeMillis());
+				t.start();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
 		super.onReady(event);
 	}
 

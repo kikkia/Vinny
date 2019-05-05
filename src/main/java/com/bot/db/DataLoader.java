@@ -24,9 +24,7 @@ public class DataLoader {
 	private ShardingManager shardingManager;
 	// Needs shards for when running on PROD
 
-	public DataLoader(ShardingManager shardingManager) throws Exception {
-		this.shardingManager = shardingManager;
-
+	public DataLoader() throws Exception {
 		// Config gets tokens
 		Config config = Config.getInstance();
 		long startTime = System.currentTimeMillis();
@@ -58,7 +56,7 @@ public class DataLoader {
 
 	}
 
-	private static class LoadThread extends Thread {
+	public static class LoadThread extends Thread {
 
 		private JDA bot;
 		private Connection connection;
