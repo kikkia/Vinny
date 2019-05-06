@@ -110,17 +110,31 @@ public class Logger {
     }
 
     private void postToErrorChannel(String s, Exception e) {
-        if (errorChannel != null) {
-            errorChannel.sendMessage("`Error:`\n" + s).queue();
-            if (e != null)
-                errorChannel.sendMessage("`Exception:`\n```" + e.toString() + "```").queue();
+        try {
+            if (errorChannel != null) {
+                errorChannel.sendMessage("`Error:`\n" + s).queue();
+                if (e != null)
+                    errorChannel.sendMessage("`Exception:`\n```" + e.toString() + "```").queue();
                 errorChannel.sendMessage("StackTrace: ```" + ExceptionUtils.getStackTrace(e) + "```").queue();
+            }
+        } catch (IllegalStateException ex) {
+            // Could be thrown when JDA gets rid of the channel object
+            init();
+            postToDebugChannel("Reinitializing error logging channel");
+            postToErrorChannel(s, e);
         }
     }
 
     private void postToDebugChannel(String s) {
-        if (debugChannel != null) {
-            debugChannel.sendMessage(s).queue();
+        try {
+            if (debugChannel != null) {
+                debugChannel.sendMessage(s).queue();
+            }
+        } catch (IllegalStateException e) {
+            // Could be thrown when jda gets rid of cached channel
+            init();
+            postToDebugChannel("Reinitializing the debug logger");
+            postToDebugChannel(s);
         }
     }
 }
