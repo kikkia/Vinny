@@ -5,10 +5,10 @@ import com.bot.commands.RedditCommand;
 import com.bot.db.ChannelDAO;
 import com.bot.models.InternalTextChannel;
 import com.bot.utils.CommandCategories;
-import com.bot.utils.Logger;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dean.jraw.ApiException;
+import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -61,6 +61,8 @@ public class TopPostCommand extends RedditCommand{
             } else {
                 commandEvent.replyError("Recieved error: " + e.getCode() + " from reddit.");
             }
+        } catch (NetworkException e) {
+            commandEvent.replyWarning("I was unable to get info the subreddit, please make sure it is correctly spelled.");
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error thrown: " + e);
             commandEvent.replyError("Sorry, something went wrong getting a reddit post.");

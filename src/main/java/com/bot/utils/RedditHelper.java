@@ -2,8 +2,6 @@ package com.bot.utils;
 
 import com.bot.RedditConnection;
 import com.bot.caching.SubredditCache;
-import com.bot.exceptions.ForbiddenCommandException;
-import com.bot.exceptions.PermsOutOfSyncException;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
@@ -56,21 +54,9 @@ public class RedditHelper {
         SubredditReference subreddit = redditConnection.getClient()
                 .subreddit(subredditName);
 
-        try {
-            if (!isChannelNSFW) {
-                if (subreddit.about().isNsfw()) {
-                    commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW subreddit detected and NSFW is not enabled on this channel. " +
-                            "To enable it, use the `~enableNSFW` command.");
-                    return;
-                } else if (!CommandPermissions.canExecuteCommand(CommandCategories.NSFW, commandEvent)) {
-                    return;
-                }
-            }
-        } catch (ForbiddenCommandException exception) {
-            commandEvent.replyWarning(exception.getMessage());
-            return;
-        } catch (PermsOutOfSyncException e) {
-            commandEvent.replyError("Could not find the role required for NSFW commands. Please have the owner of the server set a new role or reset the roles with the `~reset` command");
+        if (!isChannelNSFW && subreddit.about().isNsfw()) {
+            commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW subreddit detected and NSFW is not enabled on this channel. " +
+                    "To enable it, use the `~enableNSFW` command.");
             return;
         }
 
