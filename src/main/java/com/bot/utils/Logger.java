@@ -119,6 +119,7 @@ public class Logger {
             }
         } catch (IllegalStateException ex) {
             // Could be thrown when JDA gets rid of the channel object
+            errorChannel = null;
             init();
             postToDebugChannel("Reinitializing error logging channel");
             postToErrorChannel(s, e);
@@ -132,6 +133,7 @@ public class Logger {
             }
         } catch (IllegalStateException e) {
             // Could be thrown when jda gets rid of cached channel
+            debugChannel = null;
             init();
             postToDebugChannel("Reinitializing the debug logger");
             postToDebugChannel(s);
