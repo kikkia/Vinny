@@ -54,12 +54,10 @@ public class RedditHelper {
         SubredditReference subreddit = redditConnection.getClient()
                 .subreddit(subredditName);
 
-        if (!isChannelNSFW) {
-            if (subreddit.about().isNsfw()) {
-                commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW subreddit detected and NSFW is not enabled on this channel. " +
-                        "To enable it, use the `~enableNSFW` command.");
-                return;
-            }
+        if (!isChannelNSFW && subreddit.about().isNsfw()) {
+            commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW subreddit detected and NSFW is not enabled on this channel. " +
+                    "To enable it, use the `~enableNSFW` command.");
+            return;
         }
 
         DefaultPaginator<Submission> paginator = subreddit
