@@ -10,18 +10,26 @@ public class MarkovModel {
     private static final String ENDING_SUFFIX = "_e*";
 
     private Hashtable<String, Vector<String>> dataTable;
+    private int messageCount;
+    private int wordCount;
     private static Random random = new Random(System.currentTimeMillis());
 
     public MarkovModel() {
         this.dataTable = new Hashtable<>();
+        messageCount = 0;
+        wordCount = 0;
 
         dataTable.put(BEGINNING_PREFIX, new Vector<>());
         dataTable.put(ENDING_SUFFIX, new Vector<>());
     }
 
     public void addPhrase(String phrase) {
+        // Mark the stats
+        messageCount++;
+
         // put each word into an array
         String[] words = phrase.split(" ");
+        wordCount += words.length;
 
         // Loop through each word, check if it's already added
         // if its added, then get the suffix vector and add the word
@@ -92,5 +100,13 @@ public class MarkovModel {
             builder.append(s).append(" ");
         }
         return builder.toString();
+    }
+
+    public int getMessageCount() {
+        return messageCount;
+    }
+
+    public int getWordCount() {
+        return wordCount;
     }
 }
