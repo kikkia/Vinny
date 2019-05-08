@@ -202,7 +202,7 @@ public class Bot extends ListenerAdapter {
 			return false;
 		}
 		else {
-			getHandler(event.getGuild()).queueTrack(track, event.getAuthor().getIdLong());
+			getHandler(event.getGuild()).queueTrack(track, event.getAuthor().getIdLong(), event.getAuthor().getName(), event.getTextChannel());
 			if (!event.getGuild().getAudioManager().isConnected()) {
 				event.getGuild().getAudioManager().openAudioConnection(event.getMember().getVoiceState().getChannel());
 			}
@@ -214,7 +214,7 @@ public class Bot extends ListenerAdapter {
 		VoiceSendHandler handler;
 		if (guild.getAudioManager().getSendingHandler() == null) {
 			AudioPlayer player = manager.createPlayer();
-			handler = new VoiceSendHandler(guild.getIdLong(), player, this);
+			handler = new VoiceSendHandler(player);
 
 			// Get default volume
 			int dVolume = 100;

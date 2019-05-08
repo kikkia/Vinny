@@ -1,6 +1,5 @@
 package voice;
 
-import com.bot.Bot;
 import com.bot.voice.VoiceSendHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import org.junit.Before;
@@ -13,17 +12,15 @@ import static org.mockito.Mockito.mock;
 public class TestVoiceSendHandler {
 
     private AudioPlayer audioPlayer;
-    private Bot bot;
 
     @Before
-    public void setup() {
+    public void setUp() {
         audioPlayer = mock(AudioPlayer.class);
-        bot = mock(Bot.class);
     }
 
     @Test
     public void testConstructor() {
-        VoiceSendHandler voiceSendHandler = new VoiceSendHandler(1234, audioPlayer, bot);
+        VoiceSendHandler voiceSendHandler = new VoiceSendHandler(audioPlayer);
 
         assertEquals(audioPlayer, voiceSendHandler.getPlayer());
         assertNull(voiceSendHandler.getNowPlaying());

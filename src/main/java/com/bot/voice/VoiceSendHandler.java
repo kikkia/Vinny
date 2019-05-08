@@ -1,12 +1,13 @@
 package com.bot.voice;
 
-import com.bot.Bot;
+import com.bot.utils.FormattingUtils;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
+import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,28 +17,35 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     public static long MAX_DURATION = 36009;
 
     private long requester;
+    private String requesterName;
+    private TextChannel lastUsedChannel;
     private QueuedAudioTrack nowPlaying;
     private Queue<QueuedAudioTrack> tracks;
     private AudioPlayer player;
     private AudioFrame lastFrame;
     private boolean repeat;
 
-    public VoiceSendHandler(long guildID, AudioPlayer player, Bot bot) {
+    public VoiceSendHandler(AudioPlayer player) {
         this.player = player;
         this.tracks = new LinkedBlockingQueue<>();
         this.nowPlaying = null;
         this.repeat = false;
     }
 
-    public void queueTrack(AudioTrack track, long user) {
+    public void queueTrack(AudioTrack track, long user, String requesterName, TextChannel channel) {
         if (player.getPlayingTrack() == null) {
             player.playTrack(track);
             requester = user;
-            nowPlaying = new QueuedAudioTrack(track, user);
+            lastUsedChannel = channel;
+            this.requesterName = requesterName;
+            nowPlaying = new QueuedAudioTrack(track, requesterName, user);
+
+            lastUsedChannel.sendMessage(FormattingUtils.getAudioTrackEmbed(nowPlaying)).queue();
         }
         else {
-            tracks.add(new QueuedAudioTrack(track, user));
+            tracks.add(new QueuedAudioTrack(track, requesterName, user));
         }
+        lastUsedChannel = channel;
     }
 
     public boolean skipTrack() {
@@ -56,6 +64,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
                 requester = nextTrack.getRequesterID();
                 player.playTrack(nextTrack.getTrack());
                 nowPlaying = nextTrack;
+                lastUsedChannel.sendMessage(FormattingUtils.getAudioTrackEmbed(nowPlaying)).queue();
             }
             return true;
         }
@@ -94,7 +103,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason == AudioTrackEndReason.FINISHED && repeat) {
-            queueTrack(track.makeClone(), requester);
+            queueTrack(track.makeClone(), requester, requesterName, lastUsedChannel);
             return;
         }
         else if (endReason != AudioTrackEndReason.FINISHED) {
@@ -108,8 +117,10 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         }
         else if (endReason.mayStartNext){
             requester = nextTrack.getRequesterID();
+            requesterName = nextTrack.getRequesterName();
             player.playTrack(nextTrack.getTrack());
             nowPlaying = nextTrack;
+            lastUsedChannel.sendMessage(FormattingUtils.getAudioTrackEmbed(nextTrack)).queue();
         }
     }
 
