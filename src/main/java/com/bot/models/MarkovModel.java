@@ -10,18 +10,26 @@ public class MarkovModel {
     private static final String ENDING_SUFFIX = "_e*";
 
     private Hashtable<String, Vector<String>> dataTable;
+    private int messageCount;
+    private int wordCount;
     private static Random random = new Random(System.currentTimeMillis());
 
     public MarkovModel() {
         this.dataTable = new Hashtable<>();
+        messageCount = 0;
+        wordCount = 0;
 
         dataTable.put(BEGINNING_PREFIX, new Vector<>());
         dataTable.put(ENDING_SUFFIX, new Vector<>());
     }
 
     public void addPhrase(String phrase) {
+        // Mark the stats
+        messageCount++;
+
         // put each word into an array
         String[] words = phrase.split(" ");
+        wordCount += words.length;
 
         // Loop through each word, check if it's already added
         // if its added, then get the suffix vector and add the word
@@ -47,6 +55,7 @@ public class MarkovModel {
                 endWords.add(words[i]);
 
             } else {
+                // Add the single depth entry
                 Vector<String> suffix = dataTable.get(words[i]);
                 if (suffix == null) {
                     suffix = new Vector<>();
@@ -55,6 +64,18 @@ public class MarkovModel {
                 } else {
                     suffix.add(words[i+1]);
                     dataTable.put(words[i], suffix);
+                }
+
+                // Add the double depth entry
+                String pair = words[i-1] + " " + words[i];
+                suffix = dataTable.get(pair);
+                if (suffix == null) {
+                    suffix = new Vector<>();
+                    suffix.add(words[i+1]);
+                    dataTable.put(pair, suffix);
+                } else {
+                    suffix.add(words[i+1]);
+                    dataTable.put(pair, suffix);
                 }
             }
         }
@@ -74,8 +95,24 @@ public class MarkovModel {
 
         // Keep looping through the words until we've reached the end
         int tries = 0;
+        int doubleDepthStreak = 0; // To keep diversity we dont want too many double depths in a row.
         while (generatedPhrase.size() < 200 && tries < 500) {
-            Vector<String> wordSelection = dataTable.get(nextWord);
+            boolean canDoubleDepth = generatedPhrase.size() > 1 && doubleDepthStreak < 2;
+            Vector<String> wordSelection;
+
+            if (canDoubleDepth) {
+                String pair = generatedPhrase.get(generatedPhrase.size() - 2) + " " + generatedPhrase.get(generatedPhrase.size() - 1);
+                wordSelection = dataTable.get(pair);
+                // If there are available words
+                if (wordSelection != null) {
+                    nextWord = wordSelection.get(random.nextInt(wordSelection.size()));
+                    generatedPhrase.add(nextWord);
+                    doubleDepthStreak++;
+                    continue;
+                }
+            }
+
+            wordSelection = dataTable.get(nextWord);
 
             if (wordSelection == null) {
                 tries++;
@@ -85,6 +122,7 @@ public class MarkovModel {
             int wordSelectionLen = wordSelection.size();
             nextWord = wordSelection.get(random.nextInt(wordSelectionLen));
             generatedPhrase.add(nextWord);
+            doubleDepthStreak = 0;
         }
 
         StringBuilder builder = new StringBuilder();
@@ -92,5 +130,13 @@ public class MarkovModel {
             builder.append(s).append(" ");
         }
         return builder.toString();
+    }
+
+    public int getMessageCount() {
+        return messageCount;
+    }
+
+    public int getWordCount() {
+        return wordCount;
     }
 }

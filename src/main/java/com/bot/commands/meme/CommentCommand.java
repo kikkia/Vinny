@@ -142,6 +142,8 @@ public class CommentCommand extends MemeCommand {
         if (channel != null)
             builder.setAuthor(channel.getName(), commandEvent.getGuild().getIconUrl(), commandEvent.getGuild().getIconUrl());
 
+        builder.setFooter("Messages: " + markovModel.getMessageCount() + "  -  Words: " + markovModel.getWordCount(), null);
+
         String phrase = markovModel.getPhrase();
         if (phrase.length() > 1020) {
             phrase = phrase.substring(0, 1018) + ".";
