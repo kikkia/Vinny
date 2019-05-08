@@ -20,7 +20,10 @@ public class LoadHandler implements AudioLoadResultHandler {
     @Override
     public void trackLoaded(AudioTrack audioTrack) {
         // Since the song comes from the db the length was checked at some point, so no need to check
-        bot.getHandler(commandEvent.getGuild()).queueTrack(audioTrack, commandEvent.getAuthor().getIdLong());
+        bot.getHandler(commandEvent.getGuild()).queueTrack(audioTrack,
+                commandEvent.getAuthor().getIdLong(),
+                commandEvent.getAuthor().getName(),
+                commandEvent.getTextChannel());
     }
 
     @Override

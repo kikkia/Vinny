@@ -23,7 +23,7 @@ public class TestVoiceSendHandler {
 
     @Test
     public void testConstructor() {
-        VoiceSendHandler voiceSendHandler = new VoiceSendHandler(1234, audioPlayer, bot);
+        VoiceSendHandler voiceSendHandler = new VoiceSendHandler(audioPlayer);
 
         assertEquals(audioPlayer, voiceSendHandler.getPlayer());
         assertNull(voiceSendHandler.getNowPlaying());

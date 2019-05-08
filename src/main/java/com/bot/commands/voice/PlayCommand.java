@@ -2,7 +2,6 @@ package com.bot.commands.voice;
 
 import com.bot.Bot;
 import com.bot.commands.VoiceCommand;
-import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -13,6 +12,8 @@ import net.dv8tion.jda.core.entities.Message;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.bot.utils.FormattingUtils.msToMinSec;
 
 public class PlayCommand extends VoiceCommand {
 
@@ -74,7 +75,7 @@ public class PlayCommand extends VoiceCommand {
 			if (playlist == null) {
 				if (VoiceSendHandler.isSongTooLong(track)) {
 					message.editMessage(commandEvent.getClient().getWarning() + " The track was longer than the max length of " +
-							QueuedAudioTrack.msToMinSec(VoiceSendHandler.MAX_DURATION * 1000)).queue();
+							msToMinSec(VoiceSendHandler.MAX_DURATION * 1000)).queue();
 					return false;
 				}
 				// If the queue track was successful go on, if not return.
