@@ -7,8 +7,9 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.Role;
 
+import java.awt.*;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,10 +65,12 @@ public class FormattingUtils {
         AudioTrack track = queuedAudioTrack.getTrack();
 
         builder.setTitle("Now Playing: ");
-        builder.setDescription(track.getInfo().title);
+        builder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")");
         builder.addField("Duration", msToMinSec(track.getInfo().length), false);
         builder.addField("Requested by", queuedAudioTrack.getRequesterName(), false);
         builder.setFooter(track.getInfo().uri, null);
+
+        builder.setColor(getColorForTrack(track.getInfo().uri));
 
         // If youtube, get the thumbnail
         if (track.getInfo().uri.contains("www.youtube.com")) {
@@ -108,4 +111,15 @@ public class FormattingUtils {
         }
     }
 
+    public static Color getColorForTrack(String uri) {
+        Color toReturn = Color.BLACK; // Default
+        if (uri.contains("www.youtube.com"))
+            toReturn = Color.red;
+        else if (uri.contains("www.soundcloud.com"))
+            toReturn = Color.orange;
+        else if (uri.contains("www.twitch.tv"))
+            toReturn = new Color(100, 65, 165); // Twitch purple
+
+        return toReturn;
+    }
 }

@@ -133,7 +133,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     }
 
     public static boolean isSongTooLong(AudioTrack track) {
-        return track.getDuration() >= MAX_DURATION * 1000;
+        return track.getDuration() >= MAX_DURATION * 1000 && !track.getInfo().isStream;
     }
 
     public QueuedAudioTrack getNowPlaying() {

@@ -76,6 +76,7 @@ public class ShardingManager {
                     // Voice Commands
                     new PlayCommand(bot),
                     new SearchCommand(bot, waiter),
+                    new NowPlayingCommand(),
                     new PauseCommand(),
                     new RepeatCommand(),
                     new StopCommand(),
@@ -108,6 +109,7 @@ public class ShardingManager {
                     new UserCommand(),
                     new PermissionsCommand(waiter),
                     new ServerInfoCommand(),
+                    new GamesCommand(),
 
                     // Meme Commands
                     new CommentCommand(),

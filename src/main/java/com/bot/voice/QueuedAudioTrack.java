@@ -27,7 +27,6 @@ public class QueuedAudioTrack {
 
     @Override
     public String toString() {
-        return "[" + msToMinSec(track.getDuration()) + "] *" + track.getInfo().title + "* requested by " +requesterName;
+        return "[" + msToMinSec(track.getDuration()) + "] *" + track.getInfo().title + "* requested by <@" + requesterID + ">";
     }
-
 }

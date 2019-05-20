@@ -64,7 +64,7 @@ public class PermissionsCommand extends GeneralCommand {
             return;
         }
 
-        builder.setText("Permissions for " + member.getAsMention())
+        builder.setText("Permissions for " + member.getEffectiveName())
                 .setUsers(commandEvent.getAuthor())
                 .setColor(commandEvent.getSelfMember().getColor());
         List<String> perms = new ArrayList<>();
