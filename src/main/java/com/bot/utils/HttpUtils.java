@@ -96,7 +96,7 @@ public class HttpUtils {
 
             HttpResponse response = client.execute(post);
             if (response.getStatusLine().getStatusCode() != 200 && response.getStatusLine().getStatusCode() != 204)
-                throw new Exception("Status code not 200: " + response);
+                throw new RuntimeException("Status code not 200: " + response);
         } catch (Exception e) {
             logger.severe("Failed to post stats. url: " + url, e);
         }

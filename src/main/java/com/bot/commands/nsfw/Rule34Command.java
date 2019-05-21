@@ -2,7 +2,6 @@ package com.bot.commands.nsfw;
 
 import com.bot.caching.R34Cache;
 import com.bot.commands.NSFWCommand;
-import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.entities.ChannelType;
 import org.apache.http.HttpEntity;

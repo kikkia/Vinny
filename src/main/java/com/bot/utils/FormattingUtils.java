@@ -115,11 +115,11 @@ public class FormattingUtils {
 
     public static Color getColorForTrack(String uri) {
         Color toReturn = Color.BLACK; // Default
-        if (uri.contains("www.youtube.com"))
+        if (uri.contains("youtube.com"))
             toReturn = Color.red;
-        else if (uri.contains("www.soundcloud.com"))
+        else if (uri.contains("soundcloud.com"))
             toReturn = Color.orange;
-        else if (uri.contains("www.twitch.tv"))
+        else if (uri.contains("twitch.tv"))
             toReturn = new Color(100, 65, 165); // Twitch purple
 
         return toReturn;

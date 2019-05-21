@@ -5,10 +5,8 @@ import com.bot.commands.VoiceCommand;
 import com.bot.db.PlaylistDAO;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
-import com.bot.utils.Logger;
 import com.bot.voice.LoadHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.Permission;
 
 import java.util.logging.Level;
 
@@ -51,20 +49,6 @@ public class LoadMyPlaylistCommand extends VoiceCommand {
         if (playlist == null) {
             logger.log(Level.WARNING, "No playlist found for id: " + playlistId + " or name: " + playlistName);
             commandEvent.reply(commandEvent.getClient().getWarning() + " Playlist not found! Please check the id/name.");
-            return;
-        }
-
-        // Check voice perms and what not
-        if (commandEvent.getMember().getVoiceState().getChannel() == null) {
-           commandEvent.reply(commandEvent.getClient().getWarning() + " You are not in a voice channel! Please join one to use this command.");
-            return;
-        }
-        else if (!commandEvent.getSelfMember().hasPermission(commandEvent.getMember().getVoiceState().getChannel(), Permission.VOICE_CONNECT)) {
-            commandEvent.reply(commandEvent.getClient().getWarning() + " I don't have permission to join your voice channel. :cry:");
-            return;
-        }
-        else if (!commandEvent.getSelfMember().hasPermission(commandEvent.getMember().getVoiceState().getChannel(), Permission.VOICE_SPEAK)){
-            commandEvent.reply(commandEvent.getClient().getWarning() + " I don't have permission to speak in your voice channel. :cry:");
             return;
         }
 

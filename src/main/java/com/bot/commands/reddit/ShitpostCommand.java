@@ -2,7 +2,6 @@ package com.bot.commands.reddit;
 
 import com.bot.RedditConnection;
 import com.bot.commands.MemeCommand;
-import com.bot.utils.Logger;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dean.jraw.models.SubredditSort;

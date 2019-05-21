@@ -1,7 +1,6 @@
 package com.bot.commands.general;
 
 import com.bot.commands.GeneralCommand;
-import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.util.Random;
