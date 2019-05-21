@@ -1,6 +1,7 @@
 package com.bot.commands.general;
 
 import com.bot.commands.GeneralCommand;
+import com.bot.utils.FormattingUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Paginator;
@@ -12,11 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static com.bot.utils.FormattingUtils.getOnlineStatusEmoji;
-
 public class GamesCommand extends GeneralCommand {
 
     private final Paginator.Builder builder;
+    private static final int PAGINATOR_SIZE = 20;
 
     public GamesCommand(EventWaiter waiter) {
         this.name = "games";
@@ -26,7 +26,7 @@ public class GamesCommand extends GeneralCommand {
 
         builder = new Paginator.Builder()
                 .setColumns(1)
-                .setItemsPerPage(20)
+                .setItemsPerPage(PAGINATOR_SIZE)
                 .useNumberedItems(false)
                 .showPageNumbers(true)
                 .setEventWaiter(waiter)
@@ -66,24 +66,9 @@ public class GamesCommand extends GeneralCommand {
             return;
         }
 
-        List<String> gameList = new ArrayList<>();
-
-        StringBuilder sb = new StringBuilder();
+        List<String> gameList = FormattingUtils.getGamesPaginatedList(PAGINATOR_SIZE, gameMap);
         builder.setText("**Games being played in " + commandEvent.getGuild().getName() + "**");
-        int maxPerGame = gameMap.size() >= 10 ? 3 : 5;
-        for (Map.Entry<String, List<Member>> game : gameMap.entrySet()) {
-            sb.append("\n`").append(game.getKey()).append("`");
-            for (int i = 0; i < maxPerGame; i++) {
-                sb.append("\n");
-                if (i == game.getValue().size())
-                    break;
-                if (i == maxPerGame - 1 && game.getValue().size() - i > 1) {
-                    sb.append("and ").append(game.getValue().size() - i).append(" more.");
-                    break;
-                }
-                sb.append(getOnlineStatusEmoji(game.getValue().get(i))).append(game.getValue().get(i).getEffectiveName());
-            }
-        }
-        commandEvent.reply(sb.toString());
+        builder.setItems(gameList.toArray(new String[]{}));
+        builder.build().paginate(commandEvent.getTextChannel(), 1);
     }
 }

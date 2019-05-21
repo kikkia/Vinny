@@ -9,7 +9,9 @@ import net.dv8tion.jda.core.entities.Role;
 
 import java.awt.*;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -121,5 +123,34 @@ public class FormattingUtils {
             toReturn = new Color(100, 65, 165); // Twitch purple
 
         return toReturn;
+    }
+
+    public static List<String> getGamesPaginatedList(int pageSize, Map<String, List<Member>> gameMap) {
+        List<String> list = new ArrayList<>();
+
+        int maxPerGame = gameMap.size() >= 10 ? 3 : 5;
+        for (Map.Entry<String, List<Member>> game : gameMap.entrySet()) {
+            // TODO: Can we fit logic
+            int remainingPageSpace = pageSize - (list.size() % pageSize);
+            int requiredPageSpace = Math.min(game.getValue().size(), maxPerGame) + 2;
+
+            if (remainingPageSpace < requiredPageSpace) {
+                // If we don't have enough space then fill the page
+                for (int i = remainingPageSpace; i > 0; i--) {
+                    list.add(" ");
+                }
+            }
+            list.add("**" + game.getKey() + "**");
+            for (int i = 0; i < maxPerGame; i++) {
+                if (i == game.getValue().size())
+                    break;
+                if (i == maxPerGame - 1 && game.getValue().size() - i > 1) {
+                    list.add("and " + (game.getValue().size() - i) + " more.");
+                    break;
+                }
+                list.add(getOnlineStatusEmoji(game.getValue().get(i)) + game.getValue().get(i).getEffectiveName());
+            }
+        }
+        return list;
     }
 }

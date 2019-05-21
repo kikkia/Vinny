@@ -40,7 +40,7 @@ public class ShardingManager {
 
     private EventWaiter waiter;
     private List<Command.Category> commandCategories;
-    private CommandClient client = null;
+    private CommandClient client;
 
     public static ShardingManager getInstance() {
         return instance;
@@ -109,7 +109,7 @@ public class ShardingManager {
                     new UserCommand(),
                     new PermissionsCommand(waiter),
                     new ServerInfoCommand(),
-                    new GamesCommand(),
+                    new GamesCommand(waiter),
 
                     // Meme Commands
                     new CommentCommand(),
