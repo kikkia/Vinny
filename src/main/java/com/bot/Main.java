@@ -1,7 +1,6 @@
 package com.bot;
 
 import com.bot.db.ConnectionPool;
-import com.bot.db.DataLoader;
 import com.bot.metrics.MetricsReporter;
 import com.bot.utils.Config;
 import org.flywaydb.core.Flyway;
