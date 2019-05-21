@@ -4,7 +4,6 @@ import com.bot.Bot;
 import com.bot.commands.ModerationCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
-import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;

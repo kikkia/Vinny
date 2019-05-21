@@ -1,9 +1,6 @@
 package com.bot.models;
 
-import java.util.logging.Logger;
-
 public class AudioTrack {
-	private static final Logger LOGGER = Logger.getLogger(AudioTrack.class.getName());
 
 	private String url;
 	private String title;

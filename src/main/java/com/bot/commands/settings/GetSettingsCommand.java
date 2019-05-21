@@ -5,7 +5,6 @@ import com.bot.commands.GeneralCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.utils.CommandCategories;
-import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
@@ -27,7 +26,7 @@ public class GetSettingsCommand extends GeneralCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        InternalGuild guild = null;
+        InternalGuild guild;
         Guild commandGuild = commandEvent.getGuild();
 
         try {

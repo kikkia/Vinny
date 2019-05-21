@@ -1,7 +1,6 @@
 package com.bot.commands.meme;
 
 import com.bot.commands.MemeCommand;
-import com.bot.utils.Logger;
 import com.github.lalyos.jfiglet.FigletFont;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
