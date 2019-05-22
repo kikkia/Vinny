@@ -61,7 +61,7 @@ public class FormattingUtils {
         }
     }
 
-    public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack) {
+    public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume) {
         EmbedBuilder builder = new EmbedBuilder();
 
         AudioTrack track = queuedAudioTrack.getTrack();
@@ -70,7 +70,7 @@ public class FormattingUtils {
         builder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")");
         builder.addField("Duration", msToMinSec(track.getInfo().length), false);
         builder.addField("Requested by", queuedAudioTrack.getRequesterName(), false);
-        builder.setFooter(track.getInfo().uri, null);
+        builder.setFooter("Volume: " + volume, null);
 
         builder.setColor(getColorForTrack(track.getInfo().uri));
 

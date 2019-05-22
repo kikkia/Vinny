@@ -16,23 +16,21 @@ public class VolumeCommand extends VoiceCommand {
 	protected void executeCommand(CommandEvent commandEvent) {
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		int newVolume;
-		try{
+		try {
+			if (handler == null) {
+				commandEvent.replyWarning("I am not connected to a voice channel.");
+				return;
+			}
+
 			newVolume = Integer.parseInt(commandEvent.getArgs().split(" ")[0]);
 			if (newVolume > 200 || newVolume < 0) {
 				throw new NumberFormatException();
 			}
-		}
-		catch (NumberFormatException e) {
-			commandEvent.reply(commandEvent.getClient().getError() + " You must enter a volume between 0 and 200");
-			return;
-		}
-
-		if (handler == null) {
-			commandEvent.reply(commandEvent.getClient().getWarning() + " I am not connected to a voice channel.");
-		}
-		else {
 			handler.getPlayer().setVolume(newVolume);
 			commandEvent.reactSuccess();
+		}
+		catch (NumberFormatException e) {
+			commandEvent.replyWarning("You can enter a volume between 0 and 200 to set.\nCurrent volume: " + handler.getPlayer().getVolume());
 		}
 	}
 }
