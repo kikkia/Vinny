@@ -33,8 +33,9 @@ public class NowPlayingCommand extends VoiceCommand {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setAuthor(track.getInfo().author);
                 embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")");
-                embedBuilder.addField("Stream", String.valueOf(track.getInfo().isStream), false);
                 embedBuilder.addField("Time", currentTrackTime + " / " + totalDuration, false);
+                embedBuilder.addField("Stream", String.valueOf(track.getInfo().isStream), false);
+                embedBuilder.addField("Volume", String.valueOf(handler.getPlayer().getVolume()), false);
 
                 // If youtube, get the thumbnail
                 if (track.getInfo().uri.contains("www.youtube.com")) {
