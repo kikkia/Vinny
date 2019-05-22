@@ -125,8 +125,8 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
-		AddFreshGuildDeferredTask defferedTask = new AddFreshGuildDeferredTask(guildJoinEvent);
-		defferedTask.start();
+		AddFreshGuildDeferredTask deferredTask = new AddFreshGuildDeferredTask(guildJoinEvent);
+		deferredTask.start();
 
 		// If we are posting stats to external discord bot sites, then do it
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
@@ -135,8 +135,8 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildLeave(GuildLeaveEvent guildLeaveEvent) {
-		LeaveGuildDeferredTask defferedTask = new LeaveGuildDeferredTask(guildLeaveEvent);
-		defferedTask.start();
+		LeaveGuildDeferredTask deferredTask = new LeaveGuildDeferredTask(guildLeaveEvent);
+		deferredTask.start();
 
 		// If we are posting stats to external discord bot sites, then do it
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
