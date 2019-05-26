@@ -147,4 +147,8 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     public Queue<QueuedAudioTrack> getTracks() {
         return tracks;
     }
+
+    public void setTracks(Queue<QueuedAudioTrack> queue) {
+        this.tracks = queue;
+    }
 }
