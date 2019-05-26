@@ -13,7 +13,7 @@ public class R4cCommand extends NSFWCommand {
         this.name = "4chan";
         this.arguments = "<4chan board>";
         this.help = "Gets a random thread from a given 4chan board";
-        this.aliases = new String[]{"random4chan", "r4chan", "random4c, r4c"};
+        this.aliases = new String[]{"random4chan", "r4chan", "random4c", "r4c"};
         this.cooldown = 2;
         this.cooldownScope = CooldownScope.USER;
     }

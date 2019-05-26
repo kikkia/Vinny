@@ -150,6 +150,10 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         return tracks;
     }
 
+    public void setTracks(Queue<QueuedAudioTrack> queue) {
+        this.tracks = queue;
+    }
+  
     private void sendNowPlayingUpdate() {
         // Refresh the last channel to make sure we dont have a stale one
         lastUsedChannel = lastUsedChannel.getJDA().getTextChannelById(lastUsedChannel.getId());
