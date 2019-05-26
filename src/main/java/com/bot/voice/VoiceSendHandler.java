@@ -7,6 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.Queue;
@@ -40,7 +41,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             this.requesterName = requesterName;
             nowPlaying = new QueuedAudioTrack(track, requesterName, user);
 
-            lastUsedChannel.sendMessage(FormattingUtils.getAudioTrackEmbed(nowPlaying)).queue();
+            sendNowPlayingUpdate();
         }
         else {
             tracks.add(new QueuedAudioTrack(track, requesterName, user));
@@ -64,7 +65,8 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
                 requester = nextTrack.getRequesterID();
                 player.playTrack(nextTrack.getTrack());
                 nowPlaying = nextTrack;
-                lastUsedChannel.sendMessage(FormattingUtils.getAudioTrackEmbed(nowPlaying)).queue();
+
+                sendNowPlayingUpdate();
             }
             return true;
         }
@@ -73,7 +75,6 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     public void stop() {
         tracks.clear();
         player.setPaused(false);
-        player.setVolume(50);
         player.stopTrack();
         player.destroy();
         repeat = false;
@@ -120,7 +121,8 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             requesterName = nextTrack.getRequesterName();
             player.playTrack(nextTrack.getTrack());
             nowPlaying = nextTrack;
-            lastUsedChannel.sendMessage(FormattingUtils.getAudioTrackEmbed(nextTrack)).queue();
+
+            sendNowPlayingUpdate();
         }
     }
 
@@ -150,5 +152,20 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
 
     public void setTracks(Queue<QueuedAudioTrack> queue) {
         this.tracks = queue;
+    }
+  
+    private void sendNowPlayingUpdate() {
+        // Refresh the last channel to make sure we dont have a stale one
+        lastUsedChannel = lastUsedChannel.getJDA().getTextChannelById(lastUsedChannel.getId());
+
+        // If we sent the last message in the channel then just edit it
+        lastUsedChannel.getHistory().retrievePast(1).queue(m -> {
+            Message lastMessage = m.get(0);
+            if (lastMessage.getAuthor().getId().equals(lastUsedChannel.getJDA().getSelfUser().getId())) {
+                lastMessage.editMessage(FormattingUtils.getAudioTrackEmbed(nowPlaying, player.getVolume())).queue();
+            } else {
+                lastUsedChannel.sendMessage(FormattingUtils.getAudioTrackEmbed(nowPlaying, player.getVolume())).queue();
+            }
+        });
     }
 }
