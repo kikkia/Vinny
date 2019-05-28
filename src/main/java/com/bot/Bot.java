@@ -9,6 +9,7 @@ import com.bot.models.InternalGuild;
 import com.bot.models.InternalShard;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
+import com.bot.tasks.TranslateMessageTask;
 import com.bot.utils.Config;
 import com.bot.utils.HttpUtils;
 import com.bot.utils.Logger;
@@ -41,6 +42,7 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
 
@@ -97,6 +99,14 @@ public class Bot extends ListenerAdapter {
 	public void onGenericEvent(Event event) {
 		metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId());
 		super.onGenericEvent(event);
+	}
+
+	@Override
+	public void onMessageReceived(MessageReceivedEvent event) {
+		super.onMessageReceived(event);
+
+		TranslateMessageTask task = new TranslateMessageTask(event);
+		task.start();
 	}
 
 	@Override

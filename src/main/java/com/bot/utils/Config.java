@@ -58,7 +58,7 @@ public class Config {
     public static final String OFFLINE_EMOJI = "OFFLINE_EMOJI";
 
     private Config() {
-        this.configFile = new File("res/config/config.conf");
+        this.configFile = new File("res/config/config_live.conf");
         configs = new HashMap<>();
 
         try {

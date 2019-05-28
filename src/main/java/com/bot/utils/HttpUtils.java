@@ -3,14 +3,17 @@ package com.bot.utils;
 import com.bot.ShardingManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Random;
 
 
@@ -138,6 +141,46 @@ public class HttpUtils {
 
             return array.getJSONObject(0);
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    //  |****************************************************|
+    //  |                  Translate-api                     |
+    //  |****************************************************|
+    public static JSONObject translateMessageToGivenLanguage(String message, String toLanguage) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            String url = "http://192.168.1.16:3001/translate/";
+            HttpPost post = new HttpPost(url);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("text", message);
+            jsonObject.put("lang", toLanguage);
+            post.setEntity(new StringEntity(jsonObject.toString(), "application/json", "UTF-8"));
+            HttpResponse response = client.execute(post);
+            // Convert response into a json array
+            ResponseHandler<String> handler = new BasicResponseHandler();
+            String body = handler.handleResponse(response);
+            return new JSONObject(body);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String detectMessageLanguage(String message) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            String url = "http://192.168.1.16:3001/detect/";
+            HttpPost post = new HttpPost(url);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("text", message);
+            post.setEntity(new StringEntity(jsonObject.toString(), "application/json", "UTF-8"));
+            HttpResponse response = client.execute(post);
+            // Convert response into a json array
+            ResponseHandler<String> handler = new BasicResponseHandler();
+            String body = handler.handleResponse(response);
+            return new JSONObject(body).getString("lang");
+        } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
     }
