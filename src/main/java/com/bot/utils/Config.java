@@ -16,8 +16,7 @@ public class Config {
     public static final String REDDIT_TOKEN = "REDDIT_TOKEN";
     public static final String REDDIT_CLIENT_ID = "REDDIT_CLIENT_ID";
     public static final String OWNER_ID = "OWNER_ID";
-    public static final String BOTLIST_API_TOKEN = "BOTLIST_API";
-    public static final String BOT_API_TOKEN = "BOT_PW_API";
+    public static final String P90_TOKEN = "P90_TOKEN";
 
 
     public static final String SILENT_DEPLOY = "SILENT_DEPLOY";
