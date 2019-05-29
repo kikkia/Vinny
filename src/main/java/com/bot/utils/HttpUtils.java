@@ -19,6 +19,8 @@ public class HttpUtils {
     private static Config config = Config.getInstance();
     private static Random random = new Random(System.currentTimeMillis());
 
+    private static final String P90_BASE_URL = "https://p90.zone/";
+
     public static void postGuildCountToExternalSites() {
         ShardingManager shardingManager = ShardingManager.getInstance();
         int totalGuilds = shardingManager.getTotalGuilds();
@@ -139,6 +141,33 @@ public class HttpUtils {
             return array.getJSONObject(0);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static String getRandomP90Post(boolean canNSFW, String search) throws Exception {
+        String url = search.isEmpty() ? P90_BASE_URL + "api/random" : P90_BASE_URL + "api/search/" + search;
+        // Search is always nsfw, random can be locked down.
+        url = (canNSFW || !search.isEmpty()) ? url : url + "?nsfw=0";
+        String token = "key " + config.getConfig(Config.P90_TOKEN);
+        try(CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet get = new HttpGet(url);
+            get.addHeader("Authorization", token);
+            HttpResponse response = client.execute(get);
+            String json = IOUtils.toString(response.getEntity().getContent());
+
+            String name = "";
+            // If random post then get name
+            if (search.isEmpty()) {
+                JSONObject post = new JSONObject(json);
+                name = post.getString("name");
+            } else { // On search get random entry
+                // On search we get a json array back
+                JSONArray array = new JSONArray(json);
+                JSONObject selectedObject = array.getJSONObject(random.nextInt(array.length()));
+                name = selectedObject.getString("name");
+            }
+
+            return P90_BASE_URL + name;
         }
     }
 }

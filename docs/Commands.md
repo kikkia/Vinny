@@ -119,8 +119,8 @@ Information about Vinny
 ### `vote`
 Support Vinny by upvoting on bot lists.
  
- ### `invite`
- Sends a link to invite the bot to your server.
+### `invite`
+Sends a link to invite the bot to your server.
 
 ### `support`
 Gives a link to the support server.
@@ -169,7 +169,11 @@ Meme commands are commands that are just truly shitposting.
 Generates a message based on what a user or channel has posted to discord using a custom adaptation of a markov chain algortihm. The comments are better the more messages that Vinny can gather from the user or channel. 
 * `~comment @kikkia` - Generates a comment for Kikkia.  
 * `~comment #general` - Generates a comment from the #general channel.  
-  
+
+### `p90`
+Gets a webm from p90.zone. You can leave it blank to get a random webm, or add in a word after to search. Searching requires nsfw to be enabled.
+* `~p90 dank` - Gets a dank webm from P90
+
 ### `ascii`
 Generates an ascii representation of a given message.
 * `ascii ayy lmao` - Outputs ascii art of `ayy lmao`
