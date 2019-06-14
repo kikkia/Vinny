@@ -41,4 +41,8 @@ public class MarkovModelCache {
     }
 
     public int getSize() {return cache.size();}
+
+    public void removeAll() {
+        cache.removeAll();
+    }
 }

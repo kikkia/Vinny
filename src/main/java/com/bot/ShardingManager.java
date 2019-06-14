@@ -7,6 +7,7 @@ import com.bot.commands.meme.P90Command;
 import com.bot.commands.nsfw.R4cCommand;
 import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.AvatarCommand;
+import com.bot.commands.owner.ClearCacheCommand;
 import com.bot.commands.owner.UpdateGuildCountCommand;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
@@ -147,7 +148,8 @@ public class ShardingManager {
         commandClientBuilder.addCommands(
                 // Owner Commands -- All hidden
                 new AvatarCommand(),
-                new UpdateGuildCountCommand()
+                new UpdateGuildCountCommand(),
+                new ClearCacheCommand()
         );
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
