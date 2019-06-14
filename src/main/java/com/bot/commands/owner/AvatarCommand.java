@@ -39,7 +39,6 @@ public class AvatarCommand extends OwnerCommand {
         catch (IOException e)
         {
             commandEvent.reply(commandEvent.getClient().getError() + " Failed to update the avatar");
-            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
     }
 }
