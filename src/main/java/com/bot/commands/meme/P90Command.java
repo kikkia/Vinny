@@ -12,9 +12,10 @@ public class P90Command extends MemeCommand {
     private ChannelDAO channelDAO;
 
     public P90Command() {
-        this.name = "p90";
+        this.name = "webm";
         this.help = "Gets a webm from P90.zone";
         this.arguments = "<Search terms or nothing>";
+        this.aliases = new String[] {"p90"};
         this.cooldown = 1;
         this.cooldownScope = CooldownScope.USER;
 

@@ -93,6 +93,7 @@ public class CommentCommand extends MemeCommand {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                logger.severe("Issue generating comment", e);
             }
             // Cache it
             markovCache.put(commandEvent.getGuild().getId() + user.getId(), markov);
@@ -115,17 +116,23 @@ public class CommentCommand extends MemeCommand {
             // Fill the model with messages from a given channel
             try {
                 int msg_limit = 5000;
-                for (Message m : channel.getIterableHistory().cache(false)) {
-                    // Check that message is the right author and has content.
-                    if (m.getContentRaw().split(" ").length > 1)
-                        markov.addPhrase(m.getContentRaw());
+                if (commandEvent.getSelfMember().hasPermission(channel, Permission.MESSAGE_HISTORY)) {
+                    for (Message m : channel.getIterableHistory().cache(false)) {
+                        // Check that message is the right author and has content.
+                        if (m.getContentRaw().split(" ").length > 1)
+                            markov.addPhrase(m.getContentRaw());
 
-                    // After 1000, break
-                    if (--msg_limit <= 0)
-                        break;
+                        // After 1000, break
+                        if (--msg_limit <= 0)
+                            break;
+                    }
+                } else {
+                    commandEvent.replyWarning("I need the `MESSAGE_HISTORY` permission for that channel to generate a comment.");
+                    return;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                logger.severe("Issue generating comment", e);
             }
             // Cache it
             markovCache.put(channel.getId(), markov);
