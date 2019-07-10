@@ -30,6 +30,7 @@ public class HttpUtils {
         postDiscordBoats(totalGuilds);
         postBotsOnDiscord(totalGuilds);
         postDiscordBotsOrg(totalGuilds);
+        postBotlistSpace(totalGuilds, shardingManager.getShards().size());
     }
 
     private static void postBotsOnDiscord(int serverCount) {
@@ -84,6 +85,16 @@ public class HttpUtils {
         String token = config.getConfig(Config.BOTS_FOR_DISCORD_API_TOKEN);
         JSONObject object = new JSONObject();
         object.put("server_count",  totalServerCount);
+
+        sendPost(token, url, object);
+    }
+
+    private static void postBotlistSpace(int totalServerCount, int shardCount) {
+        String url = "https://api.botlist.space/v1/bots/" + config.getConfig(Config.DISCORD_BOT_ID);
+        String token = config.getConfig(Config.BOTLIST_SPACE_TOKEN);
+        JSONObject object = new JSONObject();
+        object.put("server_count", totalServerCount);
+        object.put("shards", shardCount);
 
         sendPost(token, url, object);
     }
