@@ -149,6 +149,11 @@ Get info of the current server.
 ### `games`
 Lists all games being played on the server and the users playing them.
 
+### `pixiv`
+Get a random new image from pixiv, or a random image for a search term. 
+* `~pixiv megumin` - Gives a pixiv post with that search term
+* `~pixiv` - Gives a random new post from pixiv
+
 ## Nsfw
 Nsfw commands are just that. They need the channel to be have nsfw enabled (both in discord and with the [`enablensfw` command](###`enablensfw`))
 
