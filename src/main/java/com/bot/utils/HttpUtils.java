@@ -1,6 +1,7 @@
 package com.bot.utils;
 
 import com.bot.ShardingManager;
+import com.bot.models.PixivPost;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -180,5 +181,30 @@ public class HttpUtils {
 
             return P90_BASE_URL + name;
         }
+    }
+
+    public static PixivPost getRandomNewPixivPost(boolean canNSFW, String search) throws Exception {
+        String postBaseUrl = "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=";
+        String getUrl = search == null ? "https://api.imjad.cn/pixiv/v1/?per_page=100&content=illust" :
+                "https://api.imjad.cn/pixiv/v1/?type=search&mode=tag&per_page=1000&word=" + search;
+        JSONObject selectedPost = null;
+
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet get = new HttpGet(getUrl);
+            HttpResponse response = client.execute(get);
+            JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
+            JSONArray resultsArray = jsonResponse.getJSONArray("response");
+            int selectedIndex = random.nextInt(resultsArray.length());
+            // If NSFW is not allowed in the channel then use helper to get a sfw post
+            selectedPost = canNSFW ? resultsArray.getJSONObject(selectedIndex) : PixivHelperKt.getSFWSubmission(resultsArray);
+        }
+        if (selectedPost == null)
+            return null;
+
+        return new PixivPost(selectedPost.getInt("id"),
+                selectedPost.getString("title"),
+                postBaseUrl + selectedPost.getInt("id"),
+                selectedPost.getJSONObject("user").getString("name"),
+                selectedPost.getJSONObject("user").getInt("id"));
     }
 }

@@ -112,6 +112,7 @@ public class ShardingManager {
                     new PermissionsCommand(waiter),
                     new ServerInfoCommand(),
                     new GamesCommand(waiter),
+                    new PixivCommand(),
 
                     // Meme Commands
                     new P90Command(),
