@@ -31,7 +31,8 @@ class InternalShard(val jda: JDA) {
         queuedTracksCount = 0
 
         for (manager in jda.audioManagers) {
-            val handler = manager.sendingHandler as VoiceSendHandler
+            val handler = manager.sendingHandler as? VoiceSendHandler ?: continue
+
             // Update active connections
             if (manager.isConnected && handler.isPlaying) {
                 activeVoiceConnectionsCount++
