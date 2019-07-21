@@ -68,7 +68,7 @@ public class MembershipDAO {
         } catch (SQLException e) {
             LOGGER.severe("Failed to get user membership in guild: " + e.getMessage());
         } finally {
-            DbHelpers.close(statement, set, connection);
+            DbHelpers.INSTANCE.close(statement, set, connection);
         }
 
         return membership;
@@ -94,7 +94,7 @@ public class MembershipDAO {
         } catch (SQLException e) {
             LOGGER.severe("Failed to get memberships for user. " + e.getMessage());
         } finally {
-            DbHelpers.close(statement, set, connection);
+            DbHelpers.INSTANCE.close(statement, set, connection);
         }
         return memberships;
     }
@@ -112,7 +112,7 @@ public class MembershipDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to remove user membership from guild. " + e.getMessage());
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
     }
 
@@ -136,7 +136,7 @@ public class MembershipDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add membership for user to guild: " + e.getMessage());
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
     }
 
@@ -152,7 +152,7 @@ public class MembershipDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add user to db: " +e.getMessage());
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
     }
 }

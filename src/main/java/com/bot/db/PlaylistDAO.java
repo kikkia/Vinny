@@ -204,7 +204,7 @@ public class PlaylistDAO {
 			e.printStackTrace();
 			return null;
 		} finally {
-			DbHelpers.close(statement, set, conn);
+			DbHelpers.INSTANCE.close(statement, set, conn);
 		}
 
 		return new ArrayList<>(playlists.values());
@@ -239,7 +239,7 @@ public class PlaylistDAO {
 
 
 		} finally {
-			DbHelpers.close(statement, set, conn);
+			DbHelpers.INSTANCE.close(statement, set, conn);
 		}
 
 		// Signifies a not found playlist
@@ -302,7 +302,7 @@ public class PlaylistDAO {
 			e.printStackTrace();
 			return false;
 		} finally {
-			DbHelpers.close(statement, set, conn);
+			DbHelpers.INSTANCE.close(statement, set, conn);
 		}
 	}
 
@@ -340,7 +340,7 @@ public class PlaylistDAO {
 			e.printStackTrace();
 			return false;
 		} finally {
-			DbHelpers.close(statement, set, conn);
+			DbHelpers.INSTANCE.close(statement, set, conn);
 		}
 	}
 
@@ -360,7 +360,7 @@ public class PlaylistDAO {
 			System.out.println(e.getMessage());
 			return false;
 		} finally {
-			DbHelpers.close(statement, set, conn);
+			DbHelpers.INSTANCE.close(statement, set, conn);
 		}
 	}
 }

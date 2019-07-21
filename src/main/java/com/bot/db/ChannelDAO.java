@@ -63,7 +63,7 @@ public class ChannelDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add voice channel to the db " +e.getMessage());
         } finally {
-            DbHelpers.close(preparedStatement, null, connection);
+            DbHelpers.INSTANCE.close(preparedStatement, null, connection);
         }
     }
 
@@ -82,7 +82,7 @@ public class ChannelDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add text channel to the db: " + e.getMessage());
         } finally {
-            DbHelpers.close(preparedStatement, null, connection);
+            DbHelpers.INSTANCE.close(preparedStatement, null, connection);
         }
     }
 
@@ -99,7 +99,7 @@ public class ChannelDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to remove a voice channel from db: " +e.getMessage());
         } finally {
-            DbHelpers.close(preparedStatement, null, connection);
+            DbHelpers.INSTANCE.close(preparedStatement, null, connection);
         }
     }
 
@@ -116,7 +116,7 @@ public class ChannelDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to remove a text channel from db: " +e.getMessage());
         } finally {
-            DbHelpers.close(preparedStatement, null, connection);
+            DbHelpers.INSTANCE.close(preparedStatement, null, connection);
         }
     }
 
@@ -138,7 +138,7 @@ public class ChannelDAO {
             LOGGER.log(Level.SEVERE, "Failed to update channel voice: " + e.getMessage());
             return false;
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
         return true;
     }
@@ -160,7 +160,7 @@ public class ChannelDAO {
             LOGGER.log(Level.SEVERE, "Failed to update channel nsfw: " + e.getMessage());
             return false;
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
         return true;
     }
@@ -193,7 +193,7 @@ public class ChannelDAO {
         } catch (SQLException e ) {
             LOGGER.severe("Failed to get Text channel: "+ channelId +" for id.." + e.getMessage());
         } finally {
-            DbHelpers.close(statement, set, connection);
+            DbHelpers.INSTANCE.close(statement, set, connection);
         }
 
         return toReturn;
@@ -218,7 +218,7 @@ public class ChannelDAO {
         } catch (SQLException e) {
             LOGGER.severe("Failed to get voiceChannel: "+ channelId + " for id.. " + e.getMessage());
         } finally {
-            DbHelpers.close(statement, set, connection);
+            DbHelpers.INSTANCE.close(statement, set, connection);
         }
         return toReturn;
     }
@@ -241,7 +241,7 @@ public class ChannelDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
         } finally {
-            DbHelpers.close(statement, set, connection);
+            DbHelpers.INSTANCE.close(statement, set, connection);
         }
 
         return channels;
@@ -265,7 +265,7 @@ public class ChannelDAO {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
         } finally {
-            DbHelpers.close(statement, set, connection);
+            DbHelpers.INSTANCE.close(statement, set, connection);
         }
 
         return channels;

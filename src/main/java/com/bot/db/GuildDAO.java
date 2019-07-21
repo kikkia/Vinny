@@ -83,7 +83,7 @@ public class GuildDAO {
         } catch (SQLException e) {
             LOGGER.severe("Failed to get guildById: " + e.getMessage());
         } finally {
-            DbHelpers.close(statement, set, connection);
+            DbHelpers.INSTANCE.close(statement, set, connection);
         }
 
         if (returned != null) {
@@ -114,7 +114,7 @@ public class GuildDAO {
             LOGGER.log(Level.SEVERE, "Failed to add guild to db: " + guild.getId() + " " + e.getMessage());
             return false;
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
 
         updateGuildInCache(guild.getId());
@@ -156,7 +156,7 @@ public class GuildDAO {
             LOGGER.log(Level.SEVERE, "Failed to update volume for guild: " + guildId + " " + e.getMessage());
             return false;
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
 
         updateGuildInCache(guildId);
@@ -178,7 +178,7 @@ public class GuildDAO {
             LOGGER.log(Level.SEVERE, "Failed to update base role for guild: " + guildId + " " + e.getMessage());
             return false;
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
 
         updateGuildInCache(guildId);
@@ -201,7 +201,7 @@ public class GuildDAO {
             LOGGER.log(Level.SEVERE, "Failed to update nsfw role for: " + guildId + " " + e.getMessage());
             return false;
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
 
         updateGuildInCache(guildId);
@@ -224,7 +224,7 @@ public class GuildDAO {
             LOGGER.log(Level.SEVERE, "Failed to update voice role for guild: " + guildId + " " + e.getMessage());
             return false;
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
 
         updateGuildInCache(guildId);
@@ -247,7 +247,7 @@ public class GuildDAO {
             LOGGER.log(Level.SEVERE, "Failed to update min mod role for guild: " + guildId + " " + e.getMessage());
             return false;
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
 
         updateGuildInCache(guildId);
@@ -271,7 +271,7 @@ public class GuildDAO {
             LOGGER.log(Level.SEVERE, "Failed to update prefixes for guild: " + guildId + " " + e.getMessage());
             return false;
         } finally {
-            DbHelpers.close(statement, null, connection);
+            DbHelpers.INSTANCE.close(statement, null, connection);
         }
 
         updateGuildInCache(guildId);
@@ -284,7 +284,7 @@ public class GuildDAO {
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, guildId);
         ResultSet set = statement.executeQuery();
-        DbHelpers.close(statement, null, connection);
+        DbHelpers.INSTANCE.close(statement, null, connection);
         return set;
     }
 
