@@ -4,7 +4,7 @@ import com.bot.voice.VoiceSendHandler
 import net.dv8tion.jda.core.JDA
 
 class InternalShard(val jda: JDA) {
-    val id: Int
+    val id: Int = jda.shardInfo.shardId
     var activeVoiceConnectionsCount = 0
         private set
     var idleVoiceConnectionCount = 0
@@ -20,37 +20,37 @@ class InternalShard(val jda: JDA) {
     val userCount: Int
         get() = jda.users.size
 
-    init {
-        this.id = jda.shardInfo.shardId
-    }
-
     fun updateStatistics() {
         activeVoiceConnectionsCount = 0
         idleVoiceConnectionCount = 0
         usersInVoiceCount = 0
         queuedTracksCount = 0
 
-        for (manager in jda.audioManagers) {
-            val handler = manager.sendingHandler as? VoiceSendHandler ?: continue
+        try {
+            for (manager in jda.audioManagers) {
+                val handler = manager.sendingHandler as? VoiceSendHandler ?: continue
 
-            // Update active connections
-            if (manager.isConnected && handler.isPlaying) {
-                activeVoiceConnectionsCount++
-                usersInVoiceCount += manager.connectedChannel.members.size - 1
+                // Update active connections
+                if (manager.isConnected && handler.isPlaying) {
+                    activeVoiceConnectionsCount++
+                    usersInVoiceCount += manager.connectedChannel.members.size - 1
+                }
+
+                // Update idle connection count
+                if (manager.isConnected && !handler.isPlaying) {
+                    idleVoiceConnectionCount++
+                    usersInVoiceCount += manager.connectedChannel.members.size - 1
+                }
+
+                if (handler != null) {
+                    if (handler.nowPlaying != null)
+                        queuedTracksCount++
+
+                    queuedTracksCount += handler.tracks.size
+                }
             }
+        } catch (e : NullPointerException) {
 
-            // Update idle connection count
-            if (manager.isConnected && !handler.isPlaying) {
-                idleVoiceConnectionCount++
-                usersInVoiceCount += manager.connectedChannel.members.size - 1
-            }
-
-            if (handler != null) {
-                if (handler.nowPlaying != null)
-                    queuedTracksCount++
-
-                queuedTracksCount += handler.tracks.size
-            }
         }
     }
 }

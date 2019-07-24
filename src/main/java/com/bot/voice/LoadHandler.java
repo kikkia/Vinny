@@ -1,6 +1,8 @@
 package com.bot.voice;
 
 import com.bot.Bot;
+import com.bot.utils.HttpUtils;
+import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -11,6 +13,7 @@ public class LoadHandler implements AudioLoadResultHandler {
 
     private Bot bot;
     private CommandEvent commandEvent;
+    private static Logger logger = new Logger(HttpUtils.class.getName());
 
     public LoadHandler(Bot bot, CommandEvent commandEvent) {
         this.bot = bot;
@@ -40,5 +43,6 @@ public class LoadHandler implements AudioLoadResultHandler {
     public void loadFailed(FriendlyException e) {
         // If load fails just tell the user.
         commandEvent.reply(commandEvent.getClient().getWarning() + " Failed to load a track: " + e.getMessage());
+        logger.severe("Failed to load a track", e);
     }
 }
