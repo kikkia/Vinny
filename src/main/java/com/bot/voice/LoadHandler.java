@@ -44,5 +44,6 @@ public class LoadHandler implements AudioLoadResultHandler {
         // If load fails just tell the user.
         commandEvent.reply(commandEvent.getClient().getWarning() + " Failed to load a track: " + e.getMessage());
         logger.severe("Failed to load a track", e);
+        logger.severe("Additional info", (Exception) e.getCause());
     }
 }
