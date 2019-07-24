@@ -22,7 +22,7 @@ public class MetricsManager {
     private MetricsManager() {
          statsd = new NonBlockingStatsDClient(
                 "vinny-redux.live",                          /* prefix to any stats; may be null or empty string */
-                "localhost",                        /* common case: localhost */
+                "datadog",                        /* common case: localhost */
                 8125,                                 /* port */
                 new String[] {"vinny:live"}            /* Datadog extension: Constant tags, always applied */
             );
