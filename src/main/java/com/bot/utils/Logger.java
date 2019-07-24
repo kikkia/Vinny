@@ -3,7 +3,6 @@ package com.bot.utils;
 import com.bot.ShardingManager;
 import com.bot.models.InternalShard;
 import net.dv8tion.jda.core.entities.TextChannel;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.Map;
 import java.util.logging.Level;
@@ -113,9 +112,10 @@ public class Logger {
         try {
             if (errorChannel != null) {
                 errorChannel.sendMessage("`Error:`\n" + s).queue();
-                if (e != null)
+                if (e != null) {
                     errorChannel.sendMessage("`Exception:`\n```" + e.toString() + "```").queue();
-                errorChannel.sendMessage("StackTrace: ```" + ExceptionUtils.getStackTrace(e) + "```").queue();
+                    errorChannel.sendMessage("StackTrace: ```" + e.getStackTrace() + "```").queue();
+                }
             }
         } catch (IllegalStateException ex) {
             // Could be thrown when JDA gets rid of the channel object
