@@ -91,7 +91,7 @@ public class AliasDAO {
     }
 
     public void removeGuildAlias(Alias alias, String guildId) throws SQLException {
-        String query = "DELETE FROM guild_aliases ga JOIN command_aliases ca ON ga.alias = ca.id " +
+        String query = "DELETE ga FROM guild_aliases ga JOIN command_aliases ca ON ga.alias = ca.id " +
                 "WHERE ca.alias = ? AND ga.guild = ?";
 
         try(Connection conn = write.getConnection()) {
@@ -100,7 +100,7 @@ public class AliasDAO {
     }
 
     public void removeChannelAlias(Alias alias, String channelId) throws SQLException {
-        String query = "DELETE FROM channel_aliases ch JOIN command_aliases ca ON ch.alias = ca.id " +
+        String query = "DELETE ch FROM channel_aliases ch JOIN command_aliases ca ON ch.alias = ca.id " +
                 "WHERE ca.alias = ? AND ch.channel = ?";
 
         try(Connection conn = write.getConnection()) {
@@ -109,7 +109,7 @@ public class AliasDAO {
     }
 
     public void removeUserAlias(Alias alias, String userId) throws SQLException {
-        String query = "DELETE FROM user_aliases ua JOIN command_aliases ca ON ua.alias = ca.id " +
+        String query = "DELETE ua FROM user_aliases ua JOIN command_aliases ca ON ua.alias = ca.id " +
                 "WHERE ca.alias = ? AND ua.user = ?";
 
         try(Connection conn = write.getConnection()) {
