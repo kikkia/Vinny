@@ -46,7 +46,7 @@ public class AliasDAO {
     }
 
     public void addGuildAlias(Alias alias) throws SQLException {
-        String guild_alias_insert_query = "INSERT INTO guild_aliases(guild, alias) VALUES (?,?,?)";
+        String guild_alias_insert_query = "INSERT INTO guild_aliases(guild, alias) VALUES (?,?)";
 
         try(Connection connection = write.getConnection()) {
             addAlias(connection, alias.getAlias(), alias.getCommand(), alias.getAuthor(), alias.getScopeId(), guild_alias_insert_query);
@@ -54,7 +54,7 @@ public class AliasDAO {
     }
 
     public void addChannelAlias(Alias alias) throws SQLException {
-        String channel_alias_insert_query = "INSERT INTO channel_aliases(channel, alias) VALUES (?,?,?)";
+        String channel_alias_insert_query = "INSERT INTO channel_aliases(channel, alias) VALUES (?,?)";
 
         try(Connection connection = write.getConnection()) {
             addAlias(connection, alias.getAlias(), alias.getCommand(), alias.getAuthor(), alias.getScopeId(), channel_alias_insert_query);
@@ -62,7 +62,7 @@ public class AliasDAO {
     }
 
     public void addUserAlias(Alias alias) throws SQLException {
-        String user_alias_insert_query = "INSERT INTO user_aliases(user, alias) VALUES (?,?,?)";
+        String user_alias_insert_query = "INSERT INTO user_aliases(user, alias) VALUES (?,?)";
 
         try(Connection connection = write.getConnection()) {
             addAlias(connection, alias.getAlias(), alias.getCommand(), alias.getAuthor(), alias.getScopeId(), user_alias_insert_query);
