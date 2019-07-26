@@ -121,7 +121,7 @@ public class CommandPermissions {
         InternalTextChannel textChannel;
         // Try to get the text channel and check, if its none, add it
         try {
-            textChannel = channelDAO.getTextChannelForId(commandEvent.getTextChannel().getId());
+            textChannel = channelDAO.getTextChannelForId(commandEvent.getTextChannel().getId(), true);
             if (textChannel == null) {
                 throw new SQLException("Text channel is missing");
             }

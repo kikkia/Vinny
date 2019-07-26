@@ -1,5 +1,6 @@
 package com.bot.db;
 
+import com.bot.caching.TextChannelCache;
 import com.bot.db.mappers.TextChannelMapper;
 import com.bot.db.mappers.VoiceChannelMapper;
 import com.bot.models.InternalTextChannel;
@@ -23,6 +24,8 @@ public class ChannelDAO {
 
     private HikariDataSource write;
     private static ChannelDAO instance;
+    private AliasDAO aliasDAO;
+    private TextChannelCache cache;
 
     private ChannelDAO() {
         try {
@@ -33,8 +36,9 @@ public class ChannelDAO {
     }
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
-    public ChannelDAO(HikariDataSource dataSource) {
-        write = dataSource;
+    public ChannelDAO(HikariDataSource dataSource, AliasDAO aliasDAO) {
+        this.write = dataSource;
+        this.aliasDAO = aliasDAO;
     }
 
 
@@ -47,6 +51,8 @@ public class ChannelDAO {
 
     private void initialize() throws SQLException {
         this.write = ConnectionPool.getDataSource();
+        this.aliasDAO = AliasDAO.getInstance();
+        this.cache = TextChannelCache.getInstance();
     }
 
     public void addVoiceChannel(VoiceChannel voiceChannel) {
@@ -176,11 +182,23 @@ public class ChannelDAO {
     }
 
     public InternalTextChannel getTextChannelForId(String channelId) {
+        return getTextChannelForId(channelId, true);
+    }
+
+    public InternalTextChannel getTextChannelForId(String channelId, boolean useCache) {
         String query = "SELECT c.id, c.name, c.guild, c.voice_enabled, c.announcement, c.nsfw_enabled, c.commands_enabled FROM text_channel c WHERE c.id = ?";
         PreparedStatement statement = null;
         InternalTextChannel toReturn = null;
         Connection connection = null;
         ResultSet set = null;
+
+        if (useCache)
+            toReturn = cache.get(channelId);
+
+        if (toReturn != null) {
+            return toReturn;
+        }
+
         try {
             connection = write.getConnection();
             statement = connection.prepareStatement(query);
@@ -189,6 +207,9 @@ public class ChannelDAO {
 
             if (set.next()) {
                 toReturn = TextChannelMapper.mapSetToInternalTextChannel(set);
+            }
+            if (toReturn != null) {
+                toReturn.setAliases(aliasDAO.getChannelAliases(channelId));
             }
         } catch (SQLException e ) {
             LOGGER.severe("Failed to get Text channel: "+ channelId +" for id.." + e.getMessage());
@@ -269,5 +290,10 @@ public class ChannelDAO {
         }
 
         return channels;
+    }
+
+    private void updateChannelInCache(String channelId) {
+        InternalTextChannel channel = getTextChannelForId(channelId, false);
+        cache.put(channelId, channel);
     }
 }
