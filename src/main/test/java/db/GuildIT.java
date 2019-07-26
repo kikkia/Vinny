@@ -1,6 +1,7 @@
 package db;
 
 import com.bot.caching.GuildCache;
+import com.bot.db.AliasDAO;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalGuildMembership;
@@ -76,7 +77,7 @@ public class GuildIT {
         flyway = new Flyway();
         flyway.setDataSource(dataSource);
 
-        guildDAO = new GuildDAO(dataSource);
+        guildDAO = new GuildDAO(dataSource, new AliasDAO(dataSource));
     }
 
     @Before

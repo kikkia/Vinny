@@ -1,5 +1,6 @@
 package db;
 
+import com.bot.db.AliasDAO;
 import com.bot.db.ChannelDAO;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalTextChannel;
@@ -86,7 +87,7 @@ public class ChannelIT {
         flyway = new Flyway();
         flyway.setDataSource(dataSource);
 
-        channelDAO = new ChannelDAO(dataSource);
+        channelDAO = new ChannelDAO(dataSource, new AliasDAO(dataSource));
     }
 
     @Before

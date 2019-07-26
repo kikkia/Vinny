@@ -36,8 +36,9 @@ public class ChannelDAO {
     }
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
-    public ChannelDAO(HikariDataSource dataSource) {
-        write = dataSource;
+    public ChannelDAO(HikariDataSource dataSource, AliasDAO aliasDAO) {
+        this.write = dataSource;
+        this.aliasDAO = aliasDAO;
     }
 
 

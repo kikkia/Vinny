@@ -144,7 +144,7 @@ public class AliasIT {
     }
 
     @Test
-    private void testAddGetAndRemoveAliasForGuild() throws Exception {
+    public void testAddGetAndRemoveAliasForGuild() throws Exception {
         Alias alias1 = new Alias("alias1", "~rr animemes", "101", "me");
         Alias alias2 = new Alias("alias2", "~tr pcmasterrace", "101", "me");
 
@@ -170,7 +170,7 @@ public class AliasIT {
     }
 
     @Test
-    private void testAddGetAndRemoveAliasForChannel() throws Exception {
+    public void testAddGetAndRemoveAliasForChannel() throws Exception {
         Alias alias1 = new Alias("alias1", "~rr animemes", "1", "me");
         Alias alias2 = new Alias("alias2", "~tr pcmasterrace", "1", "me");
 

@@ -38,9 +38,10 @@ public class GuildDAO {
     }
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
-    public GuildDAO(HikariDataSource dataSource) {
-        write = dataSource;
-        cache = GuildCache.getInstance();
+    public GuildDAO(HikariDataSource dataSource, AliasDAO aliasDAO) {
+        this.write = dataSource;
+        this.cache = GuildCache.getInstance();
+        this.aliasDAO = aliasDAO;
     }
 
     public static GuildDAO getInstance() {
