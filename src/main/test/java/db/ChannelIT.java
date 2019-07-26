@@ -173,7 +173,7 @@ public class ChannelIT {
     @Test
     public void testGetTextChannelById() throws SQLException {
         InternalTextChannel expected = textChannels.get(0);
-        InternalTextChannel actual = channelDAO.getTextChannelForId(expected.getId());
+        InternalTextChannel actual = channelDAO.getTextChannelForId(expected.getId(), false);
         assertTextChannelEquals(expected, actual);
     }
 
@@ -196,7 +196,7 @@ public class ChannelIT {
 
         channelDAO.addTextChannel(textChannel);
 
-        InternalTextChannel actual = channelDAO.getTextChannelForId("1000");
+        InternalTextChannel actual = channelDAO.getTextChannelForId("1000", false);
 
         assertTextChannelEquals(expected, actual);
     }
@@ -236,7 +236,7 @@ public class ChannelIT {
 
         channelDAO.removeTextChannel(textChannel);
 
-        InternalTextChannel returned = channelDAO.getTextChannelForId("4");
+        InternalTextChannel returned = channelDAO.getTextChannelForId("4", false);
         assertNull(returned);
     }
 

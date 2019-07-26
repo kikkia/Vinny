@@ -25,6 +25,7 @@ public class GuildDAO {
 
     private HikariDataSource write;
     private GuildCache cache;
+    private AliasDAO aliasDAO;
     private static GuildDAO instance;
 
 
@@ -50,7 +51,8 @@ public class GuildDAO {
 
     private void initialize() throws SQLException {
         this.write = ConnectionPool.getDataSource();
-        cache = GuildCache.getInstance();
+        this.cache = GuildCache.getInstance();
+        this.aliasDAO = AliasDAO.getInstance();
     }
 
     public InternalGuild getGuildById(String guildId) {
@@ -80,14 +82,14 @@ public class GuildDAO {
             if (set.next()) {
                 returned = GuildMapper.mapSetToGuild(set);
             }
+            if (returned != null) {
+                returned.setAliasList(aliasDAO.getGuildAliases(guildId));
+                cache.put(returned.getId(), returned);
+            }
         } catch (SQLException e) {
             LOGGER.severe("Failed to get guildById: " + e.getMessage());
         } finally {
             DbHelpers.INSTANCE.close(statement, set, connection);
-        }
-
-        if (returned != null) {
-            cache.put(returned.getId(), returned);
         }
 
         return returned;
