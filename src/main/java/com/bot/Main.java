@@ -4,7 +4,6 @@ import com.bot.db.ConnectionPool;
 import com.bot.metrics.MetricsReporter;
 import com.bot.utils.Config;
 import org.flywaydb.core.Flyway;
-import org.flywaydb.core.api.FlywayException;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,13 +35,7 @@ public class Main {
 		LOGGER.log(Level.INFO, "Hikari pool successfully initialized");
 		Flyway flyway = new Flyway();
 		flyway.setDataSource(connectionPool.getDataSource());
-		try {
-			flyway.migrate();
-		} catch (FlywayException e) {
-			System.out.println("Flyway exception found: " + e.getMessage());
-			flyway.repair();
-			flyway.migrate();
-		}
+		flyway.migrate();
 		LOGGER.log(Level.INFO, "Flyway migrations completed");
 
 		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));

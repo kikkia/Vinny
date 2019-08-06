@@ -7,7 +7,6 @@ import com.bot.db.MembershipDAO;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalShard;
-import com.bot.models.InternalTextChannel;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.utils.Config;
@@ -42,13 +41,10 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceUpdateEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
 
 import java.sql.SQLException;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 
 public class Bot extends ListenerAdapter {
@@ -61,7 +57,6 @@ public class Bot extends ListenerAdapter {
 	private MembershipDAO membershipDAO;
 	private ChannelDAO channelDAO;
 	private MetricsManager metricsManager;
-	private ThreadPoolExecutor executor;
 
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 
@@ -77,8 +72,6 @@ public class Bot extends ListenerAdapter {
 
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
-		// TODO: Testing handling all message logic async
-		executor = new ScheduledThreadPoolExecutor(3);
 	}
 
 	@Override
@@ -101,118 +94,94 @@ public class Bot extends ListenerAdapter {
 	}
 
 	@Override
-	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-		// TODO: Check for custom Aliases, For now this is just to see effect on text cache
-		executor.execute(() -> {
-			InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
-			InternalTextChannel channel = channelDAO.getTextChannelForId(event.getChannel().getId());
-		});
-		super.onGuildMessageReceived(event);
-	}
-
-	@Override
 	public void onGenericEvent(Event event) {
-		executor.execute(() -> {
-			metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId());
-		});
+		metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId());
 		super.onGenericEvent(event);
 	}
 
 	@Override
 	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-		executor.execute(() -> checkVoiceLobby(event));
+		checkVoiceLobby(event);
 	}
 
 	@Override
 	public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-		executor.execute(() -> checkVoiceLobby(event));
+		checkVoiceLobby(event);
 	}
 
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-		executor.execute(() -> {
-			if (!addGuildIfNotPresent(event)) {
-				LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add membership.");
-				return;
-			}
-			membershipDAO.addUserToGuild(event.getUser(), event.getGuild());
-		});
+		if (!addGuildIfNotPresent(event)) {
+			LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add membership.");
+			return;
+		}
+		membershipDAO.addUserToGuild(event.getUser(), event.getGuild());
 	}
 
 	@Override
 	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
-		executor.execute(() -> {
-			membershipDAO.removeUserMembershipToGuild(event.getUser().getId(), event.getGuild().getId());
-		});
+		membershipDAO.removeUserMembershipToGuild(event.getUser().getId(), event.getGuild().getId());
 	}
 
 	@Override
 	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
-		// In some cases (large guilds) this can take a while, so put it on its own thread
 		AddFreshGuildDeferredTask deferredTask = new AddFreshGuildDeferredTask(guildJoinEvent);
 		deferredTask.start();
 
-		// If we are posting stats to external discord bot sites, then do it async
-		executor.execute(() -> {
-			if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
-				HttpUtils.postGuildCountToExternalSites();
-		});
+		// If we are posting stats to external discord bot sites, then do it
+		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
+			HttpUtils.postGuildCountToExternalSites();
 	}
 
 	@Override
 	public void onGuildLeave(GuildLeaveEvent guildLeaveEvent) {
-		// In some cases (large guilds) this can take a while, so put it on its own thread
 		LeaveGuildDeferredTask deferredTask = new LeaveGuildDeferredTask(guildLeaveEvent);
 		deferredTask.start();
 
-		// If we are posting stats to external discord bot sites, then do it async
-		executor.execute(() -> {
-			if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
-				HttpUtils.postGuildCountToExternalSites();
-		});
+		// If we are posting stats to external discord bot sites, then do it
+		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
+			HttpUtils.postGuildCountToExternalSites();
 	}
 
 
 	@Override
 	public void onTextChannelCreate(TextChannelCreateEvent event) {
-		executor.execute(() -> {
-			if (!addGuildIfNotPresent(event)) {
-				LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add text channel.");
-				return;
-			}
-			channelDAO.addTextChannel(event.getChannel());
-		});
+		if (!addGuildIfNotPresent(event)) {
+			LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add text channel.");
+			return;
+		}
+		channelDAO.addTextChannel(event.getChannel());
 	}
 
 	@Override
 	public void onVoiceChannelCreate(VoiceChannelCreateEvent event) {
-		executor.execute(() -> {
-			if (!addGuildIfNotPresent(event)) {
-				LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add voice channel.");
-				return;
-			}
-			channelDAO.addVoiceChannel(event.getChannel());
-		});
+		if (!addGuildIfNotPresent(event)) {
+			LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add voice channel.");
+			return;
+		}
+		channelDAO.addVoiceChannel(event.getChannel());
 	}
 
 	@Override
 	public void onTextChannelDelete(TextChannelDeleteEvent event) {
-		executor.execute(() -> channelDAO.removeTextChannel(event.getChannel()));
+		channelDAO.removeTextChannel(event.getChannel());
 	}
 
 	@Override
 	public void onVoiceChannelDelete(VoiceChannelDeleteEvent event) {
-		executor.execute(() -> channelDAO.removeVoiceChannel(event.getChannel()));
+		channelDAO.removeVoiceChannel(event.getChannel());
 	}
 
 	@Override
 	public void onTextChannelUpdateName(TextChannelUpdateNameEvent event) {
-		executor.execute(() -> channelDAO.addTextChannel(event.getChannel()));
+		// This should trip the on duplicate sync the names
+		channelDAO.addTextChannel(event.getChannel());
 	}
 
 	@Override
 	public void onVoiceChannelUpdateName(VoiceChannelUpdateNameEvent event) {
-		executor.execute(() -> channelDAO.addVoiceChannel(event.getChannel()));
+		// This should trip the on duplicate sync the names
+		channelDAO.addVoiceChannel(event.getChannel());
 	}
 
 	public AudioPlayerManager getManager() {

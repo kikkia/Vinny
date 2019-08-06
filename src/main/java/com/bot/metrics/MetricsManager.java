@@ -1,6 +1,5 @@
 package com.bot.metrics;
 
-import com.bot.utils.Config;
 import com.jagrosh.jdautilities.command.Command;
 import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
@@ -11,7 +10,6 @@ public class MetricsManager {
 
     // TODO: Health checks
     private final StatsDClient statsd;
-    private Config config;
     private static MetricsManager instance;
 
     public static MetricsManager getInstance() {
@@ -22,12 +20,11 @@ public class MetricsManager {
     }
 
     private MetricsManager() {
-        config = Config.getInstance();
-        statsd = new NonBlockingStatsDClient(
+         statsd = new NonBlockingStatsDClient(
                 "vinny-redux.live",                          /* prefix to any stats; may be null or empty string */
-                config.getConfig(Config.DATADOG_HOSTNAME),         /* common case: localhost */
-                8125,                                         /* port */
-                new String[] {"vinny:live"}                        /* Datadog extension: Constant tags, always applied */
+                "datadog",                        /* common case: localhost */
+                8125,                                 /* port */
+                new String[] {"vinny:live"}            /* Datadog extension: Constant tags, always applied */
             );
     }
 
