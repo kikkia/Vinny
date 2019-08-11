@@ -168,13 +168,13 @@ public class FormattingUtils {
         for (String word: words) {
 
             // Escape everyone
-            if (word.toLowerCase().equals("@everyone")) {
+            if (word.equalsIgnoreCase("@everyone")) {
                 sb.append("(at)everyone ");
                 continue;
             }
 
             // Escape here
-            if (word.toLowerCase().equals("@here")) {
+            if (word.equalsIgnoreCase("@here")) {
                 sb.append("(at)here ");
                 continue;
             }
