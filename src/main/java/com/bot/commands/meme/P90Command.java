@@ -24,7 +24,7 @@ public class P90Command extends MemeCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        InternalTextChannel channel = channelDAO.getTextChannelForId(commandEvent.getChannel().getId());
+        InternalTextChannel channel = channelDAO.getTextChannelForId(commandEvent.getChannel().getId(), true);
         boolean canNSFW = false;
         if (channel == null) {
             channelDAO.addTextChannel(commandEvent.getTextChannel());
