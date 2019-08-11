@@ -27,7 +27,7 @@ public class PixivCommand extends GeneralCommand {
 
         // TODO: Move to static helper
         if (!commandEvent.isFromType(ChannelType.PRIVATE)) {
-            InternalTextChannel channel = channelDAO.getTextChannelForId(commandEvent.getTextChannel().getId());
+            InternalTextChannel channel = channelDAO.getTextChannelForId(commandEvent.getTextChannel().getId(), true);
 
             if (channel == null) {
                 commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong getting the channel from the db. Please try again.");

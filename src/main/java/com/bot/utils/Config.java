@@ -29,6 +29,8 @@ public class Config {
     public static final String PREFIX = "PREFIX";
     public static final String DATA_LOADER = "DATA_LOADER";
 
+    public static final String DATADOG_HOSTNAME = "DATADOG_HOSTNAME";
+
     public static final String GUILD_PREFS_CACHE_MAX_ITEMS = "GUILD_PREFS_CACHE_MAX_ITEMS";
     public static final String GUILD_PREFS_CACHE_OBJECT_LIFETIME = "GUILD_PREFS_OBJECT_LIFETIME";
     public static final String GUILD_PREFS_CACHE_CLEANUP_INTERVAL = "GUILD_PREFS_CACHE_CLEANUP_INTERVAL";

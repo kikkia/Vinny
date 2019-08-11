@@ -9,6 +9,8 @@ class InternalTextChannel(id: String,
                           var isCommandsEnabled: Boolean,
                           var isVoiceEnabled: Boolean) : InternalChannel() {
 
+    var aliases: Map<String, Alias>? = null
+
     init {
         this.id = id
         this.guildId = guildId
