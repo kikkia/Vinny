@@ -99,6 +99,7 @@ public class ShardingManager {
 
                     // General Commands
                     new InfoCommand(),
+                    new SayCommand(),
                     new VoteCommand(),
                     new InviteCommand(),
                     new SupportCommand(),

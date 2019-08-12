@@ -1,11 +1,13 @@
 package com.bot.utils;
 
 import com.bot.voice.QueuedAudioTrack;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.User;
 
 import java.awt.*;
 import java.time.OffsetDateTime;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class FormattingUtils {
 
@@ -152,5 +155,71 @@ public class FormattingUtils {
             }
         }
         return list;
+    }
+
+    public static String cleanSayCommand(CommandEvent commandEvent) {
+        StringBuilder sb = new StringBuilder();
+        String[] words = commandEvent.getArgs().split(" ");
+
+        Pattern inviteRegx = Pattern.compile("discord(?:app\\.com\\/invite|\\.gg)\\/([a-z0-9]{1,16})", Pattern.CASE_INSENSITIVE);
+        Pattern userMentionRegx = Pattern.compile("\\<\\@([0-9]+)\\>");
+        Pattern roleMentionRegx = Pattern.compile("\\<\\@\\&([0-9]+)\\>");
+
+        for (String word: words) {
+
+            // Escape everyone
+            if (word.equalsIgnoreCase("@everyone")) {
+                sb.append("(at)everyone ");
+                continue;
+            }
+
+            // Escape here
+            if (word.equalsIgnoreCase("@here")) {
+                sb.append("(at)here ");
+                continue;
+            }
+
+            // Escape all user mentions
+            Matcher mentionMatcher = userMentionRegx.matcher(word);
+            if (mentionMatcher.find()) {
+                String userId = mentionMatcher.group(1);
+                // If any users match the id
+                List<User> mentionedUser = commandEvent.getMessage().getMentionedUsers().stream()
+                        .filter(user -> user.getId().equals(userId))
+                        .collect(Collectors.toList());
+
+
+                // Check if user was mentioned
+                if (!mentionedUser.isEmpty()) {
+                    sb.append(mentionedUser.get(0).getName()).append(" ");
+                    continue;
+                }
+            }
+
+            // Escape all role mentions
+            Matcher roleMatcher = roleMentionRegx.matcher(word);
+            if (roleMatcher.find()) {
+                String roleId = roleMatcher.group(1);
+
+                List<Role> mentionedRole = commandEvent.getMessage().getMentionedRoles().stream()
+                        .filter(role -> role.getId().equals(roleId))
+                        .collect(Collectors.toList());
+
+                if (!mentionedRole.isEmpty()) {
+                   sb.append(mentionedRole.get(0).getName()).append(" ");
+                   continue;
+                }
+            }
+
+            // Get rid of invites
+            Matcher matcher = inviteRegx.matcher(word);
+            if (matcher.find()) {
+                word = "`invite`";
+            }
+
+            sb.append(word).append(" ");
+        }
+
+        return sb.toString();
     }
 }
