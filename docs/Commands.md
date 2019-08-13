@@ -116,6 +116,10 @@ General commands are commands that donlt fit in any other category.
 ### `info`
 Information about Vinny
 
+### `say`  
+Vinny will repeat whatever you said
+* `~say hey whats up?` - Vinny will say `hey whats up?`
+
 ### `vote`
 Support Vinny by upvoting on bot lists.
  
