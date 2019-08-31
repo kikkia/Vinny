@@ -1,5 +1,6 @@
 package com.bot;
 
+import com.bot.commands.alias.AddGuildAliasCommand;
 import com.bot.commands.general.*;
 import com.bot.commands.meme.AsciiCommand;
 import com.bot.commands.meme.CommentCommand;
@@ -21,6 +22,7 @@ import com.bot.utils.Config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -115,6 +117,9 @@ public class ShardingManager {
                     new GamesCommand(waiter),
                     new PixivCommand(),
 
+                    // Alias Commands
+                    new AddGuildAliasCommand(waiter),
+
                     // Meme Commands
                     new P90Command(),
                     new CommentCommand(),
@@ -186,6 +191,13 @@ public class ShardingManager {
             guilds += shard.getServerCount();
         }
         return guilds;
+    }
+
+    public CommandClientImpl getCommandClientImpl() {
+        if (client instanceof CommandClientImpl)
+            return (CommandClientImpl) client;
+        else
+            return null;
     }
 
     public List<Command.Category> getCommandCategories() {

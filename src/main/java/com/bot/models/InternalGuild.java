@@ -77,7 +77,7 @@ public class InternalGuild {
             return null;
 
         // We use a space as a delimiter in the db as it is impossible for it to be uses in a prefix (as jda splits args using it)
-        return new GuildPreferencesProvider(Arrays.asList(prefixes.split(" ")), id);
+        return new GuildPreferencesProvider(Arrays.asList(prefixes.split(" ")), aliases, id);
     }
 
     public Map<String, Alias> getAliasList() {
