@@ -107,7 +107,6 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-		// TODO: Check for custom Aliases, For now this is just to see effect on text cache
 		executor.execute(() -> {
 			InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
 			MessageReceivedEvent aliasEvent = AliasUtils.getAliasMessageEvent(event, guild, null, null);
@@ -130,9 +129,7 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGenericEvent(Event event) {
-		executor.execute(() -> {
-			metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId());
-		});
+		executor.execute(() -> metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId()));
 		super.onGenericEvent(event);
 	}
 
@@ -159,9 +156,7 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
-		executor.execute(() -> {
-			membershipDAO.removeUserMembershipToGuild(event.getUser().getId(), event.getGuild().getId());
-		});
+		executor.execute(() -> membershipDAO.removeUserMembershipToGuild(event.getUser().getId(), event.getGuild().getId()));
 	}
 
 	@Override
@@ -237,6 +232,7 @@ public class Bot extends ListenerAdapter {
 		return manager;
 	}
 
+	// TODO: Move this audio handling stuff out
 	public boolean queueTrack(AudioTrack track, CommandEvent event, Message m) {
 		if (event.getMember().getVoiceState().getChannel() == null) {
 			m.editMessage(event.getClient().getWarning() + " You are not in a voice channel! Please join one to use this command.").queue();

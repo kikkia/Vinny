@@ -7,7 +7,6 @@ import com.bot.models.InternalGuild;
 import com.bot.models.InternalTextChannel;
 import com.bot.models.InternalUser;
 import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.impl.ReceivedMessage;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
