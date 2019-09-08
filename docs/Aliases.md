@@ -1,6 +1,6 @@
 # Aliases
 ### What is an alias?
-Simply put, an alias is a way for you to invoke Vinny commands however toy want to.
+Simply put, an alias is a way for you to invoke Vinny commands however you want to.
 
 ### How they work
 There are 3 types of aliases (Guild, Channel, and user) Currently only Guild Aliases are implemented but the other 2 are coming soon.
@@ -17,6 +17,5 @@ override the user alias. The hierarchy is
 #### Permissions
 The way these work under the hood is just as if you sent the command. So it takes your permissions to evaluate when running the command.
 
-#### Examples
-Alias where saying `who is number one?` Makes vinny jump into voice playing `We are number one`
-Alias where 
+#### Making an alias
+To make an alias for the guild you use the command `~addgalias`. Vinny will then walk you through the steps to setup an alias.
