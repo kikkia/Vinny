@@ -9,12 +9,12 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.sql.SQLException;
 
-public class RemoveAliasCommand extends ModerationCommand {
+public class RemoveGuildAliasCommand extends ModerationCommand {
 
     private GuildDAO guildDAO;
     private AliasDAO aliasDAO;
 
-    public RemoveAliasCommand() {
+    public RemoveGuildAliasCommand() {
         this.name = "removegalias";
         this.aliases = new String[]{"removeguildalias"};
         this.help = "removes an alias from the guild";
