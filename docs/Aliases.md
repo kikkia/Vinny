@@ -1,6 +1,8 @@
 # Aliases
 ### What is an alias?
 Simply put, an alias is a way for you to invoke Vinny commands however you want to.
+  
+![](http://g.recordit.co/c8yOwFaH37.gif)   
 
 ### How they work
 There are 3 types of aliases (Guild, Channel, and user) Currently only Guild Aliases are implemented but the other 2 are coming soon.
