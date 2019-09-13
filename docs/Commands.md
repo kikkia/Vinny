@@ -10,6 +10,7 @@
     * [Nsfw Commands](#Nsfw)
     * [Meme Commands](#Meme)
     * [Settings Commands](#Settings)
+    * [Alias Commands] (#Aliases)
 3. [Role Permissions](#Permissions)
 
 # About 
@@ -229,6 +230,19 @@ Removes one or more prefixes from the servers custom prefixes.
 
 ### `prefixes`
 Lists all custom prefixes on the server.
+
+## Aliases
+Aliases are ways to use vinny commands with whatever trigger you want as opposed to using the normal command prefixes.
+
+### `addgalias`
+Adds an alias for the guild that anyone can invoke. This command will walk you through the process.
+
+### `aliases`
+Shows all aliases you have access to.
+
+### `removegalias`
+Removes an alias from the guild. Example: `given your guild has an alias with the trigger lol`
+* `~removegalias lol`
 
 ---
 ## Permissions

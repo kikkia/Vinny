@@ -15,10 +15,10 @@ public class ConstantStrings {
     public static String ALIAS_GUIDE_LINK = "https://github.com/JessWalters/Vinny-Redux/blob/master/docs/Commands.md";
 
     public static String ALIAS_STEP_ONE_COMPLETE_PART_1 = "Got it, the trigger phrase for this alias is `";
-    public static String ALIAS_STEP_ONE_COMPLETE_PART_2 = "`\nNext you need to define the command to run when that this alias is triggered. Just reply with the command it should run (" +
-            "without a prefix) Example: `rr dankmemes`";
+    public static String ALIAS_STEP_ONE_COMPLETE_PART_2 = "`\nNext you need to define the command to run when that this alias is triggered. \nJust reply with the command it should run (" +
+            "without a prefix) Example: `rr dankmemes`\nYou can also pass anything after the trigger to the command by typing `%%`";
 
-    public static String ALIAS_SUCCESSFULLY_ADDED = "The alias has been successfully added. Why not try it out? Remember it has to be said exactly like you input.";
+    public static String ALIAS_SUCCESSFULLY_ADDED = "The alias has been successfully added. Why not try it out? Remember it has to begin exactly with the trigger you input.";
 
     public static String EVENT_WAITER_TIMEOUT = "Sorry you took too long, please try again.";
 }

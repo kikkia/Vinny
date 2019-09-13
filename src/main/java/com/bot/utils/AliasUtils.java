@@ -35,7 +35,7 @@ public class AliasUtils {
                 null,
                 message.isTTS(),
                 message.isPinned(),
-                triggered.getCommand(),
+                parseCommand(triggered.getCommand(), message, triggered),
                 message.getNonce(),
                 message.getAuthor(),
                 message.getActivity(),
@@ -43,6 +43,11 @@ public class AliasUtils {
                 message.getReactions(),
                 message.getAttachments(),
                 message.getEmbeds());
+    }
+
+    // If we find %% then replace it with whatever is after the trigger.
+    private static String parseCommand(String command, Message message, Alias alias) {
+        return command.replace("%%", message.getContentRaw().substring(alias.getAlias().length()));
     }
 
     // Checks if there is an alias to be applied for the channel, guild, user, in that order. Returns null if none.
@@ -56,12 +61,14 @@ public class AliasUtils {
 
         // Check guild aliases
         if (guild != null) {
-            if (guild.getAliasList().containsKey(event.getMessage().getContentRaw())) {
-                Alias alias = guild.getAliasList().get(event.getMessage().getContentRaw());
+            for(String key : guild.getAliasList().keySet()) {
+                if (event.getMessage().getContentRaw().startsWith(key)) {
+                    Alias alias = guild.getAliasList().get(key);
 
-                metricsManager.markGuildAliasExecuted(guild);
-                // Alias exists for this message
-                return generateAliasedMessageReceivedEvent(alias, event);
+                    metricsManager.markGuildAliasExecuted(guild);
+                    // Alias exists for this message
+                    return generateAliasedMessageReceivedEvent(alias, event);
+                }
             }
         }
 
