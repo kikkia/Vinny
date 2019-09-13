@@ -10,20 +10,24 @@ import com.bot.models.InternalShard;
 import com.bot.models.InternalTextChannel;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
+import com.bot.utils.AliasUtils;
 import com.bot.utils.Config;
 import com.bot.utils.HttpUtils;
 import com.bot.utils.Logger;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.impl.ReceivedMessage;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.channel.text.GenericTextChannelEvent;
@@ -42,6 +46,7 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
@@ -102,19 +107,29 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-		// TODO: Check for custom Aliases, For now this is just to see effect on text cache
 		executor.execute(() -> {
 			InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
-			InternalTextChannel channel = channelDAO.getTextChannelForId(event.getChannel().getId());
+			MessageReceivedEvent aliasEvent = AliasUtils.getAliasMessageEvent(event, guild, null, null);
+
+			if (aliasEvent != null) {
+				// Alias matched, send it!
+				CommandClientImpl client = ShardingManager.getInstance().getCommandClientImpl();
+				// Null check cause we need to get the impl class here
+				if (client != null) {
+					// Execute the forged alias command
+					client.onEvent(aliasEvent);
+				}
+				else {
+					LOGGER.warning("Command client was null???");
+				}
+			}
 		});
 		super.onGuildMessageReceived(event);
 	}
 
 	@Override
 	public void onGenericEvent(Event event) {
-		executor.execute(() -> {
-			metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId());
-		});
+		executor.execute(() -> metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId()));
 		super.onGenericEvent(event);
 	}
 
@@ -141,9 +156,7 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
-		executor.execute(() -> {
-			membershipDAO.removeUserMembershipToGuild(event.getUser().getId(), event.getGuild().getId());
-		});
+		executor.execute(() -> membershipDAO.removeUserMembershipToGuild(event.getUser().getId(), event.getGuild().getId()));
 	}
 
 	@Override
@@ -219,6 +232,7 @@ public class Bot extends ListenerAdapter {
 		return manager;
 	}
 
+	// TODO: Move this audio handling stuff out
 	public boolean queueTrack(AudioTrack track, CommandEvent event, Message m) {
 		if (event.getMember().getVoiceState().getChannel() == null) {
 			m.editMessage(event.getClient().getWarning() + " You are not in a voice channel! Please join one to use this command.").queue();

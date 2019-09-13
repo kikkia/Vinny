@@ -1,5 +1,6 @@
 package com.bot.metrics;
 
+import com.bot.models.*;
 import com.bot.utils.Config;
 import com.jagrosh.jdautilities.command.Command;
 import com.timgroup.statsd.NonBlockingStatsDClient;
@@ -41,6 +42,24 @@ public class MetricsManager {
         String guildTag = "guild:" + guildOrPM;
 
         statsd.incrementCounter("command", userTag, guildTag, commandTag, categoryTag);
+    }
+
+    public void markGuildAliasExecuted(InternalGuild guild) {
+        String sourceTag = "source:guild";
+        String sourceIdTag = "sourceid:" + guild.getId();
+        statsd.incrementCounter("alias", sourceTag, sourceIdTag);
+    }
+
+    public void markChannelAliasExecuted(InternalTextChannel channel) {
+        String sourceTag = "source:channel";
+        String sourceIdTag = "sourceid:" + channel.getId();
+        statsd.incrementCounter("alias", sourceTag, sourceIdTag);
+    }
+
+    public void markUserAliasExecuted(InternalUser user) {
+        String sourceTag = "source:user";
+        String sourceIdTag = "sourceid:" + user.getId();
+        statsd.incrementCounter("alias", sourceTag, sourceIdTag);
     }
 
     public void markCommandFailed(Command command, User user, Guild guild) {
