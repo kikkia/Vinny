@@ -12,7 +12,7 @@ public class ConstantStrings {
     public static String GUILD_ALIAS_SETUP_HELLO = "Hey! Let's setup an alias for the guild! I'll walk you through the process. If you don't know what an alias is just reply with `?` and I will " +
             "point you in the right direction.\nReply with the trigger phrase. This is the phrase that will execute the alias when used anywhere in the guild I can see. Example: `gimme a meme`";
 
-    public static String ALIAS_GUIDE_LINK = "";
+    public static String ALIAS_GUIDE_LINK = "https://github.com/JessWalters/Vinny-Redux/blob/master/docs/Commands.md";
 
     public static String ALIAS_STEP_ONE_COMPLETE_PART_1 = "Got it, the trigger phrase for this alias is `";
     public static String ALIAS_STEP_ONE_COMPLETE_PART_2 = "`\nNext you need to define the command to run when that this alias is triggered. Just reply with the command it should run (" +

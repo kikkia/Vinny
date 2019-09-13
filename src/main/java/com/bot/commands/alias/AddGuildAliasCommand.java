@@ -1,6 +1,6 @@
 package com.bot.commands.alias;
 
-import com.bot.commands.GeneralCommand;
+import com.bot.commands.ModerationCommand;
 import com.bot.db.AliasDAO;
 import com.bot.db.GuildDAO;
 import com.bot.models.Alias;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public class AddGuildAliasCommand extends GeneralCommand {
+public class AddGuildAliasCommand extends ModerationCommand {
 
     private EventWaiter waiter;
     private AliasDAO aliasDAO;
@@ -99,7 +99,7 @@ public class AddGuildAliasCommand extends GeneralCommand {
         public void accept(MessageReceivedEvent event) {
             // TODO: Possible more input validation
             boolean isValid = AliasUtils.confirmValicCommandName(event.getMessage().getContentRaw().split(" ")[0]);
-            command = event.getMessage().getContentRaw();
+            command = "~" + event.getMessage().getContentRaw();
 
             if (!isValid) {
                 commandEvent.replyWarning("That does not seem like it would trigger any commands. Please try again.");
@@ -109,9 +109,13 @@ public class AddGuildAliasCommand extends GeneralCommand {
                 Alias toPut = new Alias(alias, command, commandEvent.getGuild().getId(), commandEvent.getAuthor().getId());
                 try {
                     aliasDAO.addGuildAlias(toPut);
+                    // Update cached guild
+                    InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
+                    guild.getAliasList().put(toPut.getAlias(), toPut);
+                    guildDAO.updateGuildInCache(guild);
                 } catch (SQLException e) {
                     commandEvent.replyError("Something went wrong writing the alias to the db.");
-                    logger.severe("Error enountered trying to write guild alias", e);
+                    logger.severe("Error encountered trying to write guild alias", e);
                 }
                 commandEvent.replySuccess(ConstantStrings.ALIAS_SUCCESSFULLY_ADDED);
             }

@@ -1,6 +1,8 @@
 package com.bot;
 
 import com.bot.commands.alias.AddGuildAliasCommand;
+import com.bot.commands.alias.AliasesCommand;
+import com.bot.commands.alias.RemoveAliasCommand;
 import com.bot.commands.general.*;
 import com.bot.commands.meme.AsciiCommand;
 import com.bot.commands.meme.CommentCommand;
@@ -118,7 +120,7 @@ public class ShardingManager {
                     new PixivCommand(),
 
                     // Alias Commands
-                    new AddGuildAliasCommand(waiter),
+                    new AliasesCommand(waiter),
 
                     // Meme Commands
                     new P90Command(),
@@ -140,6 +142,8 @@ public class ShardingManager {
                     new DisableNSFWCommand(),
                     new AddPrefixCommand(),
                     new RemovePrefixCommand(),
+                    new AddGuildAliasCommand(waiter),
+                    new RemoveAliasCommand(),
 
                     // NSFW Commands
                     new Rule34Command(),

@@ -296,4 +296,8 @@ public class GuildDAO {
         InternalGuild guild = getGuildById(guildId, false);
         cache.put(guildId, guild);
     }
+
+    public void updateGuildInCache(InternalGuild guild) {
+        cache.put(guild.getId(), guild);
+    }
 }
