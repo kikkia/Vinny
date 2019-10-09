@@ -24,8 +24,8 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
-import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.api.sharding.ShardManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -167,7 +167,7 @@ public class ShardingManager {
                 "https://github.com/JessWalters/Vinny-Redux/blob/master/docs/Commands.md");
         commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
-        commandClientBuilder.setGame(null);
+        commandClientBuilder.setActivity(null);
         commandClientBuilder.setScheduleExecutor(executor);
         client = commandClientBuilder.build();
 
@@ -175,9 +175,8 @@ public class ShardingManager {
                 .setToken(config.getConfig(Config.DISCORD_TOKEN))
                 .setShardsTotal(numShards)
                 .setShards(0, numShards-1)
-                .setAudioEnabled(true)
                 .addEventListeners(client, waiter, bot)
-                .setGame(null)
+                .setActivity(null)
                 .build();
     }
 

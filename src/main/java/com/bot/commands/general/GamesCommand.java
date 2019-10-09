@@ -5,7 +5,7 @@ import com.bot.utils.FormattingUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Paginator;
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.api.entities.Member;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,16 +43,16 @@ public class GamesCommand extends GeneralCommand {
         Map<String, List<Member>> gameMap = new HashMap<>();
 
         for (Member member : memberList) {
-            if (member.getGame() != null) {
+            if (!member.getActivities().isEmpty()) {
                 // Add if present
-                gameMap.computeIfPresent(member.getGame().getName(),
+                gameMap.computeIfPresent(member.getActivities().get(0).getName(),
                         (k, v) -> {
                             v.add(member);
                             return v;
                         });
 
                 // Create entry if not present
-                gameMap.computeIfAbsent(member.getGame().getName(),
+                gameMap.computeIfAbsent(member.getActivities().get(0).getName(),
                         k -> {
                             ArrayList<Member> list = new ArrayList<>();
                             list.add(member);

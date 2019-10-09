@@ -4,12 +4,11 @@ import com.bot.caching.MarkovModelCache;
 import com.bot.commands.MemeCommand;
 import com.bot.models.MarkovModel;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Channel;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -141,7 +140,7 @@ public class CommentCommand extends MemeCommand {
     }
 
     // Sends a formatted comment for a channel or a user
-    private void sendComment(CommandEvent commandEvent, MarkovModel markovModel, User user, Channel channel) {
+    private void sendComment(CommandEvent commandEvent, MarkovModel markovModel, User user, TextChannel channel) {
         EmbedBuilder builder = new EmbedBuilder();
         if (user != null)
             builder.setAuthor(user.getName(), user.getAvatarUrl(), user.getAvatarUrl());

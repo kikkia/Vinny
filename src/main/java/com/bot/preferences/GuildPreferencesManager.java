@@ -4,7 +4,7 @@ import com.bot.caching.GuildCache;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.GuildSettingsManager;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 
 import javax.annotation.Nullable;
 import java.util.logging.Logger;

@@ -2,9 +2,9 @@ package com.bot.commands.owner;
 
 import com.bot.commands.OwnerCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.entities.Icon;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.managers.AccountManager;
+import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.managers.AccountManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class AvatarCommand extends OwnerCommand {
         try
         {
             File file = new File(attachment.getFileName());
-            attachment.download(file);
+            attachment.downloadToFile(file);
 
             Icon icon = Icon.from(file);
             AccountManager manager = commandEvent.getSelfUser().getManager();

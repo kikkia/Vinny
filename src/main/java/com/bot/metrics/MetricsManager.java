@@ -1,12 +1,14 @@
 package com.bot.metrics;
 
-import com.bot.models.*;
+import com.bot.models.InternalGuild;
+import com.bot.models.InternalTextChannel;
+import com.bot.models.InternalUser;
 import com.bot.utils.Config;
 import com.jagrosh.jdautilities.command.Command;
 import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 
 public class MetricsManager {
 

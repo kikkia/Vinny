@@ -5,11 +5,12 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
-import net.dv8tion.jda.core.audio.AudioSendHandler;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
+import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;
+import net.dv8tion.jda.api.audio.AudioSendHandler;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.nio.ByteBuffer;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -23,7 +24,8 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     private QueuedAudioTrack nowPlaying;
     private Queue<QueuedAudioTrack> tracks;
     private AudioPlayer player;
-    private AudioFrame lastFrame;
+    private final ByteBuffer buffer;
+    private final MutableAudioFrame frame;
     private boolean repeat;
 
     public VoiceSendHandler(AudioPlayer player) {
@@ -31,6 +33,10 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         this.tracks = new LinkedBlockingQueue<>();
         this.nowPlaying = null;
         this.repeat = false;
+
+        this.buffer = ByteBuffer.allocate(1024);
+        this.frame = new MutableAudioFrame();
+        this.frame.setBuffer(buffer);
     }
 
     public void queueTrack(AudioTrack track, long user, String requesterName, TextChannel channel) {
@@ -87,13 +93,12 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
 
     @Override
     public boolean canProvide() {
-        lastFrame = player.provide();
-        return lastFrame != null;
+        return player.provide(frame);
     }
 
     @Override
-    public byte[] provide20MsAudio() {
-        return lastFrame.getData();
+    public ByteBuffer provide20MsAudio() {
+        return (ByteBuffer) buffer.flip();
     }
 
     @Override

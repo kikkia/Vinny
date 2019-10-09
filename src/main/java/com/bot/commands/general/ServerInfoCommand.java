@@ -3,9 +3,9 @@ package com.bot.commands.general;
 import com.bot.commands.GeneralCommand;
 import com.bot.utils.FormattingUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Emote;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Emote;
+import net.dv8tion.jda.api.entities.Guild;
 
 import java.util.stream.Collectors;
 
@@ -41,7 +41,7 @@ public class ServerInfoCommand extends GeneralCommand {
         embedBuilder.addField("Roles", g.getRoles().size() + "", false);
         embedBuilder.addField("Custom Emojis", customEmojis, false);
         embedBuilder.addField("Region", g.getRegionRaw(), false);
-        embedBuilder.setFooter(FormattingUtils.formatOffsetDateTimeToDay(g.getCreationTime()), null);
+        embedBuilder.setFooter(FormattingUtils.formatOffsetDateTimeToDay(g.getTimeCreated()), null);
         commandEvent.reply(embedBuilder.build());
     }
 }
