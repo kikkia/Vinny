@@ -4,9 +4,7 @@ import com.bot.commands.alias.AddGuildAliasCommand;
 import com.bot.commands.alias.AliasesCommand;
 import com.bot.commands.alias.RemoveGuildAliasCommand;
 import com.bot.commands.general.*;
-import com.bot.commands.meme.AsciiCommand;
-import com.bot.commands.meme.CommentCommand;
-import com.bot.commands.meme.P90Command;
+import com.bot.commands.meme.*;
 import com.bot.commands.nsfw.R4cCommand;
 import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.AvatarCommand;
@@ -127,6 +125,8 @@ public class ShardingManager {
                     new CommentCommand(),
                     new AsciiCommand(),
                     new ShitpostCommand(),
+                    new ClapCommand(),
+                    new CopyPastaCommand(),
 
                     // Reddit Commands
                     new RandomPostCommand(),

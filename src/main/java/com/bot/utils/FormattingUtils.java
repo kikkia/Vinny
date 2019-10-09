@@ -222,4 +222,12 @@ public class FormattingUtils {
 
         return sb.toString();
     }
+
+    public static String clapify(String message) {
+        StringBuilder sb = new StringBuilder();
+        for (String s : message.split(" ")) {
+            sb.append(" ").append(s).append(" :clap:");
+        }
+        return sb.toString();
+    }
 }
