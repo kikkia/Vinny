@@ -8,7 +8,7 @@ import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.api.Permission;
 
 public abstract class GeneralCommand extends Command {
     protected MetricsManager metricsManager;

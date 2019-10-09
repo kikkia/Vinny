@@ -6,10 +6,10 @@ import com.bot.models.InternalGuild;
 import com.bot.utils.DbHelpers;
 import com.bot.utils.GuildUtils;
 import com.zaxxer.hikari.HikariDataSource;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

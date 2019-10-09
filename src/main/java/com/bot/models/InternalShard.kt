@@ -1,7 +1,7 @@
 package com.bot.models
 
 import com.bot.voice.VoiceSendHandler
-import net.dv8tion.jda.core.JDA
+import net.dv8tion.jda.api.JDA
 
 class InternalShard(val jda: JDA) {
     val id: Int = jda.shardInfo.shardId
@@ -33,13 +33,13 @@ class InternalShard(val jda: JDA) {
                 // Update active connections
                 if (manager.isConnected && handler.isPlaying) {
                     activeVoiceConnectionsCount++
-                    usersInVoiceCount += manager.connectedChannel.members.size - 1
+                    usersInVoiceCount += manager.connectedChannel!!.members.size - 1
                 }
 
                 // Update idle connection count
                 if (manager.isConnected && !handler.isPlaying) {
                     idleVoiceConnectionCount++
-                    usersInVoiceCount += manager.connectedChannel.members.size - 1
+                    usersInVoiceCount += manager.connectedChannel!!.members.size - 1
                 }
 
                 if (handler != null) {

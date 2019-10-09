@@ -2,8 +2,8 @@ package com.bot.commands.general;
 
 import com.bot.commands.GeneralCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.PrivateChannel;
+import net.dv8tion.jda.api.entities.User;
 
 public class InviteCommand extends GeneralCommand {
 

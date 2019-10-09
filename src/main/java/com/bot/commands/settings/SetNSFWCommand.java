@@ -5,8 +5,8 @@ import com.bot.commands.ModerationCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 
 import java.util.List;
 import java.util.logging.Level;

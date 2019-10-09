@@ -1,10 +1,11 @@
 package com.bot.utils;
 
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
+
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,13 +72,12 @@ public class GuildUtils {
     }
 
     public static Message getLastMessageFromChannel(TextChannel channel, boolean ignoreCommandMessage) {
-        if (!ignoreCommandMessage) {
-            return channel.getMessageById(channel.getLatestMessageId()).complete();
-        }
-
         for (Message message : channel.getIterableHistory().cache(true)) {
             if (message.getIdLong() == channel.getLatestMessageIdLong())
-                continue;
+                if (ignoreCommandMessage)
+                    continue;
+                else
+                    return message;
             return message;
         }
         return null;

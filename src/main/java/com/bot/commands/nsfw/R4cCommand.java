@@ -3,7 +3,7 @@ package com.bot.commands.nsfw;
 import com.bot.commands.NSFWCommand;
 import com.bot.utils.HttpUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONObject;
 

@@ -7,7 +7,6 @@ import com.bot.db.MembershipDAO;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalShard;
-import com.bot.models.InternalTextChannel;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.utils.AliasUtils;
@@ -22,34 +21,33 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.impl.ReceivedMessage;
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.channel.text.GenericTextChannelEvent;
-import net.dv8tion.jda.core.events.channel.text.TextChannelCreateEvent;
-import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
-import net.dv8tion.jda.core.events.channel.text.update.TextChannelUpdateNameEvent;
-import net.dv8tion.jda.core.events.channel.voice.GenericVoiceChannelEvent;
-import net.dv8tion.jda.core.events.channel.voice.VoiceChannelCreateEvent;
-import net.dv8tion.jda.core.events.channel.voice.VoiceChannelDeleteEvent;
-import net.dv8tion.jda.core.events.channel.voice.update.VoiceChannelUpdateNameEvent;
-import net.dv8tion.jda.core.events.guild.GenericGuildEvent;
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceUpdateEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.dv8tion.jda.core.managers.AudioManager;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.channel.text.GenericTextChannelEvent;
+import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
+import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
+import net.dv8tion.jda.api.events.channel.text.update.TextChannelUpdateNameEvent;
+import net.dv8tion.jda.api.events.channel.voice.GenericVoiceChannelEvent;
+import net.dv8tion.jda.api.events.channel.voice.VoiceChannelCreateEvent;
+import net.dv8tion.jda.api.events.channel.voice.VoiceChannelDeleteEvent;
+import net.dv8tion.jda.api.events.channel.voice.update.VoiceChannelUpdateNameEvent;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.managers.AudioManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -128,7 +126,7 @@ public class Bot extends ListenerAdapter {
 	}
 
 	@Override
-	public void onGenericEvent(Event event) {
+	public void onGenericEvent(@NotNull GenericEvent event) {
 		executor.execute(() -> metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId()));
 		super.onGenericEvent(event);
 	}
@@ -284,7 +282,7 @@ public class Bot extends ListenerAdapter {
 	}
 
 	private void checkVoiceLobby(GuildVoiceUpdateEvent event) {
-		Guild guild = event.getGuild();
+		Guild guild = event.getEntity().getGuild();
 		VoiceSendHandler handler = getHandler(guild);
 		AudioManager manager = guild.getAudioManager();
 

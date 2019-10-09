@@ -3,7 +3,7 @@ package com.bot.commands.nsfw;
 import com.bot.caching.R34Cache;
 import com.bot.commands.NSFWCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.api.entities.ChannelType;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;

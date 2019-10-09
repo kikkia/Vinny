@@ -11,7 +11,7 @@ import net.dean.jraw.ApiException;
 import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
-import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.api.entities.ChannelType;
 
 import java.util.logging.Level;
 
