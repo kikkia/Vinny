@@ -5,7 +5,7 @@ import com.bot.db.GuildDAO
 import com.bot.db.MembershipDAO
 import com.bot.utils.GuildUtils
 import com.bot.utils.Logger
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent
 
 /**
  * Deferred task to delegate adding new guilds to the db and send a welcome message on a separate thread.

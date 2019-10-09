@@ -4,7 +4,7 @@ import com.bot.Bot;
 import com.bot.ShardingManager;
 import com.bot.commands.GeneralCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.api.EmbedBuilder;
 
 public class InfoCommand extends GeneralCommand {
 

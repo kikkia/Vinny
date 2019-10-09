@@ -9,7 +9,7 @@ import com.bot.utils.AliasUtils;
 import com.bot.utils.ConstantStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;

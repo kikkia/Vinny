@@ -2,7 +2,7 @@ package com.bot.tasks
 
 import com.bot.db.MembershipDAO
 import com.bot.utils.Logger
-import net.dv8tion.jda.core.events.guild.GuildLeaveEvent
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent
 
 class LeaveGuildDeferredTask(private val guildLeaveEvent: GuildLeaveEvent) : Thread() {
 

@@ -4,8 +4,8 @@ import com.bot.ShardingManager;
 import com.bot.commands.GeneralCommand;
 import com.bot.models.InternalShard;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class ShardStatsCommand extends GeneralCommand {
             builder.addField("Voice Streams", entry.getValue().getActiveVoiceConnectionsCount() + "", true);
             builder.addField("Guilds", jda.getGuilds().size() + "", true);
             builder.addField("Users", jda.getUsers().size() + "", true);
-            builder.addField("Ping", jda.getPing() + "ms", true);
+            builder.addField("Ping", jda.getGatewayPing() + "ms", true);
             builder.addField("Response Total", jda.getResponseTotal() + "", true);
             commandEvent.reply(builder.build());
         }

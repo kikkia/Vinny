@@ -5,7 +5,7 @@ import com.bot.db.ChannelDAO;
 import com.bot.models.InternalTextChannel;
 import com.bot.utils.HttpUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.entities.PrivateChannel;
+import net.dv8tion.jda.api.entities.PrivateChannel;
 
 public class P90Command extends MemeCommand {
 

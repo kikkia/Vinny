@@ -2,7 +2,7 @@ package com.bot.utils;
 
 import com.bot.ShardingManager;
 import com.bot.models.InternalShard;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.Map;

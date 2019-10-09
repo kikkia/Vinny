@@ -5,7 +5,7 @@ import com.bot.caching.MarkovModelCache;
 import com.bot.caching.R34Cache;
 import com.bot.caching.SubredditCache;
 import com.bot.models.InternalShard;
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.api.entities.Activity;
 
 /**
  * Thread that just reports some less active stats every 5 seconds
@@ -46,7 +46,7 @@ public class MetricsReporter extends Thread {
                 guildCount += shard.getServerCount();
                 userCount += shard.getUserCount();
 
-                metricsManager.updatePing(shard.getId(), shard.getJda().getPing());
+                metricsManager.updatePing(shard.getId(), shard.getJda().getGatewayPing());
             }
 
             metricsManager.updateActiveVoiceConnectionsCount(activeVoiceConnectionCount);
@@ -63,7 +63,7 @@ public class MetricsReporter extends Thread {
             metricsManager.updateShards(shardManager.shardManager.getShardsRunning(), shardManager.shardManager.getShardsQueued());
 
             // We need to set this status after the sharding manager is built. This will ensure that it is set to this, not the default
-            shardManager.shardManager.setGame(Game.playing("@Vinny help"));
+            shardManager.shardManager.setGame(Activity.playing("@Vinny help"));
 
             try {
                 Thread.sleep(5000);

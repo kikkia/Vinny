@@ -6,8 +6,8 @@ import com.bot.models.InternalTextChannel;
 import com.bot.models.PixivPost;
 import com.bot.utils.HttpUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
 
 public class PixivCommand extends GeneralCommand {
 

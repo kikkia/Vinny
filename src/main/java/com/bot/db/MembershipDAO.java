@@ -5,8 +5,8 @@ import com.bot.db.mappers.GuildMembershipMapper;
 import com.bot.models.InternalGuildMembership;
 import com.bot.utils.DbHelpers;
 import com.zaxxer.hikari.HikariDataSource;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

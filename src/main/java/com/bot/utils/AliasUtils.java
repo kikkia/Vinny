@@ -7,10 +7,10 @@ import com.bot.models.InternalGuild;
 import com.bot.models.InternalTextChannel;
 import com.bot.models.InternalUser;
 import com.jagrosh.jdautilities.command.Command;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.impl.ReceivedMessage;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.internal.entities.ReceivedMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class AliasUtils {
                 message.getNonce(),
                 message.getAuthor(),
                 message.getActivity(),
-                message.getEditedTime(),
+                message.getTimeEdited(),
                 message.getReactions(),
                 message.getAttachments(),
                 message.getEmbeds());

@@ -3,9 +3,9 @@ package com.bot.commands.general;
 import com.bot.commands.GeneralCommand;
 import com.bot.utils.FormattingUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 
 public class UserCommand extends GeneralCommand {
 
@@ -44,9 +44,9 @@ public class UserCommand extends GeneralCommand {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(user.getName() + "#" + user.getDiscriminator());
         builder.setImage(user.getAvatarUrl());
-        builder.addField("Created:", FormattingUtils.formatOffsetDateTimeToDay(user.getCreationTime()), true);
+        builder.addField("Created:", FormattingUtils.formatOffsetDateTimeToDay(user.getTimeCreated()), true);
         if (member != null) {
-            builder.addField("Joined server:", FormattingUtils.formatOffsetDateTimeToDay(member.getJoinDate()), true);
+            builder.addField("Joined server:", FormattingUtils.formatOffsetDateTimeToDay(member.getTimeJoined()), true);
             builder.setDescription(FormattingUtils.getOnlineStatusEmoji(member) + member.getAsMention());
 
             // Build role list

@@ -14,6 +14,6 @@ public class PingCommand extends GeneralCommand {
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
 
-        commandEvent.reply(commandEvent.getJDA().getPing() + "ms");
+        commandEvent.reply(commandEvent.getJDA().getGatewayPing() + "ms");
     }
 }

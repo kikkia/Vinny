@@ -1,8 +1,8 @@
 package utils;
 
 import com.bot.utils.GuildUtils;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import org.junit.Test;
 
 import java.util.Arrays;

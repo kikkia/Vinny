@@ -3,7 +3,7 @@ package com.bot.commands.settings;
 import com.bot.commands.ModerationCommand;
 import com.bot.db.ChannelDAO;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.api.Permission;
 
 public class EnableNSFWCommand extends ModerationCommand {
 
