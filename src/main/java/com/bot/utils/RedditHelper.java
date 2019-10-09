@@ -151,4 +151,30 @@ public class RedditHelper {
 
         return builder.build();
     }
+
+    public static String getRandomCopyPasta(RedditConnection redditConnection) {
+        String subredditName = "copypasta";
+        SubredditReference subreddit = redditConnection.getClient()
+                .subreddit(subredditName);
+
+        SubredditSort sortType = SubredditSort.TOP;
+        DefaultPaginator<Submission> paginator = subreddit
+                .posts()
+                .limit(1000)
+                .timePeriod(TimePeriod.ALL)
+                .sorting(sortType)
+                .build();
+
+        SubredditCache cache = SubredditCache.getInstance();
+        List<Listing<Submission>> submissions = cache.get(sortType.toString() + subredditName);
+
+        if (submissions == null) {
+            submissions = paginator.accumulate(1);
+            cache.put(sortType.toString() + subredditName, submissions);
+        }
+
+        Listing<Submission> page = submissions.get(0); // Get the only page
+        Submission submission =  getRandomSubmission(page, false);// Get random child post from the page
+        return submission.getSelfText();
+    }
 }

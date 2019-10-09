@@ -192,6 +192,12 @@ Generates an ascii representation of a given message.
 ### `shitpost`
 nuff said.
 
+### `clap`
+Clap emojifies any input or the last message sent
+
+### `copypasta`
+Gives a copypasta
+
 ## Settings
 Seettings commands (Also know as `Mod` or `Moderation`) change Vinny's settings on the server. Any one that changes a settings falls under the ModRole permissions category. 
 

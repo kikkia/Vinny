@@ -1,6 +1,7 @@
 package com.bot.utils;
 
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
@@ -67,5 +68,18 @@ public class GuildUtils {
                 highestChannel.sendMessage(ConstantStrings.WELCOME_MESSAGE).queue(c -> logger.info("Sent guild welcome message to " + c.getChannel().getName()));
             }
         }
+    }
+
+    public static Message getLastMessageFromChannel(TextChannel channel, boolean ignoreCommandMessage) {
+        if (!ignoreCommandMessage) {
+            return channel.getMessageById(channel.getLatestMessageId()).complete();
+        }
+
+        for (Message message : channel.getIterableHistory().cache(true)) {
+            if (message.getIdLong() == channel.getLatestMessageIdLong())
+                continue;
+            return message;
+        }
+        return null;
     }
 }
