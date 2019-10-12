@@ -41,6 +41,7 @@ public class ServerInfoCommand extends GeneralCommand {
         embedBuilder.addField("Roles", g.getRoles().size() + "", false);
         embedBuilder.addField("Custom Emojis", customEmojis, false);
         embedBuilder.addField("Region", g.getRegionRaw(), false);
+        embedBuilder.addField("Shard", commandEvent.getJDA().getShardInfo().getShardString(), false);
         embedBuilder.setFooter(FormattingUtils.formatOffsetDateTimeToDay(g.getTimeCreated()), null);
         commandEvent.reply(embedBuilder.build());
     }
