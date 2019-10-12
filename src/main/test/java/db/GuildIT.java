@@ -45,7 +45,7 @@ public class GuildIT {
 
     private List<InternalGuild> guilds = Arrays.asList(
             new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", null, true),
-            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", "Dude ~ !", false)
+            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", "Dude ~ !", true)
     );
 
     @BeforeClass
@@ -96,7 +96,7 @@ public class GuildIT {
     }
 
     private void loadGuilds() throws SQLException {
-        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id, prefixes) VALUES(?,?,?,?,?,?,?,?)";
+        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id, prefixes, active) VALUES(?,?,?,?,?,?,?,?,?)";
         Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement(query);
 
@@ -109,6 +109,7 @@ public class GuildIT {
             statement.setString(6, g.getRequiredPermission(CommandCategories.VOICE));
             statement.setString(7, g.getRequiredPermission(CommandCategories.NSFW));
             statement.setString(8, g.getPrefixes());
+            statement.setBoolean(9, g.isActive());
 
             statement.addBatch();
         }
