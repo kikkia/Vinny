@@ -14,8 +14,9 @@ public class InternalGuild {
     private Map<Command.Category, String> roleRequirements;
     private String prefixes;
     private Map<String, Alias> aliases;
+    private boolean active;
 
-    public InternalGuild(String id, String name, int minVolume, String minBaseRole, String minModRole, String minNsfwRole, String minVoiceRole, String prefixes) {
+    public InternalGuild(String id, String name, int minVolume, String minBaseRole, String minModRole, String minNsfwRole, String minVoiceRole, String prefixes, boolean active) {
         this.id = id;
         this.name = name;
         this.volume = minVolume;
@@ -25,6 +26,7 @@ public class InternalGuild {
         this.roleRequirements.put(CommandCategories.NSFW, minNsfwRole);
         this.roleRequirements.put(CommandCategories.VOICE, minVoiceRole);
         this.prefixes = prefixes;
+        this.active = active;
     }
 
     public String getId() {
@@ -78,6 +80,14 @@ public class InternalGuild {
 
         // We use a space as a delimiter in the db as it is impossible for it to be uses in a prefix (as jda splits args using it)
         return new GuildPreferencesProvider(Arrays.asList(prefixes.split(" ")), aliases, id);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public Map<String, Alias> getAliasList() {

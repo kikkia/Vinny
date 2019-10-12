@@ -25,7 +25,6 @@ public class Config {
     public static final String DB_PASSWORD = "DB_PASSWORD";
     public static final String DB_SCHEMA = "DB_SCHEMA";
 
-    public static final String NUM_SHARDS = "NUM_SHARDS";
     public static final String PREFIX = "PREFIX";
     public static final String DATA_LOADER = "DATA_LOADER";
 
@@ -59,8 +58,12 @@ public class Config {
     public static final String DND_EMOJI = "DND_EMOJI";
     public static final String OFFLINE_EMOJI = "OFFLINE_EMOJI";
 
+    public static final String TOTAL_SHARDS = "TOTAL_SHARDS";
+    public static final String LOCAL_SHARD_START = "LOCAL_SHARD_START";
+    public static final String LOCAL_SHARD_END = "LOCAL_SHARD_END";
+
     private Config() {
-        this.configFile = new File("res/config/config.conf");
+        this.configFile = new File("res/config/config_live.conf");
         configs = new HashMap<>();
 
         try {

@@ -1,6 +1,7 @@
 package com.bot.commands.owner;
 
 import com.bot.commands.OwnerCommand;
+import com.bot.db.GuildDAO;
 import com.bot.utils.Config;
 import com.bot.utils.HttpUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -16,6 +17,8 @@ public class UpdateGuildCountCommand extends OwnerCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
+        String i = GuildDAO.getInstance().getActiveGuildCount() + "";
+        commandEvent.replyError(i);
         if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS))) {
             try {
                 HttpUtils.postGuildCountToExternalSites();

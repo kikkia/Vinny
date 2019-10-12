@@ -96,9 +96,32 @@ public class GuildDAO {
         return returned;
     }
 
+    public int getActiveGuildCount() {
+        String query = "SELECT COUNT(*) FROM guild WHERE active=1";
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet set = null;
+        int count = 0;
+
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
+            set = statement.executeQuery();
+            if (set.next()) {
+                count = set.getInt(1);
+            }
+        } catch (SQLException e) {
+            LOGGER.severe("Failed to get guild count");
+        } finally {
+            DbHelpers.INSTANCE.close(statement, set, connection);
+        }
+
+        return count;
+    }
+
     // We throw on this one so if we cant add a guild to the db we just leave the guild to avoid greater problems
     public boolean addGuild(Guild guild) {
-        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE name=name";
+        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id, active) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE active=1";
         Connection connection = null;
         PreparedStatement statement = null;
         try {
@@ -112,6 +135,7 @@ public class GuildDAO {
             statement.setString(5, GuildUtils.getHighestRole(guild).getId());
             statement.setString(6, guild.getPublicRole().getId());
             statement.setString(7, guild.getPublicRole().getId());
+            statement.setBoolean(8, true);
             statement.execute();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add guild to db: " + guild.getId() + " " + e.getMessage());
@@ -281,6 +305,28 @@ public class GuildDAO {
 
         return true;
     }
+
+    public void setGuildActive(String guildId, boolean active) {
+        String query = "UPDATE guild SET active = ? WHERE id = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
+            statement.setBoolean(1, active);
+            statement.setString(2, guildId);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update active flag for guild: " + guildId + " " + e.getMessage());
+        } finally {
+            DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+
+        updateGuildInCache(guildId);
+    }
+
+
 
     private ResultSet executeGetQuery(String query, String guildId) throws SQLException {
         Connection connection = write.getConnection();

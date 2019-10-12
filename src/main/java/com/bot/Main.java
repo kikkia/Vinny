@@ -17,7 +17,7 @@ public class Main {
 		// Sharding manager connects to the Discord API
 		Config config = Config.getInstance();
 
-		if (config.getConfig(Config.NUM_SHARDS) == null) {
+		if (config.getConfig(Config.TOTAL_SHARDS) == null) {
 			LOGGER.log(Level.SEVERE, "Num_Shards not set, exiting");
 			return;
 		}
@@ -45,8 +45,11 @@ public class Main {
 		}
 		LOGGER.log(Level.INFO, "Flyway migrations completed");
 
-		int numShards = Integer.parseInt(config.getConfig(Config.NUM_SHARDS));
-		ShardingManager shardingManager = ShardingManager.getInstance(numShards);
+		// Start the shards on this instance and therefore the bot
+		int numShards = Integer.parseInt(config.getConfig(Config.TOTAL_SHARDS));
+		int startShardIndex = Integer.parseInt(config.getConfig(Config.LOCAL_SHARD_START));
+		int endShardIndex = Integer.parseInt(config.getConfig(Config.LOCAL_SHARD_END));
+		ShardingManager shardingManager = ShardingManager.getInstance(numShards, startShardIndex, endShardIndex);
 
 		// Start a metrics reporter to keeps the metrics that are not frequently updates flowing to datadog
 		MetricsReporter metricsReporter = new MetricsReporter();

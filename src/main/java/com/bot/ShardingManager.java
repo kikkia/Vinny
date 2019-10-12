@@ -50,15 +50,15 @@ public class ShardingManager {
         return instance;
     }
 
-    public static ShardingManager getInstance(int numShards) throws Exception {
+    public static ShardingManager getInstance(int numShards, int startIndex, int endIndex) throws Exception {
         if (instance == null)
-            instance = new ShardingManager(numShards);
+            instance = new ShardingManager(numShards, startIndex, endIndex);
         return instance;
     }
 
     // This adds a connection for each shard. Shards make it more efficient. ~1000 servers to shards is ideal
     // supportScript disables commands. Useful for running a supportScript simultaneously while the bot is going on prod
-    private ShardingManager(int numShards) throws Exception {
+    private ShardingManager(int numShards, int startIndex, int endIndex) throws Exception {
         Config config = Config.getInstance();
         waiter = new EventWaiter();
 
@@ -174,7 +174,7 @@ public class ShardingManager {
         shardManager = new DefaultShardManagerBuilder()
                 .setToken(config.getConfig(Config.DISCORD_TOKEN))
                 .setShardsTotal(numShards)
-                .setShards(0, numShards-1)
+                .setShards(startIndex, endIndex)
                 .addEventListeners(client, waiter, bot)
                 .setActivity(null)
                 .build();
