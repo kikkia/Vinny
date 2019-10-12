@@ -60,7 +60,7 @@ public class DataLoader {
 		private JDA bot;
 		private Connection connection;
 		private long startTime;
-		private String guildInsertQuery = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE name=name";
+		private String guildInsertQuery = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id, active) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE active=1";
 		private String textChannelInsertQuery = "INSERT INTO text_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private String userInsertQuery = "INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild, can_use_bot) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE guild = guild";
@@ -95,6 +95,7 @@ public class DataLoader {
 					statement.setString(5, GuildUtils.getHighestRole(g).getId());
 					statement.setString(6, g.getPublicRole().getId());
 					statement.setString(7, g.getPublicRole().getId());
+					statement.setBoolean(8, true);
 
 					statement.execute();
 					statement.close();

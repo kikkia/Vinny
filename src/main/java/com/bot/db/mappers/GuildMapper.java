@@ -14,7 +14,8 @@ public class GuildMapper {
                 set.getString("min_mod_role_id"),
                 set.getString("min_nsfw_role_id"),
                 set.getString("min_voice_role_id"),
-                set.getString("prefixes"));
+                set.getString("prefixes"),
+                set.getBoolean("active"));
     }
 
 }

@@ -44,8 +44,8 @@ public class GuildIT {
             );
 
     private List<InternalGuild> guilds = Arrays.asList(
-            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", null),
-            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", "Dude ~ !")
+            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", null, true),
+            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", "Dude ~ !", true)
     );
 
     @BeforeClass
@@ -96,7 +96,7 @@ public class GuildIT {
     }
 
     private void loadGuilds() throws SQLException {
-        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id, prefixes) VALUES(?,?,?,?,?,?,?,?)";
+        String query = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_voice_role_id, min_nsfw_role_id, prefixes, active) VALUES(?,?,?,?,?,?,?,?,?)";
         Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement(query);
 
@@ -109,6 +109,7 @@ public class GuildIT {
             statement.setString(6, g.getRequiredPermission(CommandCategories.VOICE));
             statement.setString(7, g.getRequiredPermission(CommandCategories.NSFW));
             statement.setString(8, g.getPrefixes());
+            statement.setBoolean(9, g.isActive());
 
             statement.addBatch();
         }
@@ -164,7 +165,7 @@ public class GuildIT {
 
     @Test
     public void testAddGuild() throws SQLException {
-        InternalGuild expected = new InternalGuild("999", "test-added", 100, "999", "12345", "999", "999", null);
+        InternalGuild expected = new InternalGuild("999", "test-added", 100, "999", "12345", "999", "999", null, true);
         Role lowRole = mock(Role.class);
         Role highRole = mock(Role.class);
         List<Role> roles = Arrays.asList(lowRole, highRole);
@@ -197,7 +198,7 @@ public class GuildIT {
 
     @Test
     public void testUpdateMinBaseRole() throws SQLException {
-        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "50", "2", "2", "1", null);
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "50", "2", "2", "1", null, true);
         guildDAO.updateMinBaseRole("101", "50");
         InternalGuild returned = guildDAO.getGuildById(expected.getId());
         assertGuildEquals(expected, returned);
@@ -205,7 +206,7 @@ public class GuildIT {
 
     @Test
     public void testUpdateMinModRole() throws SQLException {
-        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "50", "2", "1", null);
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "50", "2", "1", null, true);
         guildDAO.updateMinModRole("101", "50");
         InternalGuild returned = guildDAO.getGuildById(expected.getId());
         assertGuildEquals(expected, returned);
@@ -214,7 +215,7 @@ public class GuildIT {
 
     @Test
     public void testUpdateMinNSFWRole() throws SQLException {
-        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "2", "50", "1", null);
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "2", "50", "1", null, true);
         guildDAO.updateMinNSFWRole("101", "50");
         InternalGuild returned = guildDAO.getGuildById(expected.getId());
         assertGuildEquals(expected, returned);
@@ -222,10 +223,21 @@ public class GuildIT {
 
     @Test
     public void testUpdateMinVoiceRole() throws SQLException {
-        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "2", "2", "50", null);
+        InternalGuild expected = new InternalGuild("101", "guild-1", 100, "1", "2", "2", "50", null, true);
         guildDAO.updateMinVoiceRole("101", "50");
         InternalGuild returned = guildDAO.getGuildById(expected.getId());
         assertGuildEquals(expected, returned);
     }
 
+    @Test
+    public void getActiveCount() throws SQLException {
+        int expected = 2;
+        assertEquals(expected, guildDAO.getActiveGuildCount());
+    }
+
+    @Test
+    public void setGuildInactive() throws SQLException {
+        guildDAO.setGuildActive("101", false);
+        assertEquals(1, guildDAO.getActiveGuildCount());
+    }
 }

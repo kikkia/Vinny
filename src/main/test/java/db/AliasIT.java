@@ -34,8 +34,8 @@ public class AliasIT {
 
 
     private List<InternalGuild> guilds = Arrays.asList(
-            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", "! v jk"),
-            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", null)
+            new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", "! v jk", true),
+            new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", null, true)
     );
 
     private List<InternalTextChannel> textChannels = Arrays.asList(

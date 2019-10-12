@@ -1,6 +1,6 @@
 package com.bot.utils;
 
-import com.bot.ShardingManager;
+import com.bot.db.GuildDAO;
 import com.bot.models.PixivPost;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -23,15 +23,18 @@ public class HttpUtils {
     private static final String P90_BASE_URL = "https://p90.zone/";
 
     public static void postGuildCountToExternalSites() {
-        ShardingManager shardingManager = ShardingManager.getInstance();
-        int totalGuilds = shardingManager.getTotalGuilds();
+        GuildDAO guildDAO = GuildDAO.getInstance();
+        Config config = Config.getInstance();
+        int totalGuilds = guildDAO.getActiveGuildCount();
+        int totalShards = Integer.parseInt(config.getConfig(Config.TOTAL_SHARDS));
+
         postBotsForDiscord(totalGuilds);
-        postBotsGG(totalGuilds, shardingManager.getShards().size());
+        postBotsGG(totalGuilds, totalShards);
         postDiscordBotList(totalGuilds);
         postDiscordBoats(totalGuilds);
         postBotsOnDiscord(totalGuilds);
         postDiscordBotsOrg(totalGuilds);
-        postBotlistSpace(totalGuilds, shardingManager.getShards().size());
+        postBotlistSpace(totalGuilds, totalShards);
     }
 
     private static void postBotsOnDiscord(int serverCount) {
@@ -57,7 +60,7 @@ public class HttpUtils {
         String token = config.getConfig(Config.DISCORD_BOTS_ORG_API_TOKEN);
         JSONObject object = new JSONObject();
         object.put("server_count", serverCount);
-        object.put("shard_count", config.getConfig(Config.NUM_SHARDS));
+        object.put("shard_count", config.getConfig(Config.TOTAL_SHARDS));
 
         sendPost(token, url, object);
     }
