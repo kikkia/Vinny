@@ -18,7 +18,7 @@ public class UpdateGuildCountCommand extends OwnerCommand {
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
         String i = GuildDAO.getInstance().getActiveGuildCount() + "";
-        commandEvent.replyError(i);
+        commandEvent.reply(i);
         if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS))) {
             try {
                 HttpUtils.postGuildCountToExternalSites();
