@@ -4,6 +4,7 @@ import com.bot.db.ChannelDAO;
 import com.bot.db.DataLoader;
 import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
+import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalShard;
@@ -80,7 +81,6 @@ public class Bot extends ListenerAdapter {
 
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
-		// TODO: Testing handling all message logic async
 		executor = new ScheduledThreadPoolExecutor(3);
 	}
 
@@ -230,8 +230,8 @@ public class Bot extends ListenerAdapter {
 		return manager;
 	}
 
-	// TODO: Move this audio handling stuff out
-	public boolean queueTrack(AudioTrack track, CommandEvent event, Message m) {
+	// TODO: Move this audio handling stuff out of the bot class
+	public boolean queueTrack(AudioTrack track, CommandEvent event, Message m) throws MaxQueueSizeException {
 		if (event.getMember().getVoiceState().getChannel() == null) {
 			m.editMessage(event.getClient().getWarning() + " You are not in a voice channel! Please join one to use this command.").queue();
 			return false;

@@ -2,6 +2,7 @@ package com.bot.commands.voice;
 
 import com.bot.Bot;
 import com.bot.commands.VoiceCommand;
+import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -70,10 +71,14 @@ public class SearchCommand extends VoiceCommand {
 				return;
 			}
 			// If the queue track was successful go on, if not return.
-			if (bot.queueTrack(track, commandEvent, message)) {
-				message.editMessage(commandEvent.getClient().getSuccess() + " Successfully added `"+ track.getInfo().title + "` to queue.").queue();
-			} else {
-				message.editMessage(commandEvent.getClient().getError() + " Failed to add track to playlist.").queue();
+			try {
+				if (bot.queueTrack(track, commandEvent, message)) {
+					message.editMessage(commandEvent.getClient().getSuccess() + " Successfully added `"+ track.getInfo().title + "` to queue.").queue();
+				} else {
+					message.editMessage(commandEvent.getClient().getError() + " Failed to add track to playlist.").queue();
+				}
+			} catch (MaxQueueSizeException e) {
+				message.editMessage(e.getMessage()).queue();
 			}
 		}
 
@@ -98,7 +103,12 @@ public class SearchCommand extends VoiceCommand {
 							return;
 						}
 
-						bot.queueTrack(track, commandEvent, message);
+						try {
+							bot.queueTrack(track, commandEvent, message);
+						} catch (MaxQueueSizeException e) {
+							commandEvent.replyWarning(e.getMessage());
+							return;
+						}
 						commandEvent.replySuccess("Added `" + track.getInfo().title + "` to the queue");
 					})
 					.setUsers(commandEvent.getAuthor())

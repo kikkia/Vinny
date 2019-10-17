@@ -1,6 +1,7 @@
 package com.bot.voice;
 
 import com.bot.Bot;
+import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.utils.HttpUtils;
 import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -23,10 +24,14 @@ public class LoadHandler implements AudioLoadResultHandler {
     @Override
     public void trackLoaded(AudioTrack audioTrack) {
         // Since the song comes from the db the length was checked at some point, so no need to check
-        bot.getHandler(commandEvent.getGuild()).queueTrack(audioTrack,
-                commandEvent.getAuthor().getIdLong(),
-                commandEvent.getAuthor().getName(),
-                commandEvent.getTextChannel());
+        try {
+            bot.getHandler(commandEvent.getGuild()).queueTrack(audioTrack,
+                    commandEvent.getAuthor().getIdLong(),
+                    commandEvent.getAuthor().getName(),
+                    commandEvent.getTextChannel());
+        } catch (MaxQueueSizeException e) {
+            commandEvent.replyWarning(e.getMessage());
+        }
     }
 
     @Override

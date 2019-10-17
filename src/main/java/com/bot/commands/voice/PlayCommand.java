@@ -2,6 +2,7 @@ package com.bot.commands.voice;
 
 import com.bot.Bot;
 import com.bot.commands.VoiceCommand;
+import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -71,7 +72,7 @@ public class PlayCommand extends VoiceCommand {
 			this.search = search;
 		}
 
-		private boolean loadTracks(AudioTrack track, List<AudioTrack> playlist) {
+		private boolean loadTracks(AudioTrack track, List<AudioTrack> playlist, boolean fromList) throws MaxQueueSizeException {
 			if (playlist == null) {
 				if (VoiceSendHandler.isSongTooLong(track)) {
 					message.editMessage(commandEvent.getClient().getWarning() + " The track was longer than the max length of " +
@@ -80,7 +81,9 @@ public class PlayCommand extends VoiceCommand {
 				}
 				// If the queue track was successful go on, if not return.
 				if (bot.queueTrack(track, commandEvent, message)) {
-					message.editMessage(commandEvent.getClient().getSuccess() + " Successfully added `"+ track.getInfo().title + "` to queue.").queue();
+					if (!fromList)
+						message.editMessage(commandEvent.getClient().getSuccess() + " Successfully added `"+ track.getInfo().title + "` to queue.").queue();
+
 					return true;
 				} else {
 					message.editMessage(commandEvent.getClient().getError() + " Failed to add track to playlist.").queue();
@@ -91,7 +94,7 @@ public class PlayCommand extends VoiceCommand {
 				int count = 0;
 				List<String> tracksAdded = new ArrayList<>();
 				for (AudioTrack t : playlist) {
-					if (loadTracks(t, null)) {
+					if (loadTracks(t, null, true)) {
 						count++;
 						tracksAdded.add(t.getInfo().title);
 					} else {
@@ -108,18 +111,27 @@ public class PlayCommand extends VoiceCommand {
 
 		@Override
 		public void trackLoaded(AudioTrack audioTrack) {
-			loadTracks(audioTrack, null);
+			try {
+				loadTracks(audioTrack, null, false);
+			} catch (MaxQueueSizeException e) {
+				message.editMessage(e.getMessage()).queue();
+			}
 		}
 
 		@Override
 		public void playlistLoaded(AudioPlaylist audioPlaylist) {
 			if (audioPlaylist.isSearchResult()) {
 				AudioTrack track = audioPlaylist.getTracks().get(0);
-				loadTracks(track, null);
+				try {
+					loadTracks(track, null, false);
+				} catch (MaxQueueSizeException e) {
+					message.editMessage(e.getMessage()).queue();
+				}
 				return;
 			}
 			if (commandEvent.getArgs().split(" ").length < 2) {
-				loadTracks(null, audioPlaylist.getTracks());
+				message.editMessage("Playlist detected. Please try again but include the songs you want included.\n" +
+						"Example: `~play *playlist url* 1-5` This would load songs 1-5 on the playlist. Limited to loading up to 10 songs at a time.").queue();
 			} else {
 				// They gave multiple args, assume one is the tracks.
 				String[] trackNums = commandEvent.getArgs().split(" ")[1].split("-");
@@ -127,7 +139,7 @@ public class PlayCommand extends VoiceCommand {
 				if(trackNums.length == 2) {
 					int to, from;
 					try {
-						from = Integer.parseInt(trackNums[0]);
+						from = Integer.parseInt(trackNums[0]) - 1; // Account for zero index
 						to = Integer.parseInt(trackNums[1]);
 					} catch (NumberFormatException e) {
 						commandEvent.reply(commandEvent.getClient().getWarning() + "  NumberFormatException: Invalid number given, please only user numeric characters.");
@@ -148,7 +160,11 @@ public class PlayCommand extends VoiceCommand {
 								"" + from + "-" + (from + 9) +" :exclamation:");
 						to = from + 9;
 					}
-					loadTracks(null, audioPlaylist.getTracks().subList(from, to));
+					try {
+						loadTracks(null, audioPlaylist.getTracks().subList(from, to), true);
+					} catch (MaxQueueSizeException e) {
+						message.editMessage(e.getMessage()).queue();
+					}
 				} else {
 					commandEvent.reply(commandEvent.getClient().getWarning() + " Error: Incorrect number of parameters. Make sure that there are no spaces between your track numbers and the dash.");
 				}

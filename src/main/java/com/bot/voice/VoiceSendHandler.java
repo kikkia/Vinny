@@ -1,5 +1,6 @@
 package com.bot.voice;
 
+import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.utils.FormattingUtils;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
@@ -17,6 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHandler {
     // Max Duration is in seconds
     public static long MAX_DURATION = 36009;
+    public static int MAX_QUEUE_SIZE = 20;
 
     private long requester;
     private String requesterName;
@@ -39,7 +41,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         this.frame.setBuffer(buffer);
     }
 
-    public void queueTrack(AudioTrack track, long user, String requesterName, TextChannel channel) {
+    public void queueTrack(AudioTrack track, long user, String requesterName, TextChannel channel) throws MaxQueueSizeException {
         if (player.getPlayingTrack() == null) {
             player.playTrack(track);
             requester = user;
@@ -48,6 +50,9 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             nowPlaying = new QueuedAudioTrack(track, requesterName, user);
 
             sendNowPlayingUpdate();
+        }
+        else if (tracks.size() >= MAX_QUEUE_SIZE) {
+            throw new MaxQueueSizeException("Error: Loading track will exceed the max queue size of " + MAX_QUEUE_SIZE);
         }
         else {
             tracks.add(new QueuedAudioTrack(track, requesterName, user));
@@ -109,7 +114,11 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason == AudioTrackEndReason.FINISHED && repeat) {
-            queueTrack(track.makeClone(), requester, requesterName, lastUsedChannel);
+            try {
+                queueTrack(track.makeClone(), requester, requesterName, lastUsedChannel);
+            } catch (MaxQueueSizeException e) {
+                // Unused since we are not adding a track
+            }
             return;
         }
         else if (endReason != AudioTrackEndReason.FINISHED) {
