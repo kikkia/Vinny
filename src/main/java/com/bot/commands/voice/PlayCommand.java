@@ -131,7 +131,8 @@ public class PlayCommand extends VoiceCommand {
 			}
 			if (commandEvent.getArgs().split(" ").length < 2) {
 				message.editMessage("Playlist detected. Please try again but include the songs you want included.\n" +
-						"Example: `~play *playlist url* 1-5` This would load songs 1-5 on the playlist. Limited to loading up to 10 songs at a time.").queue();
+						"Example: `~play *playlist url* 1-5` This would load songs 1-5 on the playlist. Limited to loading up to 10 songs at a time. \n" +
+						"Sorry but due to the current youtube ban crisis facing music bots, this is in place to help keep Vinny up.").queue();
 			} else {
 				// They gave multiple args, assume one is the tracks.
 				String[] trackNums = commandEvent.getArgs().split(" ")[1].split("-");
@@ -178,17 +179,8 @@ public class PlayCommand extends VoiceCommand {
 
 		@Override
 		public void loadFailed(FriendlyException e) {
-			// If a common exception give the message
-			if (e.severity == FriendlyException.Severity.COMMON) {
-				message.editMessage(commandEvent.getClient().getError() + " I encountered an error loading track: \n `" +
-						e.getMessage() + "`").queue();
-				logger.severe("Failed to load a track.", e);
-			}
-			// If an uncommon exception do not give any details to the user
-			else {
-				message.editMessage(commandEvent.getClient().getError() + " I encountered an error loading track.").queue();
-				logger.severe("Failed to load a track", e);
-			}
+			message.editMessage(commandEvent.getClient().getError() + " I encountered an error loading track.").queue();
+			logger.severe("Failed to load a track", e);
 		}
 
 		private String prettyPrintTracks(List<String> tracks) {
