@@ -129,17 +129,8 @@ public class SearchCommand extends VoiceCommand {
 
 		@Override
 		public void loadFailed(FriendlyException e) {
-			// If a common exception give the message
-			if (e.severity == FriendlyException.Severity.COMMON) {
-				message.editMessage(commandEvent.getClient().getError() + " I encountered an error loading track: \n `" +
-						e.getMessage() + "`").queue();
-				logger.severe("Failed to load a track", e);
-			}
-			// If an uncommon exception do not give any details to the user
-			else {
-				logger.severe("Failed to load a track", e);
-				message.editMessage(commandEvent.getClient().getError() + " I encountered an error loading track.").queue();
-			}
+			logger.severe("Failed to load a track", e);
+			message.editMessage(commandEvent.getClient().getError() + " I encountered an error loading track.").queue();
 		}
 	}
 }
