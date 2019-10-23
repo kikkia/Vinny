@@ -30,21 +30,23 @@ public class Logger {
         this.name = name;
 
         channelLoggingEnabled = Boolean.parseBoolean(config.getConfig(Config.ENABLE_LOGGING_CHANNELS));
-        debugWebhook = config.getConfig(Config.DEBUG_WEBHOOK);
-        infoWebhook = config.getConfig(Config.INFO_WEBHOOK);
-        warnWebhook = config.getConfig(Config.WARN_WEBHOOK);
-        errorWebhook = config.getConfig(Config.ERROR_WEBHOOK);
-        hostIdentifier = config.getConfig(Config.HOST_IDENTIFIER);
+        if (channelLoggingEnabled) {
+            debugWebhook = config.getConfig(Config.DEBUG_WEBHOOK);
+            infoWebhook = config.getConfig(Config.INFO_WEBHOOK);
+            warnWebhook = config.getConfig(Config.WARN_WEBHOOK);
+            errorWebhook = config.getConfig(Config.ERROR_WEBHOOK);
+            hostIdentifier = config.getConfig(Config.HOST_IDENTIFIER);
 
-        DislogClient.Builder builder = new DislogClient.Builder()
-                .setUsername("Not Vinny")
-                .setDebugWebhookUrl(debugWebhook)
-                .setInfoWebhookUrl(infoWebhook)
-                .setWarnWebhookUrl(warnWebhook)
-                .setErrorWebhookUrl(errorWebhook)
-                .setIdentifier(hostIdentifier)
-                .printStackTrace(true);
-        this.dislogClient = builder.build();
+            DislogClient.Builder builder = new DislogClient.Builder()
+                    .setUsername("Not Vinny")
+                    .setDebugWebhookUrl(debugWebhook)
+                    .setInfoWebhookUrl(infoWebhook)
+                    .setWarnWebhookUrl(warnWebhook)
+                    .setErrorWebhookUrl(errorWebhook)
+                    .setIdentifier(hostIdentifier)
+                    .printStackTrace(true);
+            this.dislogClient = builder.build();
+        }
     }
 
     public void log(Level level, String s) {
@@ -90,7 +92,9 @@ public class Logger {
     }
 
     private void sendDislogLog(String s, LogLevel logLevel, Exception e) {
-        Log log = new Log(s, logLevel, e);
-        dislogClient.sendLog(log);
+        if (channelLoggingEnabled) {
+            Log log = new Log(s, logLevel, e);
+            dislogClient.sendLog(log);
+        }
     }
 }
