@@ -239,6 +239,11 @@
             <version>1.3.22.pbjtest3</version>
         </dependency>
         <dependency>
+            <groupId>com.github.kikkia</groupId>
+            <artifactId>Dislog</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.2</version>
@@ -347,6 +352,10 @@
             <id>central</id>
             <name>bintray</name>
             <url>http://jcenter.bintray.com</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 

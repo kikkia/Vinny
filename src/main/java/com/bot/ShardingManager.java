@@ -177,6 +177,7 @@ public class ShardingManager {
                 .setShards(startIndex, endIndex)
                 .addEventListeners(client, waiter, bot)
                 .setActivity(null)
+                .setContextEnabled(false)
                 .build();
     }
 
