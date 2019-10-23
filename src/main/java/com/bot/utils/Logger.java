@@ -1,11 +1,9 @@
 package com.bot.utils;
 
-import com.bot.ShardingManager;
-import com.bot.models.InternalShard;
-import net.dv8tion.jda.api.entities.TextChannel;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import api.DislogClient;
+import models.Log;
+import models.LogLevel;
 
-import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -15,15 +13,16 @@ public class Logger {
     private java.util.logging.Logger logger;
     private String name;
     private boolean channelLoggingEnabled;
-    private boolean initialized;
 
-    // Stored just until we initialize (allows us to statically make loggers)
-    private String debugChannelId;
-    private String errorChannelId;
+    // Webhook urls to post logs to discord with
+    private String debugWebhook;
+    private String infoWebhook;
+    private String warnWebhook;
+    private String errorWebhook;
 
-    // Grabbed during initialization
-    private TextChannel debugChannel;
-    private TextChannel errorChannel;
+    private String hostIdentifier;
+
+    private DislogClient dislogClient;
 
     public Logger(String name) {
         Config config = Config.getInstance();
@@ -31,37 +30,22 @@ public class Logger {
         this.name = name;
 
         channelLoggingEnabled = Boolean.parseBoolean(config.getConfig(Config.ENABLE_LOGGING_CHANNELS));
-        debugChannelId = config.getConfig(Config.DEBUG_CHANNEL_ID);
-        errorChannelId = config.getConfig(Config.ERROR_CHANNEL_ID);
+        if (channelLoggingEnabled) {
+            debugWebhook = config.getConfig(Config.DEBUG_WEBHOOK);
+            infoWebhook = config.getConfig(Config.INFO_WEBHOOK);
+            warnWebhook = config.getConfig(Config.WARN_WEBHOOK);
+            errorWebhook = config.getConfig(Config.ERROR_WEBHOOK);
+            hostIdentifier = config.getConfig(Config.HOST_IDENTIFIER);
 
-        initialized = false;
-    }
-
-    // Called when the first log is sent through
-    private void init() {
-        // To account for race conditions, if sharding manager is still null. Then ignore it;
-        if (ShardingManager.getInstance() == null)
-            return;
-
-        // Get a list of all of the shards, since the channels could be on any one.
-        Map<Integer, InternalShard> shards = ShardingManager.getInstance().getShards();
-
-        // Check the shard for either one, keep in mind its possible that the channels could be on different servers/shards
-        for (InternalShard s : shards.values()) {
-            if (debugChannel == null) {
-                debugChannel = s.getJda().getTextChannelById(debugChannelId);
-            }
-            if (errorChannel == null) {
-                errorChannel = s.getJda().getTextChannelById(errorChannelId);
-            }
-            if (errorChannel != null && debugChannel != null) {
-                // If we found them both then stop looking
-                break;
-            }
-        }
-        if (errorChannel != null || debugChannel != null) {
-            // If one is found we know that we can get channels but the other is just setup wrong. It will be ignored in logic
-            initialized = true;
+            DislogClient.Builder builder = new DislogClient.Builder()
+                    .setUsername("Not Vinny")
+                    .setDebugWebhookUrl(debugWebhook)
+                    .setInfoWebhookUrl(infoWebhook)
+                    .setWarnWebhookUrl(warnWebhook)
+                    .setErrorWebhookUrl(errorWebhook)
+                    .setIdentifier(hostIdentifier)
+                    .printStackTrace(true);
+            this.dislogClient = builder.build();
         }
     }
 
@@ -70,8 +54,6 @@ public class Logger {
     }
 
     public void log(Level level, String s, Exception e) {
-        if (!initialized)
-            init();
 
         if (level == Level.SEVERE)
             logError(s, e);
@@ -83,17 +65,17 @@ public class Logger {
     }
 
     private void logError(String s, Exception e) {
-        postToErrorChannel(s, e);
+        sendDislogLog(s, LogLevel.ERROR, e);
         logger.log(Level.SEVERE, s, e);
     }
 
     private void logWarn(String s) {
-        postToDebugChannel("`WARN`\n" + s);
+        sendDislogLog(s, LogLevel.WARN, null);
         logger.log(Level.WARNING, s);
     }
 
     private void logInfo(String s) {
-        postToDebugChannel("`INFO`\n" + s);
+        sendDislogLog(s, LogLevel.INFO, null);
         logger.info(s);
     }
 
@@ -109,35 +91,10 @@ public class Logger {
         log(Level.SEVERE, s, e);
     }
 
-    private void postToErrorChannel(String s, Throwable e) {
-        try {
-            if (errorChannel != null) {
-                errorChannel.sendMessage("`Error:`\n" + s).queue();
-                if (e != null) {
-                    errorChannel.sendMessage("`Exception:`\n```" + e.toString() + "```").queue();
-                    errorChannel.sendMessage("StackTrace: ```" + ExceptionUtils.getStackTrace(e) + "```").queue();
-                }
-            }
-        } catch (IllegalStateException ex) {
-            // Could be thrown when JDA gets rid of the channel object, if so we need to reinitialize it.
-            errorChannel = null;
-            init();
-            postToDebugChannel("Reinitializing error logging channel");
-            postToErrorChannel(s, e);
-        }
-    }
-
-    private void postToDebugChannel(String s) {
-        try {
-            if (debugChannel != null) {
-                debugChannel.sendMessage(s).queue();
-            }
-        } catch (IllegalStateException e) {
-            // Could be thrown when jda gets rid of cached channel, if so we need to reinitialize it.
-            debugChannel = null;
-            init();
-            postToDebugChannel("Reinitializing the debug logger");
-            postToDebugChannel(s);
+    private void sendDislogLog(String s, LogLevel logLevel, Exception e) {
+        if (channelLoggingEnabled) {
+            Log log = new Log(s, logLevel, e);
+            dislogClient.sendLog(log);
         }
     }
 }

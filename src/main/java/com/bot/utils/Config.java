@@ -64,10 +64,12 @@ public class Config {
 
     // Enable logging channeld
     public static final String ENABLE_LOGGING_CHANNELS = "ENABLE_LOGGING_CHANNELS";
-    // Channel id to send debug/info to
-    public static final String DEBUG_CHANNEL_ID = "DEBUG_CHANNEL_ID";
-    // channel id to send severe to
-    public static final String ERROR_CHANNEL_ID = "ERROR_CHANNEL_ID";
+    // Webhook urls to post different log levels to
+    public static final String ERROR_WEBHOOK = "ERROR_WEBHOOK";
+    public static final String WARN_WEBHOOK = "WARN_WEBHOOK";
+    public static final String INFO_WEBHOOK = "INFO_WEBHOOK";
+    public static final String DEBUG_WEBHOOK = "DEBUG_WEBHOOK";
+    public static final String HOST_IDENTIFIER = "HOST_IDENTIFIER";
 
     public static final String ONLINE_EMOJI = "ONLINE_EMOJI";
     public static final String IDLE_EMOJI = "IDLE_EMOJI";

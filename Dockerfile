@@ -3,8 +3,6 @@ WORKDIR /app
 COPY . /app/
 RUN mvn clean package
 
-MAINTAINER jess<jesswalters53@gmail.com>
-
 FROM openjdk:latest
 WORKDIR /app
 COPY --from=build /app/target/ /app
