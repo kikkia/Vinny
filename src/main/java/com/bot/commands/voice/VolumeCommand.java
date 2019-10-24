@@ -26,6 +26,10 @@ public class VolumeCommand extends VoiceCommand {
 			if (newVolume > 200 || newVolume < 0) {
 				throw new NumberFormatException();
 			}
+			if (handler.isLocked()) {
+				commandEvent.replyWarning("Volume is currently locked. You need to unlock it to edit it.");
+				return;
+			}
 			handler.getPlayer().setVolume(newVolume);
 			commandEvent.reactSuccess();
 		}

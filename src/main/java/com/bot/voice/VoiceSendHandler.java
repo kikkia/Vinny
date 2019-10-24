@@ -29,12 +29,14 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     private final ByteBuffer buffer;
     private final MutableAudioFrame frame;
     private boolean repeat;
+    private boolean lockVolume;
 
     public VoiceSendHandler(AudioPlayer player) {
         this.player = player;
         this.tracks = new LinkedBlockingQueue<>();
         this.nowPlaying = null;
         this.repeat = false;
+        this.lockVolume = false;
 
         this.buffer = ByteBuffer.allocate(1024);
         this.frame = new MutableAudioFrame();
@@ -164,6 +166,15 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
 
     public Queue<QueuedAudioTrack> getTracks() {
         return tracks;
+    }
+
+    public boolean toggleVolumeLock() {
+        this.lockVolume = !lockVolume;
+        return lockVolume;
+    }
+
+    public boolean isLocked() {
+        return lockVolume;
     }
 
     public void setTracks(Queue<QueuedAudioTrack> queue) {

@@ -66,6 +66,9 @@ Sets the volume of the voice output. With no arguments it displays the current v
 Sets the defualt volume for the server. Whenever Vinny starts playing audio, he will be set to the default volume. 
 * `~dvolume 50` - Sets the default volume to 50%
 
+### `lockvolume` or `lvol`
+Locks or unlocks the volume for the playing stream. (Requires mod perms)
+
 ### `list`
 *Aliases:* `playlist`, `lists`, `queue`  
 List all of the current tracks in the queue. 

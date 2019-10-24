@@ -95,6 +95,7 @@ public class ShardingManager {
                     new LoadGuildPlaylistCommand(bot),
                     new SaveGuildPlaylistCommand(bot),
                     new ListGuildPlaylistCommand(),
+                    new LockVolumeCommand(),
 
                     // Battle Royale
                     //new BattleRoyaleCommand(),
