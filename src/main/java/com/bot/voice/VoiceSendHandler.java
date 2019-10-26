@@ -18,7 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHandler {
     // Max Duration is in seconds
     public static long MAX_DURATION = 36009;
-    public static int MAX_QUEUE_SIZE = 20;
+    public static int MAX_QUEUE_SIZE = 1000;
 
     private long requester;
     private String requesterName;

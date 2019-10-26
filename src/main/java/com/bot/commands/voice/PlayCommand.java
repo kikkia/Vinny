@@ -129,45 +129,45 @@ public class PlayCommand extends VoiceCommand {
 				}
 				return;
 			}
-			if (commandEvent.getArgs().split(" ").length < 2) {
-				message.editMessage("Playlist detected. Please try again but include the songs you want included.\n" +
-						"Example: `~play *playlist url* 1-5` This would load songs 1-5 on the playlist. Limited to loading up to 10 songs at a time. \n" +
-						"Sorry but due to the current youtube ban crisis facing music bots, this is in place to help keep Vinny up.").queue();
+			// They gave multiple args, assume one is the tracks.
+			String[] trackNums = {};
+			if (commandEvent.getArgs().split(" ").length == 2)
+				trackNums = commandEvent.getArgs().split(" ")[1].split("-");
+
+			if(trackNums.length == 2) {
+				int to, from;
+				try {
+					from = Integer.parseInt(trackNums[0]) - 1; // Account for zero index
+					to = Integer.parseInt(trackNums[1]);
+				} catch (NumberFormatException e) {
+					commandEvent.reply(commandEvent.getClient().getWarning() + "  NumberFormatException: Invalid number given, please only user numeric characters.");
+					return;
+				}
+
+				if (from > to) {
+					commandEvent.reply(commandEvent.getClient().getWarning() + " Error: Beginning index is bigger than ending index.");
+					return;
+				} else if (from < 0) {
+					commandEvent.reply(commandEvent.getClient().getWarning() + " Error: Beginning index is less than 1.");
+					return;
+				} else if (to > audioPlaylist.getTracks().size()) {
+					commandEvent.reply(commandEvent.getClient().getWarning() + " Error: Requesting tracks out of range. Only " + audioPlaylist.getTracks().size() + " tracks in playlist :x:");
+					return;
+				} else if (to - from > 9) {
+					commandEvent.reply(commandEvent.getClient().getWarning() + " Warning: Requesting number of tracks that is greater than 10. Trimming results to " +
+							"" + from + "-" + (from + 9) +" :exclamation:");
+					to = from + 9;
+				}
+				try {
+					loadTracks(null, audioPlaylist.getTracks().subList(from, to), true);
+				} catch (MaxQueueSizeException e) {
+					message.editMessage(e.getMessage()).queue();
+				}
 			} else {
-				// They gave multiple args, assume one is the tracks.
-				String[] trackNums = commandEvent.getArgs().split(" ")[1].split("-");
-
-				if(trackNums.length == 2) {
-					int to, from;
-					try {
-						from = Integer.parseInt(trackNums[0]) - 1; // Account for zero index
-						to = Integer.parseInt(trackNums[1]);
-					} catch (NumberFormatException e) {
-						commandEvent.reply(commandEvent.getClient().getWarning() + "  NumberFormatException: Invalid number given, please only user numeric characters.");
-						return;
-					}
-
-					if (from > to) {
-						commandEvent.reply(commandEvent.getClient().getWarning() + " Error: Beginning index is bigger than ending index.");
-						return;
-					} else if (from < 0) {
-						commandEvent.reply(commandEvent.getClient().getWarning() + " Error: Beginning index is less than 0.");
-						return;
-					} else if (to > audioPlaylist.getTracks().size()) {
-						commandEvent.reply(commandEvent.getClient().getWarning() + " Error: Requesting tracks out of range. Only " + audioPlaylist.getTracks().size() + " tracks in playlist :x:");
-						return;
-					} else if (to - from > 9) {
-						commandEvent.reply(commandEvent.getClient().getWarning() + " Warning: Requesting number of tracks that is greater than 10. Trimming results to " +
-								"" + from + "-" + (from + 9) +" :exclamation:");
-						to = from + 9;
-					}
-					try {
-						loadTracks(null, audioPlaylist.getTracks().subList(from, to), true);
-					} catch (MaxQueueSizeException e) {
-						message.editMessage(e.getMessage()).queue();
-					}
-				} else {
-					commandEvent.reply(commandEvent.getClient().getWarning() + " Error: Incorrect number of parameters. Make sure that there are no spaces between your track numbers and the dash.");
+				try {
+					loadTracks(null, audioPlaylist.getTracks(), true);
+				} catch (MaxQueueSizeException e) {
+					message.editMessage(e.getMessage()).queue();
 				}
 			}
  		}
