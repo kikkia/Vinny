@@ -76,6 +76,13 @@ public class Config {
     public static final String DND_EMOJI = "DND_EMOJI";
     public static final String OFFLINE_EMOJI = "OFFLINE_EMOJI";
 
+    // Enable IP block routing for youtube
+    public static final String ENABLE_YT_IP_ROUTING = "ENABLE_YT_IP_ROUTING";
+    // The IPv4 CIDR block to use
+    public static final String IPV4_IP_BLOCK = "IPV4_IP_BLOCK";
+    // Excluded addresses from the ip block (comma separated)
+    public static final String EXCLUDED_ADDRESSES = "EXCLUDED_IPV4";
+
     // Total shards
     public static final String TOTAL_SHARDS = "TOTAL_SHARDS";
     // 0 indexed shard to start with
