@@ -17,7 +17,7 @@ public class LavaPlayerUtils {
         Config config = Config.getInstance();
 
         // If not enabled then return null
-        if (!Boolean.parseBoolean(config.getConfig(Config.ENABLE_LOGGING_CHANNELS))) {
+        if (!Boolean.parseBoolean(config.getConfig(Config.ENABLE_YT_IP_ROUTING))) {
             return null;
         }
 
