@@ -34,7 +34,9 @@ public class LavaPlayerUtils {
             return null;
         }
 
+        // Filter addresses in the blacklist out
         Predicate<InetAddress> filter = (inetAddress -> !excluded.containsKey(inetAddress));
+        logger.info("Creating routeplanner with " + block.getSize() + " ips");
 
         return new RotatingIpRoutePlanner(block, filter, true);
     }
