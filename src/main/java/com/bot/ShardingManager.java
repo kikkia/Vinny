@@ -14,6 +14,7 @@ import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
 import com.bot.commands.reddit.ShitpostCommand;
 import com.bot.commands.reddit.TopPostCommand;
+import com.bot.commands.scheduled.ScheduleCommand;
 import com.bot.commands.settings.*;
 import com.bot.commands.voice.*;
 import com.bot.models.InternalShard;
@@ -120,6 +121,7 @@ public class ShardingManager {
 
                     // Alias Commands
                     new AliasesCommand(waiter),
+                    new ScheduleCommand(waiter),
 
                     // Meme Commands
                     new P90Command(),

@@ -21,4 +21,12 @@ public class ConstantStrings {
     public static String ALIAS_SUCCESSFULLY_ADDED = "The alias has been successfully added. Why not try it out? Remember it has to begin exactly with the trigger you input.";
 
     public static String EVENT_WAITER_TIMEOUT = "Sorry you took too long, please try again.";
+
+    public static String SCHEDULED_COMMAND_SETUP_HELLO = "Hey! Lets start setting up a scheduled command! If you dont know what a scheduled command is, reply with a `?`\n" +
+            "Reply with the command that you want to be executed. (without a prefix) Example: `rr dankmemes`";
+
+    public static String SCHEDULED_COMMAND_SETUP_INTERVAL = "Got it, now how often should I run that command? Minimum is 1 minute. Format should be ww:dd:hh:mm:ss\nExamples: \n`2:12:40` - 2 hours, 12 minutes, 40s" +
+            "\n`5:00` - 5 minutes\n`12:3:4:20:00` - 12 weeks, 3 days, 4 hours, 20 minutes.";
+
+    public static String SCHEDULED_COMMAND_SETUP_COMPLETE = "The command has been successfully scheduled.";
 }
