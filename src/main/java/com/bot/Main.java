@@ -2,10 +2,14 @@ package com.bot;
 
 import com.bot.db.ConnectionPool;
 import com.bot.metrics.MetricsReporter;
+import com.bot.tasks.RunScheduledCommandsDefferedTask;
 import com.bot.utils.Config;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,6 +58,11 @@ public class Main {
 		// Start a metrics reporter to keeps the metrics that are not frequently updates flowing to datadog
 		MetricsReporter metricsReporter = new MetricsReporter();
 		metricsReporter.start();
+
+		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_SCHEDULED_COMMANDS))) {
+			ScheduledExecutorService scheduledTaskExecutor = Executors.newSingleThreadScheduledExecutor();
+			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 0, 10, TimeUnit.SECONDS);
+		}
 
 		System.out.println("Successfully started.");
 	}

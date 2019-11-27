@@ -62,7 +62,7 @@ public class ScheduledCommandDAO {
     }
 
     public List<ScheduledCommand> getAllScheduledCommands() throws SQLException {
-        String query = "SELECT id, command, guild, channel, author, interval_time, last_run FROM command_alias";
+        String query = "SELECT id, command, guild, channel, author, interval_time, last_run FROM scheduled_command";
         try (Connection connection = write.getConnection()){
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 return getCommands(statement);
@@ -71,7 +71,7 @@ public class ScheduledCommandDAO {
     }
 
     public List<ScheduledCommand> getAllScheduledCommandsForAuthor(String userId) throws SQLException {
-        String query = "SELECT id, command, guild, channel, author, interval_time, last_run FROM command_alias WHERE author = ?";
+        String query = "SELECT id, command, guild, channel, author, interval_time, last_run FROM scheduled_command WHERE author = ?";
         try (Connection connection = write.getConnection()){
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, userId);
@@ -81,7 +81,7 @@ public class ScheduledCommandDAO {
     }
 
     public List<ScheduledCommand> getAllScheduledCommandsForChannel(String channelId) throws SQLException {
-        String query = "SELECT id, command, guild, channel, author, interval_time, last_run FROM command_alias WHERE channel = ?";
+        String query = "SELECT id, command, guild, channel, author, interval_time, last_run FROM scheduled_command WHERE channel = ?";
         try (Connection connection = write.getConnection()){
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, channelId);
@@ -91,7 +91,7 @@ public class ScheduledCommandDAO {
     }
 
     public List<ScheduledCommand> getAllScheduledCommandsForGuild(String guildId) throws SQLException {
-        String query = "SELECT id, command, guild, channel, author, interval_time, last_run FROM command_alias WHERE guild = ?";
+        String query = "SELECT id, command, guild, channel, author, interval_time, last_run FROM scheduled_command WHERE guild = ?";
         try (Connection connection = write.getConnection()){
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, guildId);

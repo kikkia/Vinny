@@ -28,5 +28,5 @@ public class ConstantStrings {
     public static String SCHEDULED_COMMAND_SETUP_INTERVAL = "Got it, now how often should I run that command? Minimum is 1 minute. Format should be ww:dd:hh:mm:ss\nExamples: \n`2:12:40` - 2 hours, 12 minutes, 40s" +
             "\n`5:00` - 5 minutes\n`12:3:4:20:00` - 12 weeks, 3 days, 4 hours, 20 minutes.";
 
-    public static String SCHEDULED_COMMAND_SETUP_COMPLETE = "The command has been successfully scheduled.";
+    public static String SCHEDULED_COMMAND_SETUP_COMPLETE = "The command has been successfully scheduled. The command will now run every ";
 }

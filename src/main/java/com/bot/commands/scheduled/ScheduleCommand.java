@@ -76,7 +76,6 @@ public class ScheduleCommand extends ModerationCommand {
 
     class StepTwoConsumer implements Consumer<MessageReceivedEvent> {
         private String command;
-        private String interval;
         private CommandEvent commandEvent;
 
         public StepTwoConsumer(CommandEvent commandEvent, String command) {
@@ -104,7 +103,8 @@ public class ScheduleCommand extends ModerationCommand {
 
             try {
                 scheduledCommandDAO.addScheduledCommand(scheduledCommand);
-                commandEvent.replySuccess(ConstantStrings.SCHEDULED_COMMAND_SETUP_COMPLETE);
+                commandEvent.replySuccess(ConstantStrings.SCHEDULED_COMMAND_SETUP_COMPLETE +
+                        FormattingUtils.getDurationBreakdown(interval));
             } catch (SQLException e) {
                 logger.severe("Failed to add scheduled command", e);
                 commandEvent.replyError("Something went wrong when scheduling the command.");

@@ -3,6 +3,7 @@ package com.bot.metrics;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalTextChannel;
 import com.bot.models.InternalUser;
+import com.bot.models.ScheduledCommand;
 import com.bot.utils.Config;
 import com.jagrosh.jdautilities.command.Command;
 import com.timgroup.statsd.NonBlockingStatsDClient;
@@ -62,6 +63,12 @@ public class MetricsManager {
         String sourceTag = "source:user";
         String sourceIdTag = "sourceid:" + user.getId();
         statsd.incrementCounter("alias", sourceTag, sourceIdTag);
+    }
+
+    public void markScheduledCommandRan(ScheduledCommand command) {
+        String sourceTag = "scheduled";
+        String guildTag = "guild:" + command.getGuild();
+        statsd.incrementCounter("command.scheduled", sourceTag, guildTag);
     }
 
     public void markCommandFailed(Command command, User user, Guild guild) {
