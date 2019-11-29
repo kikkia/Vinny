@@ -61,6 +61,11 @@ public class ScheduleCommand extends ModerationCommand {
 
         @Override
         public void accept(MessageReceivedEvent event) {
+            if (event.getMessage().getContentRaw().equals("?")) {
+                commandEvent.reply(ConstantStrings.SCHEDULED_COMMANDS_HELP);
+                return;
+            }
+
             Command commandToInvoke = AliasUtils.findCommandForInput(event.getMessage().getContentRaw().split(" ")[0]);
             command = "~" + event.getMessage().getContentRaw();
 
