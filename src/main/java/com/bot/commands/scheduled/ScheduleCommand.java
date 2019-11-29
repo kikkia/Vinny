@@ -4,10 +4,7 @@ import com.bot.commands.ModerationCommand;
 import com.bot.db.ScheduledCommandDAO;
 import com.bot.exceptions.IntervalFormatException;
 import com.bot.models.ScheduledCommand;
-import com.bot.utils.AliasUtils;
-import com.bot.utils.CommandCategories;
-import com.bot.utils.ConstantStrings;
-import com.bot.utils.FormattingUtils;
+import com.bot.utils.*;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -33,6 +30,16 @@ public class ScheduleCommand extends ModerationCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
+        if (!ScheduledCommandUtils.isUserDonator(commandEvent.getAuthor().getId())) {
+            if (scheduledCommandDAO.getCountOfScheduledForAuthor(commandEvent.getAuthor().getId()) >= 5) {
+                commandEvent.replyWarning("You can only make 5 scheduled commands. To be able to make unlimited can donate" +
+                        " at " + ConstantStrings.DONATION_URL + ". If you have already donated, make sure you are in the Vinny support server." +
+                        " To get a support server invite user `~support`.\nYou can also remove your current scheduled commands with the " +
+                        "`~unschedule` command");
+                return;
+            }
+        }
+
         commandEvent.reply(ConstantStrings.SCHEDULED_COMMAND_SETUP_HELLO);
 
         waiter.waitForEvent(MessageReceivedEvent.class,

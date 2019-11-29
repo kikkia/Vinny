@@ -100,6 +100,36 @@ public class ScheduledCommandDAO {
         }
     }
 
+    public int getCountOfScheduledForAuthor(String id) {
+        try {
+            return getAllScheduledCommandsForAuthor(id).size();
+        } catch (SQLException e) {
+            LOGGER.severe("Failed to get author scheduled command count", e);
+            // Just let them if this fails
+            return 0;
+        }
+    }
+
+    public ScheduledCommand getScheduledCommandByID(int id) throws SQLException {
+        String query = "SELECT id, command, guild, channel, author, interval_time, last_run FROM scheduled_command WHERE id = ?";
+        try (Connection connection = write.getConnection()){
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, id);
+                return getCommands(statement).get(0);
+            }
+        }
+    }
+
+    public void removeScheduledCommand(int id) throws SQLException {
+        String query = "DELETE FROM scheduled_command WHERE id = ?";
+        try (Connection connection = write.getConnection()){
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, id);
+                statement.execute();
+            }
+        }
+    }
+
     private List<ScheduledCommand> getCommands(PreparedStatement statement) throws SQLException {
         List<ScheduledCommand> commands = new ArrayList<>();
 

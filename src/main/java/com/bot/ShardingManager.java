@@ -16,6 +16,7 @@ import com.bot.commands.reddit.ShitpostCommand;
 import com.bot.commands.reddit.TopPostCommand;
 import com.bot.commands.scheduled.GetScheduledCommand;
 import com.bot.commands.scheduled.ScheduleCommand;
+import com.bot.commands.scheduled.UnscheduleCommand;
 import com.bot.commands.settings.*;
 import com.bot.commands.voice.*;
 import com.bot.models.InternalShard;
@@ -125,6 +126,7 @@ public class ShardingManager {
                     new AliasesCommand(waiter),
                     new ScheduleCommand(waiter),
                     new GetScheduledCommand(waiter),
+                    new UnscheduleCommand(waiter),
 
                     // Meme Commands
                     new P90Command(),
@@ -171,7 +173,7 @@ public class ShardingManager {
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/JessWalters/Vinny-Redux/blob/master/docs/Commands.md");
-        commandClientBuilder.setEmojis("\u2714", "\u2757", "\u274c");
+        commandClientBuilder.setEmojis("\u2705", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
         commandClientBuilder.setActivity(null);
         commandClientBuilder.setScheduleExecutor(executor);

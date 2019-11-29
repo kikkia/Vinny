@@ -60,8 +60,8 @@ public class Main {
 		metricsReporter.start();
 
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_SCHEDULED_COMMANDS))) {
-			ScheduledExecutorService scheduledTaskExecutor = Executors.newSingleThreadScheduledExecutor();
-			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 0, 10, TimeUnit.SECONDS);
+			ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(2);
+			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 10, 10, TimeUnit.SECONDS);
 		}
 
 		System.out.println("Successfully started.");

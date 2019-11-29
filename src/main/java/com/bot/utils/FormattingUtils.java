@@ -1,5 +1,6 @@
 package com.bot.utils;
 
+import com.bot.ShardingManager;
 import com.bot.exceptions.IntervalFormatException;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -306,5 +307,14 @@ public class FormattingUtils {
         Date date = new Date(millis);
         DateFormat df = new SimpleDateFormat("dd:MM:yy:HH:mm:ss");
         return df.format(date);
+    }
+
+    public static String getUserNameOrId(String guildId, String userId) {
+        User user = ShardingManager.getInstance().getShardForGuild(guildId).getUserById(userId);
+        if (user == null) {
+            return userId;
+        } else {
+            return user.getName();
+        }
     }
 }
