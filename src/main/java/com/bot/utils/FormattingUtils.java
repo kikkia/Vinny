@@ -1,5 +1,7 @@
 package com.bot.utils;
 
+import com.bot.ShardingManager;
+import com.bot.exceptions.IntervalFormatException;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -10,10 +12,14 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 
 import java.awt.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -229,5 +235,86 @@ public class FormattingUtils {
             sb.append(" ").append(s).append(" :clap:");
         }
         return sb.toString();
+    }
+
+    // Time format to millis
+    public static long getTimeForScheduledInput(String input) throws IntervalFormatException {
+        try {
+            String[] array = input.split(":");
+            // if there is too many or not enough, then throw an error
+            if (array.length > 5) {
+                throw new IntervalFormatException("Too many args given. Please use the format `ww:dd:hh:mm:ss`");
+            } else if (array.length < 2) {
+                throw new IntervalFormatException("Invalid interval. Please use the format `ww:dd:hh:mm:ss");
+            } else {
+                // Array to use to convert indexes to millis
+                int[] convertUnits = new int[] {1000, 60000, 3600000, 86400000, 604800000};
+                int index = 0;
+                long interval = 0;
+
+                // Add millis for each index
+                for (int i = array.length - 1; i >= 0; i--) {
+                    int val = Integer.parseInt(array[i]);
+                    interval += val * convertUnits[index];
+                    index++;
+                }
+
+                // Min time is one minute
+                if (interval < convertUnits[1]) {
+                    throw new IntervalFormatException("Interval cannot be smaller than 1 minute");
+                }
+
+                return interval;
+            }
+        } catch (Exception e) {
+            throw new IntervalFormatException(e.getMessage());
+        }
+    }
+
+    /**
+     * Convert a millisecond duration to a string format
+     *
+     * @param millis A duration to convert to a string form
+     * @return A string of the form "X Days Y Hours Z Minutes A Seconds".
+     */
+    public static String getDurationBreakdown(long millis) {
+        if(millis < 0) {
+            throw new IllegalArgumentException("Duration must be greater than zero!");
+        }
+
+        long days = TimeUnit.MILLISECONDS.toDays(millis);
+        millis -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+
+        StringBuilder sb = new StringBuilder(64);
+        sb.append(days);
+        sb.append(" Days ");
+        sb.append(hours);
+        sb.append(" Hours ");
+        sb.append(minutes);
+        sb.append(" Minutes ");
+        sb.append(seconds);
+        sb.append(" Seconds");
+
+        return(sb.toString());
+    }
+
+    public static String getDateForMillis(long millis) {
+        Date date = new Date(millis);
+        DateFormat df = new SimpleDateFormat("dd:MM:yy:HH:mm:ss");
+        return df.format(date);
+    }
+
+    public static String getUserNameOrId(String guildId, String userId) {
+        User user = ShardingManager.getInstance().getShardForGuild(guildId).getUserById(userId);
+        if (user == null) {
+            return userId;
+        } else {
+            return user.getName();
+        }
     }
 }

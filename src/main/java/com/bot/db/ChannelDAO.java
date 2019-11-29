@@ -6,6 +6,7 @@ import com.bot.db.mappers.VoiceChannelMapper;
 import com.bot.models.InternalTextChannel;
 import com.bot.models.InternalVoiceChannel;
 import com.bot.utils.DbHelpers;
+import com.bot.utils.Logger;
 import com.zaxxer.hikari.HikariDataSource;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -17,10 +18,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ChannelDAO {
-    private static final Logger LOGGER = Logger.getLogger(ChannelDAO.class.getName());
+    private static final Logger LOGGER = new Logger(ChannelDAO.class.getName());
 
     private HikariDataSource write;
     private static ChannelDAO instance;
@@ -28,11 +28,7 @@ public class ChannelDAO {
     private TextChannelCache cache;
 
     private ChannelDAO() {
-        try {
-            initialize();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        initialize();
     }
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
@@ -49,7 +45,7 @@ public class ChannelDAO {
         return instance;
     }
 
-    private void initialize() throws SQLException {
+    private void initialize() {
         this.write = ConnectionPool.getDataSource();
         this.aliasDAO = AliasDAO.getInstance();
         this.cache = TextChannelCache.getInstance();
@@ -212,7 +208,7 @@ public class ChannelDAO {
                 toReturn.setAliases(aliasDAO.getChannelAliases(channelId));
             }
         } catch (SQLException e ) {
-            LOGGER.severe("Failed to get Text channel: "+ channelId +" for id.." + e.getMessage());
+            LOGGER.severe("Failed to get Text channel: "+ channelId +" for id..", e);
         } finally {
             DbHelpers.INSTANCE.close(statement, set, connection);
         }
@@ -237,7 +233,7 @@ public class ChannelDAO {
                 toReturn = VoiceChannelMapper.mapSetToInternalVoiceChannel(set);
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to get voiceChannel: "+ channelId + " for id.. " + e.getMessage());
+            LOGGER.severe("Failed to get voiceChannel: "+ channelId + " for id..", e);
         } finally {
             DbHelpers.INSTANCE.close(statement, set, connection);
         }

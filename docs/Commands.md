@@ -11,6 +11,7 @@
     * [Meme Commands](#Meme)
     * [Settings Commands](#Settings)
     * [Alias Commands] (#Aliases)
+    * [Scheduling Commands] (#Scheduling)
 3. [Role Permissions](#Permissions)
 
 # About 
@@ -19,7 +20,8 @@ Vinny has many commands that can be run on either a server or in DMs.
 # How-to
 Commands are run by typing a message in a channel that Vinny can see and post in. These messages comprise of two parts, the prefix (Default: `~` and `@Vinny`) and the command (For example `play`). You can set custom prefixes for any server.  
 Some commands take in arguments. These arguments effect what the command does. For example the `~play` command can take in either a link to audio, or a youtube search. (Example `~play rickroll` or `~play https://www.youtube.com/watch?v=dQw4w9WgXcQ`)  
-Commands can also have `aliases`, which are just other names for the command you can use to invoke it. 
+Commands can also have `aliases`, which are just other names for the command you can use to invoke it. You can also schedule commands to run at
+an interval. Using the scheduling feature, you can get all your Vinny automatically.
 
 # Categories
 Commands are organized by different categories. Most categories can be given a required minimum role needed to use them. 
@@ -252,6 +254,22 @@ Shows all aliases you have access to.
 ### `removegalias`
 Removes an alias from the guild. Example: `given your guild has an alias with the trigger lol`
 * `~removegalias lol`
+
+## Scheduling
+You can schedule Vinny to run commands every X amount of time using these commands
+
+### `schedule`
+Setup a Scheduled command. Vinny will walk you trough setting them up when you use this command.
+
+### `unschedule`
+This command is used to remove scheduled commands. You must be able to run Mod commands, or be the author of the scheduled command.
+* `~unschedule <id>`
+
+### `scheduled`
+This command can be used to get all scheduled commands on either the server, the channel or for yourself.
+* `~scheduled me` - Gets all of your scheduled commands.
+* `~scheduled g` - Gets all scheduled commands in the guild.
+* `~scheduled c` - Gets all scheduled commands in the channel.
 
 ---
 ## Permissions

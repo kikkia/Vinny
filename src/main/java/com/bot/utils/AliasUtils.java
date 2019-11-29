@@ -80,12 +80,19 @@ public class AliasUtils {
         return null;
     }
 
-    public static boolean confirmValicCommandName(String commandName) {
+    public static boolean confirmValidCommandName(String commandName) {
         List<Command> validCommands = ShardingManager.getInstance().getCommandClientImpl().getCommands();
         Map<String,Integer> commandIndex;
 
         Command command = validCommands.stream().filter((cmd) -> cmd.isCommandFor(commandName)).findAny().orElse(null);
         // TODO: Maybe log stats about what command aliases use
         return command != null;
+    }
+
+    public static Command findCommandForInput(String commandName) {
+        List<Command> validCommands = ShardingManager.getInstance().getCommandClientImpl().getCommands();
+        Map<String,Integer> commandIndex;
+
+        return validCommands.stream().filter((cmd) -> cmd.isCommandFor(commandName)).findAny().orElse(null);
     }
 }

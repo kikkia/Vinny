@@ -98,7 +98,7 @@ public class AddGuildAliasCommand extends ModerationCommand {
         @Override
         public void accept(MessageReceivedEvent event) {
             // TODO: Possible more input validation
-            boolean isValid = AliasUtils.confirmValicCommandName(event.getMessage().getContentRaw().split(" ")[0]);
+            boolean isValid = AliasUtils.confirmValidCommandName(event.getMessage().getContentRaw().split(" ")[0]);
             command = "~" + event.getMessage().getContentRaw();
 
             if (!isValid) {

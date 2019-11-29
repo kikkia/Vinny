@@ -83,6 +83,8 @@ public class Config {
     // shard to end with on this process
     public static final String LOCAL_SHARD_END = "LOCAL_SHARD_END";
 
+    public static final String ENABLE_SCHEDULED_COMMANDS = "ENABLE_SCHEDULED_COMMANDS";
+
     private Config() {
         this.configFile = new File("res/config/config.conf");
         configs = new HashMap<>();
