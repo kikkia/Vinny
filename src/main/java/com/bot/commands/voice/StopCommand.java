@@ -10,6 +10,9 @@ public class StopCommand extends VoiceCommand {
 		this.name = "stop";
 		this.arguments = "";
 		this.help = "Stops stream and clears the current playlist";
+		this.aliases = new String[2];
+		aliases[0] = "leave";
+		aliases[1] = "fuck off";
 	}
 
 	@Override
