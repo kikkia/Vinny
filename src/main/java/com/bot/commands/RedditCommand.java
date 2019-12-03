@@ -10,6 +10,6 @@ public abstract class RedditCommand extends BaseCommand {
         this.guildOnly = false;
         this.botPermissions = new Permission[]{Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_EMBED_LINKS};
         this.cooldownScope = CooldownScope.USER;
-        this.cooldown = 2;
+        this.cooldown = 1;
     }
 }
