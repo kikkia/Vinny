@@ -61,6 +61,9 @@ public class Config {
     public static final String BOTS_GG_API_TOKEN = "BOTS_GG_API_TOKEN";
     public static final String DISCORD_BOATS_TOKEN = "DISCORD_BOATS_TOKEN";
     public static final String BOTLIST_SPACE_TOKEN = "BOTLIST_SPACE_TOKEN";
+    public static final String DIVINE_BOTLIST_TOKEN = "DIVINE_BOTLIST_TOKEN";
+    public static final String MYTHICAL_BOTLIST_TOKEN = "MYTHICAL_BOTLIST_TOKEN";
+    public static final String EXTREME_BOTLIST_TOKEN = "EXTREME_BOTLIST_TOKEN";
 
     // Enable logging channeld
     public static final String ENABLE_LOGGING_CHANNELS = "ENABLE_LOGGING_CHANNELS";

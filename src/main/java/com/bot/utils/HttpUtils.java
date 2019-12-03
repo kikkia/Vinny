@@ -35,6 +35,9 @@ public class HttpUtils {
         postBotsOnDiscord(totalGuilds);
         postDiscordBotsOrg(totalGuilds);
         postBotlistSpace(totalGuilds, totalShards);
+        postDivineDiscordBots(totalGuilds, totalShards);
+        postMythicalBots(totalGuilds);
+        postDiscordExtremeList(totalGuilds);
     }
 
     private static void postBotsOnDiscord(int serverCount) {
@@ -99,6 +102,34 @@ public class HttpUtils {
         JSONObject object = new JSONObject();
         object.put("server_count", totalServerCount);
         object.put("shards", shardCount);
+
+        sendPost(token, url, object);
+    }
+
+    private static void postDivineDiscordBots(int totalServerCount, int shardCount) {
+        String url = "https://divinediscordbots.com/bot/" + config.getConfig(Config.DISCORD_BOT_ID) + "/stats";
+        String token = config.getConfig(Config.DIVINE_BOTLIST_TOKEN);
+        JSONObject object = new JSONObject();
+        object.put("server_count", totalServerCount);
+        object.put("shard_count", shardCount);
+
+        sendPost(token, url, object);
+    }
+
+    private static void postMythicalBots(int totalServerCount) {
+        String url = "https://mythicalbots.xyz/api/bot/" + config.getConfig(Config.DISCORD_BOT_ID);
+        String token = config.getConfig(Config.MYTHICAL_BOTLIST_TOKEN);
+        JSONObject object = new JSONObject();
+        object.put("server_count",  totalServerCount);
+
+        sendPost(token, url, object);
+    }
+
+    private static void postDiscordExtremeList(int totalServerCount) {
+        String url = "https://discordextremelist.xyz/api/bot/" + config.getConfig(Config.DISCORD_BOT_ID);
+        String token = config.getConfig(Config.EXTREME_BOTLIST_TOKEN);
+        JSONObject object = new JSONObject();
+        object.put("guildCount",  totalServerCount);
 
         sendPost(token, url, object);
     }
