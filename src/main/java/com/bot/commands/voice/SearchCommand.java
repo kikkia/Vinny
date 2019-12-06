@@ -130,7 +130,7 @@ public class SearchCommand extends VoiceCommand {
 		@Override
 		public void loadFailed(FriendlyException e) {
 			logger.severe("Failed to load a track", e);
-			message.editMessage(commandEvent.getClient().getError() + " I encountered an error loading track.").queue();
+			message.editMessage(commandEvent.getClient().getError() + " I encountered an error loading track: " + e.getMessage()).queue();
 		}
 	}
 }

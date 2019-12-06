@@ -179,7 +179,7 @@ public class PlayCommand extends VoiceCommand {
 
 		@Override
 		public void loadFailed(FriendlyException e) {
-			message.editMessage(commandEvent.getClient().getError() + " I encountered an error loading track.").queue();
+			message.editMessage(commandEvent.getClient().getError() + " I encountered an error loading track: " + e.getMessage()).queue();
 			logger.severe("Failed to load a track", e);
 		}
 
