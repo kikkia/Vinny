@@ -130,6 +130,16 @@ public class ScheduledCommandDAO {
         }
     }
 
+    public void removeAllScheduledInGuild(String guildId) throws SQLException {
+        String query = "DELETE FROM scheduled_command WHERE guild = ?";
+        try (Connection connection = write.getConnection()){
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, guildId);
+                statement.execute();
+            }
+        }
+    }
+
     private List<ScheduledCommand> getCommands(PreparedStatement statement) throws SQLException {
         List<ScheduledCommand> commands = new ArrayList<>();
 

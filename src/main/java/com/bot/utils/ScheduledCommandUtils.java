@@ -84,11 +84,14 @@ public class ScheduledCommandUtils {
             return;
         }
 
+        Config config = Config.getInstance();
+
         try {
             ScheduledCommand scheduledCommand = scheduledCommandDAO.getScheduledCommandByID(id);
             boolean canDelete = scheduledCommand.getAuthor().equals(commandEvent.getAuthor().getId()) ||
                     scheduledCommand.getGuild().equals(commandEvent.getGuild().getId());
-            if (canDelete) {
+            // Allow owner to remove any scheduled command
+            if (canDelete || commandEvent.getAuthor().getId().equals(config.getConfig(Config.OWNER_ID))) {
                 scheduledCommandDAO.removeScheduledCommand(id);
                 commandEvent.replySuccess("Successfully unscheduled command.");
             } else {

@@ -13,5 +13,7 @@ public class CommandCategories {
     public final static Command.Category REDDIT = new Command.Category("reddit");
     public final static Command.Category MEME = new Command.Category("meme");
 
+    public final static Command.Category OWNER = new Command.Category("owner");
+
 
 }

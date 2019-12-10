@@ -157,19 +157,16 @@ public class ShardingManager {
                     new Rule34Command(),
 
                     // 4chan commands
-                    new R4cCommand()
+                    new R4cCommand(),
+
+                    // Owner Commands -- All hidden
+                    new AvatarCommand(),
+                    new UpdateGuildCountCommand(),
+                    new ClearCacheCommand()
             );
         } else {
             commandClientBuilder.useHelpBuilder(false);
         }
-
-        // Owner commands are added regardless
-        commandClientBuilder.addCommands(
-                // Owner Commands -- All hidden
-                new AvatarCommand(),
-                new UpdateGuildCountCommand(),
-                new ClearCacheCommand()
-        );
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/JessWalters/Vinny-Redux/blob/master/docs/Commands.md");
