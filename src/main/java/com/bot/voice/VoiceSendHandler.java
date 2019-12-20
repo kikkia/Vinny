@@ -2,6 +2,7 @@ package com.bot.voice;
 
 import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.utils.FormattingUtils;
+import com.github.natanbc.lavadsp.timescale.TimescalePcmAudioFilter;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -30,6 +32,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     private final MutableAudioFrame frame;
     private boolean repeat;
     private boolean lockVolume;
+    private double speed;
 
     public VoiceSendHandler(AudioPlayer player) {
         this.player = player;
@@ -41,6 +44,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         this.buffer = ByteBuffer.allocate(1024);
         this.frame = new MutableAudioFrame();
         this.frame.setBuffer(buffer);
+        this.speed = 1.0;
     }
 
     public void queueTrack(AudioTrack track, long user, String requesterName, TextChannel channel) throws MaxQueueSizeException {
@@ -94,6 +98,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         player.destroy();
         repeat = false;
         nowPlaying = null;
+        setSpeed(1.0);
     }
 
     public AudioPlayer getPlayer()  {
@@ -193,6 +198,20 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             } else {
                 lastUsedChannel.sendMessage(FormattingUtils.getAudioTrackEmbed(nowPlaying, player.getVolume())).queue();
             }
+        });
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+
+        this.player.setFilterFactory((track, format, output)->{
+            TimescalePcmAudioFilter audioFilter = new TimescalePcmAudioFilter(output, format.channelCount, format.sampleRate);
+            audioFilter.setSpeed(speed);
+            return Collections.singletonList(audioFilter);
         });
     }
 }

@@ -340,6 +340,11 @@
             <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.natanbc</groupId>
+            <artifactId>lavadsp</artifactId>
+            <version>0.5.2</version>
+        </dependency>
     </dependencies>
 
     <repositories>

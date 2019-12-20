@@ -1,11 +1,11 @@
-package com.bot.commands.meme;
+package com.bot.commands.meme
 
-import com.bot.commands.MemeCommand;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import com.bot.commands.MemeCommand
+import com.jagrosh.jdautilities.command.CommandEvent
 
-public class FeelsCommand extends MemeCommand {
+class FeelsCommand : MemeCommand() {
 
-    private String feels = "───────▄▀▀▀▀▀▀▀▀▀▀▄▄\n" +
+    private val feels = "───────▄▀▀▀▀▀▀▀▀▀▀▄▄\n" +
             "────▄▀▀░░░░░░░░░░░░░▀▄\n" +
             "──▄▀░░░░░░░░░░░░░░░░░░▀▄\n" +
             "──█░░░░░░░░░░░░░░░░░░░░░▀▄\n" +
@@ -25,14 +25,13 @@ public class FeelsCommand extends MemeCommand {
             "───█░░░▀░░░░▀▄░░░░░░░░░░▄▀\n" +
             "──▐▌░░░░░░░░░░▀▄░░░░░░▄▀\n" +
             "─▄▀░░░▄▀░░░░░░░░▀▀▀▀█▀\n" +
-            "▀░░░▄▀░░░░░░░░░░▀░░░▀▀▀▀▄▄▄▄▄";
+            "▀░░░▄▀░░░░░░░░░░▀░░░▀▀▀▀▄▄▄▄▄"
 
-    public FeelsCommand() {
-        this.name = "feels";
+    init {
+        this.name = "feels"
     }
 
-    @Override
-    protected void executeCommand(CommandEvent commandEvent) {
-        commandEvent.reply(feels);
+    override fun executeCommand(commandEvent: CommandEvent) {
+        commandEvent.reply(feels)
     }
 }
