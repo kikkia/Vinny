@@ -100,6 +100,7 @@ public class ShardingManager {
                     new SaveGuildPlaylistCommand(bot),
                     new ListGuildPlaylistCommand(),
                     new LockVolumeCommand(),
+                    new SpeedCommand(),
 
                     // Battle Royale
                     //new BattleRoyaleCommand(),

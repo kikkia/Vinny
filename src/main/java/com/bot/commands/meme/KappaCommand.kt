@@ -1,11 +1,11 @@
-package com.bot.commands.meme;
+package com.bot.commands.meme
 
-import com.bot.commands.MemeCommand;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import com.bot.commands.MemeCommand
+import com.jagrosh.jdautilities.command.CommandEvent
 
-public class KappaCommand extends MemeCommand {
+class KappaCommand : MemeCommand() {
 
-    private String kappa = "░░░░░░░░░░░░░░░░░░\n" +
+    private val kappa = "░░░░░░░░░░░░░░░░░░\n" +
             "░░░░▄▀▀▀▀▀█▀▄▄▄▄░░░░\n" +
             "░░▄▀▒▓▒▓▓▒▓▒▒▓▒▓▀▄░░\n" +
             "▄▀▒▒▓▒▓▒▒▓▒▓▒▓▓▒▒▓█░\n" +
@@ -19,16 +19,15 @@ public class KappaCommand extends MemeCommand {
             "░░▀░░░░░░▒▄▄▒▄▄▄▒▒█░\n" +
             "░░░▀▄▄▒▒░░░░▀▀▒▒▄▀░░\n" +
             "░░░░░▀█▄▒▒░░░░▒▄▀░░░\n" +
-            "░░░░░░░░▀▀█▄▄▄▄▀";
+            "░░░░░░░░▀▀█▄▄▄▄▀"
 
-    public KappaCommand() {
-        this.name = "kappa";
-        this.help = "prints a kappa face";
+    init {
+        this.name = "kappa"
+        this.help = "prints a kappa face"
     }
 
 
-    @Override
-    protected void executeCommand(CommandEvent commandEvent) {
-        commandEvent.reply(kappa);
+    override fun executeCommand(commandEvent: CommandEvent) {
+        commandEvent.reply(kappa)
     }
 }

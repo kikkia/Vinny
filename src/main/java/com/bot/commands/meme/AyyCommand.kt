@@ -1,11 +1,11 @@
-package com.bot.commands.meme;
+package com.bot.commands.meme
 
-import com.bot.commands.MemeCommand;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import com.bot.commands.MemeCommand
+import com.jagrosh.jdautilities.command.CommandEvent
 
-public class AyyCommand extends MemeCommand {
+class AyyCommand : MemeCommand() {
 
-    private String lmao = "░░░░█▒▒▄▀▀▀▀▀▄▄▒▒▒▒▒▒▒▒▒▄▄▀▀▀▀▀▀▄\n" +
+    private val lmao = "░░░░█▒▒▄▀▀▀▀▀▄▄▒▒▒▒▒▒▒▒▒▄▄▀▀▀▀▀▀▄\n" +
             "    ░░▄▀▒▒▒▄█████▄▒█▒▒▒▒▒▒▒█▒▄█████▄▒█\n" +
             "    ░█▒▒▒▒▐██▄████▌▒█▒▒▒▒▒█▒▐██▄████▌▒█\n" +
             "    ▀▒▒▒▒▒▒▀█████▀▒▒█▒░▄▒▄█▒▒▀█████▀▒▒▒█\n" +
@@ -20,15 +20,14 @@ public class AyyCommand extends MemeCommand {
             "    ░▄▄▄░░▄░░▄░▄░░▄░░▄░░░░▄▄░▄▄░░░▄▄▄░░░▄▄▄\n" +
             "    █▄▄▄█░█▄▄█░█▄▄█░░█░░░█░░█░░█░█▄▄▄█░█░░░█\n" +
             "    █░░░█░░█░░░░█░░░░█░░░█░░█░░█░█░░░█░█░░░█\n" +
-            "    ▀░░░▀░░▀░░░░▀░░░░▀▀▀░░░░░░░░░▀░░░▀░▀▄▄▄▀\uFEFF";
+            "    ▀░░░▀░░▀░░░░▀░░░░▀▀▀░░░░░░░░░▀░░░▀░▀▄▄▄▀\uFEFF"
 
-    public AyyCommand() {
-        this.name = "ayy";
-        this.help = "lmao";
+    init {
+        this.name = "ayy"
+        this.help = "lmao"
     }
 
-    @Override
-    protected void executeCommand(CommandEvent commandEvent) {
-        commandEvent.reply(lmao);
+    override fun executeCommand(commandEvent: CommandEvent) {
+        commandEvent.reply(lmao)
     }
 }
