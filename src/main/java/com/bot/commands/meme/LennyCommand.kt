@@ -1,11 +1,11 @@
-package com.bot.commands.meme;
+package com.bot.commands.meme
 
-import com.bot.commands.MemeCommand;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import com.bot.commands.MemeCommand
+import com.jagrosh.jdautilities.command.CommandEvent
 
-public class LennyCommand extends MemeCommand {
+class LennyCommand : MemeCommand() {
 
-    private String lenny = "───█───▄▀█▀▀█▀▄▄───▐█──────▄▀█▀▀█▀▄▄\n" +
+    private val lenny = "───█───▄▀█▀▀█▀▄▄───▐█──────▄▀█▀▀█▀▄▄\n" +
             "──█───▀─▐▌──▐▌─▀▀──▐█─────▀─▐▌──▐▌─█▀\n" +
             "─▐▌──────▀▄▄▀──────▐█▄▄──────▀▄▄▀──▐▌\n" +
             "─█────────────────────▀█────────────█\n" +
@@ -14,15 +14,14 @@ public class LennyCommand extends MemeCommand {
             "─█───────────────█▄───▄█────────────█\n" +
             "─▐▌───────────────▀███▀────────────▐▌\n" +
             "──█──────────▀▄───────────▄▀───────█\n" +
-            "───█───────────▀▄▄▄▄▄▄▄▄▄▀────────█";
+            "───█───────────▀▄▄▄▄▄▄▄▄▄▀────────█"
 
-    public LennyCommand() {
-        this.name = "lenny";
-        this.help = "prints a lenny face";
+    init {
+        this.name = "lenny"
+        this.help = "prints a lenny face"
     }
 
-    @Override
-    protected void executeCommand(CommandEvent commandEvent) {
-        commandEvent.reply(lenny);
+    override fun executeCommand(commandEvent: CommandEvent) {
+        commandEvent.reply(lenny)
     }
 }

@@ -126,7 +126,7 @@ public class HttpUtils {
     }
 
     private static void postDiscordExtremeList(int totalServerCount) {
-        String url = "https://discordextremelist.xyz/api/bot/" + config.getConfig(Config.DISCORD_BOT_ID);
+        String url = "https://discordextremelist.xyz/v1/bot/" + config.getConfig(Config.DISCORD_BOT_ID);
         String token = config.getConfig(Config.EXTREME_BOTLIST_TOKEN);
         JSONObject object = new JSONObject();
         object.put("guildCount",  totalServerCount);
@@ -143,7 +143,13 @@ public class HttpUtils {
             post.setEntity(entity);
 
             HttpResponse response = client.execute(post);
-            if (response.getStatusLine().getStatusCode() != 200 && response.getStatusLine().getStatusCode() != 204
+
+            // If server error, just a warning
+            if (response.getStatusLine().getStatusCode() >= 500) {
+                logger.warning("Server error posting to: " + url + " Status code: "
+                        + response.getStatusLine().getStatusCode());
+            }
+            else if (response.getStatusLine().getStatusCode() != 200 && response.getStatusLine().getStatusCode() != 204
                 && response.getStatusLine().getStatusCode() != 429)
                 throw new RuntimeException("Status code not 200: " + response);
         } catch (Exception e) {

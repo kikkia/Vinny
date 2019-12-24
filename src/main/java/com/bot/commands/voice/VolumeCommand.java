@@ -27,7 +27,7 @@ public class VolumeCommand extends VoiceCommand {
 				throw new NumberFormatException();
 			}
 			if (handler.isLocked()) {
-				commandEvent.replyWarning("Volume is currently locked. You need to unlock it to edit it.");
+				commandEvent.replyWarning("Volume and speed is currently locked. You need to unlock it to edit it.");
 				return;
 			}
 			handler.getPlayer().setVolume(newVolume);

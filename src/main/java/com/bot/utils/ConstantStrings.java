@@ -33,4 +33,8 @@ public class ConstantStrings {
     public static String DONATION_URL = "https://www.patreon.com/Kikkia";
 
     public static String SCHEDULED_COMMANDS_HELP = "https://github.com/kikkia/Vinny-Redux/blob/master/docs/ScheduledCommands.md";
+
+    public static String REBOOT_VOICE_MESSAGE = "Vinny will be rebooting in a few moments for maintenance. You will have to restart your audio stream once Vinny is rebooted. Sorry for the inconvenience. In a" +
+            " future update Vinny will save your current playlists when rebooting. You can stay up to date" +
+            " with new Vinny updates, features, and maintenance on Vinny's [support server](https://discord.gg/XMwyzxZ)";
 }

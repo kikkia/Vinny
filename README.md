@@ -15,3 +15,5 @@ A complete rewrite and overhaul of the original VinnyBot.
 
 ### Want to make a command or help contribute?
 Because Vinny is open-source it is very much welcomed for anyone to have the oppritunity to contribute to Vinny. Contributing guidelines and tips can be found [here](docs/Contributing.md)
+
+[![Bots for Discord](https://botsfordiscord.com/api/bot/276855867796881408/widget)](https://botsfordiscord.com/bots/276855867796881408)

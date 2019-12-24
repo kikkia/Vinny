@@ -2,6 +2,7 @@ package com.bot.models
 
 import com.bot.voice.VoiceSendHandler
 import net.dv8tion.jda.api.JDA
+import java.util.stream.Collectors
 
 class InternalShard(val jda: JDA) {
     val id: Int = jda.shardInfo.shardId
@@ -52,5 +53,9 @@ class InternalShard(val jda: JDA) {
         } catch (e : NullPointerException) {
 
         }
+    }
+
+    fun getVoiceSendHandlers() : List<VoiceSendHandler> {
+        return (jda.audioManagers.stream().map { m -> m.sendingHandler }.collect(Collectors.toList()) as List<VoiceSendHandler>?)!!
     }
 }

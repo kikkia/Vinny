@@ -1,11 +1,11 @@
-package com.bot.commands.meme;
+package com.bot.commands.meme
 
-import com.bot.commands.MemeCommand;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import com.bot.commands.MemeCommand
+import com.jagrosh.jdautilities.command.CommandEvent
 
-public class SaltCommand extends MemeCommand {
+class SaltCommand : MemeCommand() {
 
-    private String salt = "▒▒▒▒▒▒▄▄██████▄\n" +
+    private val salt = "▒▒▒▒▒▒▄▄██████▄\n" +
             "▒▒▒▒▒▒▒▒▒▒▄▄████████████▄\n" +
             "▒▒▒▒▒▒▄▄██████████████████\n" +
             "▒▒▒▄████▀▀▀██▀██▌███▀▀▀████\n" +
@@ -17,14 +17,13 @@ public class SaltCommand extends MemeCommand {
             "▒▒▒▒▀░▓▓▒▐█████████▀▀▒\n" +
             "▒▒▒▒▒░░▒▒▐█████▀▀▒▒▒▒▒▒\n" +
             "▒▒░░░░░▀▀▀▀▀▀▒▒▒▒▒▒▒▒▒\n" +
-            "▒▒▒░░░░░░░░▒▒";
+            "▒▒▒░░░░░░░░▒▒"
 
-    public SaltCommand() {
-        this.name = "salt";
+    init {
+        this.name = "salt"
     }
 
-    @Override
-    protected void executeCommand(CommandEvent commandEvent) {
-        commandEvent.reply(salt);
+    override fun executeCommand(commandEvent: CommandEvent) {
+        commandEvent.reply(salt)
     }
 }
