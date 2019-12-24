@@ -126,7 +126,7 @@ public class HttpUtils {
     }
 
     private static void postDiscordExtremeList(int totalServerCount) {
-        String url = "https://discordextremelist.xyz/api/bot/" + config.getConfig(Config.DISCORD_BOT_ID);
+        String url = "https://discordextremelist.xyz/v1/bot/" + config.getConfig(Config.DISCORD_BOT_ID);
         String token = config.getConfig(Config.EXTREME_BOTLIST_TOKEN);
         JSONObject object = new JSONObject();
         object.put("guildCount",  totalServerCount);

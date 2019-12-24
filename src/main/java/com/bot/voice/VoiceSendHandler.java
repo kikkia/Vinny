@@ -8,10 +8,12 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.awt.*;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Queue;
@@ -169,6 +171,8 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         return nowPlaying != null && !player.isPaused();
     }
 
+    public boolean isActive() {return nowPlaying != null;}
+
     public Queue<QueuedAudioTrack> getTracks() {
         return tracks;
     }
@@ -213,5 +217,19 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             audioFilter.setSpeed(speed);
             return Collections.singletonList(audioFilter);
         });
+    }
+
+    // Send an update to the last used channel to announce that a reboot is happening.
+    public void sendUpdateToLastUsedChannel(String message) {
+        lastUsedChannel = lastUsedChannel.getJDA().getTextChannelById(lastUsedChannel.getId());
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setAuthor("Kikkia");
+        builder.setColor(Color.RED);
+        builder.setTitle("Voice maintenance announcement!");
+        builder.setDescription(message);
+
+        if (lastUsedChannel != null)
+            lastUsedChannel.sendMessage(builder.build()).queue();
     }
 }
