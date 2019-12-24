@@ -9,6 +9,7 @@ import com.bot.commands.nsfw.R4cCommand;
 import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.AvatarCommand;
 import com.bot.commands.owner.ClearCacheCommand;
+import com.bot.commands.owner.RebootAnnounceCommand;
 import com.bot.commands.owner.UpdateGuildCountCommand;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
@@ -22,6 +23,7 @@ import com.bot.commands.voice.*;
 import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
 import com.bot.utils.Config;
+import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
@@ -37,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Collectors;
 
 public class ShardingManager {
 
@@ -163,7 +166,8 @@ public class ShardingManager {
                     // Owner Commands -- All hidden
                     new AvatarCommand(),
                     new UpdateGuildCountCommand(),
-                    new ClearCacheCommand()
+                    new ClearCacheCommand(),
+                    new RebootAnnounceCommand()
             );
         } else {
             commandClientBuilder.useHelpBuilder(false);
@@ -231,5 +235,14 @@ public class ShardingManager {
             }
         }
         return null;
+    }
+
+    public List<VoiceSendHandler> getActiveVoiceSendHandlers() {
+        List<VoiceSendHandler> activeHandlers = new ArrayList<>();
+
+        for (InternalShard shard : shards.values()) {
+            activeHandlers.addAll(shard.getVoiceSendHandlers().stream().filter(VoiceSendHandler::isActive).collect(Collectors.toList()));
+        }
+        return activeHandlers;
     }
 }
