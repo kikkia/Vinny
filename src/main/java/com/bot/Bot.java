@@ -17,13 +17,6 @@ import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -77,13 +70,7 @@ public class Bot extends ListenerAdapter {
 		this.config = Config.getInstance();
 		this.manager = new DefaultAudioPlayerManager();
 
-		manager.registerSourceManager(new YoutubeAudioSourceManager(true, LavaPlayerUtils.getIPRoutePlanner()));
-		manager.registerSourceManager(new SoundCloudAudioSourceManager());
-		manager.registerSourceManager(new BandcampAudioSourceManager());
-		manager.registerSourceManager(new VimeoAudioSourceManager());
-		manager.registerSourceManager(new TwitchStreamAudioSourceManager());
-		manager.registerSourceManager(new BeamAudioSourceManager());
-		manager.registerSourceManager(new HttpAudioSourceManager());
+		LavaPlayerUtils.setupLavaplayer(manager);
 
 		guildDAO = GuildDAO.getInstance();
 		membershipDAO = MembershipDAO.getInstance();
