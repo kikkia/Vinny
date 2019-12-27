@@ -2,7 +2,6 @@ package com.bot.voice;
 
 import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.utils.FormattingUtils;
-import com.github.natanbc.lavadsp.timescale.TimescalePcmAudioFilter;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -15,7 +14,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
-import java.util.Collections;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -210,13 +208,13 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     }
 
     public void setSpeed(double speed) {
-        this.speed = speed;
-
-        this.player.setFilterFactory((track, format, output)->{
-            TimescalePcmAudioFilter audioFilter = new TimescalePcmAudioFilter(output, format.channelCount, format.sampleRate);
-            audioFilter.setSpeed(speed);
-            return Collections.singletonList(audioFilter);
-        });
+//        this.speed = speed;
+//
+//        this.player.setFilterFactory((track, format, output)->{
+//            TimescalePcmAudioFilter audioFilter = new TimescalePcmAudioFilter(output, format.channelCount, format.sampleRate);
+//            audioFilter.setSpeed(speed);
+//            return Collections.singletonList(audioFilter);
+//        });
     }
 
     // Send an update to the last used channel to announce that a reboot is happening.
