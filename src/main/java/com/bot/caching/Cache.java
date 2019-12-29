@@ -19,7 +19,7 @@ public class Cache<V> {
     private MetricsManager metricsManager;
     private String name;
     private int maxIdleLifetime;
-    private final int maxTotalLifetime = 3600; // 60 Mins, JDA caching does timeout eventually, we want to refresh this before it craps out
+    private final int maxTotalLifetime = 600; // 10 Mins, JDA caching does timeout eventually, we want to refresh this before it craps out
     private int maxSize;
     private int cleanupInterval;
 
