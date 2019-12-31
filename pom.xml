@@ -277,7 +277,7 @@
         <dependency>
             <groupId>biz.paluch.logging</groupId>
             <artifactId>logstash-gelf</artifactId>
-            <version>1.11.2</version>
+            <version>1.13.0</version>
         </dependency>
         <dependency>
             <groupId>net.sf.trove4j</groupId>
