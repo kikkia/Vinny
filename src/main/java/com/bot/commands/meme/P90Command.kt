@@ -38,7 +38,7 @@ class P90Command : MemeCommand() {
         }
 
         try {
-            commandEvent.reply(HttpUtils.getRandomP90Post(canNSFW, commandEvent.args.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]))
+            commandEvent.reply(HttpUtils.getRandomP90Post(canNSFW, commandEvent.args))
         } catch (e: Exception) {
             logger.severe("Issue getting p90 post!", e)
             commandEvent.replyError("There was an error getting a post.")

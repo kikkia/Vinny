@@ -198,7 +198,7 @@ public class HttpUtils {
     }
 
     public static String getRandomP90Post(boolean canNSFW, String search) throws Exception {
-        String url = search.isEmpty() ? P90_BASE_URL + "api/random" : P90_BASE_URL + "api/search/" + search;
+        String url = search.isEmpty() ? P90_BASE_URL + "api/random" : P90_BASE_URL + "api/search/" + search.split(" ")[0];
         // Search is always nsfw, random can be locked down.
         url = (canNSFW || !search.isEmpty()) ? url : url + "?nsfw=0";
         String token = "key " + config.getConfig(Config.P90_TOKEN);
