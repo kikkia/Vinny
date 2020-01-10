@@ -6,6 +6,7 @@ A complete rewrite and overhaul of the original VinnyBot.
 
 ### [Click here to add Vinny to your server.](https://discordapp.com/oauth2/authorize?client_id=276855867796881408&scope=bot&permissions=523365751) 
 ### [Command List](docs/Commands.md)
+### [Live dashboard](https://p.datadoghq.com/sb/f38e74b49-cb74461cc4)
 ### [Questions? Join the Support Server](https://discord.gg/XMwyzxZ)
 # How to use Vinny
 1. To use Vinny in your discord server you must first add it. You can do so by following the link above. Do not edit any of the permissions that Vinny requests, those are the minimum permissions it needs to do what it does. 
@@ -15,5 +16,3 @@ A complete rewrite and overhaul of the original VinnyBot.
 
 ### Want to make a command or help contribute?
 Because Vinny is open-source it is very much welcomed for anyone to have the oppritunity to contribute to Vinny. Contributing guidelines and tips can be found [here](docs/Contributing.md)
-
-[![Bots for Discord](https://botsfordiscord.com/api/bot/276855867796881408/widget)](https://botsfordiscord.com/bots/276855867796881408)
