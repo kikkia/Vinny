@@ -128,7 +128,6 @@ public class RedditHelper {
                 tries++;
             }
         }
-
         return toReturn;
     }
 
