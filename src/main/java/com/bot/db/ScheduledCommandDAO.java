@@ -140,6 +140,17 @@ public class ScheduledCommandDAO {
         }
     }
 
+    public void recordRunComplete(int commandCount, long runtime) throws SQLException {
+        String query = "INSERT INTO scheduled_command_runs(runtime, commands_run) VALUES(?,?)";
+        try(Connection connection = write.getConnection()) {
+            try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setLong(1, runtime);
+                preparedStatement.setInt(2, commandCount);
+                preparedStatement.execute();
+            }
+        }
+    }
+
     private List<ScheduledCommand> getCommands(PreparedStatement statement) throws SQLException {
         List<ScheduledCommand> commands = new ArrayList<>();
 

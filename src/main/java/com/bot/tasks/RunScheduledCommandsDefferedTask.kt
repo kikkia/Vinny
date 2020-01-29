@@ -22,6 +22,9 @@ class RunScheduledCommandsDefferedTask() : Thread() {
 
         val scheduledCommands : List<ScheduledCommand> = scheduledCommandDAO.allScheduledCommands
 
+        val startTime = System.currentTimeMillis()
+        var commandRanCount = 0
+
         for (sCommand in scheduledCommands) {
             try {
                 val shouldRun = System.currentTimeMillis() > sCommand.lastRun + sCommand.interval
@@ -42,6 +45,7 @@ class RunScheduledCommandsDefferedTask() : Thread() {
 
                     scheduledCommandDAO.updateLastRun(sCommand.id)
                     metrics.markScheduledCommandRan(sCommand)
+                    commandRanCount++
                 }
             } catch (e: Exception) {
                 MDC.put("commandId", "" + sCommand.id)
@@ -49,6 +53,9 @@ class RunScheduledCommandsDefferedTask() : Thread() {
                 MDC.clear()
             }
         }
-        logger.info("Finished scheduled command task")
+
+        val runtime = System.currentTimeMillis() - startTime
+        scheduledCommandDAO.recordRunComplete(commandRanCount, runtime)
+        logger.info("Finished scheduled command task. Commands run: $commandRanCount")
     }
 }
