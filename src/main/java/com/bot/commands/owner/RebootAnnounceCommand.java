@@ -19,5 +19,6 @@ public class RebootAnnounceCommand extends OwnerCommand {
         for (VoiceSendHandler handler : shardingManager.getActiveVoiceSendHandlers()) {
             handler.sendUpdateToLastUsedChannel(ConstantStrings.REBOOT_VOICE_MESSAGE);
         }
+        commandEvent.reactSuccess();
     }
 }
