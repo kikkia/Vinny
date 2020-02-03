@@ -70,7 +70,7 @@ public class ChannelDAO {
     }
 
     public void addTextChannel(TextChannel textChannel) {
-        String query = "INSERT INTO text_channel(id, guild, name) VALUES (?,?,?) ON DUPLICATE KEY UPDATE name=VALUES(name)";
+        String query = "INSERT INTO text_channel(id, guild, name, nsfw_enabled) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE nsfw_enabled=VALUES(nsfw_enabled)";
         PreparedStatement preparedStatement = null;
         Connection connection = null;
 
@@ -80,6 +80,7 @@ public class ChannelDAO {
             preparedStatement.setString(1, textChannel.getId());
             preparedStatement.setString(2, textChannel.getGuild().getId());
             preparedStatement.setString(3, textChannel.getName());
+            preparedStatement.setBoolean(4, textChannel.isNSFW());
             preparedStatement.execute();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to add text channel to the db: " + e.getMessage());

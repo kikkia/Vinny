@@ -34,6 +34,7 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.channel.text.GenericTextChannelEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
+import net.dv8tion.jda.api.events.channel.text.update.TextChannelUpdateNSFWEvent;
 import net.dv8tion.jda.api.events.channel.text.update.TextChannelUpdateNameEvent;
 import net.dv8tion.jda.api.events.channel.voice.GenericVoiceChannelEvent;
 import net.dv8tion.jda.api.events.channel.voice.VoiceChannelCreateEvent;
@@ -234,6 +235,11 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onVoiceChannelUpdateName(VoiceChannelUpdateNameEvent event) {
 		executor.execute(() -> channelDAO.addVoiceChannel(event.getChannel()));
+	}
+
+	@Override
+	public void onTextChannelUpdateNSFW(TextChannelUpdateNSFWEvent event) {
+		executor.execute(() -> channelDAO.addTextChannel(event.getChannel()));
 	}
 
 	public AudioPlayerManager getManager() {
