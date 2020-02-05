@@ -49,7 +49,7 @@ class RunScheduledCommandsDefferedTask() : Thread() {
                 }
             } catch (e: Exception) {
                 MDC.put("commandId", "" + sCommand.id)
-                logger.severe("Failed to run scheduled command.", e)
+                logger.warning("Failed to run scheduled command.", e)
                 MDC.clear()
             }
         }

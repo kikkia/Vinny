@@ -53,6 +53,8 @@ public abstract class BaseCommand extends Command {
                 try (MDC.MDCCloseable commandCloseable = MDC.putCloseable("command", this.name);
                      MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
                     executeCommand(commandEvent);
+                } catch (Exception e) {
+                    logger.warning("Exception Executing command", e);
                 }
             });
         } catch (Exception e) {

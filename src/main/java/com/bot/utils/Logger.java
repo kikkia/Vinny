@@ -84,7 +84,11 @@ public class Logger {
     }
 
     public void warning(String s) {
-        log(Level.WARNING, s, null);
+        warning(s, null);
+    }
+
+    public void warning(String s, Exception e) {
+        log(Level.WARNING, s, e);
     }
 
     public void severe(String s, Exception e) {

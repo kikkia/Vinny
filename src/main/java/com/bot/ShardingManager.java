@@ -30,6 +30,7 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
@@ -232,6 +233,16 @@ public class ShardingManager {
         for (InternalShard shard : shards.values()) {
             if (shard.getJda().getGuildById(guildId) != null) {
                 return shard.getJda();
+            }
+        }
+        return null;
+    }
+
+    public User getUserFromAnyShard(Long userId) {
+        for (InternalShard shard : shards.values()) {
+            User user = shard.getJda().getUserById(userId);
+            if (user != null) {
+                return user;
             }
         }
         return null;

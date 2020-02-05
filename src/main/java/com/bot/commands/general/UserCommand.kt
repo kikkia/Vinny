@@ -1,5 +1,6 @@
 package com.bot.commands.general
 
+import com.bot.ShardingManager
 import com.bot.commands.GeneralCommand
 import com.bot.utils.FormattingUtils
 import com.jagrosh.jdautilities.command.CommandEvent
@@ -7,6 +8,7 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.User
 
 class UserCommand : GeneralCommand() {
+
     init {
         this.name = "user"
         this.help = "Gives details about a user"
@@ -15,6 +17,7 @@ class UserCommand : GeneralCommand() {
     }
 
     override fun executeCommand(commandEvent: CommandEvent) {
+        val shardingManager = ShardingManager.getInstance()
 
         val userId: Long
         val user: User?
@@ -27,9 +30,9 @@ class UserCommand : GeneralCommand() {
                 return
             }
 
-            user = commandEvent.jda.getUserById(userId)
+            user = shardingManager.getUserFromAnyShard(userId)
             if (user == null) {
-                commandEvent.replyWarning("Could not find that user on this shard")
+                commandEvent.replyWarning("Could not find that user.")
                 return
             }
         } else {
@@ -42,6 +45,7 @@ class UserCommand : GeneralCommand() {
         builder.setTitle(user.name + "#" + user.discriminator)
         builder.setImage(user.avatarUrl)
         builder.addField("Created:", FormattingUtils.formatOffsetDateTimeToDay(user.timeCreated), true)
+        // User is in the server, make the embed more server specific
         if (member != null) {
             builder.addField("Joined server:", FormattingUtils.formatOffsetDateTimeToDay(member.timeJoined), true)
             builder.setDescription(FormattingUtils.getOnlineStatusEmoji(member) + member.asMention)
@@ -54,6 +58,7 @@ class UserCommand : GeneralCommand() {
                 builder.addField("Roles", roles, false)
             }
         } else {
+            // User not in guild, use some more of the user info
             builder.setDescription("User is not in this server")
         }
 
