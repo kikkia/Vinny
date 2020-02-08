@@ -61,7 +61,7 @@ public class Main {
 
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_SCHEDULED_COMMANDS))) {
 			ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(2);
-			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 120, 10, TimeUnit.SECONDS);
+			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 120, 9, TimeUnit.SECONDS);
 		}
 
 		System.out.println("Successfully started.");

@@ -140,14 +140,28 @@ public class ScheduledCommandDAO {
         }
     }
 
-    public void recordRunComplete(int commandCount, long runtime) throws SQLException {
-        String query = "INSERT INTO scheduled_command_runs(runtime, commands_run) VALUES(?,?)";
+    public void recordRunComplete(int commandCount, long runtime, int failedCount) throws SQLException {
+        String query = "INSERT INTO scheduled_command_runs(runtime, commands_run, failed_commands) VALUES(?,?,?)";
         try(Connection connection = write.getConnection()) {
             try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setLong(1, runtime);
                 preparedStatement.setInt(2, commandCount);
+                preparedStatement.setInt(3, failedCount);
                 preparedStatement.execute();
             }
+        }
+    }
+
+    public void recordFailure(ScheduledCommand command, String message) {
+        String query = "INSERT INTO scheduled_command_failures(command_id, message) VALUES(?,?)";
+        try(Connection connection = write.getConnection()) {
+            try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, command.getId());
+                preparedStatement.setString(2, message);
+                preparedStatement.execute();
+            }
+        } catch (SQLException e) {
+            LOGGER.warning("Failed to write failed command to db", e);
         }
     }
 
