@@ -7,10 +7,7 @@ import com.bot.commands.general.*;
 import com.bot.commands.meme.*;
 import com.bot.commands.nsfw.R4cCommand;
 import com.bot.commands.nsfw.Rule34Command;
-import com.bot.commands.owner.AvatarCommand;
-import com.bot.commands.owner.ClearCacheCommand;
-import com.bot.commands.owner.RebootAnnounceCommand;
-import com.bot.commands.owner.UpdateGuildCountCommand;
+import com.bot.commands.owner.*;
 import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
 import com.bot.commands.reddit.ShitpostCommand;
@@ -168,7 +165,8 @@ public class ShardingManager {
                     new AvatarCommand(),
                     new UpdateGuildCountCommand(),
                     new ClearCacheCommand(),
-                    new RebootAnnounceCommand()
+                    new RebootAnnounceCommand(),
+                    new GuildDebugCommand()
             );
         } else {
             commandClientBuilder.useHelpBuilder(false);
