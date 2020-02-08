@@ -58,7 +58,7 @@ public class Logger {
         if (level == Level.SEVERE)
             logError(s, e);
         else if (level == Level.WARNING) {
-            logWarn(s);
+            logWarn(s, e);
         } else {
             logInfo(s);
         }
@@ -69,9 +69,9 @@ public class Logger {
         logger.log(Level.SEVERE, s, e);
     }
 
-    private void logWarn(String s) {
-        sendDislogLog(s, LogLevel.WARN, null);
-        logger.log(Level.WARNING, s);
+    private void logWarn(String s, Exception e) {
+        sendDislogLog(s, LogLevel.WARN, e);
+        logger.log(Level.WARNING, s, e);
     }
 
     private void logInfo(String s) {

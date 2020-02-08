@@ -35,6 +35,11 @@ public class CommandPermissions {
         if (commandEvent.isFromType(ChannelType.PRIVATE))
             return true;
 
+        if (commandCategory.equals(CommandCategories.OWNER)) {
+            Config config = Config.getInstance();
+            return commandEvent.getAuthor().getId().equals(config.getConfig(Config.OWNER_ID));
+        }
+
         InternalGuild guild;
 
         try {
@@ -103,6 +108,7 @@ public class CommandPermissions {
                         throw new SQLException("Voice channel is missing");
                     }
                 } catch (SQLException e) {
+                    guildDAO.addGuild(commandEvent.getGuild());
                     LOGGER.severe("Failed to get voice channel: ", e);
                     channelDAO.addVoiceChannel(commandEvent.getMember().getVoiceState().getChannel());
                     throw new ForbiddenCommandException("There is a problem with the voice channel in the db. " +
