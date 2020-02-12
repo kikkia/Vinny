@@ -138,12 +138,9 @@ public class CommandPermissions {
                     "I will attempt to fix it, please try again later. If this issue persists please contact the devs on the support server.");
         }
 
-        if (commandCategory == CommandCategories.NSFW && !textChannel.isNSFWEnabled()) {
-           throw new ForbiddenCommandException("NSFW commands are not enabled on this channel. " +
-                    "To enable it, use the `~enableNSFW` command.");
-        } else if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {
+        if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {
             throw new ForbiddenCommandException("This channel is not marked in discord as nsfw. " +
-                    "I am now honoring both discords flag and my own. To enable it, please go into the channel settings in discord and enable nsfw.");
+                    "To enable it, please go into the channel settings in discord and enable nsfw.");
         }
 
         return textChannel.isCommandsEnabled();

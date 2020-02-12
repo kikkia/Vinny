@@ -42,7 +42,7 @@ public class NewPostCommand extends RedditCommand {
                 return;
             }
 
-            isNSFWAllowed = channel.isNSFWEnabled();
+            isNSFWAllowed = commandEvent.getTextChannel().isNSFW();
         }
 
         try{

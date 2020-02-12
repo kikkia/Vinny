@@ -56,7 +56,7 @@ public class RedditHelper {
 
         if (!isChannelNSFW && subreddit.about().isNsfw()) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW subreddit detected and NSFW is not enabled on this channel. " +
-                    "To enable it, use the `~enableNSFW` command.");
+                    "Please make sure that nsfw is enabled in the discord channel settings");
             return;
         }
 
@@ -88,7 +88,7 @@ public class RedditHelper {
                 tries++;
                 if (tries == 10) {
                     commandEvent.reply(commandEvent.getClient().getWarning() + " I only found NSFW posts and NSFW is not enabled on this channel. " +
-                            "To enable it, use the `~enableNSFW` command, or you can try again and I will look at some more.");
+                            "Please make sure that nsfw is enabled in the discord channel settings.");
                     return;
                 }
             }
