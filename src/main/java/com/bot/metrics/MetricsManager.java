@@ -27,12 +27,22 @@ public class MetricsManager {
 
     private MetricsManager() {
         config = Config.getInstance();
-        statsd = new NonBlockingStatsDClient(
-                "vinny-redux.live",                          /* prefix to any stats; may be null or empty string */
-                config.getConfig(Config.DATADOG_HOSTNAME),         /* common case: localhost */
-                8125,                                         /* port */
-                new String[] {"vinny:live"}                        /* Datadog extension: Constant tags, always applied */
+        // TODO: Better way of handling metrics names
+        if (config.getConfig(Config.DISCORD_BOT_ID).equalsIgnoreCase("276855867796881408")) {
+            statsd = new NonBlockingStatsDClient(
+                    "vinny-redux.live",                          /* prefix to any stats; may be null or empty string */
+                    config.getConfig(Config.DATADOG_HOSTNAME),         /* common case: localhost */
+                    8125,                                         /* port */
+                    new String[]{"vinny:live"}                        /* Datadog extension: Constant tags, always applied */
             );
+        } else {
+            statsd = new NonBlockingStatsDClient(
+                    "vinny-redux.test",                          /* prefix to any stats; may be null or empty string */
+                    config.getConfig(Config.DATADOG_HOSTNAME),         /* common case: localhost */
+                    8125,                                         /* port */
+                    new String[]{"vinny:test"}                        /* Datadog extension: Constant tags, always applied */
+            );
+        }
     }
 
     public void markCommand(Command command, User user, Guild guild) {

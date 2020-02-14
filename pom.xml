@@ -234,9 +234,14 @@
             <version>4.0.0_50</version>
         </dependency>
         <dependency>
-            <groupId>com.github.bytealex</groupId>
+            <groupId>com.sedmelluq</groupId>
             <artifactId>lavaplayer</artifactId>
-            <version>d121f50</version>
+            <version>1.3.34</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sedmelluq</groupId>
+            <artifactId>lavaplayer-ext-youtube-rotator</artifactId>
+            <version>0.2.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.kikkia</groupId>
@@ -349,11 +354,6 @@
 
     <repositories>
         <repository>
-            <id>jcenter</id>
-            <name>jcenter-bintray</name>
-            <url>https://jcenter.bintray.com</url>
-        </repository>
-        <repository>
             <id>central</id>
             <name>bintray</name>
             <url>https://jcenter.bintray.com</url>
@@ -361,6 +361,10 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>sedmelluq</id>
+            <url>https://dl.bintray.com/sedmelluq/com.sedmelluq</url>
         </repository>
     </repositories>
 
