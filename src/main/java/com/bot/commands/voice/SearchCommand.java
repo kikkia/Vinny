@@ -3,6 +3,7 @@ package com.bot.commands.voice;
 import com.bot.Bot;
 import com.bot.commands.VoiceCommand;
 import com.bot.exceptions.MaxQueueSizeException;
+import com.bot.utils.Config;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -24,7 +25,7 @@ public class SearchCommand extends VoiceCommand {
 	public SearchCommand(Bot bot, EventWaiter eventWaiter) {
 		this.name = "search";
 		this.arguments = "<Search terms>";
-		this.help = "Searches youtube and replies with a list of tracks to play.";
+		this.help = "Searches for the track and replies with a list of tracks to play.";
 
 		this.builder = new OrderedMenu.Builder()
 				.useNumbers()
@@ -52,7 +53,9 @@ public class SearchCommand extends VoiceCommand {
 		}
 
 		commandEvent.reply("Searching for `[" + commandEvent.getArgs() + "]`",
-				m -> bot.getManager().loadItemOrdered(commandEvent.getGuild(), "ytsearch:" + commandEvent.getArgs(), new PlayHandler(m, commandEvent)));
+				m -> bot.getManager().loadItemOrdered(commandEvent.getGuild(),
+						Config.getInstance().getConfig(Config.DEFAULT_SEARCH_PROVIDER, "ytsearch:")
+								+ commandEvent.getArgs(), new PlayHandler(m, commandEvent)));
 	}
 
 	private class PlayHandler implements AudioLoadResultHandler {

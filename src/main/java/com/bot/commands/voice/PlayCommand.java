@@ -3,6 +3,7 @@ package com.bot.commands.voice;
 import com.bot.Bot;
 import com.bot.commands.VoiceCommand;
 import com.bot.exceptions.MaxQueueSizeException;
+import com.bot.utils.Config;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -54,8 +55,9 @@ public class PlayCommand extends VoiceCommand {
 			commandEvent.reply("\u231A Loading... `["+commandEvent.getArgs()+"]`", m -> bot.getManager().loadItemOrdered(commandEvent.getGuild(), URL, new PlayHandler(m, URL, commandEvent, false)));
 		}
 		else {
-			// Not a URL, Treat as a YT search
-			commandEvent.reply("\u231A Searching for `["+commandEvent.getArgs()+"]`", m -> bot.getManager().loadItemOrdered(commandEvent.getGuild(), "ytsearch:" + commandEvent.getArgs(), new PlayHandler(m, commandEvent.getArgs(), commandEvent, true)));
+			// Not a URL, Treat as a search
+			String searchPrefix = Config.getInstance().getConfig(Config.DEFAULT_SEARCH_PROVIDER, "ytsearch:");
+			commandEvent.reply("\u231A Searching for `["+commandEvent.getArgs()+"]`", m -> bot.getManager().loadItemOrdered(commandEvent.getGuild(),  searchPrefix + commandEvent.getArgs(), new PlayHandler(m, commandEvent.getArgs(), commandEvent, true)));
 		}
 	}
 

@@ -95,6 +95,8 @@ public class Config {
 
     public static final String ENABLE_SCHEDULED_COMMANDS = "ENABLE_SCHEDULED_COMMANDS";
 
+    public static final String DEFAULT_SEARCH_PROVIDER = "DEFAULT_SEARCH_PROVIDER";
+
     private Config() {
         this.configFile = new File("res/config/config.conf");
         configs = new HashMap<>();
@@ -126,8 +128,16 @@ public class Config {
         }
     }
 
+    public void setConfig(String key, String value) {
+        configs.put(key, value);
+    }
+
 
     public String getConfig(String key) {
             return configs.get(key);
+    }
+
+    public String getConfig(String key, String defaultValue) {
+        return configs.getOrDefault(key, defaultValue);
     }
 }

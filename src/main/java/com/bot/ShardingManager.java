@@ -166,7 +166,8 @@ public class ShardingManager {
                     new UpdateGuildCountCommand(),
                     new ClearCacheCommand(),
                     new RebootAnnounceCommand(),
-                    new GuildDebugCommand()
+                    new GuildDebugCommand(),
+                    new SwitchDefaultSearchCommand()
             );
         } else {
             commandClientBuilder.useHelpBuilder(false);
