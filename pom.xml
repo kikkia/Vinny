@@ -364,8 +364,7 @@
         </repository>
         <repository>
             <id>sedmelluq</id>
-            <name>com.sedmelluq</name>
-            <url>https://dl.bintray.com/</url>
+            <url>https://dl.bintray.com/sedmelluq/com.sedmelluq</url>
         </repository>
     </repositories>
 
