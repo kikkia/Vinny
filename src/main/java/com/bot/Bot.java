@@ -25,6 +25,8 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceMan
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
+import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -78,8 +80,19 @@ public class Bot extends ListenerAdapter {
 		this.config = Config.getInstance();
 		this.manager = new DefaultAudioPlayerManager();
 
-		manager.registerSourceManager(new YoutubeAudioSourceManager(true, LavaPlayerUtils.getIPRoutePlanner()));
-		manager.registerSourceManager(new SoundCloudAudioSourceManager());
+		YoutubeAudioSourceManager ytSource = new YoutubeAudioSourceManager(true);
+
+		manager.registerSourceManager(ytSource);
+
+		AbstractRoutePlanner planner = LavaPlayerUtils.getIPRoutePlanner();
+		if (planner != null) {
+			YoutubeIpRotatorSetup setup = new YoutubeIpRotatorSetup(planner);
+			setup.forSource(ytSource)
+					.forManager(manager);
+			setup.setup();
+		}
+
+		manager.registerSourceManager(new SoundCloudAudioSourceManager.Builder().withAllowSearch(true).build());
 		manager.registerSourceManager(new BandcampAudioSourceManager());
 		manager.registerSourceManager(new VimeoAudioSourceManager());
 		manager.registerSourceManager(new TwitchStreamAudioSourceManager());

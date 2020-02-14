@@ -1,12 +1,15 @@
 package com.bot.utils;
 
-import com.sedmelluq.discord.lavaplayer.tools.Ipv4Block;
-import com.sedmelluq.discord.lavaplayer.tools.http.AbstractRoutePlanner;
-import com.sedmelluq.discord.lavaplayer.tools.http.RotatingIpRoutePlanner;
+import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
+import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingIpRoutePlanner;
+import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.IpBlock;
+import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv4Block;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -38,6 +41,8 @@ public class LavaPlayerUtils {
         Predicate<InetAddress> filter = (inetAddress -> !excluded.containsKey(inetAddress));
         logger.info("Creating routeplanner with " + block.getSize() + " ips");
 
-        return new RotatingIpRoutePlanner(block, filter, true);
+        List<IpBlock> blocks = new ArrayList<>();
+        blocks.add(block);
+        return new RotatingIpRoutePlanner(blocks, filter, true);
     }
 }
