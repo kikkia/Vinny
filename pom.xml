@@ -367,6 +367,11 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>sedmelluq</id>
+            <name>com.sedmelluq</name>
+            <url>https://dl.bintray.com/</url>
+        </repository>
     </repositories>
 
 </project>
