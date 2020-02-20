@@ -1,7 +1,7 @@
 package com.bot.utils;
 
+import com.bot.voice.MyRotatingIpPlanner;
 import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
-import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingIpRoutePlanner;
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.IpBlock;
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv4Block;
 
@@ -43,6 +43,6 @@ public class LavaPlayerUtils {
 
         List<IpBlock> blocks = new ArrayList<>();
         blocks.add(block);
-        return new RotatingIpRoutePlanner(blocks, filter, true);
+        return new MyRotatingIpPlanner(blocks, filter, true);
     }
 }
