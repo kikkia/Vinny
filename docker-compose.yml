@@ -3,3 +3,4 @@ services:
   vinny:
     build: .
     restart: always
+    network_mode: host
