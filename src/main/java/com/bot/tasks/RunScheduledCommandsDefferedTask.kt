@@ -4,12 +4,10 @@ import com.bot.ShardingManager
 import com.bot.db.ScheduledCommandDAO
 import com.bot.metrics.MetricsManager
 import com.bot.models.ScheduledCommand
-import com.bot.utils.FormattingUtils
 import com.bot.utils.Logger
 import com.bot.utils.ScheduledCommandUtils
 import net.dv8tion.jda.api.JDA
 import org.slf4j.MDC
-import java.util.concurrent.TimeUnit
 
 class RunScheduledCommandsDefferedTask() : Thread() {
 
@@ -41,8 +39,9 @@ class RunScheduledCommandsDefferedTask() : Thread() {
                     val client = ShardingManager.getInstance().commandClientImpl
                     client.onEvent(event)
 
-                    event.channel.sendMessage("> Command scheduled by " +
-                            FormattingUtils.getUserNameOrId(sCommand.guild, sCommand.author)).queueAfter(2, TimeUnit.SECONDS)
+                    // Commenting out due to feedback
+                    // event.channel.sendMessage("> Command scheduled by " +
+                    //        FormattingUtils.getUserNameOrId(sCommand.guild, sCommand.author)).queueAfter(2, TimeUnit.SECONDS)
 
                     scheduledCommandDAO.updateLastRun(sCommand.id)
                     metrics.markScheduledCommandRan(sCommand)
