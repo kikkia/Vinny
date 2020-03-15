@@ -15,7 +15,6 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Role;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -67,17 +66,14 @@ public class CommandPermissions {
         // Get users role, if they have none then use default
         List<Role> roleList;
 
+        Role highestRole;
+
         // For scheduled commands, if member left then just get @everyone perms
         if (commandEvent.getMember() == null) {
-            roleList = new ArrayList<>();
-        } else {
-            roleList =  commandEvent.getMember().getRoles();
-        }
-        Role highestRole;
-        if (roleList.isEmpty())
             highestRole = commandEvent.getGuild().getPublicRole();
-        else
+        } else {
             highestRole = commandEvent.getMember().getRoles().get(0);
+        }
 
         if (!commandEvent.getMember().isOwner() && highestRole.getPosition() < requiredRole.getPosition()) {
             throw new ForbiddenCommandException("You do not have the required role to use this command. You must have at least the " +
