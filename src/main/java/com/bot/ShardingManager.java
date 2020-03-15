@@ -113,7 +113,6 @@ public class ShardingManager {
                     new InviteCommand(),
                     new SupportCommand(),
                     new StatsCommand(),
-                    new ShardStatsCommand(),
                     new PingCommand(),
                     new GetSettingsCommand(),
                     new PrefixesCommand(),
@@ -159,19 +158,27 @@ public class ShardingManager {
                     new Rule34Command(),
 
                     // 4chan commands
-                    new R4cCommand(),
-
-                    // Owner Commands -- All hidden
-                    new AvatarCommand(),
-                    new UpdateGuildCountCommand(),
-                    new ClearCacheCommand(),
-                    new RebootAnnounceCommand(),
-                    new GuildDebugCommand(),
-                    new SwitchDefaultSearchCommand()
+                    new R4cCommand()
             );
         } else {
             commandClientBuilder.useHelpBuilder(false);
         }
+
+        commandClientBuilder.addCommands(
+                // Owner Commands -- All hidden
+                new AvatarCommand(),
+                new UpdateGuildCountCommand(),
+                new ClearCacheCommand(),
+                new RebootAnnounceCommand(),
+                new GuildDebugCommand(),
+                new SwitchDefaultSearchCommand(),
+                new InGuildCommand(),
+                new InChannelCommand(),
+                new FUserCommand(),
+                new ForceSendMessage(),
+                new ShardCommand(),
+                new ShardStatsCommand()
+                );
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/JessWalters/Vinny-Redux/blob/master/docs/Commands.md");
@@ -231,6 +238,15 @@ public class ShardingManager {
     public JDA getShardForGuild(String guildId) {
         for (InternalShard shard : shards.values()) {
             if (shard.getJda().getGuildById(guildId) != null) {
+                return shard.getJda();
+            }
+        }
+        return null;
+    }
+
+    public JDA getShardForChannel(String channelId) {
+        for (InternalShard shard : shards.values()) {
+            if (shard.getJda().getGuildChannelById(channelId) != null) {
                 return shard.getJda();
             }
         }

@@ -98,7 +98,7 @@ public class Config {
     public static final String DEFAULT_SEARCH_PROVIDER = "DEFAULT_SEARCH_PROVIDER";
 
     private Config() {
-        this.configFile = new File("res/config/config.conf");
+        this.configFile = new File("res/config/config_live.conf");
         configs = new HashMap<>();
 
         try {
