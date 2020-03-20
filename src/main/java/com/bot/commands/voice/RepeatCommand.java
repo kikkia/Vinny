@@ -8,8 +8,8 @@ public class RepeatCommand extends VoiceCommand {
 
 	public RepeatCommand() {
 		this.name = "repeat";
-		this.arguments = "`all` for repeat all, no input for repeat one";
-		this.help = "Toggles repeating the current track or all based on input";
+		this.arguments = "";
+		this.help = "Toggles repeating the current playlist";
 	}
 
 	@Override
@@ -18,16 +18,13 @@ public class RepeatCommand extends VoiceCommand {
 		if (handler == null) {
 			commandEvent.reply(commandEvent.getClient().getWarning() + " I am not currently connected to voice.");
 		}
+		else if (handler.isRepeat()) {
+			handler.setRepeat(false);
+			commandEvent.reply(commandEvent.getClient().getSuccess() + " Repeat is now off.");
+		}
 		else {
-			if (commandEvent.getArgs().equalsIgnoreCase("all")) {
-				handler.setRepeatAll(!handler.isRepeatAll());
-				String msg = handler.isRepeatAll() ? "on." : "off.";
-				commandEvent.replySuccess("Repeat all is now " + msg);
-			} else {
-				handler.setRepeatOne(!handler.isRepeatOne());
-				String msg = handler.isRepeatOne() ? "on." : "off.";
-				commandEvent.replySuccess("Repeat one is now " + msg);
-			}
+			handler.setRepeat(true);
+			commandEvent.reply(commandEvent.getClient().getSuccess() + " Repeat is now on.");
 		}
 	}
 }

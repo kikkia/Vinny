@@ -27,7 +27,6 @@ public abstract class BaseCommand extends Command {
             guild = commandEvent.getGuild();
 
         metricsManager.markCommand(this, commandEvent.getAuthor(), guild);
-        commandEvent.getTextChannel().sendTyping().queue();
 
         // Check the permissions to do the command
         try {

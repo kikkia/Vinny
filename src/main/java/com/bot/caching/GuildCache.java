@@ -28,7 +28,7 @@ public class GuildCache {
     private GuildCache() {
         Config config = Config.getInstance();
         // Set or default the settings for the map
-        MAX_SIZE = config.getConfig(Config.GUILD_PREFS_CACHE_MAX_ITEMS) == null ? 1000 : Integer.parseInt(config.getConfig(Config.GUILD_PREFS_CACHE_MAX_ITEMS));
+        MAX_SIZE = config.getConfig(Config.GUILD_PREFS_CACHE_MAX_ITEMS) == null ? 500 : Integer.parseInt(config.getConfig(Config.GUILD_PREFS_CACHE_MAX_ITEMS));
         CACHE_OBJECT_LIFETIME = config.getConfig(Config.GUILD_PREFS_CACHE_OBJECT_LIFETIME) == null ? 1200 : Integer.parseInt(config.getConfig(Config.GUILD_PREFS_CACHE_OBJECT_LIFETIME));
         CACHE_CHECK_INTERVAL = config.getConfig(Config.GUILD_PREFS_CACHE_CLEANUP_INTERVAL) == null ? 300 : Integer.parseInt(config.getConfig(Config.GUILD_PREFS_CACHE_CLEANUP_INTERVAL));
 
