@@ -60,17 +60,6 @@ Resumes the audio queue if it is currently paused.
 ### `skip`
 Skips to the next track in the queue. (Only if there is a next track to skip to.)
 
-### `remove`
-Removes tracks from the current queue by either a given (position in queue, url, track name)
-* `~remove 4` - Removes the 4th next track in the queue.
-* `~remove track title` - Removes all tracks in the queue with the given title (Case insensitive)
-* `~remove url` - Removes all tracks in the queue with the given url
-
-### `repeat`
-Sets the current queue to loop through all tracks, or the next track
-* `~repeat` - Repeats the next track in the loop (Run command again or `repeat all` to turn it off)
-* `~repeat all` - Loops over the whole queue continuously. (When track ends it gets added to the end.)
-
 ### `volume`
 Sets the volume of the voice output. With no arguments it displays the current volume. Volume can range between 1 and 200. 
 * `~volume 50` - Sets the volume to 50%.

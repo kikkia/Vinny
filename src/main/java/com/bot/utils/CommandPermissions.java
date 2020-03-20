@@ -65,10 +65,7 @@ public class CommandPermissions {
 
         // Get users role, if they have none then use default
         List<Role> roleList;
-
         Role highestRole;
-
-        // For scheduled commands, if member left then just get @everyone perms
         if (commandEvent.getMember() == null) {
             highestRole = commandEvent.getGuild().getPublicRole();
         } else {
