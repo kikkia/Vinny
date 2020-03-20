@@ -64,18 +64,12 @@ public class CommandPermissions {
         }
 
         // Get users role, if they have none then use default
-        List<Role> roleList;
+        List<Role> roleList = commandEvent.getMember().getRoles();
         Role highestRole;
-        if (commandEvent.getMember() == null) {
+        if (roleList.isEmpty())
             highestRole = commandEvent.getGuild().getPublicRole();
-        } else {
-            roleList = commandEvent.getMember().getRoles();
-            if (roleList.isEmpty()) {
-                highestRole = commandEvent.getGuild().getPublicRole();
-            } else {
-                highestRole = commandEvent.getMember().getRoles().get(0);
-            }
-        }
+        else
+            highestRole = commandEvent.getMember().getRoles().get(0);
 
         if (!commandEvent.getMember().isOwner() && highestRole.getPosition() < requiredRole.getPosition()) {
             throw new ForbiddenCommandException("You do not have the required role to use this command. You must have at least the " +
