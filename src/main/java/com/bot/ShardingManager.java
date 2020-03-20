@@ -86,6 +86,7 @@ public class ShardingManager {
                     new PlayCommand(bot),
                     new SearchCommand(bot, waiter),
                     new NowPlayingCommand(),
+                    new RemoveTrackCommand(bot),
                     new PauseCommand(),
                     new RepeatCommand(),
                     new StopCommand(),
