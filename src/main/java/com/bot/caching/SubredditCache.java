@@ -24,7 +24,7 @@ public class SubredditCache {
 
     private SubredditCache() {
         // Just doing some default values here
-        MAX_SIZE = 200;
+        MAX_SIZE = 100;
         CACHE_CHECK_INTERVAL = 300;
         CACHE_OBJECT_LIFETIME = 600;
 
