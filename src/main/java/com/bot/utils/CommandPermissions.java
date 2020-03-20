@@ -72,7 +72,12 @@ public class CommandPermissions {
         if (commandEvent.getMember() == null) {
             highestRole = commandEvent.getGuild().getPublicRole();
         } else {
-            highestRole = commandEvent.getMember().getRoles().get(0);
+            roleList = commandEvent.getMember().getRoles();
+            if (roleList.isEmpty()) {
+                highestRole = commandEvent.getGuild().getPublicRole();
+            } else {
+                highestRole = commandEvent.getMember().getRoles().get(0);
+            }
         }
 
         if (!commandEvent.getMember().isOwner() && highestRole.getPosition() < requiredRole.getPosition()) {
