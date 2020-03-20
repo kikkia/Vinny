@@ -30,7 +30,8 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     private AudioPlayer player;
     private final ByteBuffer buffer;
     private final MutableAudioFrame frame;
-    private boolean repeat;
+    private boolean repeatOne;
+    private boolean repeatAll;
     private boolean lockVolume;
     private double speed;
 
@@ -38,7 +39,8 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         this.player = player;
         this.tracks = new LinkedBlockingQueue<>();
         this.nowPlaying = null;
-        this.repeat = false;
+        this.repeatOne = false;
+        this.repeatAll = false;
         this.lockVolume = false;
 
         this.buffer = ByteBuffer.allocate(1024);
@@ -96,7 +98,8 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         player.setPaused(false);
         player.stopTrack();
         player.destroy();
-        repeat = false;
+        repeatOne = false;
+        repeatAll = false;
         nowPlaying = null;
         setSpeed(1.0);
     }
@@ -122,22 +125,32 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        if (endReason == AudioTrackEndReason.FINISHED && repeat) {
-            try {
-                queueTrack(track.makeClone(), requester, requesterName, lastUsedChannel);
-            } catch (MaxQueueSizeException e) {
-                // Unused since we are not adding a track
+
+        // TODO: cleanup dirty logic in this func
+        if (endReason == AudioTrackEndReason.FINISHED) {
+            if (repeatOne) {
+                try {
+                    queueTrack(track.makeClone(), requester, requesterName, lastUsedChannel);
+                } catch (MaxQueueSizeException e) {
+                    // Unused since we are not adding a track
+                }
+                return;
             }
-            return;
-        }
-        else if (endReason != AudioTrackEndReason.FINISHED) {
-            return;
         }
 
         QueuedAudioTrack nextTrack = tracks.poll();
-        // If nextTrack is null then we are dont
+        // If nextTrack is null then we are done
         if (nextTrack == null) {
-            stop();
+            if (repeatAll) {
+                // Just repeat the playing track
+                try {
+                    queueTrack(track.makeClone(), requester, requesterName, lastUsedChannel);
+                } catch (MaxQueueSizeException e) {
+                    // Unused since we are not adding a track
+                }
+            } else {
+                stop();
+            }
         }
         else if (endReason.mayStartNext){
             requester = nextTrack.getRequesterID();
@@ -146,15 +159,38 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             nowPlaying = nextTrack;
 
             sendNowPlayingUpdate();
+            if (repeatAll) {
+                try {
+                    queueTrack(track.makeClone(), requester, requesterName, lastUsedChannel);
+                } catch (MaxQueueSizeException e) {
+                    // Unused since we are not adding a track
+                }
+            }
         }
     }
 
-    public boolean isRepeat() {
-        return repeat;
+    public boolean isRepeatOne() {
+        return repeatOne;
     }
 
-    public void setRepeat(boolean repeat) {
-        this.repeat = repeat;
+    public void setRepeatOne(boolean repeatOne) {
+        // If repeat all is on, and we are turning on repeat one, turn off repeatAll
+        if (repeatAll && repeatOne) {
+            repeatAll = false;
+        }
+        this.repeatOne = repeatOne;
+    }
+
+    public boolean isRepeatAll() {
+        return repeatAll;
+    }
+
+    public void setRepeatAll(boolean repeatAll) {
+        // If repeat one is on, and we are turning on repeat all, turn off repeatOne
+        if (repeatOne && repeatAll) {
+            repeatOne = false;
+        }
+        this.repeatAll = repeatAll;
     }
 
     public static boolean isSongTooLong(AudioTrack track) {
