@@ -3,13 +3,13 @@ package com.bot.commands.nsfw;
 import com.bot.caching.R34Cache;
 import com.bot.commands.NSFWCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.entities.ChannelType;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
@@ -42,8 +42,6 @@ public class Rule34Command extends NSFWCommand {
 
         try {
             if (imageUrls == null) {
-                if (!commandEvent.isFromType(ChannelType.PRIVATE))
-                    commandEvent.getTextChannel().sendTyping().queue();
                 imageUrls = new ArrayList<>();
                 imageUrls.addAll(getImageURLFromSearch(r34url));
                 imageUrls.addAll(getImageURLFromSearch(booruUrl));
@@ -54,15 +52,28 @@ public class Rule34Command extends NSFWCommand {
         } catch (IllegalArgumentException e) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " I couldn't find any results for that search.");
         } catch (Exception e) {
-            logger.severe("Something went wrong getting r34 post: ", e);
-            commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong getting the image, please try again.");
-            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
+            if (imageUrls == null || imageUrls.isEmpty()) {
+                logger.severe("Something went wrong getting r34 post: ", e);
+                commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong getting the image, please try again.");
+                metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
+            } else {
+                logger.warning("Failed to get some r34 posts, but some exist... Attempting to send them", e);
+                cache.put(commandEvent.getArgs(), imageUrls);
+                String selected = imageUrls.get(random.nextInt(imageUrls.size()));
+                commandEvent.reply(selected);
+            }
         }
     }
 
     private List<String> getImageURLFromSearch(String url) throws Exception{
         HttpGet get = new HttpGet(url);
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
+        int timeout = 4;
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(timeout * 1000)
+                .setConnectionRequestTimeout(timeout * 1000)
+                .setSocketTimeout(timeout * 1000).build();
+
+        try (CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build()) {
 
             ResponseHandler<String> responseHandler = response -> {
                 int status = response.getStatusLine().getStatusCode();
