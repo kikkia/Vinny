@@ -58,11 +58,6 @@ public class CommandPermissions {
         // Check the roles returned
         Role requiredRole = commandEvent.getGuild().getRoleById(guild.getRequiredPermission(commandCategory));
 
-        // We check owner as well, because if they are the owner they get around this check
-        if (requiredRole == null) {
-            throw new PermsOutOfSyncException("Role required for permission not found.");
-        }
-
         // Get users role, if they have none then use default
         List<Role> roleList;
 
@@ -82,6 +77,13 @@ public class CommandPermissions {
             }
             isOwner = commandEvent.isOwner();
         }
+
+
+        // We check owner as well, because if they are the owner they get around this check
+        if (requiredRole == null && !isOwner) {
+            throw new PermsOutOfSyncException("Role required for permission not found.");
+        }
+
 
         if (!isOwner && highestRole.getPosition() < requiredRole.getPosition()) {
             throw new ForbiddenCommandException("You do not have the required role to use this command. You must have at least the " +
