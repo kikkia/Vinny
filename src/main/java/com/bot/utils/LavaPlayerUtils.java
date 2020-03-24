@@ -23,7 +23,7 @@ public class LavaPlayerUtils {
     public static AbstractRoutePlanner getIPRoutePlanner() {
         Config config = Config.getInstance();
 
-        if (!Boolean.parseBoolean(config.getConfig(Config.ENABLE_YT_IP_ROUTING))) {
+        if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_YT_IP_ROUTING_V6))) {
            return getIPV6RoutePlanner();
         }
 
