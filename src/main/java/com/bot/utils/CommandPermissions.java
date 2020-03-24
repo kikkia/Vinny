@@ -59,7 +59,7 @@ public class CommandPermissions {
         Role requiredRole = commandEvent.getGuild().getRoleById(guild.getRequiredPermission(commandCategory));
 
         // We check owner as well, because if they are the owner they get around this check
-        if (requiredRole == null && !commandEvent.getMember().isOwner()) {
+        if (requiredRole == null) {
             throw new PermsOutOfSyncException("Role required for permission not found.");
         }
 
@@ -67,10 +67,12 @@ public class CommandPermissions {
         List<Role> roleList;
 
         Role highestRole;
+        boolean isOwner;
 
         // For scheduled commands, if member left then just get @everyone perms
         if (commandEvent.getMember() == null) {
             highestRole = commandEvent.getGuild().getPublicRole();
+            isOwner = false;
         } else {
             roleList = commandEvent.getMember().getRoles();
             if (roleList.isEmpty()) {
@@ -78,9 +80,10 @@ public class CommandPermissions {
             } else {
                 highestRole = commandEvent.getMember().getRoles().get(0);
             }
+            isOwner = commandEvent.isOwner();
         }
 
-        if (!commandEvent.getMember().isOwner() && highestRole.getPosition() < requiredRole.getPosition()) {
+        if (!isOwner && highestRole.getPosition() < requiredRole.getPosition()) {
             throw new ForbiddenCommandException("You do not have the required role to use this command. You must have at least the " +
                     requiredRole.getName() + " role or higher to use " + commandCategory.getName() + " commands.");
         }

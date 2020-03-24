@@ -86,6 +86,13 @@ public class Config {
     // Excluded addresses from the ip block (comma separated)
     public static final String EXCLUDED_ADDRESSES = "EXCLUDED_IPV4";
 
+    // Enable IP block routing for youtube
+    public static final String ENABLE_YT_IP_ROUTING_V6 = "ENABLE_YT_IP_ROUTING_V6";
+    // The IPv4 CIDR block to use
+    public static final String IPV6_IP_BLOCK = "IPV6_IP_BLOCK";
+
+
+
     // Total shards
     public static final String TOTAL_SHARDS = "TOTAL_SHARDS";
     // 0 indexed shard to start with
