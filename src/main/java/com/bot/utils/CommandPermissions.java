@@ -75,7 +75,7 @@ public class CommandPermissions {
             } else {
                 highestRole = commandEvent.getMember().getRoles().get(0);
             }
-            isOwner = commandEvent.isOwner();
+            isOwner = commandEvent.getMember().isOwner();
         }
 
 
