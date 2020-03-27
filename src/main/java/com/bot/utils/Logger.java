@@ -1,8 +1,8 @@
 package com.bot.utils;
 
-import api.DislogClient;
-import models.Log;
-import models.LogLevel;
+import com.kikkia.dislog.api.DislogClient;
+import com.kikkia.dislog.models.Log;
+import com.kikkia.dislog.models.LogLevel;
 
 import java.util.logging.Level;
 
@@ -39,10 +39,10 @@ public class Logger {
 
             DislogClient.Builder builder = new DislogClient.Builder()
                     .setUsername("Not Vinny")
-                    .setDebugWebhookUrl(debugWebhook)
-                    .setInfoWebhookUrl(infoWebhook)
-                    .setWarnWebhookUrl(warnWebhook)
-                    .setErrorWebhookUrl(errorWebhook)
+                    .addWebhook(LogLevel.DEBUG, debugWebhook)
+                    .addWebhook(LogLevel.INFO, infoWebhook)
+                    .addWebhook(LogLevel.WARN, warnWebhook)
+                    .addWebhook(LogLevel.ERROR, errorWebhook)
                     .setIdentifier(hostIdentifier)
                     .printStackTrace(true);
             this.dislogClient = builder.build();
@@ -98,7 +98,7 @@ public class Logger {
     private void sendDislogLog(String s, LogLevel logLevel, Exception e) {
         if (channelLoggingEnabled) {
             Log log = new Log(s, logLevel, e);
-            dislogClient.sendLog(log);
+            dislogClient.queueLog(log);
         }
     }
 }
