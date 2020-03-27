@@ -84,7 +84,7 @@ public class MarkovModel {
     public String getPhrase() {
 
         Vector<String> generatedPhrase = new Vector<>();
-
+        int length = new Random().nextInt(150) + 150;
         String nextWord;
 
         // Select the first word
@@ -96,7 +96,7 @@ public class MarkovModel {
         // Keep looping through the words until we've reached the end
         int tries = 0;
         int doubleDepthStreak = 0; // To keep diversity we dont want too many double depths in a row.
-        while (generatedPhrase.size() < 200 && tries < 500) {
+        while (generatedPhrase.size() < length && tries < 300) {
             boolean canDoubleDepth = generatedPhrase.size() > 1 && doubleDepthStreak < 2;
             Vector<String> wordSelection;
 

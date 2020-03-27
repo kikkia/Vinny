@@ -1,7 +1,11 @@
 package com.bot.utils;
 
 import com.bot.db.GuildDAO;
+import com.bot.models.MarkovModel;
 import com.bot.models.PixivPost;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.Webhook;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -11,7 +15,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.MDC;
 
+import java.io.IOException;
 import java.util.Random;
 
 
@@ -247,5 +253,41 @@ public class HttpUtils {
                 postBaseUrl + selectedPost.getInt("id"),
                 selectedPost.getJSONObject("user").getString("name"),
                 selectedPost.getJSONObject("user").getInt("id"));
+    }
+
+
+    public static void sendCommentHook(Webhook webhook, MarkovModel model, Member member, TextChannel channel) throws Exception {
+        String message = model.getPhrase();
+        JSONObject toSend = new JSONObject();
+
+        message = message.replaceAll("@", "(at)");
+
+        if (member != null) {
+            toSend.put("username", member.getEffectiveName());
+            toSend.put("avatar_url", member.getUser().getAvatarUrl());
+        } else {
+            toSend.put("username", channel.getName());
+            toSend.put("avatar_url", channel.getGuild().getIconUrl());
+        }
+        toSend.put("content", message);
+
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpPost post = new HttpPost(webhook.getUrl());
+            post.addHeader("Content-type", "application/json");
+            post.setEntity(new StringEntity(toSend.toString()));
+
+            HttpResponse response = client.execute(post);
+
+            if (response.getStatusLine().getStatusCode() >= 400) {
+                try(MDC.MDCCloseable closeable = MDC.putCloseable("error_message",
+                        IOUtils.toString(response.getEntity().getContent()))) {
+                    logger.warning("Posting to discord webhook failed with code " +
+                            response.getStatusLine().getStatusCode());
+                }
+            }
+        } catch (IOException e) {
+            logger.severe("Failed to send webhook for comment", e);
+            throw new RuntimeException("Failed to send webhook to channel.");
+        }
     }
 }

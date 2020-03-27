@@ -3,6 +3,7 @@ package com.bot.commands.meme
 import com.bot.caching.MarkovModelCache
 import com.bot.commands.MemeCommand
 import com.bot.models.MarkovModel
+import com.bot.utils.HttpUtils
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
 import net.dv8tion.jda.api.EmbedBuilder
@@ -61,7 +62,6 @@ class CommentCommand : MemeCommand() {
         } else {
             user = mentionedUsers[0]
         }
-
 
         // See if we have the model cached. If so we can skip rebuilding it. (We user server+user so that it does not go across servers)
         markov = markovCache.get(commandEvent.guild.id + user!!.id)
@@ -140,7 +140,7 @@ class CommentCommand : MemeCommand() {
     }
 
     // Sends a formatted comment for a channel or a user
-    private fun sendComment(commandEvent: CommandEvent, markovModel: MarkovModel, user: User?, channel: TextChannel?) {
+    private fun sendCommentEmbed(commandEvent: CommandEvent, markovModel: MarkovModel, user: User?, channel: TextChannel?) {
         val builder = EmbedBuilder()
         if (user != null)
             builder.setAuthor(user.name, user.avatarUrl, user.avatarUrl)
@@ -148,7 +148,8 @@ class CommentCommand : MemeCommand() {
         if (channel != null)
             builder.setAuthor(channel.name, commandEvent.guild.iconUrl, commandEvent.guild.iconUrl)
 
-        builder.setFooter("Messages: " + markovModel.messageCount + "  -  Words: " + markovModel.wordCount, null)
+        builder.setFooter("Messages: " + markovModel.messageCount + "  -  Words: " + markovModel.wordCount +
+                "\nFor a more realistic comment, give me the MANAGE_WEBHOOKS permission.", null)
 
         var phrase = markovModel.phrase
         if (phrase.length > 1020) {
@@ -158,5 +159,25 @@ class CommentCommand : MemeCommand() {
         builder.addField("", phrase, false)
         builder.setColor(Color(0, 255, 0))
         commandEvent.reply(builder.build())
+    }
+
+    private fun sendComment(commandEvent: CommandEvent, markovModel: MarkovModel, user: User?, channel: TextChannel?) {
+        if (commandEvent.selfMember.hasPermission(commandEvent.textChannel, Permission.MANAGE_WEBHOOKS)) {
+            val hooks = commandEvent.textChannel.retrieveWebhooks().complete()
+
+            // If there are webhooks, lets send that way
+            var vinnyHook = hooks.stream().filter{ it.name == "vinny" }.findFirst()
+            if (!vinnyHook.isPresent) {
+                vinnyHook = Optional.of(commandEvent.textChannel.createWebhook("vinny").complete())
+            }
+
+            if (user != null) {
+                HttpUtils.sendCommentHook(vinnyHook.get(), markovModel, commandEvent.guild.getMember(user), null)
+            } else {
+                HttpUtils.sendCommentHook(vinnyHook.get(), markovModel, null, channel)
+            }
+        } else {
+            sendCommentEmbed(commandEvent, markovModel, user, channel)
+        }
     }
 }

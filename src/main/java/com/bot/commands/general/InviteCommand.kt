@@ -17,5 +17,6 @@ class InviteCommand : GeneralCommand() {
         val user = commandEvent.author
         val privateChannel = user.openPrivateChannel().complete()
         privateChannel.sendMessage("https://discordapp.com/oauth2/authorize?client_id=276855867796881408&scope=bot&permissions=1744305473").queue()
+        commandEvent.reactSuccess()
     }
 }
