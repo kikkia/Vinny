@@ -71,7 +71,7 @@ public class ShardingManager {
         boolean silentDeploy = Boolean.parseBoolean(config.getConfig(Config.SILENT_DEPLOY));
 
         shards = new HashMap<>();
-        executor = Executors.newScheduledThreadPool(10);
+        executor = Executors.newScheduledThreadPool(50);
         Bot bot = new Bot();
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
