@@ -1,4 +1,4 @@
-FROM maven:3.5-jdk-8-alpine AS build
+FROM maven:3.6.3-jdk-11-slim AS build
 WORKDIR /app
 COPY . /app/
 RUN mvn clean package
