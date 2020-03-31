@@ -5,7 +5,6 @@ import com.bot.db.ChannelDAO
 import com.bot.models.PixivPost
 import com.bot.utils.HttpUtils
 import com.jagrosh.jdautilities.command.CommandEvent
-import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.ChannelType
 
 class PixivCommand : GeneralCommand() {
@@ -57,11 +56,9 @@ class PixivCommand : GeneralCommand() {
             return
         }
 
-        val embedBuilder = EmbedBuilder()
-        embedBuilder.setThumbnail(pixivPost.url)
-        embedBuilder.setTitle(pixivPost.title)
-        embedBuilder.setDescription(pixivPost.url)
-        embedBuilder.setFooter("Author: " + pixivPost.authorName, null)
-        commandEvent.reply(embedBuilder.build())
+        val urlParts = pixivPost.url.split('=')
+        val url = "https://www.pixiv.net/en/artworks/" + urlParts[urlParts.size - 1]
+
+        commandEvent.reply(url)
     }
 }
