@@ -143,6 +143,9 @@ Support Vinny by upvoting on bot lists.
 ### `invite`
 Sends a link to invite the bot to your server.
 
+### `review`
+Leave Vinny a review, your feedback will help the bot grow and improve!
+
 ### `support`
 Gives a link to the support server.
   

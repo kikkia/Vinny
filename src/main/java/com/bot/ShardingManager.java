@@ -123,6 +123,7 @@ public class ShardingManager {
                     new ServerInfoCommand(),
                     new GamesCommand(waiter),
                     new PixivCommand(),
+                    new ReviewCommand(),
 
                     // Alias Commands
                     new AliasesCommand(waiter),
