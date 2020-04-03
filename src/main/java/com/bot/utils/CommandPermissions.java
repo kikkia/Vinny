@@ -6,9 +6,7 @@ import com.bot.db.MembershipDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.models.InternalGuild;
-import com.bot.models.InternalGuildMembership;
 import com.bot.models.InternalTextChannel;
-import com.bot.models.InternalVoiceChannel;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -41,7 +39,6 @@ public class CommandPermissions {
         }
 
         InternalGuild guild;
-
         try {
             guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
             if (guild == null) { // Membership is missing
@@ -60,7 +57,6 @@ public class CommandPermissions {
 
         // Get users role, if they have none then use default
         List<Role> roleList;
-
         Role highestRole;
         boolean isOwner;
 
@@ -90,73 +86,20 @@ public class CommandPermissions {
                     requiredRole.getName() + " role or higher to use " + commandCategory.getName() + " commands.");
         }
 
-        // Checking Membership permissions
-        InternalGuildMembership membership;
-        try {
-            membership = membershipDAO.getUserMembershipByIdInGuild(commandEvent.getAuthor().getId(), commandEvent.getGuild().getId());
-            if (membership == null) { // Membership is missing
-                throw new SQLException("Membership is missing");
-            }
-        } catch (SQLException e) {
-            LOGGER.severe("Failed to get membership from db when checking command perms. ", e);
-            membershipDAO.addUserToGuild(commandEvent.getAuthor(), commandEvent.getGuild());
-            throw new ForbiddenCommandException("There is a problem with your association to the guild in the db. This can happen right after adding me to your server. " +
-                    "I will attempt to fix it, please try again. If this issue persists please contact the devs on the support server.");
-        }
-
-        if (!membership.canUseBot()) {
-            throw new ForbiddenCommandException("Your ability to use commands has been disabled. " +
-                    "To unlock commands please talk to a guild admin.");
-        }
-
-        // TODO: Check channel permissions
         if (commandCategory == CommandCategories.VOICE) {
             // If their in a voice channel the doesn't allow voice, then dont let them use it
-            if (commandEvent.getMember().getVoiceState().inVoiceChannel()) {
-                InternalVoiceChannel voiceChannel;
-                // Get voice channel, if not present add it
-                try {
-                    voiceChannel = channelDAO.getVoiceChannelForId(
-                            commandEvent.getMember().getVoiceState().getChannel().getId());
-                    if (voiceChannel == null) {
-                        throw new SQLException("Voice channel is missing");
-                    }
-                } catch (SQLException e) {
-                    guildDAO.addGuild(commandEvent.getGuild());
-                    LOGGER.severe("Failed to get voice channel: ", e);
-                    channelDAO.addVoiceChannel(commandEvent.getMember().getVoiceState().getChannel());
-                    throw new ForbiddenCommandException("There is a problem with the voice channel in the db. " +
-                            "I will attempt to fix it, please try again later. If this issue persists please contact the devs on the support server.");
-                }
-
-                if (!voiceChannel.isVoiceEnabled()) {
-                    throw new ForbiddenCommandException("This voice channel has commands disabled. Please contact" +
-                            " a mod in your server to enable them.");
-                }
-            } else {
+            if (!commandEvent.getMember().getVoiceState().inVoiceChannel()) {
                 throw new ForbiddenCommandException("You must be in a voice channel to use a voice command");
             }
         }
 
         InternalTextChannel textChannel;
-        // Try to get the text channel and check, if its none, add it
-        try {
-            textChannel = channelDAO.getTextChannelForId(commandEvent.getTextChannel().getId(), true);
-            if (textChannel == null) {
-                throw new SQLException("Text channel is missing");
-            }
-        } catch (SQLException e) {
-            LOGGER.severe("Failed to get text channel: ", e);
-            channelDAO.addTextChannel(commandEvent.getTextChannel());
-            throw new ForbiddenCommandException("There is a problem with the text channel in the db. " +
-                    "I will attempt to fix it, please try again later. If this issue persists please contact the devs on the support server.");
-        }
 
         if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {
             throw new ForbiddenCommandException("This channel is not marked in discord as nsfw. " +
                     "To enable it, please go into the channel settings in discord and enable nsfw.");
         }
 
-        return textChannel.isCommandsEnabled();
+        return true;
     }
 }
