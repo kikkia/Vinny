@@ -24,6 +24,7 @@ import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
@@ -101,7 +102,6 @@ public class ShardingManager {
                     new LoadGuildPlaylistCommand(bot),
                     new SaveGuildPlaylistCommand(bot),
                     new ListGuildPlaylistCommand(),
-                    new LockVolumeCommand(),
                     //new SpeedCommand(),
 
                     // Battle Royale
@@ -124,12 +124,10 @@ public class ShardingManager {
                     new GamesCommand(waiter),
                     new PixivCommand(),
                     new ReviewCommand(),
+                    new GetScheduledCommand(waiter),
 
                     // Alias Commands
                     new AliasesCommand(waiter),
-                    new ScheduleCommand(waiter),
-                    new GetScheduledCommand(waiter),
-                    new UnscheduleCommand(waiter),
 
                     // Meme Commands
                     new P90Command(),
@@ -155,6 +153,9 @@ public class ShardingManager {
                     new RemovePrefixCommand(),
                     new AddGuildAliasCommand(waiter),
                     new RemoveGuildAliasCommand(),
+                    new LockVolumeCommand(),
+                    new ScheduleCommand(waiter),
+                    new UnscheduleCommand(waiter),
 
                     // NSFW Commands
                     new Rule34Command(),
@@ -189,6 +190,8 @@ public class ShardingManager {
         commandClientBuilder.setActivity(null);
         commandClientBuilder.setScheduleExecutor(executor);
         client = commandClientBuilder.build();
+
+        CommandEvent.MAX_MESSAGES = 5;
 
         shardManager = new DefaultShardManagerBuilder()
                 .setToken(config.getConfig(Config.DISCORD_TOKEN))
