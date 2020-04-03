@@ -140,6 +140,16 @@ public class ScheduledCommandDAO {
         }
     }
 
+    public void removeAllScheduledInChannel(String channelId) throws SQLException {
+        String query = "DELETE FROM scheduled_command WHERE channel = ?";
+        try (Connection connection = write.getConnection()){
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, channelId);
+                statement.execute();
+            }
+        }
+    }
+
     public void recordRunComplete(int commandCount, long runtime, int failedCount) throws SQLException {
         String query = "INSERT INTO scheduled_command_runs(runtime, commands_run, failed_commands) VALUES(?,?,?)";
         try(Connection connection = write.getConnection()) {

@@ -1,9 +1,6 @@
 package com.bot;
 
-import com.bot.db.ChannelDAO;
-import com.bot.db.DataLoader;
-import com.bot.db.GuildDAO;
-import com.bot.db.MembershipDAO;
+import com.bot.db.*;
 import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.InternalGuild;
@@ -36,7 +33,6 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.channel.text.GenericTextChannelEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
-import net.dv8tion.jda.api.events.channel.text.update.TextChannelUpdateNSFWEvent;
 import net.dv8tion.jda.api.events.channel.text.update.TextChannelUpdateNameEvent;
 import net.dv8tion.jda.api.events.channel.voice.GenericVoiceChannelEvent;
 import net.dv8tion.jda.api.events.channel.voice.VoiceChannelCreateEvent;
@@ -105,7 +101,7 @@ public class Bot extends ListenerAdapter {
 
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
-		executor = new ScheduledThreadPoolExecutor(3);
+		executor = new ScheduledThreadPoolExecutor(15);
 	}
 
 	@Override
@@ -151,7 +147,7 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGenericEvent(@NotNull GenericEvent event) {
-		executor.execute(() -> metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId()));
+		metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId());
 		super.onGenericEvent(event);
 	}
 
@@ -232,7 +228,14 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onTextChannelDelete(TextChannelDeleteEvent event) {
-		executor.execute(() -> channelDAO.removeTextChannel(event.getChannel()));
+		executor.execute(() -> {
+			try {
+				ScheduledCommandDAO.getInstance().removeAllScheduledInChannel(event.getChannel().getId());
+				channelDAO.removeTextChannel(event.getChannel());
+			} catch (SQLException e) {
+				LOGGER.warning("Ran into error when removing text channel from db", e);
+			}
+		});
 	}
 
 	@Override
@@ -248,11 +251,6 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onVoiceChannelUpdateName(VoiceChannelUpdateNameEvent event) {
 		executor.execute(() -> channelDAO.addVoiceChannel(event.getChannel()));
-	}
-
-	@Override
-	public void onTextChannelUpdateNSFW(TextChannelUpdateNSFWEvent event) {
-		executor.execute(() -> channelDAO.addTextChannel(event.getChannel()));
 	}
 
 	public AudioPlayerManager getManager() {
