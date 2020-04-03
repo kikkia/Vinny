@@ -350,6 +350,11 @@
             <artifactId>lavadsp</artifactId>
             <version>0.5.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.datadoghq</groupId>
+            <artifactId>dd-trace-api</artifactId>
+            <version>0.47.0</version>
+        </dependency>
     </dependencies>
 
     <repositories>
