@@ -27,7 +27,6 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
 import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
-import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -151,7 +150,6 @@ public class Bot extends ListenerAdapter {
 	}
 
 	@Override
-	@Trace(operationName = "onEvent", resourceName = "vinny.bot")
 	public void onGenericEvent(@NotNull GenericEvent event) {
 		metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId());
 		super.onGenericEvent(event);
