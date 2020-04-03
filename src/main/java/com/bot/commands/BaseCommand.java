@@ -24,6 +24,7 @@ public abstract class BaseCommand extends Command {
     @Override
     @Trace(operationName = "onCommand", resourceName = "vinny.bot")
     protected void execute(CommandEvent commandEvent) {
+        logger.info("In command: " + System.currentTimeMillis());
         Guild guild = null;
         if (!commandEvent.isFromType(ChannelType.PRIVATE))
             guild = commandEvent.getGuild();
@@ -51,6 +52,7 @@ public abstract class BaseCommand extends Command {
             return;
         }
         try {
+            logger.info("Starting execute: " + System.currentTimeMillis());
             commandEvent.async(() -> {
                 // Add some details to the MDC on the thread before executing
                 try (MDC.MDCCloseable commandCloseable = MDC.putCloseable("command", this.name);
@@ -65,6 +67,7 @@ public abstract class BaseCommand extends Command {
             logger.severe("Failed command " + this.getClass().getName() + ": ", e);
             e.printStackTrace();
         }
+        logger.info("Command finished: " + System.currentTimeMillis());
     }
 
     protected abstract void executeCommand(CommandEvent commandEvent);
