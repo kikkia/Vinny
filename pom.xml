@@ -246,7 +246,7 @@
         <dependency>
             <groupId>com.github.kikkia</groupId>
             <artifactId>Dislog</artifactId>
-            <version>2.0.0</version>
+            <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
