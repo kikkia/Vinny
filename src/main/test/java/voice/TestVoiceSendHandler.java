@@ -1,7 +1,7 @@
 package voice;
 
 import com.bot.voice.VoiceSendHandler;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import lavalink.client.player.LavalinkPlayer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,11 +11,11 @@ import static org.mockito.Mockito.mock;
 
 public class TestVoiceSendHandler {
 
-    private AudioPlayer audioPlayer;
+    private LavalinkPlayer audioPlayer;
 
     @Before
     public void setUp() {
-        audioPlayer = mock(AudioPlayer.class);
+        audioPlayer = mock(LavalinkPlayer.class);
     }
 
     @Test

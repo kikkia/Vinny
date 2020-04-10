@@ -32,7 +32,7 @@ public class PlayCommand extends VoiceCommand {
 	protected void executeCommand(CommandEvent commandEvent) {
 		if (commandEvent.getArgs().isEmpty()) {
 			VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
-			
+
 			if(handler != null && handler.getPlayer().isPaused()) {
 				handler.getPlayer().setPaused(false);
 				commandEvent.reply(commandEvent.getClient().getSuccess() + " Resumed paused stream.");

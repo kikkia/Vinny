@@ -7,8 +7,10 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;
+import lavalink.client.player.LavalinkPlayer;
+import lavalink.client.player.event.IPlayerEventListener;
+import lavalink.client.player.event.PlayerEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -17,7 +19,7 @@ import java.nio.ByteBuffer;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHandler {
+public class VoiceSendHandler extends AudioEventAdapter implements IPlayerEventListener {
     // Max Duration is in seconds
     public static long MAX_DURATION = 36009;
     public static int MAX_QUEUE_SIZE = 1000;
@@ -27,7 +29,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     private TextChannel lastUsedChannel;
     private QueuedAudioTrack nowPlaying;
     private Queue<QueuedAudioTrack> tracks;
-    private AudioPlayer player;
+    private LavalinkPlayer player;
     private final ByteBuffer buffer;
     private final MutableAudioFrame frame;
     private boolean repeatOne;
@@ -35,7 +37,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     private boolean lockVolume;
     private double speed;
 
-    public VoiceSendHandler(AudioPlayer player) {
+    public VoiceSendHandler(LavalinkPlayer player) {
         this.player = player;
         this.tracks = new LinkedBlockingQueue<>();
         this.nowPlaying = null;
@@ -97,30 +99,14 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         tracks.clear();
         player.setPaused(false);
         player.stopTrack();
-        player.destroy();
         repeatOne = false;
         repeatAll = false;
         nowPlaying = null;
         setSpeed(1.0);
     }
 
-    public AudioPlayer getPlayer()  {
+    public LavalinkPlayer getPlayer()  {
         return player;
-    }
-
-    @Override
-    public boolean canProvide() {
-        return player.provide(frame);
-    }
-
-    @Override
-    public ByteBuffer provide20MsAudio() {
-        return (ByteBuffer) buffer.flip();
-    }
-
-    @Override
-    public boolean isOpus() {
-        return true;
     }
 
     @Override
@@ -265,5 +251,10 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
 
         if (lastUsedChannel != null)
             lastUsedChannel.sendMessage(builder.build()).queue();
+    }
+
+    @Override
+    public void onEvent(PlayerEvent playerEvent) {
+
     }
 }

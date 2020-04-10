@@ -12,11 +12,13 @@ public class GuildPreferencesProvider implements GuildSettingsProvider {
     private List<String> prefixes;
     private Map<String, Alias> aliases;
     private String guildId;
+    private int dVolume;
 
-    public GuildPreferencesProvider(List<String> prefixes, Map<String, Alias> aliases, String guildId) {
+    public GuildPreferencesProvider(List<String> prefixes, Map<String, Alias> aliases, String guildId, int dVolume) {
         this.prefixes = prefixes;
         this.aliases = aliases;
         this.guildId = guildId;
+        this.dVolume = dVolume;
     }
 
     @Override
@@ -30,5 +32,9 @@ public class GuildPreferencesProvider implements GuildSettingsProvider {
 
     public String getGuildId() {
         return guildId;
+    }
+
+    public int getdVolume() {
+        return dVolume;
     }
 }

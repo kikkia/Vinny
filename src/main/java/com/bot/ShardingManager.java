@@ -27,11 +27,15 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import lavalink.client.io.jda.JdaLavalink;
+import lavalink.client.io.jda.JdaLink;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +55,7 @@ public class ShardingManager {
     private EventWaiter waiter;
     private List<Command.Category> commandCategories;
     private CommandClient client;
+    private JdaLavalink jdaLavalink;
 
     public static ShardingManager getInstance() {
         return instance;
@@ -191,16 +196,26 @@ public class ShardingManager {
         commandClientBuilder.setScheduleExecutor(executor);
         client = commandClientBuilder.build();
 
+        jdaLavalink = new JdaLavalink(
+                config.getConfig(Config.OWNER_ID),
+                numShards,
+                shardId -> shards.get(shardId).getJda()
+        );
+        jdaLavalink.addNode(new URI(config.getConfig(Config.LL_URL)), config.getConfig(Config.LL_PASS));
+
         CommandEvent.MAX_MESSAGES = 5;
 
         shardManager = new DefaultShardManagerBuilder()
                 .setToken(config.getConfig(Config.DISCORD_TOKEN))
                 .setShardsTotal(numShards)
                 .setShards(startIndex, endIndex)
-                .addEventListeners(client, waiter, bot)
+                .addEventListeners(client, waiter, bot, jdaLavalink)
+                .setVoiceDispatchInterceptor(jdaLavalink.getVoiceInterceptor())
                 .setActivity(null)
                 .setContextEnabled(false)
                 .build();
+
+
     }
 
     public Map<Integer, InternalShard> getShards() {
@@ -275,5 +290,10 @@ public class ShardingManager {
             activeHandlers.addAll(shard.getVoiceSendHandlers().stream().filter(VoiceSendHandler::isActive).collect(Collectors.toList()));
         }
         return activeHandlers;
+    }
+
+    public JdaLink getLinkForGuild(Guild guild) {
+        System.out.println(jdaLavalink.getNodes().get(0).getStats());
+        return jdaLavalink.getLink(guild);
     }
 }

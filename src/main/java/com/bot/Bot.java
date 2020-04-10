@@ -11,7 +11,6 @@ import com.bot.utils.*;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
@@ -24,6 +23,7 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
 import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
+import lavalink.client.player.LavalinkPlayer;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -272,10 +272,10 @@ public class Bot extends ListenerAdapter {
 			return false;
 		}
 		else {
-			getHandler(event.getGuild()).queueTrack(track, event.getAuthor().getIdLong(), event.getAuthor().getName(), event.getTextChannel());
 			if (!event.getGuild().getAudioManager().isConnected()) {
-				event.getGuild().getAudioManager().openAudioConnection(event.getMember().getVoiceState().getChannel());
+				ShardingManager.getInstance().getLinkForGuild(event.getGuild()).connect(event.getMember().getVoiceState().getChannel());
 			}
+			getHandler(event.getGuild()).queueTrack(track, event.getAuthor().getIdLong(), event.getAuthor().getName(), event.getTextChannel());
 			return true;
 		}
 	}
@@ -283,8 +283,8 @@ public class Bot extends ListenerAdapter {
 	public VoiceSendHandler getHandler(Guild guild) {
 		VoiceSendHandler handler;
 		if (guild.getAudioManager().getSendingHandler() == null) {
-			AudioPlayer player = manager.createPlayer();
-			handler = new VoiceSendHandler(player);
+			LavalinkPlayer player = getPlayer(guild);
+			handler = new VoiceSendHandler(ShardingManager.getInstance().getLinkForGuild(guild).getPlayer());
 
 			// Get default volume
 			int dVolume = 100;
@@ -300,12 +300,15 @@ public class Bot extends ListenerAdapter {
 
 			handler.getPlayer().setVolume(dVolume);
 			player.addListener(handler);
-			guild.getAudioManager().setSendingHandler(handler);
 		}
 		else {
 			handler = (VoiceSendHandler) guild.getAudioManager().getSendingHandler();
 		}
 		return handler;
+	}
+
+	private LavalinkPlayer getPlayer(Guild guild) {
+		return ShardingManager.getInstance().getLinkForGuild(guild).getPlayer();
 	}
 
 	private void checkVoiceLobby(GuildVoiceUpdateEvent event) {

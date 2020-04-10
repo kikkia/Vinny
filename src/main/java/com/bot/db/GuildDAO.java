@@ -5,6 +5,7 @@ import com.bot.db.mappers.GuildMapper;
 import com.bot.models.InternalGuild;
 import com.bot.utils.DbHelpers;
 import com.bot.utils.GuildUtils;
+import com.bot.utils.Logger;
 import com.zaxxer.hikari.HikariDataSource;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -17,10 +18,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class GuildDAO {
-    private static final Logger LOGGER = Logger.getLogger(PlaylistDAO.class.getName());
+    private final Logger LOGGER = new Logger(this.getClass().getSimpleName());
     private final int DEFAULT_VOLUME = 100;
 
     private HikariDataSource write;
@@ -88,7 +88,7 @@ public class GuildDAO {
                 cache.put(returned.getId(), returned);
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to get guildById: " + e.getMessage());
+            LOGGER.severe("Failed to get guildById: " + e.getMessage(), e);
         } finally {
             DbHelpers.INSTANCE.close(statement, set, connection);
         }
@@ -98,24 +98,19 @@ public class GuildDAO {
 
     public int getActiveGuildCount() {
         String query = "SELECT COUNT(*) FROM guild WHERE active=1";
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet set = null;
         int count = 0;
 
-        try {
-            connection = write.getConnection();
-            statement = connection.prepareStatement(query);
-            set = statement.executeQuery();
-            if (set.next()) {
-                count = set.getInt(1);
+        try (Connection connection = write.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                try (ResultSet set = statement.executeQuery()) {
+                    if (set.next()) {
+                        count = set.getInt(1);
+                    }
+                }
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to get guild count");
-        } finally {
-            DbHelpers.INSTANCE.close(statement, set, connection);
+            LOGGER.severe("Failed to get guild count", e);
         }
-
         return count;
     }
 
@@ -138,7 +133,7 @@ public class GuildDAO {
             statement.setBoolean(8, true);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to add guild to db: " + guild.getId() + " " + e.getMessage());
+            LOGGER.severe("Failed to add guild to db: " + guild.getId() + " " + e.getMessage(), e);
             return false;
         } finally {
             DbHelpers.INSTANCE.close(statement, null, connection);

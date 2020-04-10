@@ -99,6 +99,14 @@ public class MetricsManager {
         statsd.incrementCounter("discord.event", shardTag);
     }
 
+    public void markTrackLoadFailed() {
+        statsd.incrementCounter("audio.track_load_failed");
+    }
+
+    public void markTrackLoadSucceed() {
+        statsd.incrementCounter("audio.track_load_success");
+    }
+
     public void markCacheHit(String name) {
         statsd.incrementCounter("cache." + name + ".hit");
     }

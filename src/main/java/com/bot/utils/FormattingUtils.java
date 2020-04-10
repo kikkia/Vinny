@@ -78,7 +78,10 @@ public class FormattingUtils {
         builder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")");
         builder.addField("Duration", msToMinSec(track.getInfo().length), false);
         builder.addField("Requested by", queuedAudioTrack.getRequesterName(), false);
-        builder.setFooter("Volume: " + volume, null);
+
+        if (volume >= 0) {
+            builder.setFooter("Volume: " + volume, null);
+        }
 
         builder.setColor(getColorForTrack(track.getInfo().uri));
 

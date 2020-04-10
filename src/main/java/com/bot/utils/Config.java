@@ -91,6 +91,8 @@ public class Config {
     // The IPv4 CIDR block to use
     public static final String IPV6_IP_BLOCK = "IPV6_IP_BLOCK";
 
+    public static final String LL_URL = "LL_URL";
+    public static final String LL_PASS = "LL_PASS";
 
 
     // Total shards

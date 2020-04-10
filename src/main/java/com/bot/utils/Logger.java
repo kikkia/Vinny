@@ -95,6 +95,10 @@ public class Logger {
         log(Level.SEVERE, s, e);
     }
 
+    public void severe(String s) {
+        log(Level.SEVERE, s, null);
+    }
+
     private void sendDislogLog(String s, LogLevel logLevel, Exception e) {
         if (channelLoggingEnabled) {
             Log log = new Log(s, logLevel, e);
