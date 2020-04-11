@@ -105,7 +105,7 @@ public class CommandPermissions {
 
         if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {
             throw new ForbiddenCommandException("This channel is not marked in discord as nsfw. " +
-                    "To enable it, please go into the channel moderation in discord and enable nsfw.");
+                    "To enable it, please go into the channel settings in discord and enable nsfw.");
         }
 
         return true;

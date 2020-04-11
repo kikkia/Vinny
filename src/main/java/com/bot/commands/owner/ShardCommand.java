@@ -14,7 +14,6 @@ public class ShardCommand extends OwnerCommand {
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
         try {
-            System.out.println("Command: " + System.currentTimeMillis());
             int i = Integer.parseInt(commandEvent.getArgs());
             ShardingManager manager = ShardingManager.getInstance();
             JDA shard = manager.getShards().get(i).getJda();
