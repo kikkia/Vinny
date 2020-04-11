@@ -29,7 +29,7 @@ public class SetNSFWCommand extends ModerationCommand {
         try {
             guild = guildDAO.getGuildById(commandGuild.getId());
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Problem getting guild moderation " + e.getMessage());
+            logger.log(Level.SEVERE, "Problem getting guild settings " + e.getMessage());
             commandEvent.reply(commandEvent.getClient().getError() + " There was a problem getting the settings for your guild. Please contact the developer on the support server. " + Bot.SUPPORT_INVITE_LINK);
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             return;
