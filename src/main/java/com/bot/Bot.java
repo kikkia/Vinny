@@ -125,6 +125,9 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+		if (event.getGuild().getIdLong() == 288349662728159232L && !event.getAuthor().isBot()) {
+			System.out.println("Bot: " + System.currentTimeMillis());
+		}
 		executor.execute(() -> {
 			InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
 			MessageReceivedEvent aliasEvent = AliasUtils.getAliasMessageEvent(event, guild, null, null);

@@ -22,7 +22,7 @@ public class MarkovModelCache {
 
     private MarkovModelCache() {
         Config config = Config.getInstance();
-        // Set or default the settings for the map
+        // Set or default the moderation for the map
         MAX_SIZE = config.getConfig(Config.MARKOV_CACHE_MAX_ITEMS) == null ? 50 : Integer.parseInt(config.getConfig(Config.MARKOV_CACHE_MAX_ITEMS));
         CACHE_OBJECT_LIFETIME = config.getConfig(Config.MARKOV_CACHE_OBJECT_LIFETIME) == null ? 7200 : Integer.parseInt(config.getConfig(Config.MARKOV_CACHE_OBJECT_LIFETIME));
         CACHE_CHECK_INTERVAL = config.getConfig(Config.MARKOV_CACHE_CLEANUP_INTERVAL) == null ? 1200 : Integer.parseInt(config.getConfig(Config.MARKOV_CACHE_CLEANUP_INTERVAL));

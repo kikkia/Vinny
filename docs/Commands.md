@@ -9,7 +9,7 @@
     * [General Commands](#General)
     * [Nsfw Commands](#Nsfw)
     * [Meme Commands](#Meme)
-    * [Settings Commands](#Settings)
+    * [Mod Commands](#Mod)
     * [Alias Commands] (#Aliases)
     * [Scheduling Commands] (#Scheduling)
 3. [Role Permissions](#Permissions)
@@ -217,8 +217,8 @@ Clap emojifies any input or the last message sent
 ### `copypasta`
 Gives a copypasta
 
-## Settings
-Seettings commands (Also know as `Mod` or `Moderation`) change Vinny's settings on the server. Any one that changes a settings falls under the ModRole permissions category. 
+## Mod
+Mod commands allow you to change Vinny's settings on the server among other thing. Any one that changes a settings falls under the ModRole permissions category.
 
 ### `settings`
 Lists all of the required minimum roles for each category. 
@@ -268,6 +268,9 @@ Shows all aliases you have access to.
 ### `removegalias`
 Removes an alias from the guild. Example: `given your guild has an alias with the trigger lol`
 * `~removegalias lol`
+
+### `purge`
+Bulk removes messages from a channel, for more help see [this page.](https://github.com/kikkia/Vinny/blob/master/docs/purge.md)
 
 ## Scheduling
 You can schedule Vinny to run commands every X amount of time using these commands

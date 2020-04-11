@@ -1,4 +1,4 @@
-package com.bot.commands.settings;
+package com.bot.commands.moderation;
 
 import com.bot.Bot;
 import com.bot.commands.GeneralCommand;
@@ -16,8 +16,8 @@ public class GetSettingsCommand extends GeneralCommand {
     private GuildDAO guildDAO;
 
     public GetSettingsCommand() {
-        this.name = "settings";
-        this.help = "Gets the settings for the guild. (Requires mod command permissions)";
+        this.name = "moderation";
+        this.help = "Gets the moderation for the guild. (Requires mod command permissions)";
         this.arguments = "";
 
         // General since we are not setting any data
@@ -32,8 +32,8 @@ public class GetSettingsCommand extends GeneralCommand {
         try {
             guild = guildDAO.getGuildById(commandGuild.getId());
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Problem getting guild settings " + e.getMessage());
-            commandEvent.reply(commandEvent.getClient().getError() + " There was a problem getting the settings for your guild. Please contact the developer on the support server. " + Bot.SUPPORT_INVITE_LINK);
+            logger.log(Level.SEVERE, "Problem getting guild moderation " + e.getMessage());
+            commandEvent.reply(commandEvent.getClient().getError() + " There was a problem getting the moderation for your guild. Please contact the developer on the support server. " + Bot.SUPPORT_INVITE_LINK);
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             return;
         }

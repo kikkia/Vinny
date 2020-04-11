@@ -27,7 +27,7 @@ public class GuildPreferencesManager implements GuildSettingsManager {
         InternalGuild guild = guildDAO.getGuildById(g.getId(), true);
         if (guild == null) {
             // If guild is not in the db return nothing
-            LOGGER.warning("Guild not found in db when getting settings: " + g.getId());
+            LOGGER.warning("Guild not found in db when getting moderation: " + g.getId());
             guildDAO.addFreshGuild(g);
             return null;
         }
