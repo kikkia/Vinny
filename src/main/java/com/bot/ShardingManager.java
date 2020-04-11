@@ -15,7 +15,7 @@ import com.bot.commands.reddit.TopPostCommand;
 import com.bot.commands.scheduled.GetScheduledCommand;
 import com.bot.commands.scheduled.ScheduleCommand;
 import com.bot.commands.scheduled.UnscheduleCommand;
-import com.bot.commands.settings.*;
+import com.bot.commands.moderation.*;
 import com.bot.commands.voice.*;
 import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
@@ -156,6 +156,7 @@ public class ShardingManager {
                     new LockVolumeCommand(),
                     new ScheduleCommand(waiter),
                     new UnscheduleCommand(waiter),
+                    new PurgeCommand(),
 
                     // NSFW Commands
                     new Rule34Command(),

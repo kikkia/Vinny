@@ -54,6 +54,7 @@ public class CommandPermissions {
 
         // Check the roles returned
         Role requiredRole = commandEvent.getGuild().getRoleById(guild.getRequiredPermission(commandCategory));
+        Role requiredBaseRole = commandEvent.getGuild().getRoleById(guild.getRequiredPermission(CommandCategories.GENERAL));
 
         // Get users role, if they have none then use default
         List<Role> roleList;
@@ -78,12 +79,19 @@ public class CommandPermissions {
         // We check owner as well, because if they are the owner they get around this check
         if (requiredRole == null && !isOwner) {
             throw new PermsOutOfSyncException("Role required for permission not found.");
+        } else if (requiredBaseRole == null && !isOwner) {
+            throw new PermsOutOfSyncException("Base role not found! Was it deleted?");
         }
 
 
+        if (!isOwner && highestRole.getPosition() < requiredBaseRole.getPosition()) {
+            throw new ForbiddenCommandException("You do not have the required base role to run any commands. You must have at least the `" +
+                    requiredBaseRole.getName() + "` role or higher to use any Vinny commands.");
+        }
+
         if (!isOwner && highestRole.getPosition() < requiredRole.getPosition()) {
-            throw new ForbiddenCommandException("You do not have the required role to use this command. You must have at least the " +
-                    requiredRole.getName() + " role or higher to use " + commandCategory.getName() + " commands.");
+            throw new ForbiddenCommandException("You do not have the required role to use this command. You must have at least the `" +
+                    requiredRole.getName() + "` role or higher to use " + commandCategory.getName() + " commands.");
         }
 
         if (commandCategory == CommandCategories.VOICE) {

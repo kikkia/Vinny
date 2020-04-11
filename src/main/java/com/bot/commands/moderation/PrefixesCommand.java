@@ -1,4 +1,4 @@
-package com.bot.commands.settings;
+package com.bot.commands.moderation;
 
 import com.bot.commands.GeneralCommand;
 import com.bot.db.GuildDAO;

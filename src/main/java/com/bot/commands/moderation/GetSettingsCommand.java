@@ -1,4 +1,4 @@
-package com.bot.commands.settings;
+package com.bot.commands.moderation;
 
 import com.bot.Bot;
 import com.bot.commands.GeneralCommand;
@@ -32,7 +32,7 @@ public class GetSettingsCommand extends GeneralCommand {
         try {
             guild = guildDAO.getGuildById(commandGuild.getId());
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Problem getting guild settings " + e.getMessage());
+            logger.severe("Problem getting guild settings " + e.getMessage(), e);
             commandEvent.reply(commandEvent.getClient().getError() + " There was a problem getting the settings for your guild. Please contact the developer on the support server. " + Bot.SUPPORT_INVITE_LINK);
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             return;

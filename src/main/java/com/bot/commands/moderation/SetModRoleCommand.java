@@ -1,4 +1,4 @@
-package com.bot.commands.settings;
+package com.bot.commands.moderation;
 
 import com.bot.Bot;
 import com.bot.commands.ModerationCommand;
@@ -11,13 +11,13 @@ import net.dv8tion.jda.api.entities.Role;
 import java.util.List;
 import java.util.logging.Level;
 
-public class SetVoiceRoleCommand extends ModerationCommand {
+public class SetModRoleCommand extends ModerationCommand {
     private GuildDAO guildDAO;
 
-    public SetVoiceRoleCommand() {
-        this.name = "voicerole";
-        this.help = "Sets the minimum role required to use voice commands.";
-        this.arguments = "<Role mention or empty for everyone>";
+    public SetModRoleCommand() {
+        this.name = "modrole";
+        this.help = "Sets the minimum role for moderation command.";
+        this.arguments = "<Role mention or nothing for everyone>";
         this.guildDAO = GuildDAO.getInstance();
     }
 
@@ -38,9 +38,10 @@ public class SetVoiceRoleCommand extends ModerationCommand {
         if (guild == null) {
             logger.log(Level.WARNING, "Guild not found in db, attempting to add: " + commandGuild.getId());
             commandEvent.reply(commandEvent.getClient().getWarning() + " This guild was not found in my database. I am going to try to add it. Please standby.");
-            if(!guildDAO.addGuild(commandGuild)){
+
+            if(!guildDAO.addGuild(commandGuild)) {
                 logger.log(Level.SEVERE, "Failed to add the guild to the db");
-                commandEvent.reply(commandEvent.getClient().getError() + " Error adding the guild to the db. Please contact the developer on the support server. " + Bot.SUPPORT_INVITE_LINK);
+                commandEvent.reply(commandEvent.getClient().getError() + " Error adding the guild to the db. Please contact the developer on the support server." + Bot.SUPPORT_INVITE_LINK);
                 metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
                 return;
             }
@@ -51,8 +52,8 @@ public class SetVoiceRoleCommand extends ModerationCommand {
 
         // If nothing then set to all
         if (commandEvent.getArgs().isEmpty()) {
-            if (!guildDAO.updateMinVoiceRole(guild.getId(), commandEvent.getGuild().getPublicRole().getId())) {
-                logger.log(Level.SEVERE, "Failed to update voice role for guild " + guild.getId());
+            if (!guildDAO.updateMinModRole(guild.getId(), commandEvent.getGuild().getPublicRole().getId())) {
+                logger.log(Level.SEVERE, "Failed to update mod role for guild " + guild.getId());
                 commandEvent.reply("Something went wrong. Please contact the developers on the support server. " + Bot.SUPPORT_INVITE_LINK);
                 metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             }
@@ -68,10 +69,12 @@ public class SetVoiceRoleCommand extends ModerationCommand {
         }
 
         // Just use the first mentioned roles
-        if (!guildDAO.updateMinVoiceRole(guild.getId(), mentionedRoles.get(0).getId())){
-            commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong! Please contact the devs on the support server. " + Bot.SUPPORT_INVITE_LINK);
+        if(!guildDAO.updateMinModRole(guild.getId(), mentionedRoles.get(0).getId())) {
+            logger.log(Level.SEVERE, "Failed to update mod role for guild " + guild.getId());
+            commandEvent.reply("Something went wrong. Please contact the developers on the support server. " + Bot.SUPPORT_INVITE_LINK);
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
         commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
+
     }
 }

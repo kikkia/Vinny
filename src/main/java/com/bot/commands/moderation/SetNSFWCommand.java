@@ -1,4 +1,4 @@
-package com.bot.commands.settings;
+package com.bot.commands.moderation;
 
 import com.bot.Bot;
 import com.bot.commands.ModerationCommand;
@@ -11,19 +11,19 @@ import net.dv8tion.jda.api.entities.Role;
 import java.util.List;
 import java.util.logging.Level;
 
-public class SetBaseRoleCommand extends ModerationCommand {
+public class SetNSFWCommand extends ModerationCommand {
     private GuildDAO guildDAO;
 
-    public SetBaseRoleCommand() {
-        this.name = "baserole";
-        this.help = "Sets the minimum role required to use any command.";
-        this.arguments = "<Role mention or nothing for everyone>";
+    public SetNSFWCommand() {
+        this.name = "nsfwrole";
+        this.help = "Sets the minimum required to use NSFW commands.";
+        this.arguments = "<Role mention or empty for everyone>";
         this.guildDAO = GuildDAO.getInstance();
     }
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        InternalGuild guild;
+        InternalGuild guild = null;
         Guild commandGuild = commandEvent.getGuild();
 
         try {
@@ -45,21 +45,24 @@ public class SetBaseRoleCommand extends ModerationCommand {
                 metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
                 return;
             }
+
             commandEvent.reply(commandEvent.getClient().getSuccess() + " Added the guild to the database. Retrying");
             executeCommand(commandEvent);
             return;
+
         }
 
         // If nothing then set to all
         if (commandEvent.getArgs().isEmpty()) {
-            if (!guildDAO.updateMinBaseRole(guild.getId(), commandEvent.getGuild().getPublicRole().getId())) {
-                logger.log(Level.SEVERE, "Failed to update base role for guild " + guild.getId());
+            if (!guildDAO.updateMinNSFWRole(guild.getId(), commandEvent.getGuild().getPublicRole().getId())) {
+                logger.log(Level.SEVERE, "Failed to update nsfw role for guild " + guild.getId());
                 commandEvent.reply("Something went wrong. Please contact the developers on the support server. " + Bot.SUPPORT_INVITE_LINK);
                 metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             }
             commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
             return;
         }
+
 
         List<Role> mentionedRoles = commandEvent.getMessage().getMentionedRoles();
         if (mentionedRoles == null || mentionedRoles.isEmpty()) {
@@ -68,12 +71,10 @@ public class SetBaseRoleCommand extends ModerationCommand {
         }
 
         // Just use the first mentioned roles
-        if (!guildDAO.updateMinBaseRole(guild.getId(), mentionedRoles.get(0).getId())) {
-            logger.log(Level.SEVERE, "Failed to update base role for guild " + guild.getId());
-            commandEvent.reply("Something went wrong. Please contact the developers on the support server. " + Bot.SUPPORT_INVITE_LINK);
+        if(!guildDAO.updateMinNSFWRole(guild.getId(), mentionedRoles.get(0).getId())) {
+            commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong! Please contact the devs on the support server. " +  Bot.SUPPORT_INVITE_LINK);
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
         commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
-
     }
 }

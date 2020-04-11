@@ -19,7 +19,7 @@ public class FUserCommand extends OwnerCommand {
                 commandEvent.replySuccess("Found user " + user.getName());
         } catch (Exception e) {
             // Not found
+            commandEvent.replyError("Did not find user");
         }
-        commandEvent.replyError("Did not find user");
     }
 }
