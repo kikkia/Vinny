@@ -57,6 +57,10 @@ private class TrackResultHandler(val loader: TrackLoader, val trackLoadContext: 
             loader.trackProvider.add(QueuedAudioTrack(a, requester.effectiveName, requester.idLong))
             trackCount++
         }
+
+        if (!loader.guildAudioPlayer.isPaused())
+            loader.guildAudioPlayer.play()
+
         trackLoadContext.replySuccess("Successfully loaded $trackCount tracks to the queue")
     }
 

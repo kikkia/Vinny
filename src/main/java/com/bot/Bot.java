@@ -5,9 +5,11 @@ import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalShard;
+import com.bot.preferences.GuildPreferencesManager;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.utils.*;
+import com.bot.voice.AudioPlayerController;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
@@ -23,6 +25,7 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
 import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
+import lavalink.client.io.jda.JdaLavalink;
 import lavalink.client.player.LavalinkPlayer;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -59,6 +62,7 @@ import java.util.logging.Level;
 
 public class Bot extends ListenerAdapter {
 	private final Logger LOGGER;
+	private final AudioPlayerController playerController;
 	private final AudioPlayerManager manager;
 
 	private Config config;
@@ -72,7 +76,7 @@ public class Bot extends ListenerAdapter {
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 
 
-	Bot() {
+	Bot(JdaLavalink lavalink) {
 		this.config = Config.getInstance();
 		this.manager = new DefaultAudioPlayerManager();
 
@@ -102,6 +106,9 @@ public class Bot extends ListenerAdapter {
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
 		executor = new ScheduledThreadPoolExecutor(15);
+
+		playerController = new AudioPlayerController(new GuildPreferencesManager(),
+				manager, lavalink);
 	}
 
 	@Override
@@ -257,6 +264,10 @@ public class Bot extends ListenerAdapter {
 		return manager;
 	}
 
+	public AudioPlayerController getPlayerController() {
+		return playerController;
+	}
+
 	// TODO: Move this audio handling stuff out of the bot class
 	public boolean queueTrack(AudioTrack track, CommandEvent event, Message m) throws MaxQueueSizeException {
 		if (event.getMember().getVoiceState().getChannel() == null) {
@@ -273,7 +284,7 @@ public class Bot extends ListenerAdapter {
 		}
 		else {
 			if (!event.getGuild().getAudioManager().isConnected()) {
-				ShardingManager.getInstance().getLinkForGuild(event.getGuild()).connect(event.getMember().getVoiceState().getChannel());
+				//ShardingManager.getInstance().getLinkForGuild(event.getGuild()).connect(event.getMember().getVoiceState().getChannel());
 			}
 			getHandler(event.getGuild()).queueTrack(track, event.getAuthor().getIdLong(), event.getAuthor().getName(), event.getTextChannel());
 			return true;
@@ -325,7 +336,7 @@ public class Bot extends ListenerAdapter {
 
 		if (manager.isConnected() && users < 1) {
 			handler.stop();
-			manager.closeAudioConnection();
+			//manager.closeAudioConnection();
 		}
 	}
 

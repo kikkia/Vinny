@@ -27,6 +27,7 @@ public class ScheduledCommandUtils {
     }
 
     private static Message generateScheduledMessage(ScheduledCommand command, JDA jda) {
+        User user = jda.getUserById(command.getAuthor());
         return new ReceivedMessage(123,
                 jda.getTextChannelById(command.getChannel()),
                 MessageType.DEFAULT,
@@ -38,12 +39,14 @@ public class ScheduledCommandUtils {
                 false,
                 command.getCommand(),
                 "",
-                jda.getUserById(command.getAuthor()),
+                user,
+                jda.getGuildById(command.getGuild()).getMember(user),
                 null,
                 null,
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(),
+                0);
     }
 
     public static JDA getShardForCommand(ScheduledCommand command) {

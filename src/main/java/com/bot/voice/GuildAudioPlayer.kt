@@ -1,10 +1,12 @@
 package com.bot.voice
 
 import com.bot.exceptions.UserFacingException
+import com.bot.models.TrackLoadContext
 import com.bot.preferences.GuildPreferencesManager
 import com.bot.utils.FormattingUtils
 import com.bot.utils.Logger
 import com.bot.utils.RepeatSetting
+import com.jagrosh.jdautilities.command.CommandEvent
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
@@ -15,12 +17,13 @@ import lavalink.client.io.jda.JdaLavalink
 import lavalink.client.player.event.AudioEventAdapterWrapped
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.VoiceChannel
 
 class GuildAudioPlayer (
         var lavalink: JdaLavalink,
-        internal val audioTrackProvider: TrackProvider,
+        private val audioTrackProvider: TrackProvider,
         val guild: Guild,
         var textChannel: TextChannel?,
         val guildPreferencesManager: GuildPreferencesManager,
@@ -31,6 +34,8 @@ class GuildAudioPlayer (
     private val logger = Logger(this::class.java.simpleName)
     var repeat = RepeatSetting.NONE
 
+    val trackLoader: TrackLoader
+
     var volume: Int
         get() = player.volume
         set(volume) {player.volume = volume}
@@ -38,6 +43,8 @@ class GuildAudioPlayer (
     init {
         player.addListener(this)
         player.volume = guildPreferencesManager.getSettings(guild)!!.getdVolume()
+
+        trackLoader = TrackLoader(audioTrackProvider, audioPlayerManager, this)
     }
 
     fun nowPlaying() : QueuedAudioTrack {
@@ -150,9 +157,12 @@ class GuildAudioPlayer (
         lavalink.getLink(guild).disconnect()
     }
 
-    fun queue() {
+    fun queue(url: String, event: CommandEvent, progress: Message) {
+        joinChannel(event.member.voiceState!!.channel!!)
 
+        trackLoader.loadTrack(TrackLoadContext(url, event, progress), event.member)
     }
+
     override fun onTrackEnd(player: AudioPlayer?, track: AudioTrack?, endReason: AudioTrackEndReason?) {
         if (endReason == AudioTrackEndReason.FINISHED || endReason == AudioTrackEndReason.STOPPED) {
             playNextTrack()

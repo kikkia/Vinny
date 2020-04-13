@@ -4,7 +4,7 @@ import java.util.*
 
 class TrackProvider {
 
-    val trackQueue = PriorityQueue<QueuedAudioTrack>()
+    val trackQueue = LinkedList<QueuedAudioTrack>()
 
     fun isEmpty() : Boolean {
         return trackQueue.size == 0

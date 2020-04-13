@@ -78,7 +78,16 @@ public class ShardingManager {
 
         shards = new HashMap<>();
         executor = Executors.newScheduledThreadPool(50);
-        Bot bot = new Bot();
+
+        jdaLavalink = new JdaLavalink(
+                config.getConfig(Config.OWNER_ID),
+                numShards,
+                this::getJdaForShard
+        );
+        jdaLavalink.setAutoReconnect(true);
+        jdaLavalink.addNode(new URI(config.getConfig(Config.LL_URL)), config.getConfig(Config.LL_PASS));
+
+        Bot bot = new Bot(jdaLavalink);
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
         commandClientBuilder.setPrefix("~");
@@ -196,13 +205,6 @@ public class ShardingManager {
         commandClientBuilder.setScheduleExecutor(executor);
         client = commandClientBuilder.build();
 
-        jdaLavalink = new JdaLavalink(
-                config.getConfig(Config.OWNER_ID),
-                numShards,
-                shardId -> shards.get(shardId).getJda()
-        );
-        jdaLavalink.addNode(new URI(config.getConfig(Config.LL_URL)), config.getConfig(Config.LL_PASS));
-
         CommandEvent.MAX_MESSAGES = 5;
 
         shardManager = new DefaultShardManagerBuilder()
@@ -214,8 +216,6 @@ public class ShardingManager {
                 .setActivity(null)
                 .setContextEnabled(false)
                 .build();
-
-
     }
 
     public Map<Integer, InternalShard> getShards() {
@@ -295,5 +295,13 @@ public class ShardingManager {
     public JdaLink getLinkForGuild(Guild guild) {
         System.out.println(jdaLavalink.getNodes().get(0).getStats());
         return jdaLavalink.getLink(guild);
+    }
+
+    public JdaLavalink getJdaLavalink() {
+        return jdaLavalink;
+    }
+
+    private JDA getJdaForShard(int shard) {
+        return shards.get(shard).getJda();
     }
 }
