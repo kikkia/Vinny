@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ShardingManager {
@@ -205,8 +204,6 @@ public class ShardingManager {
                 .setActivity(null)
                 .setContextEnabled(false)
                 .build();
-
-        executor.schedule(System::gc, 10, TimeUnit.SECONDS);
     }
 
     public Map<Integer, InternalShard> getShards() {
