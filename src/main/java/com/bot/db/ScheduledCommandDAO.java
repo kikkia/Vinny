@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ScheduledCommandDAO {
     private static final Logger LOGGER = new Logger(ScheduledCommandDAO.class.getName());
@@ -173,6 +174,24 @@ public class ScheduledCommandDAO {
         } catch (SQLException e) {
             LOGGER.warning("Failed to write failed command to db", e);
         }
+    }
+
+    public void updateLastRunBatch(Map<Integer, Long> commands) {
+        String query = "UPDATE scheduled_command SET last_run=? WHERE id=?";
+        try (Connection connection = write.getConnection()) {
+            try(PreparedStatement ps = connection.prepareStatement(query)) {
+                for (Map.Entry<Integer, Long> entry : commands.entrySet()) {
+                    ps.setLong(1, entry.getValue());
+                    ps.setInt(2, entry.getKey());
+                    ps.addBatch();
+                }
+                if (commands.size() > 0)
+                    ps.execute();
+            }
+        } catch (SQLException e) {
+            LOGGER.severe("Failed to update last run batch", e);
+        }
+
     }
 
     private List<ScheduledCommand> getCommands(PreparedStatement statement) throws SQLException {
