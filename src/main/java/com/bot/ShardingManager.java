@@ -5,6 +5,7 @@ import com.bot.commands.alias.AliasesCommand;
 import com.bot.commands.alias.RemoveGuildAliasCommand;
 import com.bot.commands.general.*;
 import com.bot.commands.meme.*;
+import com.bot.commands.moderation.*;
 import com.bot.commands.nsfw.R4cCommand;
 import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.*;
@@ -15,7 +16,6 @@ import com.bot.commands.reddit.TopPostCommand;
 import com.bot.commands.scheduled.GetScheduledCommand;
 import com.bot.commands.scheduled.ScheduleCommand;
 import com.bot.commands.scheduled.UnscheduleCommand;
-import com.bot.commands.moderation.*;
 import com.bot.commands.voice.*;
 import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
@@ -27,6 +27,7 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
@@ -199,6 +200,7 @@ public class ShardingManager {
                 .setShardsTotal(numShards)
                 .setShards(startIndex, endIndex)
                 .addEventListeners(client, waiter, bot)
+                .setAudioSendFactory(new NativeAudioSendFactory())
                 .setActivity(null)
                 .setContextEnabled(false)
                 .build();
