@@ -83,8 +83,7 @@ class PurgeCommand() : ModerationCommand() {
                 commandEvent.replyError("Failed to purge ${toDelete.size - delCount} messages. " + (if (twoWeekWarn) twoWeekWarning else ""))
                 return@async
             }
-            // Removed at user request
-            // commandEvent.replySuccess("Successfully purged ${toDelete.size} messages." + (if (twoWeekWarn) twoWeekWarning else ""))
+            commandEvent.replySuccess("Successfully purged ${toDelete.size} messages." + (if (twoWeekWarn) twoWeekWarning else ""))
         }
     }
 
