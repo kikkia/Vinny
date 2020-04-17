@@ -83,6 +83,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
                 stop();
             }
             else {
+                player.stopTrack();
                 requester = nextTrack.getRequesterID();
                 player.playTrack(nextTrack.getTrack());
                 nowPlaying = nextTrack;
