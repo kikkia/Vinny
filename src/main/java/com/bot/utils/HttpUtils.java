@@ -41,7 +41,7 @@ public class HttpUtils {
         postBotsOnDiscord(totalGuilds);
         postDiscordBotsOrg(totalGuilds);
         postBotlistSpace(totalGuilds, totalShards);
-        postDivineDiscordBots(totalGuilds, totalShards);
+        // postDivineDiscordBots(totalGuilds, totalShards);
         // postMythicalBots(totalGuilds);
         // postDiscordExtremeList(totalGuilds); // Their site broke as hell
     }
