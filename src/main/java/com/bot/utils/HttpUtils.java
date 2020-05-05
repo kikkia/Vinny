@@ -159,7 +159,7 @@ public class HttpUtils {
                 && response.getStatusLine().getStatusCode() != 429)
                 throw new RuntimeException("Status code not 200: " + response);
         } catch (Exception e) {
-            logger.severe("Failed to post stats. url: " + url, e);
+            logger.warning("Failed to post stats. url: " + url, e);
         }
     }
 
