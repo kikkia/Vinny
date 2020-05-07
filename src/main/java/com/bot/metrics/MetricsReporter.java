@@ -63,10 +63,8 @@ public class MetricsReporter extends Thread {
             metricsManager.updateShards(shardManager.shardManager.getShardsRunning(), shardManager.shardManager.getShardsQueued());
 
             // We need to set this status after the sharding manager is built. This will ensure that it is set to this, not the default
-            shardManager.shardManager.setGame(Activity.playing("@Vinny help"));
-
-            System.out.println("Threads: " + java.lang.Thread.activeCount());
-
+            shardManager.shardManager.setActivity(Activity.playing("@Vinny help"));
+            
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
