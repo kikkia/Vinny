@@ -3,6 +3,7 @@ package com.bot.db;
 import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
 import com.bot.utils.DbHelpers;
+import com.bot.utils.Logger;
 import com.bot.voice.QueuedAudioTrack;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -12,10 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PlaylistDAO {
-    private static final Logger LOGGER = Logger.getLogger(PlaylistDAO.class.getName());
+    private static final Logger LOGGER = new Logger(PlaylistDAO.class.getName());
 
 	private HikariDataSource write;
 	private static PlaylistDAO instance;

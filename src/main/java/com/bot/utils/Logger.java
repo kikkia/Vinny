@@ -31,21 +31,7 @@ public class Logger {
 
         channelLoggingEnabled = Boolean.parseBoolean(config.getConfig(Config.ENABLE_LOGGING_CHANNELS));
         if (channelLoggingEnabled) {
-            debugWebhook = config.getConfig(Config.DEBUG_WEBHOOK);
-            infoWebhook = config.getConfig(Config.INFO_WEBHOOK);
-            warnWebhook = config.getConfig(Config.WARN_WEBHOOK);
-            errorWebhook = config.getConfig(Config.ERROR_WEBHOOK);
-            hostIdentifier = config.getConfig(Config.HOST_IDENTIFIER);
-
-            DislogClient.Builder builder = new DislogClient.Builder()
-                    .setUsername("Not Vinny")
-                    .addWebhook(LogLevel.DEBUG, debugWebhook)
-                    .addWebhook(LogLevel.INFO, infoWebhook)
-                    .addWebhook(LogLevel.WARN, warnWebhook)
-                    .addWebhook(LogLevel.ERROR, errorWebhook)
-                    .setIdentifier(hostIdentifier)
-                    .printStackTrace(true);
-            this.dislogClient = builder.build();
+            dislogClient = LoggerUtils.getClient();
         }
     }
 

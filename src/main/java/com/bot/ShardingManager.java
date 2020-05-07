@@ -46,7 +46,7 @@ public class ShardingManager {
     private static ShardingManager instance;
 
     private Map<Integer, InternalShard> shards;
-    private ScheduledExecutorService executor;
+    private final ScheduledExecutorService executor;
     public ShardManager shardManager;
 
     private EventWaiter waiter;
@@ -73,7 +73,7 @@ public class ShardingManager {
         boolean silentDeploy = Boolean.parseBoolean(config.getConfig(Config.SILENT_DEPLOY));
 
         shards = new HashMap<>();
-        executor = Executors.newScheduledThreadPool(50);
+        executor = Executors.newScheduledThreadPool(30);
         Bot bot = new Bot();
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();

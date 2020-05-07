@@ -5,6 +5,7 @@ import com.bot.db.mappers.GuildMapper;
 import com.bot.models.InternalGuild;
 import com.bot.utils.DbHelpers;
 import com.bot.utils.GuildUtils;
+import com.bot.utils.Logger;
 import com.zaxxer.hikari.HikariDataSource;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -17,10 +18,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class GuildDAO {
-    private static final Logger LOGGER = Logger.getLogger(PlaylistDAO.class.getName());
+    private static final Logger LOGGER = new Logger(PlaylistDAO.class.getName());
     private final int DEFAULT_VOLUME = 100;
 
     private HikariDataSource write;
@@ -88,7 +88,7 @@ public class GuildDAO {
                 cache.put(returned.getId(), returned);
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to get guildById: " + e.getMessage());
+            LOGGER.severe("Failed to get guildById", e);
         } finally {
             DbHelpers.INSTANCE.close(statement, set, connection);
         }
@@ -111,7 +111,7 @@ public class GuildDAO {
                 count = set.getInt(1);
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to get guild count");
+            LOGGER.severe("Failed to get guild count", e);
         } finally {
             DbHelpers.INSTANCE.close(statement, set, connection);
         }

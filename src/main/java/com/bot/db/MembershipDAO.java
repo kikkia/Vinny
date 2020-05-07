@@ -4,6 +4,7 @@ package com.bot.db;
 import com.bot.db.mappers.GuildMembershipMapper;
 import com.bot.models.InternalGuildMembership;
 import com.bot.utils.DbHelpers;
+import com.bot.utils.Logger;
 import com.zaxxer.hikari.HikariDataSource;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -15,10 +16,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MembershipDAO {
-    private static final Logger LOGGER = Logger.getLogger(MembershipDAO.class.getName());
+    private static final Logger LOGGER = new Logger(MembershipDAO.class.getName());
 
     private HikariDataSource write;
     private static MembershipDAO instance;
@@ -66,7 +66,7 @@ public class MembershipDAO {
                 membership = GuildMembershipMapper.mapGuildMembership(set);
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to get user membership in guild: " + e.getMessage());
+            LOGGER.severe("Failed to get user membership in guild", e);
         } finally {
             DbHelpers.INSTANCE.close(statement, set, connection);
         }
@@ -92,7 +92,7 @@ public class MembershipDAO {
                 memberships.add(GuildMembershipMapper.mapGuildMembership(set));
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to get memberships for user. " + e.getMessage());
+            LOGGER.severe("Failed to get memberships for user.", e);
         } finally {
             DbHelpers.INSTANCE.close(statement, set, connection);
         }

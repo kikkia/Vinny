@@ -2,8 +2,10 @@ package com.bot;
 
 import com.bot.db.ConnectionPool;
 import com.bot.metrics.MetricsReporter;
+import com.bot.tasks.CleanupIdlePlayers;
 import com.bot.tasks.RunScheduledCommandsDefferedTask;
 import com.bot.utils.Config;
+import com.bot.utils.Logger;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 
@@ -11,10 +13,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main {
-	private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+	private static final Logger LOGGER = new Logger(Main.class.getName());
 
 
 	public static void main(String[] args) throws Exception {
@@ -63,6 +64,9 @@ public class Main {
 			ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(2);
 			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 120, 9, TimeUnit.SECONDS);
 		}
+
+		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+		service.scheduleAtFixedRate(new CleanupIdlePlayers(), 60, 300, TimeUnit.SECONDS);
 
 		System.out.println("Successfully started.");
 	}
