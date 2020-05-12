@@ -2,7 +2,6 @@ package com.bot;
 
 import com.bot.db.ConnectionPool;
 import com.bot.metrics.MetricsReporter;
-import com.bot.tasks.CleanupIdlePlayers;
 import com.bot.tasks.RunScheduledCommandsDefferedTask;
 import com.bot.utils.Config;
 import com.bot.utils.Logger;
@@ -65,8 +64,8 @@ public class Main {
 			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 120, 9, TimeUnit.SECONDS);
 		}
 
-		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-		service.scheduleAtFixedRate(new CleanupIdlePlayers(), 60, 300, TimeUnit.SECONDS);
+//		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+//		service.scheduleAtFixedRate(new CleanupIdlePlayers(), 60, 300, TimeUnit.SECONDS);
 
 		System.out.println("Successfully started.");
 	}
