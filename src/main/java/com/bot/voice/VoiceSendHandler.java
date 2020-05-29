@@ -139,7 +139,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             }
         }
 
-        QueuedAudioTrack nextTrack = tracks.poll();
+        QueuedAudioTrack nextTrack = tracks.peek();
         // If nextTrack is null then we are done
         if (nextTrack == null) {
             if (repeatAll) {
@@ -160,6 +160,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             nowPlaying = nextTrack;
 
             sendNowPlayingUpdate();
+            tracks.poll(); // Since we peek above, take the track off of the queue
             if (repeatAll) {
                 try {
                     queueTrack(track.makeClone(), requester, requesterName, lastUsedChannel);
