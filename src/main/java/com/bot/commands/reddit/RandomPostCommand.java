@@ -64,7 +64,7 @@ public class RandomPostCommand extends RedditCommand{
         } catch (NetworkException e) {
             commandEvent.replyWarning("I was unable to get info the subreddit, please make sure it is correctly spelled.");
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error thrown: " + e);
+            logger.log(Level.SEVERE, "Error thrown when getting reddit post", e);
             commandEvent.replyError("Sorry, something went wrong getting a reddit post.");
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }

@@ -1,6 +1,10 @@
 package com.bot.utils;
 
+import java.util.Random;
+
 public class ConstantStrings {
+
+    private static Random random = new Random();
 
     public static String WELCOME_MESSAGE = "Hey all! Thanks for adding me to your server! To get started you can go to https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md" +
             " to find a full list of commands. You can also run `~help` to get a less detailed list sent to you in a DM.\n\nA couple tips before we start:\n" +
@@ -37,4 +41,30 @@ public class ConstantStrings {
     public static String REBOOT_VOICE_MESSAGE = "Vinny will be rebooting in a few moments for maintenance. You will have to restart your audio stream once Vinny is rebooted. Sorry for the inconvenience. In a" +
             " future update Vinny will save your current playlists when rebooting. You can stay up to date" +
             " with new Vinny updates, features, and maintenance on Vinny's [support server](https://discord.gg/XMwyzxZ)";
+
+    private static String[] ROULETTE_DED = new String[] {"BANG! That is one hell of a shame",
+        "BANG! Rip that dude ded",
+        "BANG! Id say it's a shame, but it really isn't.",
+        "BANG! I guess they were not as lucky as they thought...",
+        "BANG! Anyone know a good lawyer? We might be accomplices now.",
+        "BANG! Post it on Liveleak, quick!",
+        "BANG! Kurt Cobain has left the server."
+    };
+
+    private static String[] ROULETTE_LIVE = new String[] {
+            "Click! Wow, do you shit with that ass?",
+            "Click! Look at the balls on this guy..",
+            "Click! Try it again, I dare you.",
+            "Click! I can't believe you actually tried that.",
+            "Click! [ $[ $RANDOM % 6 ] == 0 ] && rm -f $(shuf -n1 -e *) or no balls",
+            "Click! That's odd, I swear I put in all 6 bullets that time.."
+    };
+
+    public static String getRandomRouletteWin() {
+        return ROULETTE_LIVE[random.nextInt(ROULETTE_LIVE.length)];
+    }
+
+    public static String getRandomRouletteFail() {
+        return ROULETTE_DED[random.nextInt(ROULETTE_DED.length)];
+    }
 }
