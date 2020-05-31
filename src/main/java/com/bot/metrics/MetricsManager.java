@@ -99,6 +99,14 @@ public class MetricsManager {
         statsd.incrementCounter("discord.event", shardTag);
     }
 
+    public void markRouletteDed() {
+        statsd.incrementCounter("roulette.ded");
+    }
+
+    public void markRouletteLive() {
+        statsd.incrementCounter("roulette.live");
+    }
+
     public void markCacheHit(String name) {
         statsd.incrementCounter("cache." + name + ".hit");
     }

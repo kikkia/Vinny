@@ -55,7 +55,7 @@ public class ScheduleCommand extends ModerationCommand {
         private String command;
         private CommandEvent commandEvent;
 
-        public StepOneConsumer(CommandEvent commandEvent) {
+        StepOneConsumer(CommandEvent commandEvent) {
             this.commandEvent = commandEvent;
         }
 
@@ -90,7 +90,7 @@ public class ScheduleCommand extends ModerationCommand {
         private String command;
         private CommandEvent commandEvent;
 
-        public StepTwoConsumer(CommandEvent commandEvent, String command) {
+        StepTwoConsumer(CommandEvent commandEvent, String command) {
             this.command = command;
             this.commandEvent = commandEvent;
         }

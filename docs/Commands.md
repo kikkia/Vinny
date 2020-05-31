@@ -206,7 +206,14 @@ Gets a webm from p90.zone. You can leave it blank to get a random webm, or add i
 ### `ascii`
 Generates an ascii representation of a given message.
 * `ascii ayy lmao` - Outputs ascii art of `ayy lmao`
-  
+
+### `kickroulette`
+Want to try your luck? Get an invite back to the guild just in case. This command will allow you to play russian roulette. Lost the game, get kicked from the server. If you rejoin in the next 24 hrs you'll get your roles back.
+* `~memeroulette`
+
+### `memekick`
+Want to kick someone, but want them back? This command kicks a user and sends them an invite to get back, it also will give them their roles back. (user needs kick_members permission)
+* `~memekick @user_to_kick` - Meme kicks the user, works with multiple users.
 
 ### `shitpost`
 nuff said.
@@ -256,6 +263,10 @@ Removes one or more prefixes from the servers custom prefixes.
 ### `prefixes`
 Lists all custom prefixes on the server.
 
+### `purge`
+Bulk removes messages from a channel, for more help see [this page.](https://github.com/kikkia/Vinny/blob/master/docs/purge.md)
+
+
 ## Aliases
 Aliases are ways to use vinny commands with whatever trigger you want as opposed to using the normal command prefixes.
 
@@ -268,9 +279,6 @@ Shows all aliases you have access to.
 ### `removegalias`
 Removes an alias from the guild. Example: `given your guild has an alias with the trigger lol`
 * `~removegalias lol`
-
-### `purge`
-Bulk removes messages from a channel, for more help see [this page.](https://github.com/kikkia/Vinny/blob/master/docs/purge.md)
 
 ## Scheduling
 You can schedule Vinny to run commands every X amount of time using these commands
