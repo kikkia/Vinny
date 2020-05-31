@@ -5,6 +5,7 @@ import com.bot.consumers.ReRoleConsumer;
 import com.bot.utils.ConstantStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
@@ -29,12 +30,13 @@ public class KickRouletteCommand extends MemeCommand {
     }
 
     @Override
+    @Trace
     protected void executeCommand(CommandEvent commandEvent) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Kick Roulette");
         builder.setDescription("I loaded this revolver with one bullet. Click on the revolver reaction to " +
                 "try your luck. You have 30 seconds.");
-        builder.addField("NOTE", "You have 1 hour to rejoin this server (to get your roles back), " +
+        builder.addField("NOTE", "You have 24 hours to rejoin this server (to get your roles back), " +
                 "I recommend you have an invite ready before pulling that trigger", false);
         builder.setFooter("NOTE: I will try to give roles back, but its possible that some roles I cannot give back.");
 
@@ -62,6 +64,7 @@ public class KickRouletteCommand extends MemeCommand {
 
             // Six shooter
             if (random.nextInt(6) == 0) {
+                metricsManager.markRouletteDed();
                 // King server is immune
                 if (commandEvent.getMember().isOwner()) {
                     commandEvent.reply("Bang! The bullet cannot pierce your skull, because you are King Server, immortal");
@@ -71,9 +74,10 @@ public class KickRouletteCommand extends MemeCommand {
                 waiter.waitForEvent(GuildMemberJoinEvent.class,
                         e -> e.getUser().getId().equals(commandEvent.getMember().getUser().getId()),
                         new ReRoleConsumer(commandEvent.getMember().getRoles(), commandEvent.getTextChannel()),
-                        5, TimeUnit.HOURS, () -> commandEvent.reply("Riperino, looks like they are dead forever"));
+                        1, TimeUnit.DAYS, () -> commandEvent.reply("Riperino, looks like they are dead forever"));
                 commandEvent.getMember().kick().queue();
             } else {
+                metricsManager.markRouletteLive();
                 commandEvent.reply(ConstantStrings.getRandomRouletteWin());
             }
         }

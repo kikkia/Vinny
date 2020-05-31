@@ -35,6 +35,12 @@ public class MemeKickCommand extends MemeCommand {
         }
 
         for (Member member : commandEvent.getMessage().getMentionedMembers()) {
+
+            if (member.getUser().isBot()) {
+                commandEvent.replyWarning("I will not memekick bots");
+                continue;
+            }
+
             Invite invite = commandEvent.getTextChannel().createInvite().setMaxUses(1).complete();
             try {
                 PrivateChannel channel = member.getUser().openPrivateChannel().complete();
@@ -56,7 +62,7 @@ public class MemeKickCommand extends MemeCommand {
             waiter.waitForEvent(GuildMemberJoinEvent.class,
                     e -> e.getUser().getId().equals(member.getUser().getId()),
                     new ReRoleConsumer(roles, commandEvent.getTextChannel()),
-                    1, TimeUnit.HOURS, () -> {});
+                    1, TimeUnit.DAYS, () -> {});
         }
         commandEvent.reactSuccess();
     }
