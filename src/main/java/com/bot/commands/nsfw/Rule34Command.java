@@ -43,7 +43,7 @@ public class Rule34Command extends NSFWCommand {
         try {
             if (imageUrls == null) {
                 imageUrls = new ArrayList<>();
-                imageUrls.addAll(getImageURLFromSearch(r34url));
+                // imageUrls.addAll(getImageURLFromSearch(r34url));
                 imageUrls.addAll(getImageURLFromSearch(booruUrl));
                 cache.put(commandEvent.getArgs(), imageUrls);
             }
