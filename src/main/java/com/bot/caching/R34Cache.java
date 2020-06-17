@@ -21,9 +21,9 @@ public class R34Cache {
     }
 
     private R34Cache() {
-        MAX_SIZE = 200;
-        CACHE_CHECK_INTERVAL = 600;
-        CACHE_OBJECT_LIFETIME = 1200;
+        MAX_SIZE = 400;
+        CACHE_CHECK_INTERVAL = 660;
+        CACHE_OBJECT_LIFETIME = 3600;
 
         cache = new Cache<>("r34", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
 

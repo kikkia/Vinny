@@ -36,14 +36,14 @@ public class Rule34Command extends NSFWCommand {
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
         // Get the tags
-        String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + commandEvent.getArgs();
+        String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=250&tags=" + commandEvent.getArgs();
         String booruUrl = "https://yande.re/post.xml?tags=" + commandEvent.getArgs();
         List<String> imageUrls = cache.get(commandEvent.getArgs());
 
         try {
             if (imageUrls == null) {
                 imageUrls = new ArrayList<>();
-                // imageUrls.addAll(getImageURLFromSearch(r34url));
+                imageUrls.addAll(getImageURLFromSearch(r34url));
                 imageUrls.addAll(getImageURLFromSearch(booruUrl));
                 cache.put(commandEvent.getArgs(), imageUrls);
             }
