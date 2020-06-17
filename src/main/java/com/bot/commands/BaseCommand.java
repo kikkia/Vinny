@@ -16,6 +16,8 @@ public abstract class BaseCommand extends Command {
     protected MetricsManager metricsManager;
     protected Logger logger;
 
+    public boolean canSchedule;
+
     public BaseCommand() {
         this.metricsManager = MetricsManager.getInstance();
         this.logger = new Logger(this.getClass().getSimpleName());

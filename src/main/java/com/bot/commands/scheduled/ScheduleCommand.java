@@ -1,11 +1,11 @@
 package com.bot.commands.scheduled;
 
+import com.bot.commands.BaseCommand;
 import com.bot.commands.ModerationCommand;
 import com.bot.db.ScheduledCommandDAO;
 import com.bot.exceptions.IntervalFormatException;
 import com.bot.models.ScheduledCommand;
 import com.bot.utils.*;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -66,15 +66,17 @@ public class ScheduleCommand extends ModerationCommand {
                 return;
             }
 
-            Command commandToInvoke = AliasUtils.findCommandForInput(event.getMessage().getContentRaw().split(" ")[0]);
+            BaseCommand commandToInvoke = (BaseCommand) AliasUtils.findCommandForInput(event.getMessage().getContentRaw().split(" ")[0]);
             command = "~" + event.getMessage().getContentRaw();
 
             if (commandToInvoke == null) {
                 commandEvent.replyWarning("That does not seem like it would trigger any commands. Please try again.");
             } else if (commandToInvoke.getCategory() == CommandCategories.VOICE) {
-                commandEvent.replyWarning("Voice commands cannot be scheduled");
+                commandEvent.replyWarning("Voice commands cannot be scheduled.");
             } else if (commandToInvoke.getCategory() == CommandCategories.MODERATION) {
-                commandEvent.replyWarning("Moderation commands cannot be scheduled");
+                commandEvent.replyWarning("Moderation commands cannot be scheduled.");
+            } else if (!commandToInvoke.canSchedule) {
+                commandEvent.replyWarning("This command cannot be scheduled.");
             } else {
                 commandEvent.replySuccess(ConstantStrings.SCHEDULED_COMMAND_SETUP_INTERVAL);
 

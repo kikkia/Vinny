@@ -8,5 +8,6 @@ abstract class NSFWCommand : BaseCommand() {
         this.category = CommandCategories.NSFW
         this.guildOnly = false
         this.botPermissions = arrayOf(Permission.MESSAGE_WRITE, Permission.MESSAGE_EMBED_LINKS)
+        this.canSchedule = true
     }
 }

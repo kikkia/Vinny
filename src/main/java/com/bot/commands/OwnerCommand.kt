@@ -8,5 +8,6 @@ abstract class OwnerCommand : BaseCommand() {
         this.guildOnly = false
         this.hidden = true
         this.category = CommandCategories.OWNER
+        this.canSchedule = false
     }
 }
