@@ -104,6 +104,9 @@ public class Config {
 
     public static final String DEFAULT_SEARCH_PROVIDER = "DEFAULT_SEARCH_PROVIDER";
 
+    public static final String SAUCE_PROXY = "SAUCE_PROXY";
+    public static final String SAUCE_TOKEN = "SAUCE_TOKEN";
+
     private Config() {
         this.configFile = new File("res/config/config.conf");
         configs = new HashMap<>();

@@ -8,5 +8,6 @@ abstract class ModerationCommand : BaseCommand() {
         this.category = CommandCategories.MODERATION
         this.guildOnly = true
         this.botPermissions = arrayOf(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION)
+        this.canSchedule = false
     }
 }
