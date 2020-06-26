@@ -14,7 +14,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
-import java.util.Queue;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHandler {
@@ -267,5 +268,11 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
 
         if (lastUsedChannel != null)
             lastUsedChannel.sendMessage(builder.build()).queue();
+    }
+
+    public void shuffleTracks() {
+        List<QueuedAudioTrack> trackList = new ArrayList<QueuedAudioTrack>(Arrays.asList(tracks.toArray(new QueuedAudioTrack[]{})));
+        Collections.shuffle(trackList);
+        tracks = new LinkedList<>(trackList);
     }
 }
