@@ -71,6 +71,9 @@ Sets the current queue to loop through all tracks, or the next track
 * `~repeat` - Repeats the next track in the loop (Run command again or `repeat all` to turn it off)
 * `~repeat all` - Loops over the whole queue continuously. (When track ends it gets added to the end.)
 
+### `shuffle`
+Shuffles all of the tracks in the current queue
+
 ### `volume`
 Sets the volume of the voice output. With no arguments it displays the current volume. Volume can range between 1 and 200. 
 * `~volume 50` - Sets the volume to 50%.
