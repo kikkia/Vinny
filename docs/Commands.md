@@ -10,8 +10,8 @@
     * [Nsfw Commands](#Nsfw)
     * [Meme Commands](#Meme)
     * [Mod Commands](#Mod)
-    * [Alias Commands] (#Aliases)
-    * [Scheduling Commands] (#Scheduling)
+    * [Alias Commands](#Aliases)
+    * [Scheduling Commands](#Scheduling)
 3. [Role Permissions](#Permissions)
 
 # About 
