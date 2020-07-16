@@ -127,6 +127,7 @@ public class ShardingManager {
                     new PixivCommand(),
                     new ReviewCommand(),
                     new GetScheduledCommand(waiter),
+                    new HelpCommand(),
 
                     // Alias Commands
                     new AliasesCommand(waiter),
@@ -169,9 +170,8 @@ public class ShardingManager {
                     // 4chan commands
                     new R4cCommand()
             );
-        } else {
-            commandClientBuilder.useHelpBuilder(false);
         }
+        commandClientBuilder.useHelpBuilder(false);
 
         commandClientBuilder.addCommands(
                 // Owner Commands -- All hidden

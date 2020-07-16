@@ -6,6 +6,8 @@ public class ConstantStrings {
 
     private static Random random = new Random();
 
+    public static final String COMMANDS_URL = "https://github.com/kikkia/Vinny/blob/master/docs/Commands.md";
+
     public static String WELCOME_MESSAGE = "Hey all! Thanks for adding me to your server! To get started you can go to https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md" +
             " to find a full list of commands. You can also run `~help` to get a less detailed list sent to you in a DM.\n\nA couple tips before we start:\n" +
             "- When adding me to a large server (>200 users) I may spit out some warnings if you use commands in the first couple messages. " +
@@ -59,6 +61,14 @@ public class ConstantStrings {
             "Click! [ $[ $RANDOM % 6 ] == 0 ] && rm -f $(shuf -n1 -e *) or no balls",
             "Click! That's odd, I swear I put in all 6 bullets that time.."
     };
+
+    private static String[] HELP_SUCCESS_MESSAGES = new String[] {
+            "Sent you a DM BB",
+            "Check your dms, my dude",
+            "I send you a DM with the deets"
+    };
+
+    public static String getRandomHelpSuccess() {return HELP_SUCCESS_MESSAGES[random.nextInt(HELP_SUCCESS_MESSAGES.length)];}
 
     public static String getRandomRouletteWin() {
         return ROULETTE_LIVE[random.nextInt(ROULETTE_LIVE.length)];
