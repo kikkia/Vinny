@@ -5,6 +5,7 @@ import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.metrics.MetricsManager;
 import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
+import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
@@ -31,7 +32,9 @@ public abstract class BaseCommand extends Command {
             guild = commandEvent.getGuild();
 
         metricsManager.markCommand(this, commandEvent.getAuthor(), guild);
-        commandEvent.getTextChannel().sendTyping().queue();
+        if (!ScheduledCommandUtils.isScheduled(commandEvent)) {
+            commandEvent.getTextChannel().sendTyping().queue();
+        }
 
         // Check the permissions to do the command
         try {
