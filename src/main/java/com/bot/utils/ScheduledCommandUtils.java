@@ -1,20 +1,24 @@
 package com.bot.utils;
 
+import club.minnced.discord.webhook.WebhookClient;
 import com.bot.ShardingManager;
+import com.bot.caching.WebhookClientCache;
 import com.bot.db.ScheduledCommandDAO;
+import com.bot.exceptions.ScheduledCommandFailedException;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.ScheduledCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageType;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.internal.entities.ReceivedMessage;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ScheduledCommandUtils {
@@ -37,7 +41,7 @@ public class ScheduledCommandUtils {
                 false,
                 false,
                 command.getCommand(),
-                "",
+                ConstantStrings.SCHEDULED_FLAG,
                 jda.getUserById(command.getAuthor()),
                 null,
                 null,
@@ -103,5 +107,30 @@ public class ScheduledCommandUtils {
         } catch (NullPointerException e) {
             commandEvent.replyWarning("Cannot find the command ID");
         }
+    }
+
+    public static WebhookClient getWebhookForChannel(CommandEvent commandEvent) throws ScheduledCommandFailedException {
+        if (commandEvent.getSelfMember().hasPermission(commandEvent.getTextChannel(), Permission.MANAGE_WEBHOOKS)) {
+            List<Webhook> hooks = commandEvent.getTextChannel().retrieveWebhooks().complete();
+
+            // If there are webhooks, lets send that way
+            Optional<Webhook> vinnyHook = hooks.stream().filter(webhook -> webhook.getName().equalsIgnoreCase("vinny")).findFirst();
+            if (!vinnyHook.isPresent()) {
+                vinnyHook = Optional.of(commandEvent.getTextChannel().createWebhook("vinny").complete());
+            }
+            WebhookClientCache clientCache = WebhookClientCache.getInstance();
+            WebhookClient client = clientCache.get(vinnyHook.get().getUrl());
+            if (client == null) {
+                client = WebhookClient.withUrl(vinnyHook.get().getUrl());
+                clientCache.put(vinnyHook.get().getUrl(), client);
+            }
+            return client;
+        } else {
+            throw new ScheduledCommandFailedException(ConstantStrings.SCHEDULED_WEBHOOK_FAIL);
+        }
+    }
+
+    public static boolean isScheduled(CommandEvent event) {
+        return Objects.equals(event.getMessage().getNonce(), ConstantStrings.SCHEDULED_FLAG);
     }
 }

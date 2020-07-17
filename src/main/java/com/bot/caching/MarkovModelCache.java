@@ -28,8 +28,6 @@ public class MarkovModelCache {
         CACHE_CHECK_INTERVAL = config.getConfig(Config.MARKOV_CACHE_CLEANUP_INTERVAL) == null ? 1200 : Integer.parseInt(config.getConfig(Config.MARKOV_CACHE_CLEANUP_INTERVAL));
 
         cache = new Cache<>("markov", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
-
-        LOGGER.info("Markov Cache successfully initialized.");
     }
 
     public void put(String key, MarkovModel value) {

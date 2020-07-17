@@ -1,7 +1,11 @@
 package com.bot.commands.general
 
+import club.minnced.discord.webhook.send.WebhookMessage
+import club.minnced.discord.webhook.send.WebhookMessageBuilder
 import com.bot.commands.GeneralCommand
+import com.bot.exceptions.ScheduledCommandFailedException
 import com.bot.utils.FormattingUtils
+import com.bot.utils.ScheduledCommandUtils
 import com.jagrosh.jdautilities.command.CommandEvent
 
 class SayCommand : GeneralCommand() {
@@ -12,6 +16,23 @@ class SayCommand : GeneralCommand() {
     }
 
     override fun executeCommand(commandEvent: CommandEvent) {
-        commandEvent.reply(FormattingUtils.cleanSayCommand(commandEvent))
+        if (ScheduledCommandUtils.isScheduled(commandEvent)) {
+            try {
+                val webhook = ScheduledCommandUtils.getWebhookForChannel(commandEvent)
+                webhook.send(buildWebhookMessage(commandEvent))
+            } catch (e : ScheduledCommandFailedException) {
+                commandEvent.replyWarning(e.message)
+            }
+        } else {
+            commandEvent.reply(FormattingUtils.cleanSayCommand(commandEvent))
+        }
+    }
+
+    private fun buildWebhookMessage(event : CommandEvent) : WebhookMessage {
+        val builder = WebhookMessageBuilder()
+        builder.setContent(FormattingUtils.cleanSayCommand(event))
+        builder.setAvatarUrl(event.selfUser.avatarUrl)
+        builder.setUsername(event.selfMember.effectiveName)
+        return builder.build()
     }
 }

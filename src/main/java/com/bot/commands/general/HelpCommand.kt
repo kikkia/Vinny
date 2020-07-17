@@ -15,7 +15,7 @@ class HelpCommand : GeneralCommand() {
     }
 
     override fun executeCommand(commandEvent: CommandEvent) {
-        val t = commandEvent.author.openPrivateChannel().queue(OpenSuccessConsumer(commandEvent), FailureConsumer(commandEvent))
+        commandEvent.author.openPrivateChannel().queue(OpenSuccessConsumer(commandEvent), FailureConsumer(commandEvent))
     }
 
     class OpenSuccessConsumer(val commandEvent: CommandEvent) : Consumer<PrivateChannel> {

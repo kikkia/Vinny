@@ -29,9 +29,6 @@ public class TextChannelCache {
         cache = new Cache<>("text_channel", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
 
         LOGGER = new Logger(TextChannelCache.class.getName());
-
-        LOGGER.info("TextChannel Cache successfully initialized.");
-
     }
 
     public void put(String key, InternalTextChannel value) {

@@ -8,6 +8,7 @@ import com.bot.models.ScheduledCommand;
 import com.bot.utils.*;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.sql.SQLException;
@@ -23,6 +24,7 @@ public class ScheduleCommand extends ModerationCommand {
         this.name = "schedule";
         this.aliases = new String[] {"schedulecommand", "setupschedule"};
         this.help = "Adds a scheduled command to the channel";
+        this.botPermissions = new Permission[] {Permission.MANAGE_WEBHOOKS};
         this.guildOnly = true;
         this.waiter = waiter;
         this.scheduledCommandDAO = ScheduledCommandDAO.getInstance();

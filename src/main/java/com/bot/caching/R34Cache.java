@@ -28,7 +28,6 @@ public class R34Cache {
         cache = new Cache<>("r34", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
 
         logger = new Logger(this.getClass().getName());
-        logger.info("r34 cache initialized");
     }
 
     public void put(String key, List<String> value) {

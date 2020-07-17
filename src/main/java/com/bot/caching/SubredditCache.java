@@ -31,7 +31,6 @@ public class SubredditCache {
         cache = new Cache<>("subreddit", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
 
         LOGGER = new Logger(SubredditCache.class.getName());
-        LOGGER.info("subreddit Cache initialized.");
     }
 
     public void put(String key, List<Listing<Submission>> value) {

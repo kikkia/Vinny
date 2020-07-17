@@ -256,6 +256,7 @@ public class HttpUtils {
     }
 
 
+    // TODO: Port to use a Webhook client like used for some scheduled commands
     public static void sendCommentHook(Webhook webhook, MarkovModel model, Member member, TextChannel channel) throws Exception {
         String message = model.getPhrase();
         JSONObject toSend = new JSONObject();

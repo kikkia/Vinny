@@ -3,8 +3,10 @@ package com.bot.commands.reddit;
 import com.bot.RedditConnection;
 import com.bot.commands.RedditCommand;
 import com.bot.db.ChannelDAO;
+import com.bot.exceptions.ScheduledCommandFailedException;
 import com.bot.models.InternalTextChannel;
 import com.bot.utils.CommandCategories;
+import com.bot.utils.ConstantStrings;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dean.jraw.ApiException;
@@ -62,6 +64,9 @@ public class NewPostCommand extends RedditCommand {
             }
         } catch (NetworkException e) {
             commandEvent.replyWarning("I was unable to get info the subreddit, please make sure it is correctly spelled.");
+        } catch (ScheduledCommandFailedException e) {
+            logger.severe("Failed to get webhook for scheduled command " + commandEvent.getTextChannel().getId(), e);
+            commandEvent.replyWarning(ConstantStrings.SCHEDULED_WEBHOOK_FAIL);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error thrown: " + e);
             commandEvent.replyError("Sorry, something went wrong getting a reddit post.");

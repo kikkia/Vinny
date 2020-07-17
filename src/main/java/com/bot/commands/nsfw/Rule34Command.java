@@ -1,7 +1,12 @@
 package com.bot.commands.nsfw;
 
+import club.minnced.discord.webhook.WebhookClient;
+import club.minnced.discord.webhook.send.WebhookMessage;
+import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.bot.caching.R34Cache;
 import com.bot.commands.NSFWCommand;
+import com.bot.exceptions.ScheduledCommandFailedException;
+import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -39,7 +44,7 @@ public class Rule34Command extends NSFWCommand {
         String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=250&tags=" + commandEvent.getArgs();
         String booruUrl = "https://yande.re/post.xml?tags=" + commandEvent.getArgs();
         List<String> imageUrls = cache.get(commandEvent.getArgs());
-
+        String selected;
         try {
             if (imageUrls == null) {
                 imageUrls = new ArrayList<>();
@@ -47,27 +52,47 @@ public class Rule34Command extends NSFWCommand {
                 imageUrls.addAll(getImageURLFromSearch(booruUrl));
                 cache.put(commandEvent.getArgs(), imageUrls);
             }
-            String selected = imageUrls.get(random.nextInt(imageUrls.size()));
-            commandEvent.reply(selected);
+            selected = imageUrls.get(random.nextInt(imageUrls.size()));
         } catch (IllegalArgumentException e) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " I couldn't find any results for that search.");
+            return;
         } catch (Exception e) {
             if (imageUrls == null || imageUrls.isEmpty()) {
                 logger.severe("Something went wrong getting r34 post: ", e);
                 commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong getting the image, please try again.");
                 metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
+                return;
             } else {
                 logger.warning("Failed to get some r34 posts, but some exist... Attempting to send them", e);
                 cache.put(commandEvent.getArgs(), imageUrls);
-                String selected = imageUrls.get(random.nextInt(imageUrls.size()));
-                commandEvent.reply(selected);
+                selected = imageUrls.get(random.nextInt(imageUrls.size()));
             }
         }
+        if (ScheduledCommandUtils.isScheduled(commandEvent)) {
+            WebhookClient client = null;
+            try {
+                client = ScheduledCommandUtils.getWebhookForChannel(commandEvent);
+                client.send(buildWebhookMessage(selected, commandEvent));
+            } catch (ScheduledCommandFailedException e) {
+                logger.warning("Failed to get webhook r34", e);
+                commandEvent.replyWarning(e.getMessage());
+            }
+        } else {
+            commandEvent.reply(selected);
+        }
+    }
+
+    private WebhookMessage buildWebhookMessage(String selected, CommandEvent commandEvent) {
+        WebhookMessageBuilder builder = new WebhookMessageBuilder();
+        builder.setAvatarUrl(commandEvent.getSelfUser().getAvatarUrl());
+        builder.setUsername(commandEvent.getSelfMember().getEffectiveName());
+        builder.setContent(selected);
+        return builder.build();
     }
 
     private List<String> getImageURLFromSearch(String url) throws Exception{
         HttpGet get = new HttpGet(url);
-        int timeout = 4;
+        int timeout = 5;
         RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(timeout * 1000)
                 .setConnectionRequestTimeout(timeout * 1000)
