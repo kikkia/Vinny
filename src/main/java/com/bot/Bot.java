@@ -147,7 +147,7 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGenericEvent(@NotNull GenericEvent event) {
-		metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId());
+		metricsManager.markDiscordEvent(event.getJDA().getShardInfo().getShardId(), event.getClass().getSimpleName());
 		super.onGenericEvent(event);
 	}
 

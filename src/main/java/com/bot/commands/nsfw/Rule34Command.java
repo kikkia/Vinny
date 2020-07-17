@@ -69,7 +69,7 @@ public class Rule34Command extends NSFWCommand {
             }
         }
         if (ScheduledCommandUtils.isScheduled(commandEvent)) {
-            WebhookClient client = null;
+            WebhookClient client;
             try {
                 client = ScheduledCommandUtils.getWebhookForChannel(commandEvent);
                 client.send(buildWebhookMessage(selected, commandEvent));
