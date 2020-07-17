@@ -65,7 +65,7 @@ public class NewPostCommand extends RedditCommand {
         } catch (NetworkException e) {
             commandEvent.replyWarning("I was unable to get info the subreddit, please make sure it is correctly spelled.");
         } catch (ScheduledCommandFailedException e) {
-            logger.severe("Failed to get webhook for scheduled command " + commandEvent.getTextChannel().getId(), e);
+            logger.warning("Failed to get webhook for scheduled command " + commandEvent.getTextChannel().getId(), e);
             commandEvent.replyWarning(ConstantStrings.SCHEDULED_WEBHOOK_FAIL);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error thrown: " + e);

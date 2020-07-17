@@ -94,9 +94,9 @@ public class MetricsManager {
         statsd.recordGaugeValue("cache." + name + ".max", limit);
     }
 
-    public void markDiscordEvent(int shard, String type) {
+    public void markDiscordEvent(int shard) {
         String shardTag = "shard:" + shard;
-        statsd.incrementCounter("discord.event", shardTag, type);
+        statsd.incrementCounter("discord.event", shardTag);
     }
 
     public void markRouletteDed() {
