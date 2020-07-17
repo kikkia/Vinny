@@ -1,7 +1,14 @@
 package com.bot.commands.nsfw;
 
+import club.minnced.discord.webhook.WebhookClient;
+import club.minnced.discord.webhook.send.WebhookEmbed;
+import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
+import club.minnced.discord.webhook.send.WebhookMessage;
+import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.bot.commands.NSFWCommand;
+import com.bot.exceptions.ScheduledCommandFailedException;
 import com.bot.utils.HttpUtils;
+import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.text.StringEscapeUtils;
@@ -49,17 +56,40 @@ public class R4cCommand extends NSFWCommand {
             body = body.substring(0, 250) + "...";
         }
 
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setImage(imageUrl);
-        builder.setAuthor(title);
-        builder.setDescription("Replies: " + thread.getInt("replies") + " Images: " + thread.getInt("images"));
-        builder.setTitle(body);
-        builder.addField("link", "[Thread](http://boards.4channel.org/" + commandEvent.getArgs() + "/thread/" + thread.getInt("no") + ")", false);
-        commandEvent.reply(builder.build());
+        if (ScheduledCommandUtils.isScheduled(commandEvent)) {
+            try {
+                WebhookClient client = ScheduledCommandUtils.getWebhookForChannel(commandEvent);
+                client.send(buildWebhookMessage(commandEvent, imageUrl, title, thread, body));
+            } catch (ScheduledCommandFailedException e) {
+                logger.warning("r4c failed to get webhook", e);
+                commandEvent.replyWarning(e.getMessage());
+            }
 
-        if (thread.getString("ext").equals(".webm")) {
-            commandEvent.reply(imageUrl);
+        } else {
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setImage(imageUrl);
+            builder.setAuthor(title);
+            builder.setDescription("Replies: " + thread.getInt("replies") + " Images: " + thread.getInt("images"));
+            builder.setTitle(body);
+            builder.addField("link", "[Thread](http://boards.4channel.org/" + commandEvent.getArgs() + "/thread/" + thread.getInt("no") + ")", false);
+            commandEvent.reply(builder.build());
+
+            if (thread.getString("ext").equals(".webm")) {
+                commandEvent.reply(imageUrl);
+            }
         }
+    }
 
+    private WebhookMessage buildWebhookMessage(CommandEvent commandEvent, String imageUrl, String title, JSONObject thread, String body) {
+        WebhookMessageBuilder builder = new WebhookMessageBuilder();
+        WebhookEmbedBuilder embedBuilder = new WebhookEmbedBuilder();
+        embedBuilder.setImageUrl(imageUrl);
+        embedBuilder.setTitle(new WebhookEmbed.EmbedTitle("/" + commandEvent.getArgs() + "/",
+                "http://boards.4channel.org/" + commandEvent.getArgs() + "/thread/" + thread.getInt("no")));
+        embedBuilder.setDescription(body);
+        embedBuilder.addField(new WebhookEmbed.EmbedField(true, "Replies", thread.getInt("replies") + ""));
+        embedBuilder.addField(new WebhookEmbed.EmbedField(true, "Images", thread.getInt("images") + ""));
+        builder.addEmbeds(embedBuilder.build());
+        return builder.build();
     }
 }

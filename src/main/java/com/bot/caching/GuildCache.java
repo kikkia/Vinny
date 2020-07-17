@@ -35,8 +35,6 @@ public class GuildCache {
         cache = new Cache<>("guild", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
 
         LOGGER = new Logger(GuildCache.class.getName());
-
-        LOGGER.info("Guild Cache successfully initialized.");
     }
 
     public void put(String key, InternalGuild value) {

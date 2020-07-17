@@ -6,6 +6,8 @@ public class ConstantStrings {
 
     private static Random random = new Random();
 
+    public static final String SCHEDULED_FLAG = "scheduled";
+    public static final String SCHEDULED_WEBHOOK_FAIL = "Failed to get webhook for scheduled command. Please make sure vinny has the MANAGE_WEBHOOKS permission for this channel";
     public static final String COMMANDS_URL = "https://github.com/kikkia/Vinny/blob/master/docs/Commands.md";
 
     public static String WELCOME_MESSAGE = "Hey all! Thanks for adding me to your server! To get started you can go to https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md" +

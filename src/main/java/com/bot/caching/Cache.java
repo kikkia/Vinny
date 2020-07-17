@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Cache<V> {
     private static final Logger LOGGER = new Logger(GuildCache.class.getName());
 
-    private final LRUMap cacheMap;
+    protected final LRUMap cacheMap;
     private MetricsManager metricsManager;
     private String name;
     private int maxIdleLifetime;
@@ -48,7 +48,7 @@ public class Cache<V> {
             t.setDaemon(true);
             t.start();
         }
-
+        LOGGER.info(name + " cache initialized");
     }
 
     @SuppressWarnings("unchecked")
@@ -122,12 +122,16 @@ public class Cache<V> {
 
         for (String key : deleteKey) {
             synchronized (cacheMap) {
-                cacheMap.remove(key);
+                removeEntity(key);
             }
 
             Thread.yield();
         }
 
         LOGGER.info(name + " Cache cleanup complete. Removed " + deleteKey.size() + " stale objects. " + name);
+    }
+
+    protected void removeEntity(String key) {
+        cacheMap.remove(key);
     }
 }

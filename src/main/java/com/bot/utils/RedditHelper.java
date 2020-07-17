@@ -1,5 +1,10 @@
 package com.bot.utils;
 
+import club.minnced.discord.webhook.WebhookClient;
+import club.minnced.discord.webhook.send.WebhookEmbed;
+import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
+import club.minnced.discord.webhook.send.WebhookMessage;
+import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.bot.RedditConnection;
 import com.bot.caching.SubredditCache;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -43,7 +48,7 @@ public class RedditHelper {
                                                   TimePeriod timePeriod,
                                                   int limit,
                                                   boolean isChannelNSFW,
-                                                  String subredditName) {
+                                                  String subredditName) throws Exception {
 
         // If the subreddit name contains an invalid character throw a error response
         if (!subredditName.matches("^[^<>@!#$%^&*() ,.=+;]+$")) {
@@ -94,23 +99,30 @@ public class RedditHelper {
             }
         }
 
-        // Send the embed, content will be sent separatly below
-        commandEvent.reply(buildEmbedForSubmission(submission));
+        // Scheduled commands generate an insane amount of traffic, lets send them to webhooks to help with global ratelimiting
+        if (ScheduledCommandUtils.isScheduled(commandEvent)) {
+            WebhookClient client = ScheduledCommandUtils.getWebhookForChannel(commandEvent);
+            client.send(buildWebhookEmbedMessageForSubmission(commandEvent, submission));
+            client.send(buildWebhookMessageForSubmission(commandEvent, submission));
+        } else {
+            // Send the embed, content will be sent separatly below
+            commandEvent.reply(buildEmbedForSubmission(submission));
 
-        String text = submission.getSelfText();
-        if (submission.isSelfPost() && text != null && !text.isEmpty()) {
-            // Since discord only allows us to send 2000 characters we need to break long posts down
-            if (text.length() > 1900) {
-                // Split message into parts and send them all separately
-                for (String part: FormattingUtils.splitTextIntoChunksByWords(text, 1500)) {
-                    commandEvent.reply("```" + part + "```");
+            String text = submission.getSelfText();
+            if (submission.isSelfPost() && text != null && !text.isEmpty()) {
+                // Since discord only allows us to send 2000 characters we need to break long posts down
+                if (text.length() > 1900) {
+                    // Split message into parts and send them all separately
+                    for (String part : FormattingUtils.splitTextIntoChunksByWords(text, 1500)) {
+                        commandEvent.reply("```" + part + "```");
+                    }
+                } else {
+                    // Its short enough so just send it
+                    commandEvent.reply("```" + text + " ```");
                 }
             } else {
-                // Its short enough so just send it
-                commandEvent.reply("```" + text + " ```");
+                commandEvent.reply(submission.getUrl());
             }
-        } else {
-            commandEvent.reply(submission.getUrl());
         }
     }
 
@@ -148,6 +160,57 @@ public class RedditHelper {
             builder.setImage(submission.getThumbnail());
         }
 
+        return builder.build();
+    }
+
+    private static WebhookMessage buildWebhookEmbedMessageForSubmission(CommandEvent event, Submission submission) {
+        WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
+        // TODO: Populate author url
+        builder.setAuthor(new WebhookEmbed.EmbedAuthor(submission.getAuthor(), null, null));
+        builder.addField(new WebhookEmbed.EmbedField(true, "Score", submission.getScore()+""));
+        builder.addField(new WebhookEmbed.EmbedField(true, "Comments", submission.getCommentCount()+""));
+        builder.setFooter(new WebhookEmbed.EmbedFooter(submission.getUrl(), REDDIT_SNOO_ICON_URL));
+
+        // If the title is more than 256 characters then trim it
+        String title = submission.getTitle();
+        title = title.length() <= 256 ? title : title.substring(0, 252) + "...";
+        builder.setTitle(new WebhookEmbed.EmbedTitle(title, submission.getUrl()));
+
+        // If there is a thumbnail and it does match a url to an image
+        if (submission.hasThumbnail() && submission.getThumbnail().matches("^[a-zA-Z0-9\\-\\.]+\\.(com|org|net|mil|edu|COM|ORG|NET|MIL|EDU)$")) {
+            builder.setImageUrl(submission.getThumbnail());
+        }
+
+        WebhookEmbed embed = builder.build();
+        WebhookMessageBuilder mBuilder = new WebhookMessageBuilder();
+        mBuilder.addEmbeds(embed);
+        mBuilder.setUsername(event.getSelfMember().getEffectiveName());
+        mBuilder.setAvatarUrl(event.getSelfUser().getAvatarUrl());
+        return mBuilder.build();
+    }
+
+    private static WebhookMessage buildWebhookMessageForSubmission(CommandEvent event, Submission submission) {
+        String message = "";
+        String text = submission.getSelfText();
+        if (submission.isSelfPost() && text != null && !text.isEmpty()) {
+            // Since discord only allows us to send 2000 characters we need to break long posts down
+            if (text.length() > 1900) {
+                // Split message into parts and send them all separately
+                for (String part : FormattingUtils.splitTextIntoChunksByWords(text, 1500)) {
+                    message = "```" + part + "```";
+                }
+            } else {
+                // Its short enough so just send it
+                message = "```" + text + " ```";
+            }
+        } else {
+            message = submission.getUrl();
+        }
+
+        WebhookMessageBuilder builder = new WebhookMessageBuilder();
+        builder.setAvatarUrl(event.getSelfUser().getAvatarUrl());
+        builder.setUsername(event.getSelfMember().getEffectiveName());
+        builder.setContent(message);
         return builder.build();
     }
 
