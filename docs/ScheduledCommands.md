@@ -1,5 +1,6 @@
 # Scheduled Commands
-Scheduling commands allows you to setup Vinny to automatically run commands on a timer.
+Scheduling commands allows you to setup Vinny to automatically run commands on a timer.  
+NOTE: To use scheduled commands, Vinny needs the `MANAGE_WEBHOOKS` permission.
 
 ## Examples
 ### `schedule`
