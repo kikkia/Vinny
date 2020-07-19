@@ -219,13 +219,13 @@
         <dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>jda-utilities-command</artifactId>
-            <version>3.0.2</version>
+            <version>3.0.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>jda-utilities-menu</artifactId>
-            <version>3.0.2</version>
+            <version>3.0.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
