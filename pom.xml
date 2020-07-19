@@ -219,14 +219,12 @@
         <dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>jda-utilities-command</artifactId>
-            <version>3.0.2</version>
-            <scope>compile</scope>
+            <version>3.0.4</version>
         </dependency>
         <dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>jda-utilities-menu</artifactId>
-            <version>3.0.2</version>
-            <scope>compile</scope>
+            <version>3.0.4</version>
         </dependency>
         <dependency>
             <groupId>net.dv8tion</groupId>
