@@ -111,19 +111,22 @@ public class ScheduledCommandUtils {
 
     public static WebhookClient getWebhookForChannel(CommandEvent commandEvent) throws ScheduledCommandFailedException {
         if (commandEvent.getSelfMember().hasPermission(commandEvent.getTextChannel(), Permission.MANAGE_WEBHOOKS)) {
-            List<Webhook> hooks = commandEvent.getTextChannel().retrieveWebhooks().complete();
+            TextChannel channel = commandEvent.getTextChannel();
 
-            // If there are webhooks, lets send that way
-            Optional<Webhook> vinnyHook = hooks.stream().filter(webhook -> webhook.getName().equalsIgnoreCase("vinny")).findFirst();
-            if (!vinnyHook.isPresent()) {
-                vinnyHook = Optional.of(commandEvent.getTextChannel().createWebhook("vinny").complete());
-            }
             WebhookClientCache clientCache = WebhookClientCache.getInstance();
-            WebhookClient client = clientCache.get(vinnyHook.get().getUrl());
+            WebhookClient client = clientCache.get(channel.getId());
             if (client == null) {
+                List<Webhook> hooks = commandEvent.getTextChannel().retrieveWebhooks().complete();
+
+                // If there are webhooks, lets send that way
+                Optional<Webhook> vinnyHook = hooks.stream().filter(webhook -> webhook.getName().equalsIgnoreCase("vinny")).findFirst();
+                if (!vinnyHook.isPresent()) {
+                    vinnyHook = Optional.of(channel.createWebhook("vinny").complete());
+                }
                 client = WebhookClient.withUrl(vinnyHook.get().getUrl());
-                clientCache.put(vinnyHook.get().getUrl(), client);
+                clientCache.put(channel.getId(), client);
             }
+            
             return client;
         } else {
             throw new ScheduledCommandFailedException(ConstantStrings.SCHEDULED_WEBHOOK_FAIL);
