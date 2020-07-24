@@ -2,6 +2,7 @@ package com.bot.utils
 
 import club.minnced.discord.webhook.send.WebhookMessage
 import club.minnced.discord.webhook.send.WebhookMessageBuilder
+import com.bot.models.RssProvider
 import com.bot.models.RssUpdate
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.Permission
@@ -22,25 +23,35 @@ class RssUtils {
                         "to allow Scheduled commands and Subscriptions to work correctly")
             } else {
                 val webhook = ScheduledCommandUtils.getWebhookForChannel(channel)
-                when (rssUpdate.provider) {
-                    1 -> { // Reddit
+                when (RssProvider.getProvider(rssUpdate.provider)) {
+                    RssProvider.REDDIT -> {
                         webhook.send(buildMessage("New post in ***${rssUpdate.subject}***" +
                                 "\nhttps://reddit.com${rssUpdate.url}", jda))
                     }
-                    2 -> { // Twitter
-                        val msg = if (rssUpdate.subject.startsWith("RT")) {
-                            "New retweet from ***${rssUpdate.subject.replace("RT", "")}"
+                    RssProvider.TWITTER -> {
+                        val msg = if (rssUpdate.subject.startsWith("**VINNY**RT")) {
+                            "New retweet from ***${rssUpdate.subject.replace("**VINNY**RT", "")}"
                         } else {
                             "New tweet from ***${rssUpdate.subject}"
                         }
                         webhook.send(buildMessage("$msg***\n" + rssUpdate.url, jda))
                     }
-                    3 -> { // 4Chan
+                    RssProvider.CHAN -> {
                         webhook.send(buildMessage("New thread in ***${rssUpdate.subject}***\n" +
                                 rssUpdate.url, jda))
                     }
+                    RssProvider.YOUTUBE -> {
+                        val msg = if (rssUpdate.subject.startsWith("**VINNY**Live")) {
+                            "***${rssUpdate.subject.replace("**VINNY**Live","")}*** has started streaming!\n" +
+                                    rssUpdate.url
+                        } else {
+                            "New video posted from ***${rssUpdate.subject}***\n" +
+                                    rssUpdate.url
+                        }
+                        webhook.send(buildMessage(msg, jda))
+                    }
                     else -> { // other
-
+                        logger.warning("Invalid provider for rss event: ```$rssUpdate```")
                     }
                 }
             }
