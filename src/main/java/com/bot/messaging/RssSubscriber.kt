@@ -1,6 +1,8 @@
 package com.bot.messaging
 
 import com.bot.ShardingManager
+import com.bot.metrics.MetricsManager
+import com.bot.models.RssProvider
 import com.bot.utils.Config
 import com.bot.utils.Logger
 import com.bot.utils.RssUtils
@@ -13,6 +15,7 @@ import java.nio.charset.StandardCharsets
 class RssSubscriber(config: Config) {
     val logger : Logger = Logger(this.javaClass.simpleName)
     val shardingManager: ShardingManager = ShardingManager.getInstance()
+    val metricsManager = MetricsManager.getInstance()
 
     val natsConnection: Connection = Nats.connect(Options.Builder()
             .server(config.getConfig(Config.NATS_SERVER))
@@ -29,9 +32,12 @@ class RssSubscriber(config: Config) {
             if (jda == null) {
                 logger.warning("Could not find channel for rss update")
             } else {
+                metricsManager.markRssEventReceived(RssProvider.getProvider(update.provider))
                 RssUtils.sendRssUpdate(update, jda)
             }
         }
         rssDispatcher.subscribe(config.getConfig(Config.RSS_SUBJECT))
     }
+
+    // TODO: https://commentpicker.com/youtube-channel-id.php for yt user lookups
 }

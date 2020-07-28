@@ -1,9 +1,6 @@
 package com.bot.metrics;
 
-import com.bot.models.InternalGuild;
-import com.bot.models.InternalTextChannel;
-import com.bot.models.InternalUser;
-import com.bot.models.ScheduledCommand;
+import com.bot.models.*;
 import com.bot.utils.Config;
 import com.jagrosh.jdautilities.command.Command;
 import com.timgroup.statsd.NonBlockingStatsDClient;
@@ -97,6 +94,11 @@ public class MetricsManager {
     public void markDiscordEvent(int shard) {
         String shardTag = "shard:" + shard;
         statsd.incrementCounter("discord.event", shardTag);
+    }
+
+    public void markRssEventReceived(RssProvider provider) {
+        String providerTag = "provider:" + provider.name();
+        statsd.incrementCounter("rss.received");
     }
 
     public void markRouletteDed() {
