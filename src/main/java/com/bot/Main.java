@@ -56,11 +56,10 @@ public class Main {
 		ShardingManager shardingManager = ShardingManager.getInstance(numShards, startShardIndex, endShardIndex);
 
 		// Start a metrics reporter to keeps the metrics that are not frequently updates flowing to datadog
-		MetricsReporter metricsReporter = new MetricsReporter();
-		metricsReporter.start();
+		ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(3);
+		scheduledTaskExecutor.scheduleAtFixedRate(new MetricsReporter(), 0, 5, TimeUnit.SECONDS);
 
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_SCHEDULED_COMMANDS))) {
-			ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(2);
 			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 120, 9, TimeUnit.SECONDS);
 		}
 
