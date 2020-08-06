@@ -1,6 +1,7 @@
 package com.bot;
 
 import com.bot.db.ConnectionPool;
+import com.bot.messaging.RssSubscriber;
 import com.bot.metrics.MetricsReporter;
 import com.bot.tasks.RunScheduledCommandsDefferedTask;
 import com.bot.utils.Config;
@@ -36,10 +37,9 @@ public class Main {
 			return;
 		}
 
-		ConnectionPool connectionPool = ConnectionPool.getInstance();
 		LOGGER.log(Level.INFO, "Hikari pool successfully initialized");
 		Flyway flyway = new Flyway();
-		flyway.setDataSource(connectionPool.getDataSource());
+		flyway.setDataSource(ConnectionPool.getDataSource());
 		try {
 			flyway.migrate();
 		} catch (FlywayException e) {
@@ -63,6 +63,10 @@ public class Main {
 			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 120, 9, TimeUnit.SECONDS);
 		}
 
+		// If nats is enabled, register subscribers
+		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_NATS))) {
+			new RssSubscriber(config);
+		}
 //		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 //		service.scheduleAtFixedRate(new CleanupIdlePlayers(), 60, 300, TimeUnit.SECONDS);
 

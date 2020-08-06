@@ -110,13 +110,16 @@ public class ScheduledCommandUtils {
     }
 
     public static WebhookClient getWebhookForChannel(CommandEvent commandEvent) throws ScheduledCommandFailedException {
-        if (commandEvent.getSelfMember().hasPermission(commandEvent.getTextChannel(), Permission.MANAGE_WEBHOOKS)) {
-            TextChannel channel = commandEvent.getTextChannel();
+        return getWebhookForChannel(commandEvent.getTextChannel());
+    }
+
+    public static WebhookClient getWebhookForChannel(TextChannel channel) throws ScheduledCommandFailedException {
+        if (channel.getGuild().getSelfMember().hasPermission(channel, Permission.MANAGE_WEBHOOKS)) {
 
             WebhookClientCache clientCache = WebhookClientCache.getInstance();
             WebhookClient client = clientCache.get(channel.getId());
             if (client == null) {
-                List<Webhook> hooks = commandEvent.getTextChannel().retrieveWebhooks().complete();
+                List<Webhook> hooks = channel.retrieveWebhooks().complete();
 
                 // If there are webhooks, lets send that way
                 Optional<Webhook> vinnyHook = hooks.stream().filter(webhook -> webhook.getName().equalsIgnoreCase("vinny")).findFirst();
