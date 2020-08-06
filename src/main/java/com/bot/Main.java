@@ -37,10 +37,9 @@ public class Main {
 			return;
 		}
 
-		ConnectionPool connectionPool = ConnectionPool.getInstance();
 		LOGGER.log(Level.INFO, "Hikari pool successfully initialized");
 		Flyway flyway = new Flyway();
-		flyway.setDataSource(connectionPool.getDataSource());
+		flyway.setDataSource(ConnectionPool.getDataSource());
 		try {
 			flyway.migrate();
 		} catch (FlywayException e) {

@@ -63,6 +63,5 @@ public class MetricsReporter extends Thread {
 
         // We need to set this status after the sharding manager is built. This will ensure that it is set to this, not the default
         shardManager.shardManager.setActivity(Activity.playing("@Vinny help"));
-        System.out.println("Metrics posted");
     }
 }
