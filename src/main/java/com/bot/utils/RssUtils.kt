@@ -13,6 +13,7 @@ class RssUtils {
         val logger = Logger(this::class.java.simpleName)
 
         fun sendRssUpdate(rssUpdate: RssUpdate, jda : JDA) {
+            // TODO: CHECK NSFW on channel and event
             val channel = jda.getTextChannelById(rssUpdate.channel)
             if (channel == null) {
                 logger.warning("Failed to find text channel for RSS update $channel")

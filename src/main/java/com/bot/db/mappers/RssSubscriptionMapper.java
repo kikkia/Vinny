@@ -11,7 +11,8 @@ public class RssSubscriptionMapper {
         return new RssSubscription(
                 set.getInt("id"),
                 set.getString("subject"),
-                RssProvider.getProvider(set.getInt("provider"))
+                RssProvider.getProvider(set.getInt("provider")),
+                set.getBoolean("nsfw")
         );
     }
 }

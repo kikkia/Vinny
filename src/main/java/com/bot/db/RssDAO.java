@@ -7,6 +7,7 @@ import com.bot.models.RssProvider;
 import com.bot.models.RssSubscription;
 import com.bot.utils.Logger;
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.MDC;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,13 +21,6 @@ public class RssDAO {
 
     private HikariDataSource write;
     private static RssDAO instance;
-
-    String get_id_by_pro_and_sub = "SELECT id FROM `rss_subscription` WHERE provider = ? AND subject = ?;";
-    String get_by_id = "SELECT * FROM `rss_subscription` WHERE id = ?";
-    String get_by_author = "SELECT * FROM `channel_rss_subscription` WHERE author = ?";
-    String get_by_channel = "SELECT * FROM `channel_rss_subscription` WHERE channel = ?";
-    String putSubscription = "INSERT INTO rss_subscription (subject, provider, lastScanAttempt, lastScanComplete) VALUES (?,?,?,?);";
-    String putChannelJoin = "INSERT INTO channel_rss_subscription (rss_subscription_id, text_channel_id, author) VALUE (?,?,?);";
 
     private RssDAO() {
         initialize();
@@ -43,15 +37,17 @@ public class RssDAO {
         this.write = ConnectionPool.getDataSource();
     }
 
-    public void addSubscription(RssProvider provider, String subject, String channelId, String authorId) throws SQLException {
+    public void addSubscription(RssProvider provider, String subject, String channelId, String authorId, boolean nsfw) throws SQLException {
 
         // Put subscription if does not exist
         try (Connection connection = write.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(putSubscription)) {
+            String PUT_SUB_QUERY = "INSERT INTO `rss_subscription` (subject, provider, lastScanAttempt, lastScanComplete, nsfw) VALUES (?,?,?,?,?) ON DUPLICATE subject=subject;";
+            try (PreparedStatement statement = connection.prepareStatement(PUT_SUB_QUERY)) {
                 statement.setString(1, subject);
                 statement.setInt(2, provider.getValue());
                 statement.setLong(3, System.currentTimeMillis());
                 statement.setLong(4, System.currentTimeMillis());
+                statement.setBoolean(5, nsfw);
                 statement.execute();
             }
         }
@@ -59,7 +55,9 @@ public class RssDAO {
         // Get id of existing or generated
         int id = 0;
         try (Connection connection = write.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(get_id_by_pro_and_sub)) {
+            // TODO: Seriously tho, I need to use JooQ or JPA or smth
+            String GET_ID_FROM_SUBJECT_PROVIDER_QUERY = "SELECT id FROM `rss_subscription` WHERE provider = ? AND subject = ?;";
+            try (PreparedStatement statement = connection.prepareStatement(GET_ID_FROM_SUBJECT_PROVIDER_QUERY)) {
                 statement.setInt(1, provider.getValue());
                 statement.setString(2, subject);
                 try(ResultSet set = statement.executeQuery()) {
@@ -77,7 +75,8 @@ public class RssDAO {
 
         // Put channel subscription
         try (Connection connection = write.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(putChannelJoin)) {
+            String PUT_CHANNEL_SUB_QUERY = "INSERT INTO `channel_rss_subscription` (rss_subscription_id, text_channel_id, author) VALUE (?,?,?);";
+            try (PreparedStatement statement = connection.prepareStatement(PUT_CHANNEL_SUB_QUERY)) {
                 statement.setInt(1, id);
                 statement.setString(2, channelId);
                 statement.setString(3, authorId);
@@ -88,7 +87,8 @@ public class RssDAO {
 
     public RssSubscription getById(int id) throws SQLException {
         try (Connection connection = write.getConnection()){
-            try (PreparedStatement statement = connection.prepareStatement(get_by_id)){
+            String GET_SUBSCRIPTION_BY_ID_QUERY = "SELECT * FROM `rss_subscription` WHERE id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(GET_SUBSCRIPTION_BY_ID_QUERY)){
                 statement.setInt(1, id);
                 try (ResultSet set = statement.executeQuery()) {
                     if (set.next()) {
@@ -101,11 +101,13 @@ public class RssDAO {
     }
 
     public List<RssChannelSubscription> getSubscriptionsForAuthor(String author) throws SQLException {
-        return getSubscriptions(author, get_by_author);
+        String GET_CHANNEL_SUBS_BY_AUTHOR_QUERY = "SELECT * FROM `channel_rss_subscription` WHERE author = ?";
+        return getSubscriptions(author, GET_CHANNEL_SUBS_BY_AUTHOR_QUERY);
     }
 
     public List<RssChannelSubscription> getSubscriptionsForChannel(String channelId) throws SQLException {
-        return getSubscriptions(channelId, get_by_channel);
+        String GET_CHANNEL_SUBS_BY_CHANNEL_QUERY = "SELECT * FROM `channel_rss_subscription` WHERE channel = ?";
+        return getSubscriptions(channelId, GET_CHANNEL_SUBS_BY_CHANNEL_QUERY);
     }
 
     private List<RssChannelSubscription> getSubscriptions(String id, String query) throws SQLException {
@@ -122,5 +124,59 @@ public class RssDAO {
             }
         }
         return subs;
+    }
+
+    public int getCountForAuthor(String author) throws SQLException {
+        try (Connection connection = write.getConnection()) {
+            String getCountByUserQuery = "SELECT(*) FROM `channel_rss_subscription` WHERE author = ?";
+            try (PreparedStatement statement = connection.prepareStatement(getCountByUserQuery)) {
+                statement.setString(1, author);
+                try (ResultSet set = statement.executeQuery()) {
+                    return set.getInt(1);
+                }
+            }
+        }
+    }
+
+    public void removeChannelSubscription(RssChannelSubscription subscription) throws SQLException {
+        try (Connection connection = write.getConnection()) {
+            String REMOVE_CHANNEL_SUB_BY_ID_QUERY = "DELETE FROM `channel_rss_subscription` WHERE id=?;";
+            try (PreparedStatement statement = connection.prepareStatement(REMOVE_CHANNEL_SUB_BY_ID_QUERY)) {
+                statement.setInt(1, subscription.getId());
+                statement.execute();
+            }
+        }
+
+        if (getCountForSubId(subscription.getRssSubscription().getId()) == 1) {
+            removeSubscription(subscription.getRssSubscription());
+        }
+    }
+
+    private void removeSubscription(RssSubscription subscription) throws SQLException {
+        try (Connection connection = write.getConnection()) {
+            String REMOVE_SUB_QUERY = "DELETE FROM `rss_subscription` WHERE id=?";
+            try (PreparedStatement statement = connection.prepareStatement(REMOVE_SUB_QUERY)) {
+                statement.setInt(1, subscription.getId());
+                statement.execute();
+            }
+        }
+        try (MDC.MDCCloseable sub_id = MDC.putCloseable("sub_id", subscription.getId() + "");
+             MDC.MDCCloseable sub = MDC.putCloseable("subject", subscription.getSubject());
+             MDC.MDCCloseable pro = MDC.putCloseable("provider", subscription.getProvider() + "")) {
+            LOGGER.info("Removed subscription");
+        }
+    }
+
+    private int getCountForSubId(int id) throws SQLException {
+        try (Connection connection = write.getConnection()) {
+            String COUNT_CHANNEL_SUB_BY_SUB_ID_QUERY = "COUNT(*) FROM `channel_rss_subscription` c JOIN `rss_subscription` r " +
+                    "ON r.id = c.rss_subscription_id WHERE r.id = ?;";
+            try (PreparedStatement statement = connection.prepareStatement(COUNT_CHANNEL_SUB_BY_SUB_ID_QUERY)){
+                statement.setInt(1, id);
+                try (ResultSet set = statement.executeQuery()) {
+                    return set.getInt(1);
+                }
+            }
+        }
     }
 }

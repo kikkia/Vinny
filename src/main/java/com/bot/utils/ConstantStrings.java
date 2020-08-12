@@ -9,6 +9,7 @@ public class ConstantStrings {
     public static final String SCHEDULED_FLAG = "scheduled";
     public static final String SCHEDULED_WEBHOOK_FAIL = "Failed to get webhook for scheduled command. Please make sure vinny has the MANAGE_WEBHOOKS permission for this channel";
     public static final String COMMANDS_URL = "https://github.com/kikkia/Vinny/blob/master/docs/Commands.md";
+    public static final String GITHUB_SUBSCRIPTIONS_HELP = " For more info on what you can do with subscriptions and their limitations please check out https://github.com/kikkia/Vinny/blob/master/docs/Subscriptions.md";
 
     public static String WELCOME_MESSAGE = "Hey all! Thanks for adding me to your server! To get started you can go to https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md" +
             " to find a full list of commands. You can also run `~help` to get a less detailed list sent to you in a DM.\n\nA couple tips before we start:\n" +
@@ -45,6 +46,18 @@ public class ConstantStrings {
     public static String REBOOT_VOICE_MESSAGE = "Vinny will be rebooting in a few moments for maintenance. You will have to restart your audio stream once Vinny is rebooted. Sorry for the inconvenience. In a" +
             " future update Vinny will save your current playlists when rebooting. You can stay up to date" +
             " with new Vinny updates, features, and maintenance on Vinny's [support server](https://discord.gg/XMwyzxZ)";
+
+    public static String TWITTER_SUB_HELLO = "Hey! Let's get started subscribing to a twitter user. Please reply with the users twitter handle.";
+
+    public static String TWITTER_SUB_NOT_FOUND = "Whoops, I cannot seem to find that twitter user, please make sure you have it spelled correctly and try the command again.";
+
+    public static String TWITTER_SUB_SUCCESS = "Sweet, I just setup that subscription! Every time they tweet, that tweet will be posted here. " + GITHUB_SUBSCRIPTIONS_HELP;
+
+    public static String CHAN_SUB_HELLO = "Hey! Let's get started subscribing to a 4chan board. Please reply with the board code. E.G `biz` or `b`";
+
+    public static String CHAN_BOARD_INVALID = "Whoops, That board is invalid, either you typed it in wrong or this board is NSFW and this channel is not NSFW in discord. Please try again.";
+
+    public static String CHAN_SUB_SUCCESS = "All set up! Each new thread will be posted in this channel, when they are 404'd they will NOT be removed. " + GITHUB_SUBSCRIPTIONS_HELP;
 
     private static String[] ROULETTE_DED = new String[] {"BANG! That is one hell of a shame",
         "BANG! Rip that dude ded",
