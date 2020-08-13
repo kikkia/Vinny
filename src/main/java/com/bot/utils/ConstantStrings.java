@@ -48,16 +48,16 @@ public class ConstantStrings {
             " with new Vinny updates, features, and maintenance on Vinny's [support server](https://discord.gg/XMwyzxZ)";
 
     public static String TWITTER_SUB_HELLO = "Hey! Let's get started subscribing to a twitter user. Please reply with the users twitter handle.";
-
     public static String TWITTER_SUB_NOT_FOUND = "Whoops, I cannot seem to find that twitter user, please make sure you have it spelled correctly and try the command again.";
-
     public static String TWITTER_SUB_SUCCESS = "Sweet, I just setup that subscription! Every time they tweet, that tweet will be posted here. " + GITHUB_SUBSCRIPTIONS_HELP;
-
-    public static String CHAN_SUB_HELLO = "Hey! Let's get started subscribing to a 4chan board. Please reply with the board code. E.G `biz` or `b`";
-
-    public static String CHAN_BOARD_INVALID = "Whoops, That board is invalid, either you typed it in wrong or this board is NSFW and this channel is not NSFW in discord. Please try again.";
-
+    public static String CHAN_SUB_HELLO = "Hey! Let's get started subscribing to a 4chan board. Please reply with the board code. (example: `biz` or `b`";
+    public static String CHAN_BOARD_INVALID = "Whoops, That board is invalid, Make sure you only include the abbreviation (example: b or wg) Please try again.";
     public static String CHAN_SUB_SUCCESS = "All set up! Each new thread will be posted in this channel, when they are 404'd they will NOT be removed. " + GITHUB_SUBSCRIPTIONS_HELP;
+    public static String CHAN_BOARD_NSFW = "This is an NSFW board and this channel is not marked as NSFW. You can only subscribe to this board in NSWF channels.";
+    public static String SUBREDDIT_SUB_HELLO = "Hey! Let's get started subscribing to a subreddit. Please reply with the subreddit you want to subscribe to. (example: dankmemes)";
+    public static String SUBREDDIT_SUBSCRIBE_SUCCESS = "Good to go! Each new post in that subreddit will now be posted here. " + GITHUB_SUBSCRIPTIONS_HELP;
+    public static String SUBREDDIT_INVALID = "I had trouble finding that subreddit, please make sure it is spelled correctly AND is a public subreddit and try again.";
+    public static String SUBREDDIT_NSFW = "This is an NSFW subreddit, I cannot subscribe to an NSFW subreddit unless the channel has NSFW enabled.";
 
     private static String[] ROULETTE_DED = new String[] {"BANG! That is one hell of a shame",
         "BANG! Rip that dude ded",
