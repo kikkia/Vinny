@@ -1,6 +1,7 @@
 package com.bot.commands.rss;
 
 import com.bot.models.RssProvider;
+import com.bot.utils.ChanUtils;
 import com.bot.utils.ConstantStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -47,15 +48,17 @@ public class SubscribeChanCommand extends CreateSubscriptionCommand {
         @Override
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
-            boolean nsfw = false;
-            // TODO: Check board is valid
-            if (false) {
+            ChanUtils.Board board = ChanUtils.Companion.getBoard(subject);
+            if (board == null) {
                 commandEvent.replyWarning(ConstantStrings.CHAN_BOARD_INVALID);
+                return;
+            } else if (board.getNsfw() && !event.getTextChannel().isNSFW()) {
+                commandEvent.replyWarning(ConstantStrings.CHAN_BOARD_NSFW);
                 return;
             }
 
             try {
-                getRssDAO().addSubscription(RssProvider.CHAN, subject, event.getChannel().getId(), event.getAuthor().getId(), nsfw);
+                getRssDAO().addSubscription(RssProvider.CHAN, subject, event.getChannel().getId(), event.getAuthor().getId(), board.getNsfw());
             } catch (SQLException e) {
                 logger.severe("Error adding twitter sub", e);
                 commandEvent.replyError("Something went wrong adding the subscription, please try again.");

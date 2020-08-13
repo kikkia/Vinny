@@ -50,6 +50,9 @@ public class SubscribeTwitterCommand extends CreateSubscriptionCommand {
             if (false) {
                 commandEvent.replyWarning(ConstantStrings.TWITTER_SUB_NOT_FOUND);
                 return;
+            } else if (!event.getTextChannel().isNSFW()) {
+                commandEvent.replyWarning(ConstantStrings.TWITTER_NSFW);
+                return;
             }
 
             try {
