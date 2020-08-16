@@ -100,6 +100,22 @@ public class RssDAO {
         return null;
     }
 
+    public RssSubscription getBySubjectAndProvider(String subject, int provider) throws SQLException {
+        try (Connection connection = write.getConnection()){
+            String GET_SUBSCRIPTION_BY_ID_QUERY = "SELECT * FROM `rss_subscription` WHERE subject = ? AND provider = ?;";
+            try (PreparedStatement statement = connection.prepareStatement(GET_SUBSCRIPTION_BY_ID_QUERY)){
+                statement.setString(1, subject);
+                statement.setInt(2, provider);
+                try (ResultSet set = statement.executeQuery()) {
+                    if (set.next()) {
+                        return RssSubscriptionMapper.mapSetToRssSubscription(set);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public List<RssChannelSubscription> getSubscriptionsForAuthor(String author) throws SQLException {
         String GET_CHANNEL_SUBS_BY_AUTHOR_QUERY = "SELECT * FROM `channel_rss_subscription` WHERE author = ?";
         return getSubscriptions(author, GET_CHANNEL_SUBS_BY_AUTHOR_QUERY);

@@ -63,7 +63,7 @@ public class SubscribeRedditCommand extends CreateSubscriptionCommand {
 
             // TODO: Keyword handler
             try {
-                getRssDAO().addSubscription(RssProvider.CHAN, subject, event.getChannel().getId(), event.getAuthor().getId(), subreddit.isNsfw());
+                getRssDAO().addSubscription(RssProvider.REDDIT, subject, event.getChannel().getId(), event.getAuthor().getId(), subreddit.isNsfw());
             } catch (SQLException e) {
                 logger.severe("Error adding twitter sub", e);
                 commandEvent.replyError("Something went wrong adding the subscription, please try again.");

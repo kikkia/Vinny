@@ -60,6 +60,8 @@ public class ConstantStrings {
     public static String SUBREDDIT_INVALID = "I had trouble finding that subreddit, please make sure it is spelled correctly AND is a public subreddit and try again.";
     public static String SUBREDDIT_NSFW = "This is an NSFW subreddit, I cannot subscribe to an NSFW subreddit unless the channel has NSFW enabled.";
 
+    public static String RSS_NSFW_DENY = "Warning: Trying to post to a non-nsfw channel from an nsfw subscription. Please change this channel to be nsfw or remove the subscription";
+
     private static String[] ROULETTE_DED = new String[] {"BANG! That is one hell of a shame",
         "BANG! Rip that dude ded",
         "BANG! Id say it's a shame, but it really isn't.",
