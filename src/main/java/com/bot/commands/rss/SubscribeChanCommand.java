@@ -62,6 +62,7 @@ public class SubscribeChanCommand extends CreateSubscriptionCommand {
             } catch (SQLException e) {
                 logger.severe("Error adding twitter sub", e);
                 commandEvent.replyError("Something went wrong adding the subscription, please try again.");
+                return;
             }
             commandEvent.replySuccess(ConstantStrings.CHAN_SUB_SUCCESS);
         }

@@ -11,7 +11,7 @@ public class RssChannelSubscriptionMapper {
         return new RssChannelSubscription(
                 set.getInt("id"),
                 subscription,
-                set.getString("channel"),
+                set.getString("text_channel_id"),
                 set.getString("author")
         );
     }

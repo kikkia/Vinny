@@ -54,7 +54,7 @@ public class ConstantStrings {
     public static String CHAN_SUB_HELLO = "Hey! Let's get started subscribing to a 4chan board. Please reply with the board code. (example: `biz` or `b`";
     public static String CHAN_BOARD_INVALID = "Whoops, That board is invalid, Make sure you only include the abbreviation (example: b or wg) Please try again.";
     public static String CHAN_SUB_SUCCESS = "All set up! Each new thread will be posted in this channel, when they are 404'd they will NOT be removed. " + GITHUB_SUBSCRIPTIONS_HELP;
-    public static String CHAN_BOARD_NSFW = "This is an NSFW board and this channel is not marked as NSFW. You can only subscribe to this board in NSWF channels.";
+    public static String CHAN_BOARD_NSFW = "This is an NSFW board and this channel is not marked as NSFW. You can only subscribe to this board in NSFW channels.";
     public static String SUBREDDIT_SUB_HELLO = "Hey! Let's get started subscribing to a subreddit. Please reply with the subreddit you want to subscribe to. (example: dankmemes)";
     public static String SUBREDDIT_SUBSCRIBE_SUCCESS = "Good to go! Each new post in that subreddit will now be posted here. " + GITHUB_SUBSCRIPTIONS_HELP;
     public static String SUBREDDIT_INVALID = "I had trouble finding that subreddit, please make sure it is spelled correctly AND is a public subreddit and try again.";

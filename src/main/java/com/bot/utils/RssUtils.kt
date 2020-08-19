@@ -3,7 +3,6 @@ package com.bot.utils
 import club.minnced.discord.webhook.send.WebhookMessage
 import club.minnced.discord.webhook.send.WebhookMessageBuilder
 import com.bot.db.RssDAO
-import com.bot.models.RssChannelSubscription
 import com.bot.models.RssProvider
 import com.bot.models.RssUpdate
 import net.dv8tion.jda.api.JDA
@@ -24,7 +23,7 @@ class RssUtils {
 
             if (!channel.isNSFW &&
                     RssDAO.getInstance().getBySubjectAndProvider(rssUpdate.subject, rssUpdate.provider).nsfw) {
-                channel.sendMessage(ConstantStrings.RSS_NSFW_DENY)
+                channel.sendMessage(ConstantStrings.RSS_NSFW_DENY).queue()
                 return
             }
 
@@ -42,7 +41,7 @@ class RssUtils {
                         val msg = if (rssUpdate.subject.startsWith("**VINNY**RT")) {
                             "New retweet from ***${rssUpdate.subject.replace("**VINNY**RT", "")}"
                         } else {
-                            "New tweet from ***${rssUpdate.subject}"
+                            "New tweet from ***${rssUpdate.subject.replace("@@", "@")}"
                         }
                         webhook.send(buildMessage("$msg***\n" + rssUpdate.url, jda))
                     }
