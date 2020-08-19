@@ -2,6 +2,7 @@ package com.bot.utils
 
 import club.minnced.discord.webhook.send.WebhookMessage
 import club.minnced.discord.webhook.send.WebhookMessageBuilder
+import com.bot.db.RssDAO
 import com.bot.models.RssProvider
 import com.bot.models.RssUpdate
 import net.dv8tion.jda.api.JDA
@@ -13,11 +14,19 @@ class RssUtils {
         val logger = Logger(this::class.java.simpleName)
 
         fun sendRssUpdate(rssUpdate: RssUpdate, jda : JDA) {
+            // TODO: Cache RSS-Subscriptions to avoid extra db ops
             val channel = jda.getTextChannelById(rssUpdate.channel)
             if (channel == null) {
                 logger.warning("Failed to find text channel for RSS update $channel")
                 return
             }
+
+            if (!channel.isNSFW &&
+                    RssDAO.getInstance().getBySubjectAndProvider(rssUpdate.subject, rssUpdate.provider).nsfw) {
+                channel.sendMessage(ConstantStrings.RSS_NSFW_DENY).queue()
+                return
+            }
+
             if (!channel.guild.selfMember.hasPermission(Permission.MANAGE_WEBHOOKS)) {
                 channel.sendMessage("WARNING: I don't have the `MANAGE_WEBHOOKS` permission. Please give me this permission " +
                         "to allow Scheduled commands and Subscriptions to work correctly")
@@ -32,7 +41,7 @@ class RssUtils {
                         val msg = if (rssUpdate.subject.startsWith("**VINNY**RT")) {
                             "New retweet from ***${rssUpdate.subject.replace("**VINNY**RT", "")}"
                         } else {
-                            "New tweet from ***${rssUpdate.subject}"
+                            "New tweet from ***${rssUpdate.subject.replace("@@", "@")}"
                         }
                         webhook.send(buildMessage("$msg***\n" + rssUpdate.url, jda))
                     }

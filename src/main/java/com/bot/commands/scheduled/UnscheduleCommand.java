@@ -27,7 +27,6 @@ public class UnscheduleCommand extends ModerationCommand {
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        boolean removed = false;
         if (commandEvent.getArgs().isEmpty()) {
             commandEvent.reply("Please just respond with the id of the scheduled command you want to remove? You can find this id" +
                     "using the `~scheduled` command. For example, `~scheduled me` gets all commands you have scheduled.");

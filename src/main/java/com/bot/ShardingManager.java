@@ -13,6 +13,7 @@ import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
 import com.bot.commands.reddit.ShitpostCommand;
 import com.bot.commands.reddit.TopPostCommand;
+import com.bot.commands.rss.*;
 import com.bot.commands.scheduled.GetScheduledCommand;
 import com.bot.commands.scheduled.ScheduleCommand;
 import com.bot.commands.scheduled.UnscheduleCommand;
@@ -29,6 +30,7 @@ import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -163,6 +165,11 @@ public class ShardingManager {
                     new ScheduleCommand(waiter),
                     new UnscheduleCommand(waiter),
                     new PurgeCommand(),
+                    new SubscribeChanCommand(waiter),
+                    new SubscribeTwitterCommand(waiter),
+                    new SubscribeRedditCommand(waiter),
+                    new SubscriptionsCommand(waiter),
+                    new RemoveSubscriptionCommand(),
 
                     // NSFW Commands
                     new Rule34Command(),
@@ -265,7 +272,21 @@ public class ShardingManager {
         return null;
     }
 
+    public GuildChannel getChannel(String channelId) {
+        for (InternalShard shard : shards.values()) {
+            GuildChannel channel = shard.getJda().getGuildChannelById(channelId);
+            if (channel != null) {
+                return channel;
+            }
+        }
+        return null;
+    }
+
     public User getUserFromAnyShard(Long userId) {
+        return getUserFromAnyShard("" + userId);
+    }
+
+    public User getUserFromAnyShard(String userId) {
         for (InternalShard shard : shards.values()) {
             User user = shard.getJda().getUserById(userId);
             if (user != null) {

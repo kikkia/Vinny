@@ -9,6 +9,7 @@ public class ConstantStrings {
     public static final String SCHEDULED_FLAG = "scheduled";
     public static final String SCHEDULED_WEBHOOK_FAIL = "Failed to get webhook for scheduled command. Please make sure vinny has the MANAGE_WEBHOOKS permission for this channel";
     public static final String COMMANDS_URL = "https://github.com/kikkia/Vinny/blob/master/docs/Commands.md";
+    public static final String GITHUB_SUBSCRIPTIONS_HELP = " For more info on what you can do with subscriptions and their limitations please check out https://github.com/kikkia/Vinny/blob/master/docs/Subscriptions.md";
 
     public static String WELCOME_MESSAGE = "Hey all! Thanks for adding me to your server! To get started you can go to https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md" +
             " to find a full list of commands. You can also run `~help` to get a less detailed list sent to you in a DM.\n\nA couple tips before we start:\n" +
@@ -45,6 +46,21 @@ public class ConstantStrings {
     public static String REBOOT_VOICE_MESSAGE = "Vinny will be rebooting in a few moments for maintenance. You will have to restart your audio stream once Vinny is rebooted. Sorry for the inconvenience. In a" +
             " future update Vinny will save your current playlists when rebooting. You can stay up to date" +
             " with new Vinny updates, features, and maintenance on Vinny's [support server](https://discord.gg/XMwyzxZ)";
+
+    public static String TWITTER_SUB_HELLO = "Hey! Let's get started subscribing to a twitter user. Please reply with the users twitter handle.";
+    public static String TWITTER_SUB_NOT_FOUND = "Whoops, I cannot seem to find that twitter user, please make sure you have it spelled correctly and try the command again.";
+    public static String TWITTER_SUB_SUCCESS = "Sweet, I just setup that subscription! Every time they tweet, that tweet will be posted here. " + GITHUB_SUBSCRIPTIONS_HELP;
+    public static String TWITTER_NSFW = "Unfortunately due to twitter's content policy, twitter subscriptions are only allowed in nsfw channels.";
+    public static String CHAN_SUB_HELLO = "Hey! Let's get started subscribing to a 4chan board. Please reply with the board code. (example: `biz` or `b`";
+    public static String CHAN_BOARD_INVALID = "Whoops, That board is invalid, Make sure you only include the abbreviation (example: b or wg) Please try again.";
+    public static String CHAN_SUB_SUCCESS = "All set up! Each new thread will be posted in this channel, when they are 404'd they will NOT be removed. " + GITHUB_SUBSCRIPTIONS_HELP;
+    public static String CHAN_BOARD_NSFW = "This is an NSFW board and this channel is not marked as NSFW. You can only subscribe to this board in NSFW channels.";
+    public static String SUBREDDIT_SUB_HELLO = "Hey! Let's get started subscribing to a subreddit. Please reply with the subreddit you want to subscribe to. (example: dankmemes)";
+    public static String SUBREDDIT_SUBSCRIBE_SUCCESS = "Good to go! Each new post in that subreddit will now be posted here. " + GITHUB_SUBSCRIPTIONS_HELP;
+    public static String SUBREDDIT_INVALID = "I had trouble finding that subreddit, please make sure it is spelled correctly AND is a public subreddit and try again.";
+    public static String SUBREDDIT_NSFW = "This is an NSFW subreddit, I cannot subscribe to an NSFW subreddit unless the channel has NSFW enabled.";
+
+    public static String RSS_NSFW_DENY = "Warning: Trying to post to a non-nsfw channel from an nsfw subscription. Please change this channel to be nsfw or remove the subscription";
 
     private static String[] ROULETTE_DED = new String[] {"BANG! That is one hell of a shame",
         "BANG! Rip that dude ded",

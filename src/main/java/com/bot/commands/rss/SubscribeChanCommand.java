@@ -1,6 +1,7 @@
 package com.bot.commands.rss;
 
 import com.bot.models.RssProvider;
+import com.bot.utils.ChanUtils;
 import com.bot.utils.ConstantStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -11,27 +12,28 @@ import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public class SubscribeTwitterCommand extends CreateSubscriptionCommand {
+public class SubscribeChanCommand extends CreateSubscriptionCommand {
 
-    public SubscribeTwitterCommand(EventWaiter waiter) {
-        this.name = "subscribetwitter";
+    public SubscribeChanCommand(EventWaiter waiter) {
+        this.name = "subscribe4chan";
+        this.aliases = new String[] {"subscribechan"};
         this.botPermissions = new Permission[] {Permission.MANAGE_WEBHOOKS};
         this.waiter = waiter;
     }
 
     @Override
-    public void executeCommand(CommandEvent commandEvent) {
+    protected void executeCommand(CommandEvent commandEvent) {
         if (!canMakeNewSubscription(commandEvent)) {
             return;
         }
 
-        commandEvent.reply(ConstantStrings.TWITTER_SUB_HELLO);
+        commandEvent.reply(ConstantStrings.CHAN_SUB_HELLO);
 
         waiter.waitForEvent(MessageReceivedEvent.class,
                 e -> e.getAuthor().equals(commandEvent.getAuthor())
                         && e.getChannel().equals(commandEvent.getChannel())
                         && !e.getMessage().equals(commandEvent.getMessage()),
-                new SubscribeTwitterCommand.StepOneConsumer(commandEvent),
+                new SubscribeChanCommand.StepOneConsumer(commandEvent),
                 // if the user takes more than a minute, time out
                 1, TimeUnit.MINUTES, () -> commandEvent.reply(ConstantStrings.EVENT_WAITER_TIMEOUT));
     }
@@ -46,22 +48,23 @@ public class SubscribeTwitterCommand extends CreateSubscriptionCommand {
         @Override
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
-            // TODO: Check username is valid
-            if (false) {
-                commandEvent.replyWarning(ConstantStrings.TWITTER_SUB_NOT_FOUND);
+            ChanUtils.Board board = ChanUtils.Companion.getBoard(subject);
+            if (board == null) {
+                commandEvent.replyWarning(ConstantStrings.CHAN_BOARD_INVALID);
                 return;
-            } else if (!event.getTextChannel().isNSFW()) {
-                commandEvent.replyWarning(ConstantStrings.TWITTER_NSFW);
+            } else if (board.getNsfw() && !event.getTextChannel().isNSFW()) {
+                commandEvent.replyWarning(ConstantStrings.CHAN_BOARD_NSFW);
                 return;
             }
 
             try {
-                getRssDAO().addSubscription(RssProvider.TWITTER, subject, event.getChannel().getId(), event.getAuthor().getId(), true);
+                getRssDAO().addSubscription(RssProvider.CHAN, subject, event.getChannel().getId(), event.getAuthor().getId(), board.getNsfw());
             } catch (SQLException e) {
                 logger.severe("Error adding twitter sub", e);
                 commandEvent.replyError("Something went wrong adding the subscription, please try again.");
+                return;
             }
-            commandEvent.replySuccess(ConstantStrings.TWITTER_SUB_SUCCESS);
+            commandEvent.replySuccess(ConstantStrings.CHAN_SUB_SUCCESS);
         }
     }
 }

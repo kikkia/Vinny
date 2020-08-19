@@ -175,6 +175,7 @@ public class RedditHelper {
         String title = submission.getTitle();
         title = title.length() <= 256 ? title : title.substring(0, 252) + "...";
         builder.setTitle(new WebhookEmbed.EmbedTitle(title, submission.getUrl()));
+        builder.setDescription("r/" + submission.getSubreddit());
 
         // If there is a thumbnail and it does match a url to an image
         if (submission.hasThumbnail() && submission.getThumbnail().matches("^[a-zA-Z0-9\\-\\.]+\\.(com|org|net|mil|edu|COM|ORG|NET|MIL|EDU)$")) {
