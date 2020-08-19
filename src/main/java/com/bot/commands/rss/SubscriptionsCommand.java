@@ -21,7 +21,7 @@ public class SubscriptionsCommand extends GeneralCommand {
     public SubscriptionsCommand(EventWaiter waiter) {
         this.name = "subscriptions";
         this.help = "Shows all subscriptions for the channel or for you";
-        this.arguments = "<{c} or {me}";
+        this.arguments = "<{c} or {me}>";
         this.guildOnly = true;
         this.rssDAO = RssDAO.getInstance();
 
@@ -54,13 +54,13 @@ public class SubscriptionsCommand extends GeneralCommand {
             else if (args.equalsIgnoreCase("me"))
                 subscriptions = rssDAO.getSubscriptionsForAuthor(commandEvent.getAuthor().getId());
         } catch (SQLException e) {
-            logger.severe("Failed to get scheduled commands", e);
-            commandEvent.replyError("Something went wrong getting the scheduled commands");
+            logger.severe("Failed to get subscriptions", e);
+            commandEvent.replyError("Something went wrong getting the subscriptions");
             return;
         }
 
         if (subscriptions.isEmpty()) {
-            commandEvent.replyWarning("I could not find any scheduled commands.");
+            commandEvent.replyWarning("I could not find any subscriptions.");
             return;
         }
 

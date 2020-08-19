@@ -75,7 +75,7 @@ public class RssDAO {
 
         // Put channel subscription
         try (Connection connection = write.getConnection()) {
-            String PUT_CHANNEL_SUB_QUERY = "INSERT INTO `channel_rss_subscription` (rss_subscription_id, text_channel_id, author) VALUE (?,?,?);";
+            String PUT_CHANNEL_SUB_QUERY = "INSERT INTO `channel_rss_subscription` (rss_subscription_id, text_channel_id, author) VALUE (?,?,?) ON DUPLICATE KEY UPDATE author=author;";
             try (PreparedStatement statement = connection.prepareStatement(PUT_CHANNEL_SUB_QUERY)) {
                 statement.setInt(1, id);
                 statement.setString(2, channelId);
