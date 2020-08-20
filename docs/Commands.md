@@ -305,6 +305,28 @@ This command can be used to get all scheduled commands on either the server, the
 * `~scheduled g` - Gets all scheduled commands in the guild.
 * `~scheduled c` - Gets all scheduled commands in the channel.
 
+## Subscriptions 
+Vinny allows you to setup subscriptions to various other places like twitter, reddit, 4chan, etc.
+[You can find more info here](https://github.com/kikkia/Vinny/blob/master/docs/Subscriptions.md)
+
+### `subscribetwitter`
+This command is used to setup a subscription to a twitter user.
+
+### `subscribechan`
+This command is used to setup a subscription to a 4chan board.
+
+### `subscribereddit`
+This command is used to setup a subscription to a subreddit.
+
+### `subscriptions`
+This command gets all of the subscriptions for a channel, or for you.
+* `~subscriptions me` - Get all subscriptions you have made
+* `~subscriptions c` - Get all subscriptions for this channel
+
+### `unsubscribe`
+Removes a subscription of the given ID. You can find this ID from the `subscriptions` command
+* `~unsubscribe <id>`
+
 ---
 ## Permissions
 The way that Vinny does permissions on who can use what commands is by role hierarchy. You can see your servers role hierarchy in the roles settings screen. The higher the role on the list, the higher it is on the hierarchy. The role set as the minimum for a command category is just that, the minimum role a user needs to run that command. If they have a role higher on the list than the current minimum, they can also run the command. 
