@@ -12,6 +12,7 @@
     * [Mod Commands](#Mod)
     * [Alias Commands](#Aliases)
     * [Scheduling Commands](#Scheduling)
+    * [Subscriptions](#Subscriptions)
 3. [Role Permissions](#Permissions)
 
 # About 
