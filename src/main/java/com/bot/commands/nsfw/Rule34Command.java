@@ -42,7 +42,7 @@ public class Rule34Command extends NSFWCommand {
     protected void executeCommand(CommandEvent commandEvent) {
         // Get the tags
         String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=250&tags=" + commandEvent.getArgs();
-        String booruUrl = "https://yande.re/post.xml?tags=" + commandEvent.getArgs();
+        String booruUrl = "https://yande.re/post.xml?limit=250&tags=" + commandEvent.getArgs();
         List<String> imageUrls = cache.get(commandEvent.getArgs());
         String selected;
         try {
@@ -92,7 +92,7 @@ public class Rule34Command extends NSFWCommand {
 
     private List<String> getImageURLFromSearch(String url) throws Exception{
         HttpGet get = new HttpGet(url);
-        int timeout = 5;
+        int timeout = 4;
         RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(timeout * 1000)
                 .setConnectionRequestTimeout(timeout * 1000)
@@ -114,7 +114,7 @@ public class Rule34Command extends NSFWCommand {
             client.close();
 
             // Regex the returned xml and get all links
-            Pattern expression = Pattern.compile("(file_url)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?");
+            Pattern expression = Pattern.compile("(sample_url)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?");
             Matcher matcher = expression.matcher(responseBody);
             ArrayList<String> possibleLinks = new ArrayList<>();
 
@@ -124,6 +124,9 @@ public class Rule34Command extends NSFWCommand {
             }
 
             return possibleLinks;
+        } catch (Exception e) {
+            logger.warning("Failed to fetch r34 posts for source: " + url, e);
+            return new ArrayList<>();
         }
     }
 }

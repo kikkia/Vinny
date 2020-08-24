@@ -5,7 +5,6 @@ import com.bot.db.ChannelDAO
 import com.bot.models.PixivPost
 import com.bot.utils.HttpUtils
 import com.jagrosh.jdautilities.command.CommandEvent
-import net.dv8tion.jda.api.entities.ChannelType
 
 class PixivCommand : GeneralCommand() {
 
@@ -22,29 +21,14 @@ class PixivCommand : GeneralCommand() {
     override fun executeCommand(commandEvent: CommandEvent) {
         var isNSFWAllowed = false
 
-        // TODO: Move to static helper
-        isNSFWAllowed = if (!commandEvent.isFromType(ChannelType.PRIVATE)) {
-            val channel = channelDAO.getTextChannelForId(commandEvent.textChannel.id, true)
-
-            if (channel == null) {
-                commandEvent.reply(commandEvent.client.error + " Something went wrong getting the channel from the db. Please try again.")
-                metricsManager.markCommandFailed(this, commandEvent.author, commandEvent.guild)
-                return
-            }
-
-            channel.isNSFWEnabled
-        } else {
-            true
-        }
-
         commandEvent.channel.sendTyping().queue()
-        var pixivPost: PixivPost? = null
+        val pixivPost: PixivPost?
 
         try {
             pixivPost = if (commandEvent.args.isEmpty())
-                HttpUtils.getRandomNewPixivPost(isNSFWAllowed, null)
+                HttpUtils.getRandomNewPixivPost(null)
             else
-                HttpUtils.getRandomNewPixivPost(isNSFWAllowed, commandEvent.args.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0])
+                HttpUtils.getRandomNewPixivPost( commandEvent.args.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0])
         } catch (e: Exception) {
             logger.severe("failed to get pixiv post", e)
             commandEvent.replyError("Something went wrong getting the post.")
@@ -56,9 +40,11 @@ class PixivCommand : GeneralCommand() {
             return
         }
 
-        val urlParts = pixivPost.url.split('=')
+        val urlParts = pixivPost.previewUrl.split('=')
         val url = "https://www.pixiv.net/en/artworks/" + urlParts[urlParts.size - 1]
 
-        commandEvent.reply(url)
+        // Since Pixiv will check our referer url we need to fetch the image ourselves to embed it. This is because the discord
+        // Client will try to embed the previewUrl and get a 403 (no referer header)
+        commandEvent.textChannel.sendFile(HttpUtils.getUrlAsByteArray(pixivPost.previewUrl, url), "${pixivPost.id}.jpg").queue()
     }
 }

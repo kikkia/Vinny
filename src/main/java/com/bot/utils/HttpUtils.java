@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Webhook;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -230,10 +232,10 @@ public class HttpUtils {
         }
     }
 
-    public static PixivPost getRandomNewPixivPost(boolean canNSFW, String search) throws Exception {
+    public static PixivPost getRandomNewPixivPost(String search) throws Exception {
         String postBaseUrl = "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=";
         String getUrl = search == null ? "https://api.imjad.cn/pixiv/v1/?per_page=100&content=illust" :
-                "https://api.imjad.cn/pixiv/v1/?type=search&mode=tag&per_page=1000&word=" + search;
+                "https://api.imjad.cn/pixiv/v1/?type=search&mode=tag&per_page=500&word=" + search;
         JSONObject selectedPost = null;
 
         try (CloseableHttpClient client = HttpClients.createDefault()) {
@@ -241,9 +243,7 @@ public class HttpUtils {
             HttpResponse response = client.execute(get);
             JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
             JSONArray resultsArray = jsonResponse.getJSONArray("response");
-            int selectedIndex = random.nextInt(resultsArray.length());
-            // If NSFW is not allowed in the channel then use helper to get a sfw post
-            selectedPost = canNSFW ? resultsArray.getJSONObject(selectedIndex) : PixivHelperKt.getSFWSubmission(resultsArray);
+            selectedPost = PixivHelperKt.getSFWSubmission(resultsArray);
         }
         if (selectedPost == null)
             return null;
@@ -252,7 +252,8 @@ public class HttpUtils {
                 selectedPost.getString("title"),
                 postBaseUrl + selectedPost.getInt("id"),
                 selectedPost.getJSONObject("user").getString("name"),
-                selectedPost.getJSONObject("user").getInt("id"));
+                selectedPost.getJSONObject("user").getInt("id"),
+                PixivHelperKt.buildPreviewString(selectedPost.getJSONObject("image_urls").getString("large")));
     }
 
 
@@ -289,6 +290,22 @@ public class HttpUtils {
         } catch (IOException e) {
             logger.severe("Failed to send webhook for comment", e);
             throw new RuntimeException("Failed to send webhook to channel.");
+        }
+    }
+
+    public static byte[] getUrlAsByteArray(String uri, String refererUrl) {
+        try (CloseableHttpClient client = HttpClients.createDefault()){
+            HttpGet httpget = new HttpGet(uri);
+            httpget.addHeader("referer", refererUrl);
+            HttpResponse response = client.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                entity.writeTo(baos);
+                return baos.toByteArray();
+            }
+        } catch (Exception e) {
+            logger.severe("Failed to get url as byteArray", e);
+            return null;
         }
     }
 }
