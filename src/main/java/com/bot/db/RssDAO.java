@@ -161,10 +161,11 @@ public class RssDAO {
 
     public int getCountForAuthor(String author) throws SQLException {
         try (Connection connection = write.getConnection()) {
-            String getCountByUserQuery = "SELECT(*) FROM `channel_rss_subscription` WHERE author = ?";
+            String getCountByUserQuery = "SELECT COUNT(*) FROM `channel_rss_subscription` WHERE author = ?";
             try (PreparedStatement statement = connection.prepareStatement(getCountByUserQuery)) {
                 statement.setString(1, author);
                 try (ResultSet set = statement.executeQuery()) {
+                    set.next();
                     return set.getInt(1);
                 }
             }
