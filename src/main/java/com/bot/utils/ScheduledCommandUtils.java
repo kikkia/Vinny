@@ -10,7 +10,10 @@ import com.bot.models.ScheduledCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageType;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.internal.entities.ReceivedMessage;
 
@@ -19,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ScheduledCommandUtils {
 
@@ -53,27 +55,6 @@ public class ScheduledCommandUtils {
     public static JDA getShardForCommand(ScheduledCommand command) {
         ShardingManager shardingManager = ShardingManager.getInstance();
         return shardingManager.getShardForGuild(command.getGuild());
-    }
-
-    // No support for multi-container atm, use db for multi container
-    public static boolean isUserDonator(String userId) {
-        // Support server
-        JDA shard = ShardingManager.getInstance()
-                .getShardForGuild("294900956078800897");
-
-        User user = shard.getUserById(userId);
-        if (user == null)
-            return false;
-
-        Member member = shard.getGuildById("294900956078800897").getMember(user);
-        if (member == null) {
-            return false;
-        } else {
-            // If they have any roles that contain donor then they are a donor.
-            return !member.getRoles().stream()
-                    .filter(role -> role.getName().contains("Donor"))
-                    .collect(Collectors.toList()).isEmpty();
-        }
     }
 
     public static void deleteScheduledCommand(CommandEvent commandEvent, String content) {

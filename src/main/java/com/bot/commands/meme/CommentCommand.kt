@@ -76,14 +76,14 @@ class CommentCommand : MemeCommand() {
             try {
                 for (t in commandEvent.guild.textChannels) {
                     if (t.canTalk(commandEvent.guild.getMember(user)!!) && commandEvent.selfMember.hasPermission(t, Permission.MESSAGE_HISTORY)) {
-                        var msg_limit = 2000
+                        var msgLimit = 2000
                         for (m in t.iterableHistory.cache(false)) {
                             // Check that message is the right author and has content.
                             if (m.author.id == user.id && m.contentRaw.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().size > 1)
                                 markov.addPhrase(m.contentRaw)
 
                             // After 1000, break
-                            if (--msg_limit <= 0)
+                            if (--msgLimit <= 0)
                                 break
                         }
                     }
