@@ -68,7 +68,7 @@ class CommentCommand : MemeCommand() {
 
         if (markov == null) {
             // No cached model found. Make a new one.
-            commandEvent.reply("No cached markov model found for user. I am building one. This will take a bit.")
+            val message = commandEvent.channel.sendMessage("No cached markov model found for user. I am building one. This will take a bit.").complete()
 
             markov = MarkovModel()
 
@@ -95,6 +95,7 @@ class CommentCommand : MemeCommand() {
 
             // Cache it
             markovCache.put(commandEvent.guild.id + user.id, markov)
+            message.delete().queue()
         }
         sendComment(commandEvent, markov, user, null)
     }
