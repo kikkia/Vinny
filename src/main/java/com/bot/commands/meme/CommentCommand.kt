@@ -4,7 +4,6 @@ import com.bot.caching.MarkovModelCache
 import com.bot.commands.MemeCommand
 import com.bot.models.MarkovModel
 import com.bot.utils.HttpUtils
-import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.Permission
@@ -21,7 +20,7 @@ class CommentCommand : MemeCommand() {
         this.name = "comment"
         this.help = "Generates a comment from the post history of a user or a channel"
         this.arguments = "<@user or userID> or <#channel>"
-        this.cooldownScope = Command.CooldownScope.USER
+        this.cooldownScope = CooldownScope.USER
         this.cooldown = 2
         this.botPermissions = arrayOf(Permission.MESSAGE_HISTORY, Permission.MESSAGE_WRITE)
 
@@ -108,7 +107,8 @@ class CommentCommand : MemeCommand() {
 
         if (markov == null) {
             // No cached model found. Make a new one.
-            commandEvent.reply("No cached markov model found for channel. I am building one. This will take a little bit.")
+            val message = commandEvent.channel.sendMessage("No cached markov model found for channel. " +
+                    "I am building one. This will take a little bit.").complete()
 
             markov = MarkovModel()
 

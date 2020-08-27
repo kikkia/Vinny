@@ -13,9 +13,9 @@ public class ConstantStrings {
 
     public static String WELCOME_MESSAGE = "Hey all! Thanks for adding me to your server! To get started you can go to https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md" +
             " to find a full list of commands. You can also run `~help` to get a less detailed list sent to you in a DM.\n\nA couple tips before we start:\n" +
-            "- When adding me to a large server (>200 users) I may spit out some warnings if you use commands in the first couple messages. " +
-            "Don't worry just keep using me, I will sort things out on the fly.\n- You can set custom prefixes with the `~addprefix` command.\n" +
-            "- You can set a default voice volume using the `~dvolume` command.\n- Join the support server (invite link in help message) to get the " +
+            "- You can schedule commands to run on a timer with the schedule command" +
+            ".\n- You can set custom prefixes with the `~addprefix` command.\n" +
+            "- You can subscribe to different sources like twitter users, subreddits, etc with the subscribe commands.\n- Join the support server (invite link in help message) to get the " +
             "latest updates on new commands and suggest new ones!\n\nThanks for using Vinny!";
 
     public static String GUILD_ALIAS_SETUP_HELLO = "Hey! Let's setup an alias for the guild! I'll walk you through the process. If you don't know what an alias is just reply with `?` and I will " +
@@ -47,7 +47,7 @@ public class ConstantStrings {
             " future update Vinny will save your current playlists when rebooting. You can stay up to date" +
             " with new Vinny updates, features, and maintenance on Vinny's [support server](https://discord.gg/XMwyzxZ)";
 
-    public static String TWITTER_SUB_HELLO = "Hey! Let's get started subscribing to a twitter user. Please reply with the users twitter handle.";
+    public static String TWITTER_SUB_HELLO = "Hey! Let's get started subscribing to a twitter user. Please reply with the users twitter handle. (example: @valve or valve, either works)";
     public static String TWITTER_SUB_NOT_FOUND = "Whoops, I cannot seem to find that twitter user, please make sure you have it spelled correctly and try the command again.";
     public static String TWITTER_SUB_SUCCESS = "Sweet, I just setup that subscription! Every time they tweet, that tweet will be posted here. " + GITHUB_SUBSCRIPTIONS_HELP;
     public static String TWITTER_NSFW = "Unfortunately due to twitter's content policy, twitter subscriptions are only allowed in nsfw channels.";
