@@ -108,7 +108,7 @@ public class Bot extends ListenerAdapter {
 	public void onReady(ReadyEvent event) {
 		ShardingManager shardingManager = ShardingManager.getInstance();
 		shardingManager.putShard(new InternalShard(event.getJDA()));
-		System.out.println("Shard: " + event.getJDA().getShardInfo().getShardId() + " ready");
+		LOGGER.info("Shard: " + event.getJDA().getShardInfo().getShardId() + " ready");
 
 		if (Boolean.parseBoolean(config.getConfig(Config.DATA_LOADER))) {
 			DataLoader.LoadThread t = null;

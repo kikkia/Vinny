@@ -12,7 +12,11 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.internal.JDAImpl;
+import net.dv8tion.jda.internal.entities.GuildImpl;
+import net.dv8tion.jda.internal.entities.MemberImpl;
 import net.dv8tion.jda.internal.entities.ReceivedMessage;
+import net.dv8tion.jda.internal.entities.UserImpl;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,6 +35,7 @@ public class ScheduledCommandUtils {
     }
 
     private static Message generateScheduledMessage(ScheduledCommand command, JDA jda) {
+        User user = new UserImpl(Long.parseLong(command.getAuthor()), (JDAImpl) jda);
         return new ReceivedMessage(123,
                 jda.getTextChannelById(command.getChannel()),
                 MessageType.DEFAULT,
@@ -42,12 +47,14 @@ public class ScheduledCommandUtils {
                 false,
                 command.getCommand(),
                 ConstantStrings.SCHEDULED_FLAG,
-                jda.getUserById(command.getAuthor()),
+                user,
+                new MemberImpl((GuildImpl) jda.getGuildById(command.getGuild()), user),
                 null,
                 null,
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(),
+                0);
     }
 
     public static JDA getShardForCommand(ScheduledCommand command) {

@@ -25,7 +25,6 @@ import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
@@ -34,6 +33,9 @@ import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.Compression;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +44,8 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
+
+import static net.dv8tion.jda.api.requests.GatewayIntent.*;
 
 public class ShardingManager {
 
@@ -205,15 +209,25 @@ public class ShardingManager {
         commandClientBuilder.setScheduleExecutor(executor);
         client = commandClientBuilder.build();
 
-        CommandEvent.MAX_MESSAGES = 5;
-
-        shardManager = new DefaultShardManagerBuilder()
-                .setToken(config.getConfig(Config.DISCORD_TOKEN))
+        shardManager = DefaultShardManagerBuilder
+                .createDefault(
+                        config.getConfig(Config.DISCORD_TOKEN),
+                        GUILD_MEMBERS,
+                        GUILD_MESSAGES,
+                        GUILD_EMOJIS,
+                        GUILD_MESSAGE_REACTIONS,
+                        GUILD_VOICE_STATES,
+                        DIRECT_MESSAGES
+                )
                 .setShardsTotal(numShards)
+                .setChunkingFilter(ChunkingFilter.NONE)
                 .setShards(startIndex, endIndex)
+                .setCompression(Compression.NONE)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(client, waiter, bot)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setActivity(null)
+                .setRequestTimeoutRetry(true)
                 .setContextEnabled(false)
                 .build();
     }
