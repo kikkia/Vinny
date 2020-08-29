@@ -319,6 +319,9 @@ This command is used to setup a subscription to a 4chan board.
 ### `subscribereddit`
 This command is used to setup a subscription to a subreddit.
 
+### `subscribetwitch`
+This command is used to get notifications when someone goes live on twitch.
+
 ### `subscriptions`
 This command gets all of the subscriptions for a channel, or for you.
 * `~subscriptions me` - Get all subscriptions you have made

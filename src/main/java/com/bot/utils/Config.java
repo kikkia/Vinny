@@ -112,6 +112,8 @@ public class Config {
     public static final String NATS_TOKEN = "NATS_TOKEN";
     public static final String RSS_SUBJECT = "RSS_SUBJECT";
 
+    public static final String TWITCH_CLIENT_ID = "TWITCH_CLIENT_ID";
+
     private Config() {
         this.configFile = new File("res/config/config.conf");
         configs = new HashMap<>();

@@ -27,7 +27,7 @@ class HelpCommand : GeneralCommand() {
 
     class DMSuccessConsumer(val commandEvent: CommandEvent) : Consumer<Message> {
         override fun accept(t: Message) {
-            commandEvent.replySuccess(ConstantStrings.getRandomHelpSuccess())
+            commandEvent.replySuccess(ConstantStrings.randomHelpSuccess)
         }
     }
 

@@ -1,6 +1,7 @@
 package com.bot.utils;
 
 import com.bot.db.GuildDAO;
+import com.bot.exceptions.TwitchUserNotFoundException;
 import com.bot.models.MarkovModel;
 import com.bot.models.PixivPost;
 import net.dv8tion.jda.api.entities.Member;
@@ -306,6 +307,21 @@ public class HttpUtils {
         } catch (Exception e) {
             logger.severe("Failed to get url as byteArray", e);
             return null;
+        }
+    }
+
+    public static String getTwitchIdForUsername(String username) throws IOException, TwitchUserNotFoundException {
+        String uri = "https://api.twitch.tv/kraken/users?login=" + username;
+        try (CloseableHttpClient client = HttpClients.createDefault()){
+            HttpGet httpget = new HttpGet(uri);
+            httpget.addHeader("Client-ID", config.getConfig(Config.TWITCH_CLIENT_ID));
+            httpget.addHeader("Accept", "application/vnd.twitchtv.v5+json");
+            HttpResponse response = client.execute(httpget);
+            JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
+            if (jsonResponse.getInt("_total") == 0) {
+                throw new TwitchUserNotFoundException("User not found");
+            }
+            return jsonResponse.getJSONArray("users").getJSONObject(0).getString("_id");
         }
     }
 }
