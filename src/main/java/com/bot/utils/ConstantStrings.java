@@ -47,20 +47,38 @@ public class ConstantStrings {
             " future update Vinny will save your current playlists when rebooting. You can stay up to date" +
             " with new Vinny updates, features, and maintenance on Vinny's [support server](https://discord.gg/XMwyzxZ)";
 
-    public static String TWITTER_SUB_HELLO = "Hey! Let's get started subscribing to a twitter user. Please reply with the users twitter handle. (example: @valve or valve, either works)";
-    public static String TWITTER_SUB_NOT_FOUND = "Whoops, I cannot seem to find that twitter user, please make sure you have it spelled correctly and try the command again.";
-    public static String TWITTER_SUB_SUCCESS = "Sweet, I just setup that subscription! Every time they tweet, that tweet will be posted here. " + GITHUB_SUBSCRIPTIONS_HELP;
-    public static String TWITTER_NSFW = "Unfortunately due to twitter's content policy, twitter subscriptions are only allowed in nsfw channels.";
-    public static String CHAN_SUB_HELLO = "Hey! Let's get started subscribing to a 4chan board. Please reply with the board code. (example: `biz` or `b`";
-    public static String CHAN_BOARD_INVALID = "Whoops, That board is invalid, Make sure you only include the abbreviation (example: b or wg) Please try again.";
-    public static String CHAN_SUB_SUCCESS = "All set up! Each new thread will be posted in this channel, when they are 404'd they will NOT be removed. " + GITHUB_SUBSCRIPTIONS_HELP;
-    public static String CHAN_BOARD_NSFW = "This is an NSFW board and this channel is not marked as NSFW. You can only subscribe to this board in NSFW channels.";
-    public static String SUBREDDIT_SUB_HELLO = "Hey! Let's get started subscribing to a subreddit. Please reply with the subreddit you want to subscribe to. (example: dankmemes)";
-    public static String SUBREDDIT_SUBSCRIBE_SUCCESS = "Good to go! Each new post in that subreddit will now be posted here. " + GITHUB_SUBSCRIPTIONS_HELP;
-    public static String SUBREDDIT_INVALID = "I had trouble finding that subreddit, please make sure it is spelled correctly AND is a public subreddit and try again.";
-    public static String SUBREDDIT_NSFW = "This is an NSFW subreddit, I cannot subscribe to an NSFW subreddit unless the channel has NSFW enabled.";
-
-    public static String RSS_NSFW_DENY = "Warning: Trying to post to a non-nsfw channel from an nsfw subscription. Please change this channel to be nsfw or remove the subscription";
+    public static String TWITTER_SUB_HELLO = "Hey! Let's get started subscribing to a twitter user. Please reply with " +
+            "the users twitter handle. (example: @valve or valve, either works)";
+    public static String TWITTER_SUB_NOT_FOUND = "Whoops, I cannot seem to find that twitter user, please make sure you " +
+            "have it spelled correctly and try the command again.";
+    public static String TWITTER_SUB_SUCCESS = "Sweet, I just setup that subscription! Every time they tweet, that tweet " +
+            "will be posted here. " + GITHUB_SUBSCRIPTIONS_HELP;
+    public static String TWITTER_NSFW = "Unfortunately due to twitter's content policy, twitter subscriptions are only " +
+            "allowed in nsfw channels.";
+    public static String CHAN_SUB_HELLO = "Hey! Let's get started subscribing to a 4chan board. Please reply with the " +
+            "board code. (example: `biz` or `b`";
+    public static String CHAN_BOARD_INVALID = "Whoops, That board is invalid, Make sure you only include the " +
+            "abbreviation (example: b or wg) Please try again.";
+    public static String CHAN_SUB_SUCCESS = "All set up! Each new thread will be posted in this channel, when they are " +
+            "404'd they will NOT be removed. " + GITHUB_SUBSCRIPTIONS_HELP;
+    public static String CHAN_BOARD_NSFW = "This is an NSFW board and this channel is not marked as NSFW. You can only " +
+            "subscribe to this board in NSFW channels.";
+    public static String SUBREDDIT_SUB_HELLO = "Hey! Let's get started subscribing to a subreddit. Please reply with the " +
+            "subreddit you want to subscribe to. (example: dankmemes)";
+    public static String SUBREDDIT_SUBSCRIBE_SUCCESS = "Good to go! Each new post in that subreddit will now be posted" +
+            " here. " + GITHUB_SUBSCRIPTIONS_HELP;
+    public static String SUBREDDIT_INVALID = "I had trouble finding that subreddit, please make sure it is spelled " +
+            "correctly AND is a public subreddit and try again.";
+    public static String SUBREDDIT_NSFW = "This is an NSFW subreddit, I cannot subscribe to an NSFW subreddit unless the " +
+            "channel has NSFW enabled.";
+    public static String TWITCH_SUB_HELLO = "Yo! Let's setup a twitch live stream subscription. Please reply with the username " +
+            "of the user you want notifications for. (You can find the username at the end of their stream url)";
+    public static String TWITCH_SUB_NOT_FOUND = "Hold up, I could not find that user on twitch, please make sure that" +
+            " you have their username right. You can find it at the end of their channel url.";
+    public static String TWITCH_SUB_SUCCESS = "Done! A message will be posted in this channel whenever they go live. " +
+            "To learn more about subscriptions you can go to " + GITHUB_SUBSCRIPTIONS_HELP;
+    public static String RSS_NSFW_DENY = "Warning: Trying to post to a non-nsfw channel from an nsfw subscription. " +
+            "Please change this channel to be nsfw or remove the subscription";
 
     private static String[] ROULETTE_DED = new String[] {"BANG! That is one hell of a shame",
         "BANG! Rip that dude ded",

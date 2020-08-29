@@ -211,6 +211,12 @@ public class RedditHelper {
         WebhookMessageBuilder builder = new WebhookMessageBuilder();
         builder.setAvatarUrl(event.getSelfUser().getAvatarUrl());
         builder.setUsername(event.getSelfMember().getEffectiveName());
+
+        // Hotfix for some issues with this being too long somehow :thonk:
+        if (message.length() >= 2000) {
+            message = message.substring(0, 1950);
+        }
+
         builder.setContent(message);
         return builder.build();
     }
