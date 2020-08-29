@@ -318,7 +318,6 @@ public class HttpUtils {
             httpget.addHeader("Accept", "application/vnd.twitchtv.v5+json");
             HttpResponse response = client.execute(httpget);
             JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
-            System.out.println(jsonResponse.toString());
             if (jsonResponse.getInt("_total") == 0) {
                 throw new TwitchUserNotFoundException("User not found");
             }
