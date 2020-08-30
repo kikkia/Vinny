@@ -313,6 +313,9 @@ Vinny allows you to setup subscriptions to various other places like twitter, re
 ### `subscribetwitter`
 This command is used to setup a subscription to a twitter user.
 
+### `subscribeyt`
+Use this command to subscribe to new video notifications for a youtube channel.
+
 ### `subscribechan`
 This command is used to setup a subscription to a 4chan board.
 

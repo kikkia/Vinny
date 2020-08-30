@@ -89,6 +89,12 @@ object ConstantStrings {
     @JvmField
     var TWITCH_SUB_SUCCESS = "Done! A message will be posted in this channel whenever they go live. " +
             "To learn more about subscriptions you can go to " + GITHUB_SUBSCRIPTIONS_HELP
+    const val YT_SUB_HELLO = "Heya! Let's get a subscription to a youtube channel setup. Please respond with a link to " +
+            "the youtube channel you want notifications for"
+    const val YT_SUB_NOT_FOUND = "I could not find that user on Youtube. Please make sure that you respond with a " +
+            "correct link to the youtube channel."
+    const val YT_SUB_SUCCESS = "Done! A message will be posted in this channel whenever they post a new video. " +
+            "To learn more about subscriptions you can go to " + GITHUB_SUBSCRIPTIONS_HELP
     var RSS_NSFW_DENY = "Warning: Trying to post to a non-nsfw channel from an nsfw subscription. " +
             "Please change this channel to be nsfw or remove the subscription"
     private val ROULETTE_DED = arrayOf("BANG! That is one hell of a shame",
