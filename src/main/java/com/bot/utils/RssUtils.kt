@@ -59,7 +59,7 @@ class RssUtils {
                             "***${rssUpdate.displayName}*** has started streaming!\n" +
                                     rssUpdate.url
                         } else {
-                            "New video posted from ***${rssUpdate.subject}***\n" +
+                            "New video posted from ***${rssUpdate.displayName}***\n" +
                                     rssUpdate.url
                         }
                         webhook.send(buildMessage(msg, jda))

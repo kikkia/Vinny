@@ -174,6 +174,7 @@ public class ShardingManager {
                     new SubscribeRedditCommand(waiter),
                     new SubscriptionsCommand(waiter),
                     new SubscribeTwitchCommand(waiter),
+                    new SubscribeYoutubeCommand(waiter),
                     new RemoveSubscriptionCommand(),
 
                     // NSFW Commands

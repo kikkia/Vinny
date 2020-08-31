@@ -1,7 +1,8 @@
 package com.bot.utils;
 
 import com.bot.db.GuildDAO;
-import com.bot.exceptions.TwitchUserNotFoundException;
+import com.bot.exceptions.InvalidInputException;
+import com.bot.exceptions.NoSuchResourceException;
 import com.bot.models.MarkovModel;
 import com.bot.models.PixivPost;
 import net.dv8tion.jda.api.entities.Member;
@@ -17,6 +18,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.MDC;
 
@@ -310,7 +312,7 @@ public class HttpUtils {
         }
     }
 
-    public static String getTwitchIdForUsername(String username) throws IOException, TwitchUserNotFoundException {
+    public static String getTwitchIdForUsername(String username) throws IOException, NoSuchResourceException {
         String uri = "https://api.twitch.tv/kraken/users?login=" + username;
         try (CloseableHttpClient client = HttpClients.createDefault()){
             HttpGet httpget = new HttpGet(uri);
@@ -319,9 +321,34 @@ public class HttpUtils {
             HttpResponse response = client.execute(httpget);
             JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
             if (jsonResponse.getInt("_total") == 0) {
-                throw new TwitchUserNotFoundException("User not found");
+                throw new NoSuchResourceException("User not found");
             }
             return jsonResponse.getJSONArray("users").getJSONObject(0).getString("_id");
         }
+    }
+
+    public static String getYoutubeIdForChannelUrl(String url) throws IOException, NoSuchResourceException, InvalidInputException {
+        String uri = buildYoutubeUri(url);
+        try (CloseableHttpClient client = HttpClients.createDefault()){
+            HttpGet httpget = new HttpGet(uri);
+            httpget.addHeader("referer", "https://commentpicker.com/youtube-channel-id.php");
+            HttpResponse response = client.execute(httpget);
+            try {
+                JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
+                return jsonResponse.getJSONArray("items").getJSONObject(0).getString("id");
+            } catch (JSONException e) {
+                throw new NoSuchResourceException("Could not find that YT channel");
+            }
+        }
+    }
+
+    private static String buildYoutubeUri(String channel) throws InvalidInputException {
+        if (!channel.contains("https://www.youtube.com/")) {
+            throw new InvalidInputException("Not youtube url");
+        }
+        String baseUri = "https://commentpicker.com/actions/youtube-channel-api.php?url=https%3A%2F%2Fwww.googleapis.com" +
+                "%2Fyoutube%2Fv3%2Fchannels%3Fpart%3Did%2Csnippet%2Cstatistics%2CcontentDetails%2Cstatus";
+        String idOrUsernamePrefix = channel.contains("/channel/") ? "%26id%3D" : "%26forUsername%3D";
+        return baseUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length-1];
     }
 }
