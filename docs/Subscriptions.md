@@ -5,7 +5,7 @@ Vinny allows you to setup subscriptions to various other sites on the internet. 
 * Twitter - Subscribe to a twitter user and new tweets will be posted
 * Reddit - Subscribe to subreddits, all new posts will be posted to discord
 * 4chan - Subscribe to 4chan boards (Individual threads coming soon), all new threads will be posted to discord.
-* Youtube (Coming soon) - Subscribe to a youtube channel and new videos will be posted to discord.
+* Youtube Subscribe to a youtube channel and new video notifications will be posted to discord.
 * Twitch - Get notifications when users go live.
 * More coming (Always open to suggestions)
 
