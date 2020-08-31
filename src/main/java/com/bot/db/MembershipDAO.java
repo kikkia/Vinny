@@ -155,4 +155,16 @@ public class MembershipDAO {
             DbHelpers.INSTANCE.close(statement, null, connection);
         }
     }
+
+    public int getActiveUserCount() throws SQLException {
+        String query = "select count(1) from guild_membership gm JOIN guild g on gm.guild = g.id WHERE g.active = 1;";
+        try (Connection connection = write.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(query)){
+                try (ResultSet set = statement.executeQuery()){
+                    set.next();
+                    return set.getInt(1);
+                }
+            }
+        }
+    }
 }
