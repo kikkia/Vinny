@@ -49,6 +49,10 @@ public class SubscribeTwitchCommand extends CreateSubscriptionCommand {
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
             String id;
+            if (subject.contains("https://www.twitch.tv/")) {
+                subject = subject.split("/")[subject.split("/").length - 1];
+            }
+
             try {
                 id = HttpUtils.getTwitchIdForUsername(subject);
             }  catch (NoSuchResourceException e) {
