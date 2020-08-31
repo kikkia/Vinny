@@ -4,7 +4,9 @@ import com.bot.ShardingManager;
 import com.bot.caching.MarkovModelCache;
 import com.bot.caching.R34Cache;
 import com.bot.caching.SubredditCache;
+import com.bot.db.MembershipDAO;
 import com.bot.models.InternalShard;
+import com.bot.utils.Logger;
 import net.dv8tion.jda.api.entities.Activity;
 
 /**
@@ -17,6 +19,10 @@ public class MetricsReporter extends Thread {
     private MetricsManager metricsManager;
     private SubredditCache subredditCache;
     private R34Cache r34Cache;
+    private MembershipDAO membershipDAO;
+    private Logger logger = new Logger(this.getClass().getSimpleName());
+
+    private int userCount = 0;
 
     public MetricsReporter() {
         shardManager = ShardingManager.getInstance();
@@ -24,16 +30,24 @@ public class MetricsReporter extends Thread {
         metricsManager = MetricsManager.getInstance();
         subredditCache = SubredditCache.getInstance();
         r34Cache = R34Cache.getInstance();
+        membershipDAO = MembershipDAO.getInstance();
     }
 
     @Override
     public void run() {
+        try {
+            updateMetrics();
+        } catch (Exception e) {
+            logger.severe("Exception when updating metrics", e);
+        }
+    }
+
+    private void updateMetrics() {
         int activeVoiceConnectionCount = 0;
         int idleVoiceConnectionCount = 0;
         int totalQueuedTracks = 0;
         int totalVoiceUsers = 0;
         int guildCount = 0;
-        int userCount = 0;
 
         for (InternalShard shard : shardManager.getShards().values()) {
             shard.updateStatistics();
@@ -43,9 +57,14 @@ public class MetricsReporter extends Thread {
             totalQueuedTracks += shard.getQueuedTracksCount();
             totalVoiceUsers += shard.getUsersInVoiceCount();
             guildCount += shard.getServerCount();
-            userCount += shard.getUserCount();
 
             metricsManager.updatePing(shard.getId(), shard.getJda().getGatewayPing());
+        }
+
+        try {
+            userCount = membershipDAO.getActiveUserCount();
+        } catch (Exception e) {
+            logger.warning("Failed to get user count", e);
         }
 
         metricsManager.updateActiveVoiceConnectionsCount(activeVoiceConnectionCount);

@@ -57,7 +57,7 @@ public class Main {
 
 		// Start a metrics reporter to keeps the metrics that are not frequently updates flowing to datadog
 		ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(3);
-		scheduledTaskExecutor.scheduleAtFixedRate(new MetricsReporter(), 0, 5, TimeUnit.SECONDS);
+		scheduledTaskExecutor.scheduleAtFixedRate(new MetricsReporter(), 0, 10, TimeUnit.SECONDS);
 
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_SCHEDULED_COMMANDS))) {
 			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 120, 9, TimeUnit.SECONDS);

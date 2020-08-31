@@ -41,7 +41,11 @@ public class Cache<V> {
                         Thread.sleep(cleanupInterval * 1000);
                     } catch (InterruptedException ex) {
                     }
-                    cleanup();
+                    try {
+                        cleanup();
+                    } catch (Exception e) {
+                        LOGGER.warning("Failed to cleanup " + name, e);
+                    }
                 }
             });
 
