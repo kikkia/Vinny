@@ -98,7 +98,7 @@ public class MetricsManager {
 
     public void markRssEventReceived(RssProvider provider) {
         String providerTag = "provider:" + provider.name();
-        statsd.incrementCounter("rss.received");
+        statsd.incrementCounter("rss.received", providerTag);
     }
 
     public void markRouletteDed() {
