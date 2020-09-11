@@ -12,6 +12,8 @@ class HelpCommand : GeneralCommand() {
     init {
         this.name = "help"
         this.aliases = arrayOf("commands")
+        this.cooldown = 5
+        this.cooldownScope = CooldownScope.USER
     }
 
     override fun executeCommand(commandEvent: CommandEvent) {

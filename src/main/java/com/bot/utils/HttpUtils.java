@@ -328,27 +328,41 @@ public class HttpUtils {
     }
 
     public static String getYoutubeIdForChannelUrl(String url) throws IOException, NoSuchResourceException, InvalidInputException {
-        String uri = buildYoutubeUri(url);
+        boolean lookup = url.contains("https://www.youtube.com/c/");
+        String uri = lookup ? buildYoutubeSearchUrl(url) : buildYoutubeLookupUri(url);
         try (CloseableHttpClient client = HttpClients.createDefault()){
             HttpGet httpget = new HttpGet(uri);
             httpget.addHeader("referer", "https://commentpicker.com/youtube-channel-id.php");
             HttpResponse response = client.execute(httpget);
             try {
                 JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
-                return jsonResponse.getJSONArray("items").getJSONObject(0).getString("id");
+                return lookup ? jsonResponse.getJSONArray("items").getJSONObject(0).getJSONObject("id").getString("channelId")
+                        : jsonResponse.getJSONArray("items").getJSONObject(0).getString("id");
             } catch (JSONException e) {
+                logger.severe("Failed to parse yt channel id", e);
                 throw new NoSuchResourceException("Could not find that YT channel");
             }
         }
     }
 
-    private static String buildYoutubeUri(String channel) throws InvalidInputException {
+    // With some channels we will need to search rather than direct lookup
+    private static String buildYoutubeSearchUrl(String channel) throws InvalidInputException {
         if (!channel.contains("https://www.youtube.com/")) {
             throw new InvalidInputException("Not youtube url");
         }
-        String baseUri = "https://commentpicker.com/actions/youtube-channel-api.php?url=https%3A%2F%2Fwww.googleapis.com" +
+        return "https://commentpicker.com/actions/youtube-channel-api.php?url=https%3A%2F%2Fwww.googleapis.com%2Fyoutube" +
+                "%2Fv3%2Fsearch%3Fpart%3Did%2Csnippet%26type%3Dchannel%26q%3D" +
+                channel.split("/")[channel.split("/").length-1] + "&token=403409fe2bcbc41adb8f8e439" +
+                "66bc8097d457aba8380fd4abc84da2a4d056c9f";
+    }
+
+    private static String buildYoutubeLookupUri(String channel) throws InvalidInputException {
+        if (!channel.contains("https://www.youtube.com/")) {
+            throw new InvalidInputException("Not youtube url");
+        }
+        String lookupUri = "https://commentpicker.com/actions/youtube-channel-api.php?url=https%3A%2F%2Fwww.googleapis.com" +
                 "%2Fyoutube%2Fv3%2Fchannels%3Fpart%3Did%2Csnippet%2Cstatistics%2CcontentDetails%2Cstatus";
         String idOrUsernamePrefix = channel.contains("/channel/") ? "%26id%3D" : "%26forUsername%3D";
-        return baseUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length-1];
+        return lookupUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length-1];
     }
 }
