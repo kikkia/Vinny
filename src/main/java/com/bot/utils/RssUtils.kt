@@ -17,7 +17,7 @@ class RssUtils {
             // TODO: Cache RSS-Subscriptions to avoid extra db ops
             val channel = jda.getTextChannelById(rssUpdate.channel)
             if (channel == null) {
-                logger.warning("Failed to find text channel for RSS update $channel")
+                logger.warning("Failed to find text channel for RSS update ${rssUpdate.channel}")
                 return
             }
 
