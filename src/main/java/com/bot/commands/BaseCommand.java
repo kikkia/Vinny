@@ -55,16 +55,10 @@ public abstract class BaseCommand extends Command {
             logger.severe("Failed to get perms for " + this.getClass().getName(), e);
             return;
         }
-        try {
-            commandEvent.async(() -> {
-                // Add some details to the MDC on the thread before executing
-                try (MDC.MDCCloseable commandCloseable = MDC.putCloseable("command", this.name);
-                     MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
-                    executeCommand(commandEvent);
-                } catch (Exception e) {
-                    logger.warning("Exception Executing command", e);
-                }
-            });
+        // Add some details to the MDC on the thread before executing
+        try (MDC.MDCCloseable commandCloseable = MDC.putCloseable("command", this.name);
+             MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
+            executeCommand(commandEvent);
         } catch (Exception e) {
             commandEvent.replyError("Something went wrong, please try again later");
             logger.severe("Failed command " + this.getClass().getName() + ": ", e);
