@@ -72,5 +72,6 @@ public abstract class BaseCommand extends Command {
         }
     }
 
+    @Trace(operationName = "executeCommand", resourceName = "vinny.bot")
     protected abstract void executeCommand(CommandEvent commandEvent);
 }
