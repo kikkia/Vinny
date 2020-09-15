@@ -101,6 +101,12 @@ public class MetricsManager {
         statsd.incrementCounter("rss.received", providerTag);
     }
 
+    public void markRssEventChannelNotFound(RssProvider provider, String channelId) {
+        String providerTag = "provider:" + provider.name();
+        String cId = "channelId:" + channelId;
+        statsd.incrementCounter("rss.channelNotFound", providerTag, cId);
+    }
+
     public void markRouletteDed() {
         statsd.incrementCounter("roulette.ded");
     }

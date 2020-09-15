@@ -25,7 +25,6 @@ public abstract class BaseCommand extends Command {
     }
 
     @Override
-    @Trace(operationName = "onCommand", resourceName = "vinny.bot")
     protected void execute(CommandEvent commandEvent) {
         Guild guild = null;
         if (!commandEvent.isFromType(ChannelType.PRIVATE))
@@ -56,14 +55,15 @@ public abstract class BaseCommand extends Command {
             return;
         }
         // Add some details to the MDC on the thread before executing
-        try (MDC.MDCCloseable commandCloseable = MDC.putCloseable("command", this.name);
-             MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
-            executeCommand(commandEvent);
-        } catch (Exception e) {
-            commandEvent.replyError("Something went wrong, please try again later");
-            logger.severe("Failed command " + this.getClass().getName() + ": ", e);
-            e.printStackTrace();
-        }
+        commandEvent.async(() -> {
+            // Add some details to the MDC on the thread before executing
+            try (MDC.MDCCloseable commandCloseable = MDC.putCloseable("command", this.name);
+                 MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
+                executeCommand(commandEvent);
+            } catch (Exception e) {
+                logger.warning("Exception Executing command", e);
+            }
+        });
     }
 
     @Trace(operationName = "executeCommand", resourceName = "vinny.bot")
