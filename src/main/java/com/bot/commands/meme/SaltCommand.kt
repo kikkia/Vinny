@@ -2,6 +2,7 @@ package com.bot.commands.meme
 
 import com.bot.commands.MemeCommand
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 
 class SaltCommand : MemeCommand() {
 
@@ -23,6 +24,7 @@ class SaltCommand : MemeCommand() {
         this.name = "salt"
     }
 
+    @Trace(operationName = "executeCommand", resourceName = "Salt")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply(salt)
     }

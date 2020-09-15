@@ -2,6 +2,7 @@ package com.bot.commands.meme
 
 import com.bot.commands.MemeCommand
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 
 class BanHammerCommand : MemeCommand() {
 
@@ -19,6 +20,7 @@ class BanHammerCommand : MemeCommand() {
         this.help = "bring out the hammer"
     }
 
+    @Trace(operationName = "executeCommand", resourceName = "BanHammer")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply(hammer)
     }

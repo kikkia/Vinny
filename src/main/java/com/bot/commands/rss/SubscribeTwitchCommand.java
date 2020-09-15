@@ -6,6 +6,7 @@ import com.bot.utils.ConstantStrings;
 import com.bot.utils.HttpUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -22,6 +23,7 @@ public class SubscribeTwitchCommand extends CreateSubscriptionCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "SubscribeTwitch")
     protected void executeCommand(CommandEvent commandEvent) {
         if (!canMakeNewSubscription(commandEvent)) {
             return;
@@ -46,6 +48,7 @@ public class SubscribeTwitchCommand extends CreateSubscriptionCommand {
         }
 
         @Override
+        @Trace(operationName = "executeCommand", resourceName = "SubscribeTwitch.stepOne")
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
             String id;

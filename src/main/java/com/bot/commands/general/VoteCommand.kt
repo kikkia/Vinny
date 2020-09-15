@@ -2,6 +2,7 @@ package com.bot.commands.general
 
 import com.bot.commands.GeneralCommand
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 
 class VoteCommand : GeneralCommand() {
     init {
@@ -9,6 +10,7 @@ class VoteCommand : GeneralCommand() {
         this.help = "Support Vinny by upvoting on bot lists."
     }
 
+    @Trace(operationName = "executeCommand", resourceName = "Vote")
     override fun executeCommand(commandEvent: CommandEvent) {
         val message = "If you want to support Vinny, please go and vote for Vinny on these awesome sites: \n" +
                 "https://discordbotlist.com/bots/276855867796881408\n" +

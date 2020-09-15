@@ -12,6 +12,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.Message;
 
 import java.util.concurrent.TimeUnit;
@@ -38,6 +39,7 @@ public class SearchCommand extends VoiceCommand {
 	}
 
 	@Override
+	@Trace(operationName = "executeCommand", resourceName = "SearchYT")
 	protected void executeCommand(CommandEvent commandEvent) {
 		if (commandEvent.getArgs().isEmpty()) {
 			VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();

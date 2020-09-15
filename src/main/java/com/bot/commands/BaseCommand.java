@@ -8,7 +8,6 @@ import com.bot.utils.Logger;
 import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.MDC;
@@ -66,6 +65,5 @@ public abstract class BaseCommand extends Command {
         });
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "vinny.bot")
     protected abstract void executeCommand(CommandEvent commandEvent);
 }

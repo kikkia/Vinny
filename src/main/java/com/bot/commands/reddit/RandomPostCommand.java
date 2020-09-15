@@ -9,6 +9,7 @@ import com.bot.utils.CommandCategories;
 import com.bot.utils.ConstantStrings;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import net.dean.jraw.ApiException;
 import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.models.SubredditSort;
@@ -32,6 +33,7 @@ public class RandomPostCommand extends RedditCommand{
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "RandomReddit")
     protected void executeCommand(CommandEvent commandEvent) {
         boolean isNSFWAllowed = true;
 

@@ -7,6 +7,7 @@ import com.bot.models.AudioTrack;
 import com.bot.models.Playlist;
 import com.bot.voice.LoadHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 import java.util.logging.Level;
 
@@ -24,6 +25,7 @@ public class LoadGuildPlaylistCommand extends VoiceCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "LoadGuildPlaylist")
     protected void executeCommand(CommandEvent commandEvent) {
         int playlistId = -1;
         String playlistName = null;

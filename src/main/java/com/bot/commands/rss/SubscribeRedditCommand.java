@@ -5,6 +5,7 @@ import com.bot.models.RssProvider;
 import com.bot.utils.ConstantStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import datadog.trace.api.Trace;
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.models.Subreddit;
 import net.dv8tion.jda.api.Permission;
@@ -26,6 +27,7 @@ public class SubscribeRedditCommand extends CreateSubscriptionCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "SubscribeReddit")
     protected void executeCommand(CommandEvent commandEvent) {
         if (!canMakeNewSubscription(commandEvent)) {
             return;
@@ -50,6 +52,7 @@ public class SubscribeRedditCommand extends CreateSubscriptionCommand {
         }
 
         @Override
+        @Trace(operationName = "executeCommand", resourceName = "SubscribeReddit.stepOne")
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
             Subreddit subreddit = redditClient.subreddit(subject).about();

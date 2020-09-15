@@ -6,6 +6,7 @@ import com.bot.models.ScheduledCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Paginator;
+import datadog.trace.api.Trace;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class GetScheduledCommand extends GeneralCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "GetScheduled")
     protected void executeCommand(CommandEvent commandEvent) {
         String args = commandEvent.getArgs();
         if (!(args.equalsIgnoreCase("g") ||

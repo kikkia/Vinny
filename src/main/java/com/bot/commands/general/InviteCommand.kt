@@ -2,6 +2,7 @@ package com.bot.commands.general
 
 import com.bot.commands.GeneralCommand
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 
 class InviteCommand : GeneralCommand() {
     init {
@@ -11,6 +12,7 @@ class InviteCommand : GeneralCommand() {
         this.guildOnly = false
     }
 
+    @Trace(operationName = "executeCommand", resourceName = "Invite")
     override fun executeCommand(commandEvent: CommandEvent) {
 
         // No need to check perms here

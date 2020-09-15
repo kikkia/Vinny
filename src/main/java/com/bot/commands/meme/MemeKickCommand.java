@@ -4,6 +4,7 @@ import com.bot.commands.MemeCommand;
 import com.bot.consumers.ReRoleConsumer;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Member;
@@ -29,6 +30,7 @@ public class MemeKickCommand extends MemeCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "Memekick")
     protected void executeCommand(CommandEvent commandEvent) {
         if (commandEvent.getMessage().getMentionedUsers().size() == 0) {
             commandEvent.replyWarning("You must specify at least one user to memekick");

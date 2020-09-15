@@ -8,6 +8,7 @@ import com.bot.utils.CommandPermissions
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.Paginator
+import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.User
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -34,6 +35,7 @@ class PermissionsCommand(waiter: EventWaiter) : GeneralCommand() {
                 .setFinalAction { message -> message.clearReactions().queue() }
     }
 
+    @Trace(operationName = "executeCommand", resourceName = "Permissions")
     override fun executeCommand(commandEvent: CommandEvent) {
 
         val userId: Long

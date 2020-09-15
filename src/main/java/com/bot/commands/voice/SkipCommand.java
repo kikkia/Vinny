@@ -3,6 +3,7 @@ package com.bot.commands.voice;
 import com.bot.commands.VoiceCommand;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 public class SkipCommand extends VoiceCommand {
 
@@ -13,6 +14,7 @@ public class SkipCommand extends VoiceCommand {
 	}
 
 	@Override
+	@Trace(operationName = "executeCommand", resourceName = "SkipTrack")
 	protected void executeCommand(CommandEvent commandEvent) {
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		if (handler == null) {

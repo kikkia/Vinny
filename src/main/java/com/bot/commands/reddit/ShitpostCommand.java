@@ -4,6 +4,7 @@ import com.bot.RedditConnection;
 import com.bot.commands.MemeCommand;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
 
@@ -24,6 +25,7 @@ public class ShitpostCommand extends MemeCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "Shitpost")
     protected void executeCommand(CommandEvent commandEvent) {
         try{
             RedditHelper.getRandomSubmissionAndSend(redditConnection,

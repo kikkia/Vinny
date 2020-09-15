@@ -2,6 +2,7 @@ package com.bot.commands.general;
 
 import com.bot.commands.GeneralCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 import java.util.Random;
 
@@ -17,6 +18,7 @@ public class RollCommand extends GeneralCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "Roll")
     protected void executeCommand(CommandEvent commandEvent) {
         String args = commandEvent.getArgs();
 

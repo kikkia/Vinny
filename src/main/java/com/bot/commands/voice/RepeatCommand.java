@@ -3,6 +3,7 @@ package com.bot.commands.voice;
 import com.bot.commands.VoiceCommand;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 public class RepeatCommand extends VoiceCommand {
 
@@ -13,6 +14,7 @@ public class RepeatCommand extends VoiceCommand {
 	}
 
 	@Override
+	@Trace(operationName = "executeCommand", resourceName = "Repeat")
 	protected void executeCommand(CommandEvent commandEvent) {
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		if (handler == null) {

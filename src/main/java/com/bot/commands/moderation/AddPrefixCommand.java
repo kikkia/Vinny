@@ -5,6 +5,7 @@ import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.utils.GuildUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ public class AddPrefixCommand extends ModerationCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "AddPrefix")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
 
