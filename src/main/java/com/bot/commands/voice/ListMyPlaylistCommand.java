@@ -4,6 +4,7 @@ import com.bot.commands.VoiceCommand;
 import com.bot.db.PlaylistDAO;
 import com.bot.models.Playlist;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class ListMyPlaylistCommand extends VoiceCommand {
 	}
 
 	@Override
+	@Trace(operationName = "executeCommand", resourceName = "myPlaylists")
 	protected void executeCommand(CommandEvent commandEvent) {
 		List<Playlist> playlistList = playlistDAO.getPlaylistsForUser(commandEvent.getAuthor().getId());
 

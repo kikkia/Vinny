@@ -2,6 +2,7 @@ package com.bot.commands.meme
 
 import com.bot.commands.MemeCommand
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 
 class FeelsCommand : MemeCommand() {
 
@@ -31,6 +32,7 @@ class FeelsCommand : MemeCommand() {
         this.name = "feels"
     }
 
+    @Trace(operationName = "executeCommand", resourceName = "Feels")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply(feels)
     }

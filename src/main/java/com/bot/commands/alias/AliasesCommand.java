@@ -8,6 +8,7 @@ import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Paginator;
+import datadog.trace.api.Trace;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class AliasesCommand extends GeneralCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "Aliases")
     protected void executeCommand(CommandEvent commandEvent) {
         // TODO: Will need updating for channel and user aliases
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());

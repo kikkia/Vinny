@@ -27,17 +27,18 @@ class RssSubscriber(config: Config) {
             val json = JSONObject(String(msg.data, StandardCharsets.UTF_8))
             logger.info(json.toString())
             val update = RssUtils.mapJsonToUpdate(json)
+            metricsManager.markRssEventReceived(RssProvider.getProvider(update.provider))
+
             // Send the update to the channel
             val jda = shardingManager.getShardForChannel(update.channel)
             if (jda == null) {
                 logger.warning("Could not find channel for rss update ${update.channel}")
+                metricsManager.markRssEventChannelNotFound(RssProvider.getProvider(update.provider), update.channel)
             } else {
-                metricsManager.markRssEventReceived(RssProvider.getProvider(update.provider))
                 RssUtils.sendRssUpdate(update, jda)
             }
         }
         rssDispatcher.subscribe(config.getConfig(Config.RSS_SUBJECT))
     }
 
-    // TODO: https://commentpicker.com/youtube-channel-id.php for yt user lookups
 }

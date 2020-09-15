@@ -6,6 +6,7 @@ import com.bot.db.RssDAO;
 import com.bot.models.InternalChannel;
 import com.bot.models.RssChannelSubscription;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 import java.sql.SQLException;
 
@@ -22,6 +23,7 @@ public class RemoveSubscriptionCommand extends ModerationCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "RemoveSubscription")
     protected void executeCommand(CommandEvent commandEvent) {
         if (commandEvent.getArgs().isEmpty()) {
             commandEvent.replyWarning("Please give the id of the subscription to end. You can find this ID using the `~subscriptions` command.");

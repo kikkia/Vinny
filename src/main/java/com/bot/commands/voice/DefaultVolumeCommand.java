@@ -3,6 +3,7 @@ package com.bot.commands.voice;
 import com.bot.commands.VoiceCommand;
 import com.bot.db.GuildDAO;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 public class DefaultVolumeCommand extends VoiceCommand {
 
@@ -16,6 +17,7 @@ public class DefaultVolumeCommand extends VoiceCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "dvolume")
     protected void executeCommand(CommandEvent commandEvent) {
         int newVolume;
         try{

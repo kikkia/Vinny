@@ -5,6 +5,7 @@ import com.bot.db.ChannelDAO
 import com.bot.models.PixivPost
 import com.bot.utils.HttpUtils
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 
 class PixivCommand : GeneralCommand() {
 
@@ -18,6 +19,7 @@ class PixivCommand : GeneralCommand() {
         this.channelDAO = ChannelDAO.getInstance()
     }
 
+    @Trace(operationName = "executeCommand", resourceName = "Pixiv")
     override fun executeCommand(commandEvent: CommandEvent) {
         var isNSFWAllowed = false
 

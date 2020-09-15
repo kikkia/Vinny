@@ -6,6 +6,7 @@ import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.utils.CommandCategories;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
@@ -25,6 +26,7 @@ public class GetSettingsCommand extends GeneralCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "GetSettings")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild;
         Guild commandGuild = commandEvent.getGuild();

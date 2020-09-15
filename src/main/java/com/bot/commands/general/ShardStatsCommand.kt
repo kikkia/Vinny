@@ -3,6 +3,7 @@ package com.bot.commands.general
 import com.bot.ShardingManager
 import com.bot.commands.GeneralCommand
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 import net.dv8tion.jda.api.EmbedBuilder
 
 /**
@@ -16,6 +17,7 @@ class ShardStatsCommand : GeneralCommand() {
         this.hidden = true
     }
 
+    @Trace(operationName = "executeCommand", resourceName = "ShardStats")
     override fun executeCommand(commandEvent: CommandEvent) {
 
         // Scan all shards and make some relevant info.

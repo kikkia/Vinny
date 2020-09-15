@@ -6,6 +6,7 @@ import com.bot.db.GuildDAO;
 import com.bot.models.Alias;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 import java.sql.SQLException;
 
@@ -24,6 +25,7 @@ public class RemoveGuildAliasCommand extends ModerationCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "RemoveGuildAlias")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
 

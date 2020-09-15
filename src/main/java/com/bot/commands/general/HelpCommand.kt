@@ -4,6 +4,7 @@ import com.bot.Bot
 import com.bot.commands.GeneralCommand
 import com.bot.utils.ConstantStrings
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.PrivateChannel
 import java.util.function.Consumer
@@ -16,6 +17,7 @@ class HelpCommand : GeneralCommand() {
         this.cooldownScope = CooldownScope.USER
     }
 
+    @Trace(operationName = "executeCommand", resourceName = "help")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.author.openPrivateChannel().queue(OpenSuccessConsumer(commandEvent), FailureConsumer(commandEvent))
     }

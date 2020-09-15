@@ -6,6 +6,7 @@ import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 public class NowPlayingCommand extends VoiceCommand {
@@ -17,6 +18,7 @@ public class NowPlayingCommand extends VoiceCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "NowPlaying")
     protected void executeCommand(CommandEvent commandEvent) {
         VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
         if (handler == null) {

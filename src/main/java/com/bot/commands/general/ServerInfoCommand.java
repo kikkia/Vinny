@@ -3,6 +3,7 @@ package com.bot.commands.general;
 import com.bot.commands.GeneralCommand;
 import com.bot.utils.FormattingUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Guild;
@@ -19,6 +20,7 @@ public class ServerInfoCommand extends GeneralCommand {
     }
 
     @Override
+    @Trace(operationName = "executeCommand", resourceName = "ServerInfo")
     protected void executeCommand(CommandEvent commandEvent) {
 
         Guild g = commandEvent.getGuild();

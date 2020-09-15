@@ -2,6 +2,7 @@ package com.bot.commands.meme
 
 import com.bot.commands.MemeCommand
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 
 class KappaCommand : MemeCommand() {
 
@@ -26,7 +27,7 @@ class KappaCommand : MemeCommand() {
         this.help = "prints a kappa face"
     }
 
-
+    @Trace(operationName = "executeCommand", resourceName = "Kappa")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply(kappa)
     }
