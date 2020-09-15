@@ -9,6 +9,7 @@ import com.bot.models.InternalGuild;
 import com.bot.models.InternalTextChannel;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Role;
 
@@ -28,6 +29,7 @@ public class CommandPermissions {
         return canExecuteCommand(command.getCategory(), commandEvent);
     }
 
+    @Trace(operationName = "executeCommand", resourceName = "permsCheck")
     public static boolean canExecuteCommand(Command.Category commandCategory, CommandEvent commandEvent) throws ForbiddenCommandException, PermsOutOfSyncException {
         // If its a PM then screw permissions
         if (commandEvent.isFromType(ChannelType.PRIVATE))
