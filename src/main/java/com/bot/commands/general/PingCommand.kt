@@ -13,6 +13,6 @@ class PingCommand : GeneralCommand() {
 
     @Trace(operationName = "executeCommand", resourceName = "Ping")
     override fun executeCommand(commandEvent: CommandEvent) {
-        commandEvent.reply(commandEvent.jda.gatewayPing.toString() + "ms")
+        commandEvent.channel.sendMessage(commandEvent.jda.gatewayPing.toString() + "ms").complete()
     }
 }
