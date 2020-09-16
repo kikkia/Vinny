@@ -55,7 +55,12 @@ public class SubscribeRedditCommand extends CreateSubscriptionCommand {
         @Trace(operationName = "executeCommand", resourceName = "SubscribeReddit.stepOne")
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
-            Subreddit subreddit = redditClient.subreddit(subject).about();
+            Subreddit subreddit;
+            try {
+                subreddit = redditClient.subreddit(subject).about();
+            } catch (Exception ignored) {
+                subreddit = null;
+            }
             if (subreddit == null) {
                 commandEvent.replyWarning(ConstantStrings.SUBREDDIT_INVALID);
                 return;

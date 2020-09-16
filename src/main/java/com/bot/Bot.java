@@ -231,6 +231,7 @@ public class Bot extends ListenerAdapter {
 		executor.execute(() -> {
 			try {
 				ScheduledCommandDAO.getInstance().removeAllScheduledInChannel(event.getChannel().getId());
+				RssDAO.getInstance().removeAllSubsInChannel(event.getChannel().getId());
 				channelDAO.removeTextChannel(event.getChannel());
 			} catch (SQLException e) {
 				LOGGER.warning("Ran into error when removing text channel from db", e);

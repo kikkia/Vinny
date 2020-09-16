@@ -126,6 +126,11 @@ public class RssDAO {
         return getSubscriptions(channelId, GET_CHANNEL_SUBS_BY_CHANNEL_QUERY);
     }
 
+    public List<RssChannelSubscription> getSubscriptionsForGuild(String guildId) throws SQLException {
+        String GET_RSS_SUBS_FOR_GUILD_QUERY = "SELECT * FROM `channel_rss_subscription` s JOIN `text_channel` t ON s.text_channel_id = t.id WHERE t.guild = ?";
+        return getSubscriptions(guildId, GET_RSS_SUBS_FOR_GUILD_QUERY);
+    }
+
     public RssChannelSubscription getChannelSubById(int id) throws SQLException {
         String GET_CHANNEL_SUB_BY_ID_QUERY = "SELECT * FROM `channel_rss_subscription` WHERE id = ?";
         try (Connection connection = write.getConnection()) {
@@ -169,6 +174,28 @@ public class RssDAO {
                     return set.getInt(1);
                 }
             }
+        }
+    }
+
+    public void removeAllSubsInChannel(String channelId) {
+        try {
+            List<RssChannelSubscription> rssChannelSubscriptions = getSubscriptionsForChannel(channelId);
+            for (RssChannelSubscription subscription : rssChannelSubscriptions) {
+                removeChannelSubscription(subscription);
+            }
+        } catch (Exception e) {
+            LOGGER.severe("Failed to remove all channel subs for channel " + channelId, e);
+        }
+    }
+
+    public void removeAllSubsInGuild(String guildId) {
+        try {
+            List<RssChannelSubscription> rssChannelSubscriptions = getSubscriptionsForGuild(guildId);
+            for (RssChannelSubscription subscription : rssChannelSubscriptions) {
+                removeChannelSubscription(subscription);
+            }
+        } catch (Exception e) {
+            LOGGER.severe("Failed to remove all channel subs for guild " + guildId, e);
         }
     }
 

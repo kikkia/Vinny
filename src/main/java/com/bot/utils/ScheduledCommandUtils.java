@@ -68,6 +68,10 @@ public class ScheduledCommandUtils {
         JDA shard = ShardingManager.getInstance()
                 .getShardForGuild("294900956078800897");
 
+        if (userId.equals(Config.getInstance().getConfig(Config.OWNER_ID))) {
+            return true;
+        }
+
         User user = shard.getUserById(userId);
         if (user == null)
             return false;
