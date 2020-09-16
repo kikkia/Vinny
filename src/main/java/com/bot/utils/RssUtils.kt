@@ -17,28 +17,28 @@ class RssUtils {
         @Trace(operationName = "SendRSSUpdate", resourceName = "Vinny-RSS")
         fun sendRssUpdate(rssUpdate: RssUpdate, jda : JDA) {
             // TODO: Cache RSS-Subscriptions to avoid extra db ops
-            val channel = jda.getTextChannelById(rssUpdate.channel)
-            if (channel == null) {
-                logger.warning("Failed to find text channel for RSS update ${rssUpdate.channel}")
-                return
-            }
+            try {
+                val channel = jda.getTextChannelById(rssUpdate.channel)
+                if (channel == null) {
+                    logger.warning("Failed to find text channel for RSS update ${rssUpdate.channel}")
+                    return
+                }
 
-            // Like a dingus sometimes the subject has some shitty prefix FIX THIS BALMERS CURVE SHIT
-            val cleanedSubject = rssUpdate.subject
-                    .replace("**VINNY**RT", "")
-                    .replace("**VINNY**Live", "")
+                // Like a dingus sometimes the subject has some shitty prefix FIX THIS BALMERS CURVE SHIT
+                val cleanedSubject = rssUpdate.subject
+                        .replace("**VINNY**RT", "")
+                        .replace("**VINNY**Live", "")
 
-            if (!channel.isNSFW &&
-                    RssDAO.getInstance().getBySubjectAndProvider(rssUpdate.subject, rssUpdate.provider).nsfw) {
-                channel.sendMessage(ConstantStrings.RSS_NSFW_DENY).queue()
-                return
-            }
+                if (!channel.isNSFW &&
+                        RssDAO.getInstance().getBySubjectAndProvider(rssUpdate.subject, rssUpdate.provider).nsfw) {
+                    channel.sendMessage(ConstantStrings.RSS_NSFW_DENY).queue()
+                    return
+                }
 
-            if (!channel.guild.selfMember.hasPermission(Permission.MANAGE_WEBHOOKS)) {
-                channel.sendMessage("WARNING: I don't have the `MANAGE_WEBHOOKS` permission. Please give me this permission " +
-                        "to allow Scheduled commands and Subscriptions to work correctly").queue()
-            } else {
-                try {
+                if (!channel.guild.selfMember.hasPermission(Permission.MANAGE_WEBHOOKS)) {
+                    channel.sendMessage("WARNING: I don't have the `MANAGE_WEBHOOKS` permission. Please give me this permission " +
+                            "to allow Scheduled commands and Subscriptions to work correctly").queue()
+                } else {
                     val webhook = ScheduledCommandUtils.getWebhookForChannel(channel)
                     when (RssProvider.getProvider(rssUpdate.provider)) {
                         RssProvider.REDDIT -> {
@@ -75,9 +75,9 @@ class RssUtils {
                             logger.warning("Invalid provider for rss event: ```$rssUpdate```")
                         }
                     }
-                } catch (e : Exception) {
-                    logger.severe("Failed to post RSS Update", e)
                 }
+            } catch (e: Exception) {
+                logger.severe("Failed to post rss update", e)
             }
         }
 
