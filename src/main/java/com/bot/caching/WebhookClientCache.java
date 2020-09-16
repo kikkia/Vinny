@@ -54,8 +54,8 @@ public class WebhookClientCache {
         @Override
         protected void removeEntity(String key) {
             try {
-                WebhookClient client = (WebhookClient) cacheMap.get(key);
-                client.close();
+                CacheObject<WebhookClient> object = (CacheObject<WebhookClient>) cacheMap.get(key);
+                object.value.close();
             } catch (Exception e) {
                 logger.warning("Exception cleaning from webhook cache", e);
             }

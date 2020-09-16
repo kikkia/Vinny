@@ -86,9 +86,8 @@ public class MetricsManager {
         statsd.incrementCounter("command.failed", userTag, guildTag, commandTag, categoryTag);
     }
 
-    public void updateCacheSize(String name, int count, int limit) {
+    public void updateCacheSize(String name, int count) {
         statsd.recordGaugeValue("cache." + name + ".size", count);
-        statsd.recordGaugeValue("cache." + name + ".max", limit);
     }
 
     public void markDiscordEvent(int shard) {

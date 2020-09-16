@@ -74,9 +74,9 @@ public class MetricsReporter extends Thread {
         metricsManager.updateGuildCount(guildCount);
         metricsManager.updateUserCount(userCount);
         // TODO: get max size
-        metricsManager.updateCacheSize("markov", markovModelCache.getSize(), 0);
-        metricsManager.updateCacheSize("subreddit", subredditCache.getSize(), 0);
-        metricsManager.updateCacheSize("r34", r34Cache.getSize(), 0);
+        metricsManager.updateCacheSize("markov", markovModelCache.getSize());
+        metricsManager.updateCacheSize("subreddit", subredditCache.getSize());
+        metricsManager.updateCacheSize("r34", r34Cache.getSize());
 
         metricsManager.updateShards(shardManager.shardManager.getShardsRunning(), shardManager.shardManager.getShardsQueued());
 

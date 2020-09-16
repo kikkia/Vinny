@@ -70,6 +70,7 @@ object ConstantStrings {
             "To learn more about subscriptions you can go to " + GITHUB_SUBSCRIPTIONS_HELP
     const val RSS_NSFW_DENY = "Warning: Trying to post to a non-nsfw channel from an nsfw subscription. " +
             "Please change this channel to be nsfw or remove the subscription"
+    const val MARKOV_GENERATING = "I am currently working on generating their comment, please try again later."
     private val ROULETTE_DED = arrayOf("BANG! That is one hell of a shame",
             "BANG! Rip that dude ded",
             "BANG! Id say it's a shame, but it really isn't.",
