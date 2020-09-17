@@ -350,7 +350,7 @@ public class HttpUtils {
         if (!channel.contains("https://www.youtube.com/")) {
             throw new InvalidInputException("Not youtube url");
         }
-        return "https://commentpicker.com/actions/youtube-channel-api.php?url=https%3A%2F%2Fwww.googleapis.com%2Fyoutube" +
+        return "https://commentpicker.com/actions/youtube-channel-id.php?url=https%3A%2F%2Fwww.googleapis.com%2Fyoutube" +
                 "%2Fv3%2Fsearch%3Fpart%3Did%2Csnippet%26type%3Dchannel%26q%3D" +
                 channel.split("/")[channel.split("/").length-1] + "&token=403409fe2bcbc41adb8f8e439" +
                 "66bc8097d457aba8380fd4abc84da2a4d056c9f";
@@ -360,7 +360,7 @@ public class HttpUtils {
         if (!channel.contains("https://www.youtube.com/")) {
             throw new InvalidInputException("Not youtube url");
         }
-        String lookupUri = "https://commentpicker.com/actions/youtube-channel-api.php?url=https%3A%2F%2Fwww.googleapis.com" +
+        String lookupUri = "https://commentpicker.com/actions/youtube-channel-id.php?url=https%3A%2F%2Fwww.googleapis.com" +
                 "%2Fyoutube%2Fv3%2Fchannels%3Fpart%3Did%2Csnippet%2Cstatistics%2CcontentDetails%2Cstatus";
         String idOrUsernamePrefix = channel.contains("/channel/") ? "%26id%3D" : "%26forUsername%3D";
         return lookupUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length-1];

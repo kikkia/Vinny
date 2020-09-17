@@ -30,7 +30,7 @@ class RssUtils {
                         .replace("**VINNY**Live", "")
 
                 if (!channel.isNSFW &&
-                        RssDAO.getInstance().getBySubjectAndProvider(rssUpdate.subject, rssUpdate.provider).nsfw) {
+                        RssDAO.getInstance().getBySubjectAndProvider(cleanedSubject, rssUpdate.provider).nsfw) {
                     channel.sendMessage(ConstantStrings.RSS_NSFW_DENY).queue()
                     return
                 }
