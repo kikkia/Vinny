@@ -17,7 +17,7 @@ class ShardStatsCommand : GeneralCommand() {
         this.hidden = true
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "ShardStats")
+    //@trace(operationName = "executeCommand", resourceName = "ShardStats")
     override fun executeCommand(commandEvent: CommandEvent) {
 
         // Scan all shards and make some relevant info.

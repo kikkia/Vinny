@@ -20,7 +20,7 @@ public class RemoveTrackCommand extends VoiceCommand {
 	}
 
 	@Override
-	@Trace(operationName = "executeCommand", resourceName = "RemoveTrack")
+	//@trace(operationName = "executeCommand", resourceName = "RemoveTrack")
 	protected void executeCommand(CommandEvent commandEvent) {
 		if (commandEvent.getArgs().isEmpty()) {
 			commandEvent.replyWarning("You need to tell me what track to remove");

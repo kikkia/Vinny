@@ -14,7 +14,7 @@ public class ResumeCommand extends VoiceCommand {
 	}
 
 	@Override
-	@Trace(operationName = "executeCommand", resourceName = "Resume")
+	//@trace(operationName = "executeCommand", resourceName = "Resume")
 	protected void executeCommand(CommandEvent commandEvent) {
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		if (handler == null) {

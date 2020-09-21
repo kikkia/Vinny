@@ -21,7 +21,7 @@ public class PrefixesCommand extends GeneralCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "Prefixes")
+    //@trace(operationName = "executeCommand", resourceName = "Prefixes")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
         List<String> prefixes = guild.getPrefixList();

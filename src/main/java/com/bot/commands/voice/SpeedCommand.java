@@ -15,7 +15,7 @@ public class SpeedCommand extends VoiceCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "Speed")
+    //@trace(operationName = "executeCommand", resourceName = "Speed")
     protected void executeCommand(CommandEvent commandEvent) {
         VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
         double newSpeed;

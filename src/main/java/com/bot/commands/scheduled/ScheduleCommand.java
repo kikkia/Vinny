@@ -32,7 +32,7 @@ public class ScheduleCommand extends ModerationCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "Schedule")
+    //@trace(operationName = "executeCommand", resourceName = "Schedule")
     protected void executeCommand(CommandEvent commandEvent) {
         if (!ScheduledCommandUtils.isUserDonator(commandEvent.getAuthor().getId())) {
             if (scheduledCommandDAO.getCountOfScheduledForAuthor(commandEvent.getAuthor().getId()) >= 5) {
@@ -64,7 +64,7 @@ public class ScheduleCommand extends ModerationCommand {
         }
 
         @Override
-        @Trace(operationName = "executeCommand", resourceName = "Schedule.stepOne")
+        //@trace(operationName = "executeCommand", resourceName = "Schedule.stepOne")
         public void accept(MessageReceivedEvent event) {
             if (event.getMessage().getContentRaw().equals("?")) {
                 commandEvent.reply(ConstantStrings.SCHEDULED_COMMANDS_HELP);
@@ -103,7 +103,7 @@ public class ScheduleCommand extends ModerationCommand {
         }
 
         @Override
-        @Trace(operationName = "executeCommand", resourceName = "Schedule.stepTwo")
+        //@trace(operationName = "executeCommand", resourceName = "Schedule.stepTwo")
         public void accept(MessageReceivedEvent event) {
             long interval;
             try {

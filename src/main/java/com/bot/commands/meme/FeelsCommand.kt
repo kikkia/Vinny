@@ -32,7 +32,7 @@ class FeelsCommand : MemeCommand() {
         this.name = "feels"
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Feels")
+    //@trace(operationName = "executeCommand", resourceName = "Feels")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply(feels)
     }

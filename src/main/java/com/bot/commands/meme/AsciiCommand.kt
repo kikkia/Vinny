@@ -14,7 +14,7 @@ class AsciiCommand : MemeCommand() {
         this.arguments = "<Text to make ascii>"
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Ascii")
+    //@trace(operationName = "executeCommand", resourceName = "Ascii")
     override fun executeCommand(commandEvent: CommandEvent) {
         if (commandEvent.args.length > 500) {
             commandEvent.reply(commandEvent.client.warning + " Please keep the input to under 500 characters.")

@@ -24,7 +24,7 @@ class P90Command : MemeCommand() {
         channelDAO = ChannelDAO.getInstance()
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "P90")
+    //@trace(operationName = "executeCommand", resourceName = "P90")
     override fun executeCommand(commandEvent: CommandEvent) {
         val channel = channelDAO.getTextChannelForId(commandEvent.channel.id, true)
         var canNSFW = false

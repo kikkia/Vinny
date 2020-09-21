@@ -23,7 +23,7 @@ public class SubscribeChanCommand extends CreateSubscriptionCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "SubscribeChan")
+    //@trace(operationName = "executeCommand", resourceName = "SubscribeChan")
     protected void executeCommand(CommandEvent commandEvent) {
         if (!canMakeNewSubscription(commandEvent)) {
             return;
@@ -48,7 +48,7 @@ public class SubscribeChanCommand extends CreateSubscriptionCommand {
         }
 
         @Override
-        @Trace(operationName = "executeCommand", resourceName = "SubscribeChan.stepOne")
+        //@trace(operationName = "executeCommand", resourceName = "SubscribeChan.stepOne")
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
             ChanUtils.Board board = ChanUtils.Companion.getBoard(subject);

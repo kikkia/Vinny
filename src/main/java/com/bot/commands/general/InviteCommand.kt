@@ -12,7 +12,7 @@ class InviteCommand : GeneralCommand() {
         this.guildOnly = false
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Invite")
+    //@trace(operationName = "executeCommand", resourceName = "Invite")
     override fun executeCommand(commandEvent: CommandEvent) {
 
         // No need to check perms here

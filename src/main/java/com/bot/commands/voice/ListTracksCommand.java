@@ -19,7 +19,7 @@ public class ListTracksCommand extends VoiceCommand {
 	}
 
 	@Override
-	@Trace(operationName = "executeCommand", resourceName = "ListTracks")
+	//@trace(operationName = "executeCommand", resourceName = "ListTracks")
 	protected void executeCommand(CommandEvent commandEvent) {
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 

@@ -14,7 +14,7 @@ public class PauseCommand extends VoiceCommand {
 	}
 
 	@Override
-	@Trace(operationName = "executeCommand", resourceName = "pause")
+	//@trace(operationName = "executeCommand", resourceName = "pause")
 	protected void executeCommand(CommandEvent commandEvent) {
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		if (handler == null) {

@@ -27,7 +27,7 @@ class KappaCommand : MemeCommand() {
         this.help = "prints a kappa face"
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Kappa")
+    //@trace(operationName = "executeCommand", resourceName = "Kappa")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply(kappa)
     }

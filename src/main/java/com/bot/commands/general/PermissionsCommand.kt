@@ -35,7 +35,7 @@ class PermissionsCommand(waiter: EventWaiter) : GeneralCommand() {
                 .setFinalAction { message -> message.clearReactions().queue() }
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Permissions")
+    //@trace(operationName = "executeCommand", resourceName = "Permissions")
     override fun executeCommand(commandEvent: CommandEvent) {
 
         val userId: Long

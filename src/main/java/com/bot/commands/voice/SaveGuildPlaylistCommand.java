@@ -24,7 +24,7 @@ public class SaveGuildPlaylistCommand extends VoiceCommand {
 	}
 
 	@Override
-	@Trace(operationName = "executeCommand", resourceName = "SaveGuildPlaylist")
+	//@trace(operationName = "executeCommand", resourceName = "SaveGuildPlaylist")
 	protected void executeCommand(CommandEvent commandEvent) {
 		String args = commandEvent.getArgs();
 		if (args.isEmpty()) {

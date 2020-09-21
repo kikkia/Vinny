@@ -10,7 +10,7 @@ class StatsCommand : GeneralCommand() {
         this.help = "Gives a link to detailed vinny statistics"
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Stats")
+    //@trace(operationName = "executeCommand", resourceName = "Stats")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply("To find detailed stats, you can find the stats dashboard here: $DASHBOARD_LINK")
     }

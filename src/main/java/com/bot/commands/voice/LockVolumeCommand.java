@@ -14,7 +14,7 @@ public class LockVolumeCommand extends ModerationCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "LockVolume")
+    //@trace(operationName = "executeCommand", resourceName = "LockVolume")
     protected void executeCommand(CommandEvent commandEvent) {
         VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
         if (handler == null) {

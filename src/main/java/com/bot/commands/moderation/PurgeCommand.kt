@@ -22,7 +22,7 @@ class PurgeCommand() : ModerationCommand() {
         this.cooldownScope = CooldownScope.USER_GUILD
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Purge")
+    //@trace(operationName = "executeCommand", resourceName = "Purge")
     override fun executeCommand(commandEvent: CommandEvent?) {
         if (commandEvent!!.args.isBlank()) {
             commandEvent.replyWarning("Incorrect command usage, please see $helpLink for additional help.")

@@ -11,7 +11,7 @@ class PingCommand : GeneralCommand() {
         this.help = "Gets the ping from Vinny to discord."
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Ping")
+    //@trace(operationName = "executeCommand", resourceName = "Ping")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.channel.sendMessage(commandEvent.jda.gatewayPing.toString() + "ms").complete()
     }

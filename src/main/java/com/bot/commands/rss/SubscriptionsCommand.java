@@ -39,7 +39,7 @@ public class SubscriptionsCommand extends GeneralCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "Subscriptions")
+    //@trace(operationName = "executeCommand", resourceName = "Subscriptions")
     protected void executeCommand(CommandEvent commandEvent) {
         String args = commandEvent.getArgs();
         if (!(args.equalsIgnoreCase("c") ||

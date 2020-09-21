@@ -18,7 +18,7 @@ public class RollCommand extends GeneralCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "Roll")
+    //@trace(operationName = "executeCommand", resourceName = "Roll")
     protected void executeCommand(CommandEvent commandEvent) {
         String args = commandEvent.getArgs();
 

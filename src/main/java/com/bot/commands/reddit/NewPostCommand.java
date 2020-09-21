@@ -32,7 +32,7 @@ public class NewPostCommand extends RedditCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "NewReddit")
+    //@trace(operationName = "executeCommand", resourceName = "NewReddit")
     protected void executeCommand(CommandEvent commandEvent) {
         boolean isNSFWAllowed = true;
 

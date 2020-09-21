@@ -25,7 +25,7 @@ public class LoadGuildPlaylistCommand extends VoiceCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "LoadGuildPlaylist")
+    //@trace(operationName = "executeCommand", resourceName = "LoadGuildPlaylist")
     protected void executeCommand(CommandEvent commandEvent) {
         int playlistId = -1;
         String playlistName = null;

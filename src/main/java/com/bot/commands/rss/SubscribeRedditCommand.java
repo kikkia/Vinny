@@ -27,7 +27,7 @@ public class SubscribeRedditCommand extends CreateSubscriptionCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "SubscribeReddit")
+    //@trace(operationName = "executeCommand", resourceName = "SubscribeReddit")
     protected void executeCommand(CommandEvent commandEvent) {
         if (!canMakeNewSubscription(commandEvent)) {
             return;
@@ -52,7 +52,7 @@ public class SubscribeRedditCommand extends CreateSubscriptionCommand {
         }
 
         @Override
-        @Trace(operationName = "executeCommand", resourceName = "SubscribeReddit.stepOne")
+        //@trace(operationName = "executeCommand", resourceName = "SubscribeReddit.stepOne")
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
             Subreddit subreddit;

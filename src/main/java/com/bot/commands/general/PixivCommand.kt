@@ -19,7 +19,7 @@ class PixivCommand : GeneralCommand() {
         this.channelDAO = ChannelDAO.getInstance()
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Pixiv")
+    //@trace(operationName = "executeCommand", resourceName = "Pixiv")
     override fun executeCommand(commandEvent: CommandEvent) {
         var isNSFWAllowed = false
 

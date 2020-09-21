@@ -22,7 +22,7 @@ public class RemovePrefixCommand extends ModerationCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "RemovePrefix")
+    //@trace(operationName = "executeCommand", resourceName = "RemovePrefix")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
 

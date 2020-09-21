@@ -23,7 +23,7 @@ public class SubscribeTwitchCommand extends CreateSubscriptionCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "SubscribeTwitch")
+    //@trace(operationName = "executeCommand", resourceName = "SubscribeTwitch")
     protected void executeCommand(CommandEvent commandEvent) {
         if (!canMakeNewSubscription(commandEvent)) {
             return;
@@ -48,7 +48,7 @@ public class SubscribeTwitchCommand extends CreateSubscriptionCommand {
         }
 
         @Override
-        @Trace(operationName = "executeCommand", resourceName = "SubscribeTwitch.stepOne")
+        //@trace(operationName = "executeCommand", resourceName = "SubscribeTwitch.stepOne")
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
             String id;

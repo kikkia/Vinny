@@ -25,7 +25,7 @@ public class LoadMyPlaylistCommand extends VoiceCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "LoadMyPlaylists")
+    //@trace(operationName = "executeCommand", resourceName = "LoadMyPlaylists")
     protected void executeCommand(CommandEvent commandEvent) {
         int playlistId = -1;
         String playlistName = null;

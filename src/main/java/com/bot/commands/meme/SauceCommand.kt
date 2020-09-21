@@ -24,7 +24,7 @@ class SauceCommand : MemeCommand() {
         this.aliases = Collections.singletonList("source").toTypedArray()
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Sauce")
+    //@trace(operationName = "executeCommand", resourceName = "Sauce")
     override fun executeCommand(commandEvent: CommandEvent?) {
         var url: String? = null
 

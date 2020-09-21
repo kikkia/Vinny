@@ -25,7 +25,7 @@ public class SubscribeYoutubeCommand extends CreateSubscriptionCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "SubscribeYoutube")
+    //@trace(operationName = "executeCommand", resourceName = "SubscribeYoutube")
     protected void executeCommand(CommandEvent commandEvent) {
         if (!canMakeNewSubscription(commandEvent)) {
             return;
@@ -48,7 +48,7 @@ public class SubscribeYoutubeCommand extends CreateSubscriptionCommand {
         }
 
         @Override
-        @Trace(operationName = "executeCommand", resourceName = "SubscribeYoutube.stepOne")
+        //@trace(operationName = "executeCommand", resourceName = "SubscribeYoutube.stepOne")
         public void accept(MessageReceivedEvent event) {
             String channelUrl = event.getMessage().getContentRaw();
             try {

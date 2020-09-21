@@ -13,7 +13,7 @@ class ClapCommand : MemeCommand() {
         this.arguments = "<message or nothing>"
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Clap")
+    //@trace(operationName = "executeCommand", resourceName = "Clap")
     override fun executeCommand(commandEvent: CommandEvent) {
         if (commandEvent.args.isEmpty()) {
             commandEvent.reply(clapify(getLastMessageFromChannel(commandEvent.textChannel, true)!!.contentStripped))

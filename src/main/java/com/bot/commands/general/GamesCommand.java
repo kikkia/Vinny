@@ -38,7 +38,7 @@ public class GamesCommand extends GeneralCommand {
 
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "Games")
+    //@trace(operationName = "executeCommand", resourceName = "Games")
     protected void executeCommand(CommandEvent commandEvent) {
         List<Member> memberList = commandEvent.getGuild().getMembers();
 

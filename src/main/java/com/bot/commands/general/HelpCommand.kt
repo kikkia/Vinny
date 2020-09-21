@@ -17,7 +17,7 @@ class HelpCommand : GeneralCommand() {
         this.cooldownScope = CooldownScope.USER
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "help")
+    //@trace(operationName = "executeCommand", resourceName = "help")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.author.openPrivateChannel().queue(OpenSuccessConsumer(commandEvent), FailureConsumer(commandEvent))
     }

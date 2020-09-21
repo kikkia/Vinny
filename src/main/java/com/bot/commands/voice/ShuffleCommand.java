@@ -13,7 +13,7 @@ public class ShuffleCommand extends VoiceCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "Shuffle")
+    //@trace(operationName = "executeCommand", resourceName = "Shuffle")
     protected void executeCommand(CommandEvent commandEvent) {
         VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
         if (handler == null)

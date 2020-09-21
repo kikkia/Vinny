@@ -26,7 +26,7 @@ public class GetSettingsCommand extends GeneralCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "GetSettings")
+    //@trace(operationName = "executeCommand", resourceName = "GetSettings")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild;
         Guild commandGuild = commandEvent.getGuild();

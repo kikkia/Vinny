@@ -39,7 +39,7 @@ public class SearchCommand extends VoiceCommand {
 	}
 
 	@Override
-	@Trace(operationName = "executeCommand", resourceName = "SearchYT")
+	//@trace(operationName = "executeCommand", resourceName = "SearchYT")
 	protected void executeCommand(CommandEvent commandEvent) {
 		if (commandEvent.getArgs().isEmpty()) {
 			VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();

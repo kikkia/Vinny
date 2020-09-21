@@ -10,7 +10,7 @@ class VoteCommand : GeneralCommand() {
         this.help = "Support Vinny by upvoting on bot lists."
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Vote")
+    //@trace(operationName = "executeCommand", resourceName = "Vote")
     override fun executeCommand(commandEvent: CommandEvent) {
         val message = "If you want to support Vinny, please go and vote for Vinny on these awesome sites: \n" +
                 "https://discordbotlist.com/bots/276855867796881408\n" +

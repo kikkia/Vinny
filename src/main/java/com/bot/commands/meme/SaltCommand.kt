@@ -24,7 +24,7 @@ class SaltCommand : MemeCommand() {
         this.name = "salt"
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Salt")
+    //@trace(operationName = "executeCommand", resourceName = "Salt")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply(salt)
     }

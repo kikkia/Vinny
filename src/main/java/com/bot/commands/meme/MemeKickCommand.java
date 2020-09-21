@@ -30,7 +30,7 @@ public class MemeKickCommand extends MemeCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "Memekick")
+    //@trace(operationName = "executeCommand", resourceName = "Memekick")
     protected void executeCommand(CommandEvent commandEvent) {
         if (commandEvent.getMessage().getMentionedUsers().size() == 0) {
             commandEvent.replyWarning("You must specify at least one user to memekick");

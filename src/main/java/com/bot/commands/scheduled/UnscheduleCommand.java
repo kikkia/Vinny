@@ -27,7 +27,7 @@ public class UnscheduleCommand extends ModerationCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "Unschedule")
+    //@trace(operationName = "executeCommand", resourceName = "Unschedule")
     protected void executeCommand(CommandEvent commandEvent) {
         if (commandEvent.getArgs().isEmpty()) {
             commandEvent.reply("Please just respond with the id of the scheduled command you want to remove? You can find this id" +
@@ -55,7 +55,7 @@ public class UnscheduleCommand extends ModerationCommand {
         }
 
         @Override
-        @Trace(operationName = "executeCommand", resourceName = "Unscheduled.stepOne")
+        //@trace(operationName = "executeCommand", resourceName = "Unscheduled.stepOne")
         public void accept(MessageReceivedEvent event) {
             // If they reply with command with arg, just ignore
             if (event.getMessage().getContentRaw().split(" ").length > 1)

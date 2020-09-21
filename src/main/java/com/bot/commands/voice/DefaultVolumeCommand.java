@@ -17,7 +17,7 @@ public class DefaultVolumeCommand extends VoiceCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "dvolume")
+    //@trace(operationName = "executeCommand", resourceName = "dvolume")
     protected void executeCommand(CommandEvent commandEvent) {
         int newVolume;
         try{

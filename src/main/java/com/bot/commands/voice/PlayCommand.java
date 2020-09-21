@@ -30,7 +30,7 @@ public class PlayCommand extends VoiceCommand {
 	}
 
 	@Override
-	@Trace(operationName = "executeCommand", resourceName = "Play")
+	//@trace(operationName = "executeCommand", resourceName = "Play")
 	protected void executeCommand(CommandEvent commandEvent) {
 		if (commandEvent.getArgs().isEmpty()) {
 			VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();

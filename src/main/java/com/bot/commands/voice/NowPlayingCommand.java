@@ -18,7 +18,7 @@ public class NowPlayingCommand extends VoiceCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "NowPlaying")
+    //@trace(operationName = "executeCommand", resourceName = "NowPlaying")
     protected void executeCommand(CommandEvent commandEvent) {
         VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
         if (handler == null) {

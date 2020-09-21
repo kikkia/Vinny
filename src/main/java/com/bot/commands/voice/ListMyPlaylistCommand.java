@@ -20,7 +20,7 @@ public class ListMyPlaylistCommand extends VoiceCommand {
 	}
 
 	@Override
-	@Trace(operationName = "executeCommand", resourceName = "myPlaylists")
+	//@trace(operationName = "executeCommand", resourceName = "myPlaylists")
 	protected void executeCommand(CommandEvent commandEvent) {
 		List<Playlist> playlistList = playlistDAO.getPlaylistsForUser(commandEvent.getAuthor().getId());
 

@@ -23,7 +23,7 @@ public class SetBaseRoleCommand extends ModerationCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "SetBaseRole")
+    //@trace(operationName = "executeCommand", resourceName = "SetBaseRole")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild;
         Guild commandGuild = commandEvent.getGuild();

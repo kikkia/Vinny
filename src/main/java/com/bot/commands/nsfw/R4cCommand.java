@@ -27,7 +27,7 @@ public class R4cCommand extends NSFWCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "4chan")
+    //@trace(operationName = "executeCommand", resourceName = "4chan")
     protected void executeCommand(CommandEvent commandEvent) {
         JSONObject thread = HttpUtils.getRandom4chanThreadFromBoard(commandEvent.getArgs());
 

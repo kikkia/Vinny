@@ -40,7 +40,7 @@ public class Rule34Command extends NSFWCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "rule34")
+    //@trace(operationName = "executeCommand", resourceName = "rule34")
     protected void executeCommand(CommandEvent commandEvent) {
         // Get the tags
         String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=250&tags=" + commandEvent.getArgs();

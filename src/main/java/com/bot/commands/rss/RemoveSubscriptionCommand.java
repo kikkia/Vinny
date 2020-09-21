@@ -23,7 +23,7 @@ public class RemoveSubscriptionCommand extends ModerationCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "RemoveSubscription")
+    //@trace(operationName = "executeCommand", resourceName = "RemoveSubscription")
     protected void executeCommand(CommandEvent commandEvent) {
         if (commandEvent.getArgs().isEmpty()) {
             commandEvent.replyWarning("Please give the id of the subscription to end. You can find this ID using the `~subscriptions` command.");
