@@ -77,7 +77,7 @@ class RssUtils {
                     }
                 }
             } catch (e: Exception) {
-                logger.severe("Failed to post rss update", e)
+                logger.severe("Failed to post rss update subject: ${rssUpdate.subject}, Provider: ${rssUpdate.provider}", e)
             }
         }
 
