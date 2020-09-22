@@ -1,5 +1,6 @@
 package com.bot.commands;
 
+import com.bot.db.MembershipDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.metrics.MetricsManager;
@@ -15,12 +16,14 @@ import org.slf4j.MDC;
 public abstract class BaseCommand extends Command {
     protected MetricsManager metricsManager;
     protected Logger logger;
+    protected MembershipDAO membershipDAO;
 
     public boolean canSchedule;
 
     public BaseCommand() {
         this.metricsManager = MetricsManager.getInstance();
         this.logger = new Logger(this.getClass().getSimpleName());
+        this.membershipDAO = MembershipDAO.getInstance();
     }
 
     @Override
@@ -32,6 +35,7 @@ public abstract class BaseCommand extends Command {
         metricsManager.markCommand(this, commandEvent.getAuthor(), guild);
         if (!ScheduledCommandUtils.isScheduled(commandEvent)) {
             commandEvent.getTextChannel().sendTyping().queue();
+            membershipDAO.ensureUserExists(commandEvent.getMember().getUser());
         }
 
         // Check the permissions to do the command

@@ -117,10 +117,14 @@ public class MembershipDAO {
     }
 
     public void addUserToGuild(User user, Guild guild) {
-        String userInsertQuery = "INSERT INTO users (id, name) VALUES(?,?) ON DUPLICATE KEY UPDATE name = name";
         String membershipInsertQuery = "INSERT INTO guild_membership (guild, user_id, can_use_bot) VALUES(?,?,?) ON DUPLICATE KEY UPDATE user_id = user_id";
-        addUser(userInsertQuery, user);
+        ensureUserExists(user);
         addMembership(membershipInsertQuery, user, guild);
+    }
+
+    public void ensureUserExists(User user) {
+        String userInsertQuery = "INSERT INTO users (id, name) VALUES(?,?) ON DUPLICATE KEY UPDATE name = name";
+        addUser(userInsertQuery, user);
     }
 
     private void addMembership(String membershipInsertQuery, User user, Guild guild) {
