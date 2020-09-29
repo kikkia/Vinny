@@ -208,8 +208,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <source>1.9</source>
-                    <target>1.9</target>
+                    <source>10</source>
+                    <target>10</target>
                 </configuration>
             </plugin>
         </plugins>

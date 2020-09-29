@@ -30,12 +30,12 @@ public class E621Command extends NSFWCommand {
             commandEvent.replyWarning("You need to specify something to search for.");
             return;
         }
-        String search = commandEvent.getArgs().split(" ")[0];
+        String search = commandEvent.getArgs();
 
         List<String> images = cache.get(search);
         if (images == null) {
             try {
-                images = HttpUtils.getE621Posts(search);
+                images = HttpUtils.getE621Posts(search.replaceAll(" ", "%20"));
             } catch (IOException e) {
                 commandEvent.replyError("Something went wrong getting the results. Please reach out" +
                         " on the support server if this continues.");

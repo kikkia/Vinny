@@ -387,16 +387,31 @@ public class HttpUtils {
                     try {
                         images.add(posts.getJSONObject(i).getJSONObject("file").getString("url"));
                     } catch (Exception ignored) {
+                        // Null url to image, we can generate our own with the md5 hash and file ext
+                        try {
+                            images.add(buildE621StaticPath(posts.getJSONObject(i).getJSONObject("file")));
+                        } catch (Exception ignored2) {
+                            // If that attempt fails, just skip
+                        }
                     }
                 }
+                if (images.isEmpty())
+                    throw new NoSuchResourceException("Could not find results for tags");
                 return images;
             } catch (JSONException e) {
                 logger.severe("Failed to parse e621 response", e);
-                throw new NoSuchResourceException("Could not find that YT channel");
+                throw new NoSuchResourceException("Could not find any results for tags");
             }
         } catch (IOException e) {
             logger.warning("Exception getting e621 post", e);
             throw e;
         }
+    }
+
+    private static String buildE621StaticPath(JSONObject jsonObject) {
+        String hash = jsonObject.getString("md5");
+        return "https://static1.e621.net/data/" + hash.substring(0,2) + "/" + hash.substring(2,4) + "/" +
+                hash + "." + jsonObject.getString("ext");
+
     }
 }

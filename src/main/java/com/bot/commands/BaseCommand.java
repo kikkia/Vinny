@@ -64,7 +64,8 @@ public abstract class BaseCommand extends Command {
                  MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
                 executeCommand(commandEvent);
             } catch (Exception e) {
-                logger.warning("Exception Executing command", e);
+                logger.severe("Exception Executing command", e);
+                commandEvent.replyError("Something went wrong executing that command. If this continues please contact the support server.");
             }
         });
     }
