@@ -190,6 +190,10 @@ Nsfw commands are just that. They need the channel to be have nsfw enabled (both
 Gives rule 34 for given tags. (Tip: When doing a multiple word tag for example: `star wars`. Replace spaces with underscores. `star_wars`)
 * `~r34 konosuba`
 
+### `e621`
+Searches e621 for a given tag. Only supports one tag at time as of now. Cannot be scheduled for now.
+* `~e621 something` - idk what you furries look at..
+
 ### `4chan`
 *Aliases*: `random4chan`, `r4chan`, `random4c`, `r4c`  
 Returns a random thread from a given 4chan board.
