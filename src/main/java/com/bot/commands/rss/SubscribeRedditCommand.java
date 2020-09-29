@@ -3,9 +3,9 @@ package com.bot.commands.rss;
 import com.bot.RedditConnection;
 import com.bot.models.RssProvider;
 import com.bot.utils.ConstantStrings;
+import com.bot.utils.RssUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import datadog.trace.api.Trace;
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.models.Subreddit;
 import net.dv8tion.jda.api.Permission;
@@ -55,6 +55,12 @@ public class SubscribeRedditCommand extends CreateSubscriptionCommand {
         //@trace(operationName = "executeCommand", resourceName = "SubscribeReddit.stepOne")
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
+
+            if (!RssUtils.isSubredditValid(subject)) {
+                commandEvent.replyWarning("Invalid subreddit name! Please enter a valid subreddit name (e.g. dankmemes, goodanimemes, etc)");
+                return;
+            }
+
             Subreddit subreddit;
             try {
                 subreddit = redditClient.subreddit(subject).about();
