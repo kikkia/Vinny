@@ -23,6 +23,8 @@ import org.json.JSONObject;
 import org.slf4j.MDC;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -364,5 +366,37 @@ public class HttpUtils {
                 "%2Fyoutube%2Fv3%2Fchannels%3Fpart%3Did%2Csnippet%2Cstatistics%2CcontentDetails%2Cstatus";
         String idOrUsernamePrefix = channel.contains("/channel/") ? "%26id%3D" : "%26forUsername%3D";
         return lookupUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length-1];
+    }
+
+    // TODO: Replace with client to handle ratelimiting well enough to allow scheduling
+    public static List<String> getE621Posts(String search) throws IOException, NoSuchResourceException {
+        String baseUrl = "https://e621.net/posts.json?tags=";
+        String limit = "&limit=250";
+
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet get = new HttpGet(baseUrl + search + limit);
+            HttpResponse response = client.execute(get);
+            try {
+                JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
+                JSONArray posts = jsonResponse.getJSONArray("posts");
+                if (posts.length() == 0) {
+                    throw new NoSuchResourceException("No posts were found for that search");
+                }
+                ArrayList<String> images = new ArrayList<>();
+                for (int i = 0; i < posts.length(); i++) {
+                    try {
+                        images.add(posts.getJSONObject(i).getJSONObject("file").getString("url"));
+                    } catch (Exception ignored) {
+                    }
+                }
+                return images;
+            } catch (JSONException e) {
+                logger.severe("Failed to parse e621 response", e);
+                throw new NoSuchResourceException("Could not find that YT channel");
+            }
+        } catch (IOException e) {
+            logger.warning("Exception getting e621 post", e);
+            throw e;
+        }
     }
 }

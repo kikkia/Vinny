@@ -98,5 +98,10 @@ class RssUtils {
                     .setContent(msg)
                     .build()
         }
+
+        @JvmStatic
+        fun isSubredditValid(name: String) : Boolean {
+            return  !(name.length > 21 ||  name[0] == '_' || !Regex("[A-Za-z0-9_]").replace(name, "").isEmpty())
+        }
     }
 }

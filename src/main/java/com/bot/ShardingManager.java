@@ -6,6 +6,7 @@ import com.bot.commands.alias.RemoveGuildAliasCommand;
 import com.bot.commands.general.*;
 import com.bot.commands.meme.*;
 import com.bot.commands.moderation.*;
+import com.bot.commands.nsfw.E621Command;
 import com.bot.commands.nsfw.R4cCommand;
 import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.*;
@@ -179,6 +180,7 @@ public class ShardingManager {
 
                     // NSFW Commands
                     new Rule34Command(),
+                    new E621Command(),
 
                     // 4chan commands
                     new R4cCommand()
