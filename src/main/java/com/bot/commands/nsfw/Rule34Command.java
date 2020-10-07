@@ -8,7 +8,6 @@ import com.bot.commands.NSFWCommand;
 import com.bot.exceptions.ScheduledCommandFailedException;
 import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import datadog.trace.api.Trace;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -43,8 +42,9 @@ public class Rule34Command extends NSFWCommand {
     //@trace(operationName = "executeCommand", resourceName = "rule34")
     protected void executeCommand(CommandEvent commandEvent) {
         // Get the tags
-        String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=250&tags=" + commandEvent.getArgs();
-        String booruUrl = "https://yande.re/post.xml?limit=250&tags=" + commandEvent.getArgs();
+        String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + commandEvent.getArgs();
+        String booruUrl = "https://yande.re/post.xml?limit=200&tags=" + commandEvent.getArgs();
+        String pahealUrl = "https://rule34.paheal.net/rss/images/" + commandEvent.getArgs() + "/1";
         List<String> imageUrls = cache.get(commandEvent.getArgs());
         String selected;
         try {
@@ -52,6 +52,7 @@ public class Rule34Command extends NSFWCommand {
                 imageUrls = new ArrayList<>();
                 imageUrls.addAll(getImageURLFromSearch(r34url));
                 imageUrls.addAll(getImageURLFromSearch(booruUrl));
+                imageUrls.addAll(getImageURLFromSearch(pahealUrl));
                 cache.put(commandEvent.getArgs(), imageUrls);
             }
             selected = imageUrls.get(random.nextInt(imageUrls.size()));
@@ -115,8 +116,10 @@ public class Rule34Command extends NSFWCommand {
             String responseBody = client.execute(get, responseHandler);
             client.close();
 
-            // Regex the returned xml and get all links
-            Pattern expression = Pattern.compile("(sample_url)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?");
+            // Regex the returned xml and get all links different regex based on source
+            Pattern expression = url.contains("paheal.net") ?
+                    Pattern.compile("(<media:content url=)\"([\\s\\S]*?)\"\\/>")
+                    : Pattern.compile("(sample_url)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?");
             Matcher matcher = expression.matcher(responseBody);
             ArrayList<String> possibleLinks = new ArrayList<>();
 
