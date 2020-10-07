@@ -46,6 +46,7 @@ object ConstantStrings {
             "abbreviation (example: b or wg) Please try again."
     const val CHAN_SUB_SUCCESS = "All set up! Each new thread will be posted in this channel, when they are " +
             "404'd they will NOT be removed. " + GITHUB_SUBSCRIPTIONS_HELP
+    const val CHAN_SUB_SUCCESS_OTHER_BOARD = "All set up! Each new thread will be posted in "
     const val CHAN_BOARD_NSFW = "This is an NSFW board and this channel is not marked as NSFW. You can only " +
             "subscribe to this board in NSFW channels."
     const val SUBREDDIT_SUB_HELLO = "Hey! Let's get started subscribing to a subreddit. Please reply with the " +
