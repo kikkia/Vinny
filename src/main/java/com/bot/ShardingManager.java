@@ -36,7 +36,6 @@ import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.Compression;
-import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -215,7 +214,6 @@ public class ShardingManager {
         shardManager = DefaultShardManagerBuilder
                 .createDefault(
                         config.getConfig(Config.DISCORD_TOKEN),
-                        GUILD_MEMBERS,
                         GUILD_MESSAGES,
                         GUILD_EMOJIS,
                         GUILD_MESSAGE_REACTIONS,
@@ -226,7 +224,6 @@ public class ShardingManager {
                 .setChunkingFilter(ChunkingFilter.NONE)
                 .setShards(startIndex, endIndex)
                 .setCompression(Compression.NONE)
-                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(client, waiter, bot)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setActivity(null)
