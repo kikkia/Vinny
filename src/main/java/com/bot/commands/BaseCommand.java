@@ -35,7 +35,7 @@ public abstract class BaseCommand extends Command {
         metricsManager.markCommand(this, commandEvent.getAuthor(), guild);
         if (!ScheduledCommandUtils.isScheduled(commandEvent)) {
             commandEvent.getTextChannel().sendTyping().queue();
-            membershipDAO.ensureUserExists(commandEvent.getMember().getUser());
+            membershipDAO.addUserToGuild(commandEvent.getMember().getUser(), commandEvent.getGuild());
         }
 
         // Check the permissions to do the command
