@@ -208,8 +208,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <source>10</source>
-                    <target>10</target>
+                    <source>1.9</source>
+                    <target>1.9</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -332,7 +332,7 @@
         <dependency>
             <groupId>com.datadoghq</groupId>
             <artifactId>java-dogstatsd-client</artifactId>
-            <version>2.7</version>
+            <version>2.10.0</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
