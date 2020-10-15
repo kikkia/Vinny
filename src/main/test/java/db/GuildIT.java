@@ -6,6 +6,7 @@ import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalGuildMembership;
 import com.bot.utils.CommandCategories;
+import com.bot.utils.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
@@ -50,6 +51,7 @@ public class GuildIT {
 
     @BeforeClass
     public static void setUpConnections() throws SQLException, InterruptedException {
+        Config.getInstance().setConfig(Config.DISCORD_BOT_ID, "test");
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl("jdbc:mysql://localhost:1337/testdb");
         hikariConfig.setUsername("mysql");
