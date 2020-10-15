@@ -4,6 +4,7 @@ import com.bot.commands.ModerationCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ public class RemovePrefixCommand extends ModerationCommand {
     }
 
     @Override
+    //@trace(operationName = "executeCommand", resourceName = "RemovePrefix")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
 

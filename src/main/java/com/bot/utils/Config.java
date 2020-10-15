@@ -107,6 +107,13 @@ public class Config {
     public static final String SAUCE_PROXY = "SAUCE_PROXY";
     public static final String SAUCE_TOKEN = "SAUCE_TOKEN";
 
+    public static final String ENABLE_NATS = "ENABLE_NATS";
+    public static final String NATS_SERVER = "NATS_SERVER";
+    public static final String NATS_TOKEN = "NATS_TOKEN";
+    public static final String RSS_SUBJECT = "RSS_SUBJECT";
+
+    public static final String TWITCH_CLIENT_ID = "TWITCH_CLIENT_ID";
+
     private Config() {
         this.configFile = new File("res/config/config.conf");
         configs = new HashMap<>();

@@ -2,6 +2,7 @@ package com.bot.commands.meme
 
 import com.bot.commands.MemeCommand
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 
 class LennyCommand : MemeCommand() {
 
@@ -21,6 +22,7 @@ class LennyCommand : MemeCommand() {
         this.help = "prints a lenny face"
     }
 
+    //@trace(operationName = "executeCommand", resourceName = "Lenny")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply(lenny)
     }

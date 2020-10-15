@@ -21,8 +21,8 @@ public class WebhookClientCache {
 
     private WebhookClientCache() {
         MAX_SIZE = 400;
-        CACHE_CHECK_INTERVAL = 660;
-        CACHE_OBJECT_LIFETIME = 3600;
+        CACHE_CHECK_INTERVAL = 6600;
+        CACHE_OBJECT_LIFETIME = 36000;
 
         cache = new CustomWebhookCache("webhook", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
 
@@ -53,8 +53,12 @@ public class WebhookClientCache {
 
         @Override
         protected void removeEntity(String key) {
-            WebhookClient client = (WebhookClient) cacheMap.get(key);
-            client.close();
+            try {
+                CacheObject<WebhookClient> object = (CacheObject<WebhookClient>) cacheMap.get(key);
+                object.value.close();
+            } catch (Exception e) {
+                logger.warning("Exception cleaning from webhook cache", e);
+            }
             cacheMap.remove(key);
         }
     }

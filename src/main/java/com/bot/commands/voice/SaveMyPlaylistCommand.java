@@ -5,6 +5,7 @@ import com.bot.commands.VoiceCommand;
 import com.bot.db.PlaylistDAO;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class SaveMyPlaylistCommand extends VoiceCommand {
 	}
 
 	@Override
+	//@trace(operationName = "executeCommand", resourceName = "SaveMyPlaylist")
 	protected void executeCommand(CommandEvent commandEvent) {
 		String args = commandEvent.getArgs();
 		if (args.isEmpty()) {

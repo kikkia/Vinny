@@ -4,6 +4,7 @@ import com.bot.Bot
 import com.bot.ShardingManager
 import com.bot.commands.GeneralCommand
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 import net.dv8tion.jda.api.EmbedBuilder
 
 class InfoCommand : GeneralCommand() {
@@ -13,6 +14,7 @@ class InfoCommand : GeneralCommand() {
         this.aliases = arrayOf("vinny", "about")
     }
 
+    //@trace(operationName = "executeCommand", resourceName = "Info")
     override fun executeCommand(commandEvent: CommandEvent) {
         val manager = ShardingManager.getInstance()
 

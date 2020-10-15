@@ -1,9 +1,6 @@
 package com.bot.metrics;
 
-import com.bot.models.InternalGuild;
-import com.bot.models.InternalTextChannel;
-import com.bot.models.InternalUser;
-import com.bot.models.ScheduledCommand;
+import com.bot.models.*;
 import com.bot.utils.Config;
 import com.jagrosh.jdautilities.command.Command;
 import com.timgroup.statsd.NonBlockingStatsDClient;
@@ -89,14 +86,24 @@ public class MetricsManager {
         statsd.incrementCounter("command.failed", userTag, guildTag, commandTag, categoryTag);
     }
 
-    public void updateCacheSize(String name, int count, int limit) {
+    public void updateCacheSize(String name, int count) {
         statsd.recordGaugeValue("cache." + name + ".size", count);
-        statsd.recordGaugeValue("cache." + name + ".max", limit);
     }
 
     public void markDiscordEvent(int shard) {
         String shardTag = "shard:" + shard;
         statsd.incrementCounter("discord.event", shardTag);
+    }
+
+    public void markRssEventReceived(RssProvider provider) {
+        String providerTag = "provider:" + provider.name();
+        statsd.incrementCounter("rss.received", providerTag);
+    }
+
+    public void markRssEventChannelNotFound(RssProvider provider, String channelId) {
+        String providerTag = "provider:" + provider.name();
+        String cId = "channelId:" + channelId;
+        statsd.incrementCounter("rss.channelNotFound", providerTag, cId);
     }
 
     public void markRouletteDed() {

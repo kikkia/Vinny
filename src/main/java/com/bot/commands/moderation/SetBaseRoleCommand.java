@@ -5,6 +5,7 @@ import com.bot.commands.ModerationCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 
@@ -22,6 +23,7 @@ public class SetBaseRoleCommand extends ModerationCommand {
     }
 
     @Override
+    //@trace(operationName = "executeCommand", resourceName = "SetBaseRole")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild;
         Guild commandGuild = commandEvent.getGuild();

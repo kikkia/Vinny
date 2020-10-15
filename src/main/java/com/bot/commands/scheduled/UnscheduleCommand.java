@@ -6,6 +6,7 @@ import com.bot.utils.ConstantStrings;
 import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;
@@ -26,8 +27,8 @@ public class UnscheduleCommand extends ModerationCommand {
     }
 
     @Override
+    //@trace(operationName = "executeCommand", resourceName = "Unschedule")
     protected void executeCommand(CommandEvent commandEvent) {
-        boolean removed = false;
         if (commandEvent.getArgs().isEmpty()) {
             commandEvent.reply("Please just respond with the id of the scheduled command you want to remove? You can find this id" +
                     "using the `~scheduled` command. For example, `~scheduled me` gets all commands you have scheduled.");
@@ -54,6 +55,7 @@ public class UnscheduleCommand extends ModerationCommand {
         }
 
         @Override
+        //@trace(operationName = "executeCommand", resourceName = "Unscheduled.stepOne")
         public void accept(MessageReceivedEvent event) {
             // If they reply with command with arg, just ignore
             if (event.getMessage().getContentRaw().split(" ").length > 1)

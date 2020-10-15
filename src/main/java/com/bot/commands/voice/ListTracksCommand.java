@@ -4,6 +4,7 @@ import com.bot.commands.VoiceCommand;
 import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ public class ListTracksCommand extends VoiceCommand {
 	}
 
 	@Override
+	//@trace(operationName = "executeCommand", resourceName = "ListTracks")
 	protected void executeCommand(CommandEvent commandEvent) {
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 

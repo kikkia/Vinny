@@ -3,9 +3,10 @@ package com.bot.commands.meme
 import com.bot.caching.MarkovModelCache
 import com.bot.commands.MemeCommand
 import com.bot.models.MarkovModel
+import com.bot.utils.ConstantStrings
 import com.bot.utils.HttpUtils
-import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.TextChannel
@@ -21,13 +22,14 @@ class CommentCommand : MemeCommand() {
         this.name = "comment"
         this.help = "Generates a comment from the post history of a user or a channel"
         this.arguments = "<@user or userID> or <#channel>"
-        this.cooldownScope = Command.CooldownScope.USER
+        this.cooldownScope = CooldownScope.USER
         this.cooldown = 2
         this.botPermissions = arrayOf(Permission.MESSAGE_HISTORY, Permission.MESSAGE_WRITE)
 
         markovCache = MarkovModelCache.getInstance()
     }
 
+    //@trace(operationName = "executeCommand", resourceName = "Comment")
     override fun executeCommand(commandEvent: CommandEvent) {
         val mentionedUsers = ArrayList(commandEvent.message.mentionedUsers)
 
@@ -67,8 +69,10 @@ class CommentCommand : MemeCommand() {
         markov = markovCache.get(commandEvent.guild.id + user!!.id)
 
         if (markov == null) {
+            // Throw an entry into the cache to denote a cache building
+            markovCache.put(commandEvent.guild.id + user.id, MarkovModel())
             // No cached model found. Make a new one.
-            commandEvent.reply("No cached markov model found for user. I am building one. This will take a bit.")
+            val message = commandEvent.channel.sendMessage("No cached markov model found for user. I am building one. This will take a bit.").complete()
 
             markov = MarkovModel()
 
@@ -91,10 +95,18 @@ class CommentCommand : MemeCommand() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 logger.severe("Issue generating comment", e)
+                commandEvent.replyError("I failed to generate a model for them due to an error. Please try again later.")
+                markovCache.remove(commandEvent.guild.id + user.id)
             }
 
             // Cache it
             markovCache.put(commandEvent.guild.id + user.id, markov)
+            message.delete().queue()
+        } else {
+            if (markov.wordCount == 0) {
+                commandEvent.replyWarning(ConstantStrings.MARKOV_GENERATING)
+                return
+            }
         }
         sendComment(commandEvent, markov, user, null)
     }
@@ -102,12 +114,16 @@ class CommentCommand : MemeCommand() {
     private fun getMarkovForChannel(commandEvent: CommandEvent) {
         val channel = commandEvent.message.mentionedChannels[0]
 
+        // Placeholder for generation
+        markovCache.put(channel.id, MarkovModel())
+
         // See if we have the model cached. If so we can skip rebuilding it.
         var markov: MarkovModel? = markovCache.get(channel.id)
 
         if (markov == null) {
             // No cached model found. Make a new one.
-            commandEvent.reply("No cached markov model found for channel. I am building one. This will take a little bit.")
+            val message = commandEvent.channel.sendMessage("No cached markov model found for channel. " +
+                    "I am building one. This will take a little bit.").complete()
 
             markov = MarkovModel()
 
@@ -131,10 +147,17 @@ class CommentCommand : MemeCommand() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 logger.severe("Issue generating comment", e)
+                commandEvent.replyError("I failed to generate a model for them due to an error. Please try again later.")
+                markovCache.remove(channel.id)
             }
 
             // Cache it
             markovCache.put(channel.id, markov)
+        } else {
+            if (markov.wordCount == 0) {
+                commandEvent.replyWarning(ConstantStrings.MARKOV_GENERATING)
+                return
+            }
         }
         sendComment(commandEvent, markov, null, channel)
     }

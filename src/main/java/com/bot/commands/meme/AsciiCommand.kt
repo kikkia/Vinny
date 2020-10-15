@@ -3,6 +3,7 @@ package com.bot.commands.meme
 import com.bot.commands.MemeCommand
 import com.github.lalyos.jfiglet.FigletFont
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 
 import java.io.IOException
 
@@ -13,6 +14,7 @@ class AsciiCommand : MemeCommand() {
         this.arguments = "<Text to make ascii>"
     }
 
+    //@trace(operationName = "executeCommand", resourceName = "Ascii")
     override fun executeCommand(commandEvent: CommandEvent) {
         if (commandEvent.args.length > 500) {
             commandEvent.reply(commandEvent.client.warning + " Please keep the input to under 500 characters.")

@@ -6,6 +6,7 @@ import com.bot.commands.alias.RemoveGuildAliasCommand;
 import com.bot.commands.general.*;
 import com.bot.commands.meme.*;
 import com.bot.commands.moderation.*;
+import com.bot.commands.nsfw.E621Command;
 import com.bot.commands.nsfw.R4cCommand;
 import com.bot.commands.nsfw.Rule34Command;
 import com.bot.commands.owner.*;
@@ -13,6 +14,7 @@ import com.bot.commands.reddit.NewPostCommand;
 import com.bot.commands.reddit.RandomPostCommand;
 import com.bot.commands.reddit.ShitpostCommand;
 import com.bot.commands.reddit.TopPostCommand;
+import com.bot.commands.rss.*;
 import com.bot.commands.scheduled.GetScheduledCommand;
 import com.bot.commands.scheduled.ScheduleCommand;
 import com.bot.commands.scheduled.UnscheduleCommand;
@@ -24,14 +26,17 @@ import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.Compression;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +45,8 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
+
+import static net.dv8tion.jda.api.requests.GatewayIntent.*;
 
 public class ShardingManager {
 
@@ -73,7 +80,7 @@ public class ShardingManager {
         boolean silentDeploy = Boolean.parseBoolean(config.getConfig(Config.SILENT_DEPLOY));
 
         shards = new HashMap<>();
-        executor = Executors.newScheduledThreadPool(30);
+        executor = Executors.newScheduledThreadPool(50);
         Bot bot = new Bot();
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
@@ -163,9 +170,17 @@ public class ShardingManager {
                     new ScheduleCommand(waiter),
                     new UnscheduleCommand(waiter),
                     new PurgeCommand(),
+                    new SubscribeChanCommand(waiter),
+                    new SubscribeTwitterCommand(waiter),
+                    new SubscribeRedditCommand(waiter),
+                    new SubscriptionsCommand(waiter),
+                    new SubscribeTwitchCommand(waiter),
+                    new SubscribeYoutubeCommand(waiter),
+                    new RemoveSubscriptionCommand(),
 
                     // NSFW Commands
                     new Rule34Command(),
+                    new E621Command(),
 
                     // 4chan commands
                     new R4cCommand()
@@ -197,15 +212,25 @@ public class ShardingManager {
         commandClientBuilder.setScheduleExecutor(executor);
         client = commandClientBuilder.build();
 
-        CommandEvent.MAX_MESSAGES = 5;
-
-        shardManager = new DefaultShardManagerBuilder()
-                .setToken(config.getConfig(Config.DISCORD_TOKEN))
+        shardManager = DefaultShardManagerBuilder
+                .createDefault(
+                        config.getConfig(Config.DISCORD_TOKEN),
+                        GUILD_MEMBERS,
+                        GUILD_MESSAGES,
+                        GUILD_EMOJIS,
+                        GUILD_MESSAGE_REACTIONS,
+                        GUILD_VOICE_STATES,
+                        DIRECT_MESSAGES
+                )
                 .setShardsTotal(numShards)
+                .setChunkingFilter(ChunkingFilter.NONE)
                 .setShards(startIndex, endIndex)
+                .setCompression(Compression.NONE)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(client, waiter, bot)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setActivity(null)
+                .setRequestTimeoutRetry(true)
                 .setContextEnabled(false)
                 .build();
     }
@@ -265,7 +290,21 @@ public class ShardingManager {
         return null;
     }
 
+    public GuildChannel getChannel(String channelId) {
+        for (InternalShard shard : shards.values()) {
+            GuildChannel channel = shard.getJda().getGuildChannelById(channelId);
+            if (channel != null) {
+                return channel;
+            }
+        }
+        return null;
+    }
+
     public User getUserFromAnyShard(Long userId) {
+        return getUserFromAnyShard("" + userId);
+    }
+
+    public User getUserFromAnyShard(String userId) {
         for (InternalShard shard : shards.values()) {
             User user = shard.getJda().getUserById(userId);
             if (user != null) {

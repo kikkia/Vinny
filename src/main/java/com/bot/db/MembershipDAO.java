@@ -117,10 +117,14 @@ public class MembershipDAO {
     }
 
     public void addUserToGuild(User user, Guild guild) {
-        String userInsertQuery = "INSERT INTO users (id, name) VALUES(?,?) ON DUPLICATE KEY UPDATE name = name";
         String membershipInsertQuery = "INSERT INTO guild_membership (guild, user_id, can_use_bot) VALUES(?,?,?) ON DUPLICATE KEY UPDATE user_id = user_id";
-        addUser(userInsertQuery, user);
+        ensureUserExists(user);
         addMembership(membershipInsertQuery, user, guild);
+    }
+
+    public void ensureUserExists(User user) {
+        String userInsertQuery = "INSERT INTO users (id, name) VALUES(?,?) ON DUPLICATE KEY UPDATE name = name";
+        addUser(userInsertQuery, user);
     }
 
     private void addMembership(String membershipInsertQuery, User user, Guild guild) {
@@ -153,6 +157,18 @@ public class MembershipDAO {
             LOGGER.log(Level.SEVERE, "Failed to add user to db: " +e.getMessage());
         } finally {
             DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+    }
+
+    public int getActiveUserCount() throws SQLException {
+        String query = "select count(1) from guild_membership gm JOIN guild g on gm.guild = g.id WHERE g.active = 1;";
+        try (Connection connection = write.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(query)){
+                try (ResultSet set = statement.executeQuery()){
+                    set.next();
+                    return set.getInt(1);
+                }
+            }
         }
     }
 }

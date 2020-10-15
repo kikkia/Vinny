@@ -7,6 +7,7 @@ import com.bot.exceptions.ScheduledCommandFailedException
 import com.bot.utils.FormattingUtils
 import com.bot.utils.ScheduledCommandUtils
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 
 class SayCommand : GeneralCommand() {
     init {
@@ -15,6 +16,7 @@ class SayCommand : GeneralCommand() {
         this.arguments = "<Something to say>"
     }
 
+    //@trace(operationName = "executeCommand", resourceName = "Say")
     override fun executeCommand(commandEvent: CommandEvent) {
         if (ScheduledCommandUtils.isScheduled(commandEvent)) {
             try {

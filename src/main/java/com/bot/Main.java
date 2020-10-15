@@ -1,6 +1,7 @@
 package com.bot;
 
 import com.bot.db.ConnectionPool;
+import com.bot.messaging.RssSubscriber;
 import com.bot.metrics.MetricsReporter;
 import com.bot.tasks.RunScheduledCommandsDefferedTask;
 import com.bot.utils.Config;
@@ -36,10 +37,9 @@ public class Main {
 			return;
 		}
 
-		ConnectionPool connectionPool = ConnectionPool.getInstance();
 		LOGGER.log(Level.INFO, "Hikari pool successfully initialized");
 		Flyway flyway = new Flyway();
-		flyway.setDataSource(connectionPool.getDataSource());
+		flyway.setDataSource(ConnectionPool.getDataSource());
 		try {
 			flyway.migrate();
 		} catch (FlywayException e) {
@@ -56,14 +56,17 @@ public class Main {
 		ShardingManager shardingManager = ShardingManager.getInstance(numShards, startShardIndex, endShardIndex);
 
 		// Start a metrics reporter to keeps the metrics that are not frequently updates flowing to datadog
-		MetricsReporter metricsReporter = new MetricsReporter();
-		metricsReporter.start();
+		ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(3);
+		scheduledTaskExecutor.scheduleAtFixedRate(new MetricsReporter(), 0, 10, TimeUnit.SECONDS);
 
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_SCHEDULED_COMMANDS))) {
-			ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(2);
 			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 120, 9, TimeUnit.SECONDS);
 		}
 
+		// If nats is enabled, register subscribers
+		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_NATS))) {
+			new RssSubscriber(config);
+		}
 //		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 //		service.scheduleAtFixedRate(new CleanupIdlePlayers(), 60, 300, TimeUnit.SECONDS);
 
