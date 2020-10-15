@@ -52,6 +52,7 @@ public class GuildIT {
     @BeforeClass
     public static void setUpConnections() throws SQLException, InterruptedException {
         Config.getInstance().setConfig(Config.DISCORD_BOT_ID, "test");
+        Config.getInstance().setConfig(Config.DATADOG_HOSTNAME, "localhost");
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl("jdbc:mysql://localhost:1337/testdb");
         hikariConfig.setUsername("mysql");
