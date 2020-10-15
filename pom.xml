@@ -220,11 +220,19 @@
             <groupId>com.jagrosh</groupId>
             <artifactId>jda-utilities-command</artifactId>
             <version>3.0.4</version>
+<<<<<<< Updated upstream
+=======
+            <scope>compile</scope>
+>>>>>>> Stashed changes
         </dependency>
         <dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>jda-utilities-menu</artifactId>
             <version>3.0.4</version>
+<<<<<<< Updated upstream
+=======
+            <scope>compile</scope>
+>>>>>>> Stashed changes
         </dependency>
         <dependency>
             <groupId>net.dv8tion</groupId>
@@ -369,7 +377,7 @@
         <repository>
             <id>central</id>
             <name>bintray</name>
-            <url>https://jcenter.bintray.com</url>
+            <url>http://jcenter.bintray.com</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
