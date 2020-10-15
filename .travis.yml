@@ -9,6 +9,6 @@ notifications:
   email: false
 
 script:
-  - mvn clean verify
+  - mvn clean verify --batch-mode --show-version --settings .travis.settings.xml
 
 install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode --show-version --settings .travis.settings.xml
