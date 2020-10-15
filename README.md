@@ -3,6 +3,7 @@ A complete rewrite and overhaul of the original VinnyBot.
 # Vinny-Redux
 [![Discord](https://img.shields.io/badge/Discord-Support-blue.svg)](https://discord.gg/XMwyzxZ)
 ![Build](https://travis-ci.org/kikkia/Vinny.svg?branch=master)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/27696f0a955f43aaaab21be58c19d664)](https://www.codacy.com/manual/jesswalters53/Vinny-Redux/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kikkia/Vinny&amp;utm_campaign=Badge_Grade)
 
 ### [Click here to add Vinny to your server.](https://discordapp.com/oauth2/authorize?client_id=276855867796881408&scope=bot&permissions=523365751) 
 ### [Command List](docs/Commands.md)
