@@ -12,6 +12,7 @@
     * [Mod Commands](#Mod)
     * [Alias Commands](#Aliases)
     * [Scheduling Commands](#Scheduling)
+    * [Subscriptions](#Subscriptions)
 3. [Role Permissions](#Permissions)
 
 # About 
@@ -189,6 +190,11 @@ Nsfw commands are just that. They need the channel to be have nsfw enabled (both
 Gives rule 34 for given tags. (Tip: When doing a multiple word tag for example: `star wars`. Replace spaces with underscores. `star_wars`)
 * `~r34 konosuba`
 
+### `e621`
+Searches e621 for given tags Cannot be scheduled for now.
+* `~e621 something` - idk what you furries look at..
+* `~e621 something another_thing` - 2 tag example, you can do up to 4 tags
+
 ### `4chan`
 *Aliases*: `random4chan`, `r4chan`, `random4c`, `r4c`  
 Returns a random thread from a given 4chan board.
@@ -304,6 +310,34 @@ This command can be used to get all scheduled commands on either the server, the
 * `~scheduled me` - Gets all of your scheduled commands.
 * `~scheduled g` - Gets all scheduled commands in the guild.
 * `~scheduled c` - Gets all scheduled commands in the channel.
+
+## Subscriptions 
+Vinny allows you to setup subscriptions to various other places like twitter, reddit, 4chan, etc.
+[You can find more info here](https://github.com/kikkia/Vinny/blob/master/docs/Subscriptions.md)
+
+### `subscribetwitter`
+This command is used to setup a subscription to a twitter user.
+
+### `subscribeyt`
+Use this command to subscribe to new video notifications for a youtube channel.
+
+### `subscribechan`
+This command is used to setup a subscription to a 4chan board.
+
+### `subscribereddit`
+This command is used to setup a subscription to a subreddit.
+
+### `subscribetwitch`
+This command is used to get notifications when someone goes live on twitch.
+
+### `subscriptions`
+This command gets all of the subscriptions for a channel, or for you.
+* `~subscriptions me` - Get all subscriptions you have made
+* `~subscriptions c` - Get all subscriptions for this channel
+
+### `unsubscribe`
+Removes a subscription of the given ID. You can find this ID from the `subscriptions` command
+* `~unsubscribe <id>`
 
 ---
 ## Permissions

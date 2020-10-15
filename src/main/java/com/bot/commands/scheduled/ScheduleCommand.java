@@ -8,6 +8,7 @@ import com.bot.models.ScheduledCommand;
 import com.bot.utils.*;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -31,6 +32,7 @@ public class ScheduleCommand extends ModerationCommand {
     }
 
     @Override
+    //@trace(operationName = "executeCommand", resourceName = "Schedule")
     protected void executeCommand(CommandEvent commandEvent) {
         if (!ScheduledCommandUtils.isUserDonator(commandEvent.getAuthor().getId())) {
             if (scheduledCommandDAO.getCountOfScheduledForAuthor(commandEvent.getAuthor().getId()) >= 5) {
@@ -62,6 +64,7 @@ public class ScheduleCommand extends ModerationCommand {
         }
 
         @Override
+        //@trace(operationName = "executeCommand", resourceName = "Schedule.stepOne")
         public void accept(MessageReceivedEvent event) {
             if (event.getMessage().getContentRaw().equals("?")) {
                 commandEvent.reply(ConstantStrings.SCHEDULED_COMMANDS_HELP);
@@ -100,6 +103,7 @@ public class ScheduleCommand extends ModerationCommand {
         }
 
         @Override
+        //@trace(operationName = "executeCommand", resourceName = "Schedule.stepTwo")
         public void accept(MessageReceivedEvent event) {
             long interval;
             try {

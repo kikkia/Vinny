@@ -5,6 +5,7 @@ import com.bot.commands.VoiceCommand;
 import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -19,6 +20,7 @@ public class RemoveTrackCommand extends VoiceCommand {
 	}
 
 	@Override
+	//@trace(operationName = "executeCommand", resourceName = "RemoveTrack")
 	protected void executeCommand(CommandEvent commandEvent) {
 		if (commandEvent.getArgs().isEmpty()) {
 			commandEvent.replyWarning("You need to tell me what track to remove");

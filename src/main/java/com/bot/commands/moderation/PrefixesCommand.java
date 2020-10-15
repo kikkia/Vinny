@@ -4,6 +4,7 @@ import com.bot.commands.GeneralCommand;
 import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class PrefixesCommand extends GeneralCommand {
     }
 
     @Override
+    //@trace(operationName = "executeCommand", resourceName = "Prefixes")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
         List<String> prefixes = guild.getPrefixList();

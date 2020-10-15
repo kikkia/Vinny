@@ -14,14 +14,6 @@ public class Logger {
     private String name;
     private boolean channelLoggingEnabled;
 
-    // Webhook urls to post logs to discord with
-    private String debugWebhook;
-    private String infoWebhook;
-    private String warnWebhook;
-    private String errorWebhook;
-
-    private String hostIdentifier;
-
     private DislogClient dislogClient;
 
     public Logger(String name) {

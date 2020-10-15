@@ -10,6 +10,7 @@ import com.bot.exceptions.ScheduledCommandFailedException;
 import com.bot.utils.HttpUtils;
 import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONObject;
@@ -26,6 +27,7 @@ public class R4cCommand extends NSFWCommand {
     }
 
     @Override
+    //@trace(operationName = "executeCommand", resourceName = "4chan")
     protected void executeCommand(CommandEvent commandEvent) {
         JSONObject thread = HttpUtils.getRandom4chanThreadFromBoard(commandEvent.getArgs());
 

@@ -6,6 +6,7 @@ import com.bot.utils.SauceUtils
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.kikkia.jsauce.models.exceptions.NoSauceFoundException
 import com.kikkia.jsauce.models.exceptions.TooMuchSauceException
+import datadog.trace.api.Trace
 import java.util.*
 import java.util.regex.Pattern
 
@@ -23,6 +24,7 @@ class SauceCommand : MemeCommand() {
         this.aliases = Collections.singletonList("source").toTypedArray()
     }
 
+    //@trace(operationName = "executeCommand", resourceName = "Sauce")
     override fun executeCommand(commandEvent: CommandEvent?) {
         var url: String? = null
 

@@ -1,12 +1,16 @@
 package com.bot.utils;
 
 import com.bot.db.GuildDAO;
+import com.bot.exceptions.InvalidInputException;
+import com.bot.exceptions.NoSuchResourceException;
 import com.bot.models.MarkovModel;
 import com.bot.models.PixivPost;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Webhook;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -14,10 +18,13 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.MDC;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -230,10 +237,10 @@ public class HttpUtils {
         }
     }
 
-    public static PixivPost getRandomNewPixivPost(boolean canNSFW, String search) throws Exception {
+    public static PixivPost getRandomNewPixivPost(String search) throws Exception {
         String postBaseUrl = "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=";
         String getUrl = search == null ? "https://api.imjad.cn/pixiv/v1/?per_page=100&content=illust" :
-                "https://api.imjad.cn/pixiv/v1/?type=search&mode=tag&per_page=1000&word=" + search;
+                "https://api.imjad.cn/pixiv/v1/?type=search&mode=tag&per_page=500&word=" + search;
         JSONObject selectedPost = null;
 
         try (CloseableHttpClient client = HttpClients.createDefault()) {
@@ -241,9 +248,7 @@ public class HttpUtils {
             HttpResponse response = client.execute(get);
             JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
             JSONArray resultsArray = jsonResponse.getJSONArray("response");
-            int selectedIndex = random.nextInt(resultsArray.length());
-            // If NSFW is not allowed in the channel then use helper to get a sfw post
-            selectedPost = canNSFW ? resultsArray.getJSONObject(selectedIndex) : PixivHelperKt.getSFWSubmission(resultsArray);
+            selectedPost = PixivHelperKt.getSFWSubmission(resultsArray);
         }
         if (selectedPost == null)
             return null;
@@ -252,7 +257,8 @@ public class HttpUtils {
                 selectedPost.getString("title"),
                 postBaseUrl + selectedPost.getInt("id"),
                 selectedPost.getJSONObject("user").getString("name"),
-                selectedPost.getJSONObject("user").getInt("id"));
+                selectedPost.getJSONObject("user").getInt("id"),
+                PixivHelperKt.buildPreviewString(selectedPost.getJSONObject("image_urls").getString("large")));
     }
 
 
@@ -290,5 +296,122 @@ public class HttpUtils {
             logger.severe("Failed to send webhook for comment", e);
             throw new RuntimeException("Failed to send webhook to channel.");
         }
+    }
+
+    public static byte[] getUrlAsByteArray(String uri, String refererUrl) {
+        try (CloseableHttpClient client = HttpClients.createDefault()){
+            HttpGet httpget = new HttpGet(uri);
+            httpget.addHeader("referer", refererUrl);
+            HttpResponse response = client.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                entity.writeTo(baos);
+                return baos.toByteArray();
+            }
+        } catch (Exception e) {
+            logger.severe("Failed to get url as byteArray", e);
+            return null;
+        }
+    }
+
+    public static String getTwitchIdForUsername(String username) throws IOException, NoSuchResourceException {
+        String uri = "https://api.twitch.tv/kraken/users?login=" + username;
+        try (CloseableHttpClient client = HttpClients.createDefault()){
+            HttpGet httpget = new HttpGet(uri);
+            httpget.addHeader("Client-ID", config.getConfig(Config.TWITCH_CLIENT_ID));
+            httpget.addHeader("Accept", "application/vnd.twitchtv.v5+json");
+            HttpResponse response = client.execute(httpget);
+            JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
+            if (jsonResponse.getInt("_total") == 0) {
+                throw new NoSuchResourceException("User not found");
+            }
+            return jsonResponse.getJSONArray("users").getJSONObject(0).getString("_id");
+        }
+    }
+
+    public static String getYoutubeIdForChannelUrl(String url) throws IOException, NoSuchResourceException, InvalidInputException {
+        boolean lookup = url.contains("https://www.youtube.com/c/");
+        String uri = lookup ? buildYoutubeSearchUrl(url) : buildYoutubeLookupUri(url);
+        try (CloseableHttpClient client = HttpClients.createDefault()){
+            HttpGet httpget = new HttpGet(uri);
+            httpget.addHeader("referer", "https://commentpicker.com/youtube-channel-id.php");
+            HttpResponse response = client.execute(httpget);
+            try {
+                JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
+                return lookup ? jsonResponse.getJSONArray("items").getJSONObject(0).getJSONObject("id").getString("channelId")
+                        : jsonResponse.getJSONArray("items").getJSONObject(0).getString("id");
+            } catch (JSONException e) {
+                logger.severe("Failed to parse yt channel id", e);
+                throw new NoSuchResourceException("Could not find that YT channel");
+            }
+        }
+    }
+
+    // With some channels we will need to search rather than direct lookup
+    private static String buildYoutubeSearchUrl(String channel) throws InvalidInputException {
+        if (!channel.contains("https://www.youtube.com/")) {
+            throw new InvalidInputException("Not youtube url");
+        }
+        return "https://commentpicker.com/actions/youtube-channel-id.php?url=https%3A%2F%2Fwww.googleapis.com%2Fyoutube" +
+                "%2Fv3%2Fsearch%3Fpart%3Did%2Csnippet%26type%3Dchannel%26q%3D" +
+                channel.split("/")[channel.split("/").length-1] + "&token=403409fe2bcbc41adb8f8e439" +
+                "66bc8097d457aba8380fd4abc84da2a4d056c9f";
+    }
+
+    private static String buildYoutubeLookupUri(String channel) throws InvalidInputException {
+        if (!channel.contains("https://www.youtube.com/")) {
+            throw new InvalidInputException("Not youtube url");
+        }
+        String lookupUri = "https://commentpicker.com/actions/youtube-channel-id.php?url=https%3A%2F%2Fwww.googleapis.com" +
+                "%2Fyoutube%2Fv3%2Fchannels%3Fpart%3Did%2Csnippet%2Cstatistics%2CcontentDetails%2Cstatus";
+        String idOrUsernamePrefix = channel.contains("/channel/") ? "%26id%3D" : "%26forUsername%3D";
+        return lookupUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length-1];
+    }
+
+    // TODO: Replace with client to handle ratelimiting well enough to allow scheduling
+    public static List<String> getE621Posts(String search) throws IOException, NoSuchResourceException {
+        String baseUrl = "https://e621.net/posts.json?tags=";
+        String limit = "&limit=250";
+
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet get = new HttpGet(baseUrl + search + limit);
+            HttpResponse response = client.execute(get);
+            try {
+                JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
+                JSONArray posts = jsonResponse.getJSONArray("posts");
+                if (posts.length() == 0) {
+                    throw new NoSuchResourceException("No posts were found for that search");
+                }
+                ArrayList<String> images = new ArrayList<>();
+                for (int i = 0; i < posts.length(); i++) {
+                    try {
+                        images.add(posts.getJSONObject(i).getJSONObject("file").getString("url"));
+                    } catch (Exception ignored) {
+                        // Null url to image, we can generate our own with the md5 hash and file ext
+                        try {
+                            images.add(buildE621StaticPath(posts.getJSONObject(i).getJSONObject("file")));
+                        } catch (Exception ignored2) {
+                            // If that attempt fails, just skip
+                        }
+                    }
+                }
+                if (images.isEmpty())
+                    throw new NoSuchResourceException("Could not find results for tags");
+                return images;
+            } catch (JSONException e) {
+                logger.severe("Failed to parse e621 response", e);
+                throw new NoSuchResourceException("Could not find any results for tags");
+            }
+        } catch (IOException e) {
+            logger.warning("Exception getting e621 post", e);
+            throw e;
+        }
+    }
+
+    private static String buildE621StaticPath(JSONObject jsonObject) {
+        String hash = jsonObject.getString("md5");
+        return "https://static1.e621.net/data/" + hash.substring(0,2) + "/" + hash.substring(2,4) + "/" +
+                hash + "." + jsonObject.getString("ext");
+
     }
 }

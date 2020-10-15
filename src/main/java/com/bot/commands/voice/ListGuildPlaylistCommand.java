@@ -4,6 +4,7 @@ import com.bot.commands.VoiceCommand;
 import com.bot.db.PlaylistDAO;
 import com.bot.models.Playlist;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class ListGuildPlaylistCommand extends VoiceCommand {
     }
 
     @Override
+    //@trace(operationName = "executeCommand", resourceName = "guildPlaylists")
     protected void executeCommand(CommandEvent commandEvent) {
         List<Playlist> playlistList = playlistDAO.getPlaylistsForGuild(commandEvent.getGuild().getId());
 

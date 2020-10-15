@@ -175,6 +175,7 @@ public class RedditHelper {
         String title = submission.getTitle();
         title = title.length() <= 256 ? title : title.substring(0, 252) + "...";
         builder.setTitle(new WebhookEmbed.EmbedTitle(title, submission.getUrl()));
+        builder.setDescription("r/" + submission.getSubreddit());
 
         // If there is a thumbnail and it does match a url to an image
         if (submission.hasThumbnail() && submission.getThumbnail().matches("^[a-zA-Z0-9\\-\\.]+\\.(com|org|net|mil|edu|COM|ORG|NET|MIL|EDU)$")) {
@@ -210,6 +211,12 @@ public class RedditHelper {
         WebhookMessageBuilder builder = new WebhookMessageBuilder();
         builder.setAvatarUrl(event.getSelfUser().getAvatarUrl());
         builder.setUsername(event.getSelfMember().getEffectiveName());
+
+        // Hotfix for some issues with this being too long somehow :thonk:
+        if (message.length() >= 2000) {
+            message = message.substring(0, 1950);
+        }
+
         builder.setContent(message);
         return builder.build();
     }

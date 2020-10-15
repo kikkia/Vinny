@@ -2,6 +2,7 @@ package com.bot.commands.moderation
 
 import com.bot.commands.ModerationCommand
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Message
 import java.time.OffsetDateTime
@@ -21,6 +22,7 @@ class PurgeCommand() : ModerationCommand() {
         this.cooldownScope = CooldownScope.USER_GUILD
     }
 
+    //@trace(operationName = "executeCommand", resourceName = "Purge")
     override fun executeCommand(commandEvent: CommandEvent?) {
         if (commandEvent!!.args.isBlank()) {
             commandEvent.replyWarning("Incorrect command usage, please see $helpLink for additional help.")

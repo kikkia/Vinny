@@ -39,10 +39,12 @@ public class Rule34Command extends NSFWCommand {
     }
 
     @Override
+    //@trace(operationName = "executeCommand", resourceName = "rule34")
     protected void executeCommand(CommandEvent commandEvent) {
         // Get the tags
-        String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=250&tags=" + commandEvent.getArgs();
-        String booruUrl = "https://yande.re/post.xml?tags=" + commandEvent.getArgs();
+        String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + commandEvent.getArgs();
+        String booruUrl = "https://yande.re/post.xml?limit=200&tags=" + commandEvent.getArgs();
+        String pahealUrl = "https://rule34.paheal.net/rss/images/" + commandEvent.getArgs() + "/1";
         List<String> imageUrls = cache.get(commandEvent.getArgs());
         String selected;
         try {
@@ -50,6 +52,7 @@ public class Rule34Command extends NSFWCommand {
                 imageUrls = new ArrayList<>();
                 imageUrls.addAll(getImageURLFromSearch(r34url));
                 imageUrls.addAll(getImageURLFromSearch(booruUrl));
+                imageUrls.addAll(getImageURLFromSearch(pahealUrl));
                 cache.put(commandEvent.getArgs(), imageUrls);
             }
             selected = imageUrls.get(random.nextInt(imageUrls.size()));
@@ -92,7 +95,7 @@ public class Rule34Command extends NSFWCommand {
 
     private List<String> getImageURLFromSearch(String url) throws Exception{
         HttpGet get = new HttpGet(url);
-        int timeout = 5;
+        int timeout = 4;
         RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(timeout * 1000)
                 .setConnectionRequestTimeout(timeout * 1000)
@@ -113,8 +116,10 @@ public class Rule34Command extends NSFWCommand {
             String responseBody = client.execute(get, responseHandler);
             client.close();
 
-            // Regex the returned xml and get all links
-            Pattern expression = Pattern.compile("(file_url)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?");
+            // Regex the returned xml and get all links different regex based on source
+            Pattern expression = url.contains("paheal.net") ?
+                    Pattern.compile("(<media:content url=)\"([\\s\\S]*?)\"\\/>")
+                    : Pattern.compile("(sample_url)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?");
             Matcher matcher = expression.matcher(responseBody);
             ArrayList<String> possibleLinks = new ArrayList<>();
 
@@ -124,6 +129,9 @@ public class Rule34Command extends NSFWCommand {
             }
 
             return possibleLinks;
+        } catch (Exception e) {
+            logger.warning("Failed to fetch r34 posts for source: " + url, e);
+            return new ArrayList<>();
         }
     }
 }

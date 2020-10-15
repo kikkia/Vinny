@@ -1,5 +1,6 @@
 package com.bot.commands;
 
+import com.bot.db.MembershipDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.metrics.MetricsManager;
@@ -8,7 +9,6 @@ import com.bot.utils.Logger;
 import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.MDC;
@@ -16,16 +16,17 @@ import org.slf4j.MDC;
 public abstract class BaseCommand extends Command {
     protected MetricsManager metricsManager;
     protected Logger logger;
+    protected MembershipDAO membershipDAO;
 
     public boolean canSchedule;
 
     public BaseCommand() {
         this.metricsManager = MetricsManager.getInstance();
         this.logger = new Logger(this.getClass().getSimpleName());
+        this.membershipDAO = MembershipDAO.getInstance();
     }
 
     @Override
-    @Trace(operationName = "onCommand", resourceName = "vinny.bot")
     protected void execute(CommandEvent commandEvent) {
         Guild guild = null;
         if (!commandEvent.isFromType(ChannelType.PRIVATE))
@@ -34,6 +35,7 @@ public abstract class BaseCommand extends Command {
         metricsManager.markCommand(this, commandEvent.getAuthor(), guild);
         if (!ScheduledCommandUtils.isScheduled(commandEvent)) {
             commandEvent.getTextChannel().sendTyping().queue();
+            membershipDAO.addUserToGuild(commandEvent.getMember().getUser(), commandEvent.getGuild());
         }
 
         // Check the permissions to do the command
@@ -55,21 +57,17 @@ public abstract class BaseCommand extends Command {
             logger.severe("Failed to get perms for " + this.getClass().getName(), e);
             return;
         }
-        try {
-            commandEvent.async(() -> {
-                // Add some details to the MDC on the thread before executing
-                try (MDC.MDCCloseable commandCloseable = MDC.putCloseable("command", this.name);
-                     MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
-                    executeCommand(commandEvent);
-                } catch (Exception e) {
-                    logger.warning("Exception Executing command", e);
-                }
-            });
-        } catch (Exception e) {
-            commandEvent.replyError("Something went wrong, please try again later");
-            logger.severe("Failed command " + this.getClass().getName() + ": ", e);
-            e.printStackTrace();
-        }
+        // Add some details to the MDC on the thread before executing
+        commandEvent.async(() -> {
+            // Add some details to the MDC on the thread before executing
+            try (MDC.MDCCloseable commandCloseable = MDC.putCloseable("command", this.name);
+                 MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
+                executeCommand(commandEvent);
+            } catch (Exception e) {
+                logger.severe("Exception Executing command", e);
+                commandEvent.replyError("Something went wrong executing that command. If this continues please contact the support server.");
+            }
+        });
     }
 
     protected abstract void executeCommand(CommandEvent commandEvent);

@@ -101,14 +101,14 @@ public class Bot extends ListenerAdapter {
 
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
-		executor = Executors.newScheduledThreadPool(15);
+		executor = Executors.newScheduledThreadPool(80);
 	}
 
 	@Override
 	public void onReady(ReadyEvent event) {
 		ShardingManager shardingManager = ShardingManager.getInstance();
 		shardingManager.putShard(new InternalShard(event.getJDA()));
-		System.out.println("Shard: " + event.getJDA().getShardInfo().getShardId() + " ready");
+		LOGGER.info("Shard: " + event.getJDA().getShardInfo().getShardId() + " ready");
 
 		if (Boolean.parseBoolean(config.getConfig(Config.DATA_LOADER))) {
 			DataLoader.LoadThread t = null;
@@ -231,6 +231,7 @@ public class Bot extends ListenerAdapter {
 		executor.execute(() -> {
 			try {
 				ScheduledCommandDAO.getInstance().removeAllScheduledInChannel(event.getChannel().getId());
+				RssDAO.getInstance().removeAllSubsInChannel(event.getChannel().getId());
 				channelDAO.removeTextChannel(event.getChannel());
 			} catch (SQLException e) {
 				LOGGER.warning("Ran into error when removing text channel from db", e);

@@ -3,6 +3,7 @@ package com.bot.commands.voice;
 import com.bot.commands.VoiceCommand;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 
 public class SpeedCommand extends VoiceCommand {
 
@@ -14,6 +15,7 @@ public class SpeedCommand extends VoiceCommand {
     }
 
     @Override
+    //@trace(operationName = "executeCommand", resourceName = "Speed")
     protected void executeCommand(CommandEvent commandEvent) {
         VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
         double newSpeed;

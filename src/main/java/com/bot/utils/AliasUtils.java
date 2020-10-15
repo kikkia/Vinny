@@ -38,11 +38,13 @@ public class AliasUtils {
                 parseCommand(triggered.getCommand(), message, triggered),
                 message.getNonce(),
                 message.getAuthor(),
+                message.getMember(),
                 message.getActivity(),
                 message.getTimeEdited(),
                 message.getReactions(),
                 message.getAttachments(),
-                message.getEmbeds());
+                message.getEmbeds(),
+                0);
     }
 
     // If we find %% then replace it with whatever is after the trigger.

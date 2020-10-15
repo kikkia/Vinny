@@ -5,6 +5,7 @@ import com.bot.utils.FormattingUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Paginator;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.Member;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class GamesCommand extends GeneralCommand {
 
 
     @Override
+    //@trace(operationName = "executeCommand", resourceName = "Games")
     protected void executeCommand(CommandEvent commandEvent) {
         List<Member> memberList = commandEvent.getGuild().getMembers();
 

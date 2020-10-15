@@ -10,6 +10,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.Message;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class PlayCommand extends VoiceCommand {
 	}
 
 	@Override
+	//@trace(operationName = "executeCommand", resourceName = "Play")
 	protected void executeCommand(CommandEvent commandEvent) {
 		if (commandEvent.getArgs().isEmpty()) {
 			VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
@@ -182,7 +184,7 @@ public class PlayCommand extends VoiceCommand {
 		@Override
 		public void loadFailed(FriendlyException e) {
 			message.editMessage(commandEvent.getClient().getError() + " I encountered an error loading track: " + e.getMessage()).queue();
-			logger.severe("Failed to load a track", e);
+			logger.warning("Failed to load a track", e);
 		}
 
 		private String prettyPrintTracks(List<String> tracks) {

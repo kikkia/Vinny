@@ -1,0 +1,1 @@
+ALTER TABLE `channel_rss_subscription` ADD CONSTRAINT `CK_channel_subscription` UNIQUE index(`text_channel_id`, `rss_subscription_id`);

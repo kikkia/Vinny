@@ -43,4 +43,8 @@ public class MarkovModelCache {
     public void removeAll() {
         cache.removeAll();
     }
+
+    public void remove(String key) {
+        cache.remove(key);
+    }
 }

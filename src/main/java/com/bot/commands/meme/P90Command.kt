@@ -6,6 +6,7 @@ import com.bot.models.InternalTextChannel
 import com.bot.utils.HttpUtils
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.PrivateChannel
 
 class P90Command : MemeCommand() {
@@ -23,6 +24,7 @@ class P90Command : MemeCommand() {
         channelDAO = ChannelDAO.getInstance()
     }
 
+    //@trace(operationName = "executeCommand", resourceName = "P90")
     override fun executeCommand(commandEvent: CommandEvent) {
         val channel = channelDAO.getTextChannelForId(commandEvent.channel.id, true)
         var canNSFW = false
