@@ -2,7 +2,7 @@ A complete rewrite and overhaul of the original VinnyBot.
 
 # Vinny-Redux
 [![Discord](https://img.shields.io/badge/Discord-Support-blue.svg)](https://discord.gg/XMwyzxZ)
-![Build](https://travis-ci.org/kikkia/Vinny-Redux.svg?branch=master)
+![Build](https://travis-ci.org/kikkia/Vinny.svg?branch=master)
 
 ### [Click here to add Vinny to your server.](https://discordapp.com/oauth2/authorize?client_id=276855867796881408&scope=bot&permissions=523365751) 
 ### [Command List](docs/Commands.md)
