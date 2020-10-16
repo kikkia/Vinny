@@ -123,7 +123,7 @@ public class Config {
         }
         catch (FileNotFoundException f) {
             // If config file is gone we can try using env vars
-            configs = System.getenv();
+            configs = new HashMap<>(System.getenv());
         }
     }
 
