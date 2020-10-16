@@ -13,6 +13,14 @@
                         <enabled>false</enabled>
                     </snapshots>
                 </repository>
+                <repository>
+                    <id>jitpack.io</id>
+                    <url>https://jitpack.io</url>
+                </repository>
+                <repository>
+                    <id>sedmelluq</id>
+                    <url>https://dl.bintray.com/sedmelluq/com.sedmelluq</url>
+                </repository>
             </repositories>
         </profile>
     </profiles>
