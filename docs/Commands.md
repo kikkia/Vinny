@@ -90,6 +90,9 @@ Locks or unlocks the volume for the playing stream. (Requires mod perms)
 *Aliases:* `playlist`, `lists`, `queue`  
 List all of the current tracks in the queue. 
 
+### `clearqueue`
+Clears all tracks from the queue without stopping the now playing track
+
 ---
 ### Playlists
 Make and load custom playlists for a server or for yourself. Playlists are used to save and load a list of tracks instantly. Playlists can either be for a guild, which allows any user with permission to load them, or for yourself. Which allows you to load them and save them on any server you and Vinny are on. 
@@ -115,6 +118,10 @@ Loads the specified playlist into the track queue. Takes either the id or name o
 ### `savegplaylist`
 Saves the current track queue as a playlist that any user can use on this server. You must specify a name to name the playlist.
 * `~savegplaylist test` - Saves a playlist of the current tracks with the name test. 
+
+### `removeplaylist`
+Removes a guild or user playlist by either name or id
+* `~removeplaylist playlistName` or `~removeplaylist 5`
 
 ## Reddit
 Reddit commands can get new, hot and top posts from any subreddit. (NOTE: NSFW posts/subreddits require the channel to have nsfw enabled.)
