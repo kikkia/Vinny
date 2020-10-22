@@ -275,4 +275,8 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         Collections.shuffle(trackList);
         tracks = new LinkedList<>(trackList);
     }
+
+    public void clearQueue() {
+        tracks.clear();
+    }
 }

@@ -168,6 +168,21 @@ public class PlaylistDAO {
 		return false;
 	}
 
+	public void removePlaylist(Playlist playlist) throws SQLException {
+		String REMOVE_PLAYLIST_QUERY = "DELETE FROM `playlist` WHERE `id` = ?";
+		String REMOVE_TRACKS_QUERY = "DELETE FROM `playlist_track` WHERE `playlist` = ?";
+		try (Connection connection = write.getConnection()) {
+			try (PreparedStatement statement = connection.prepareStatement(REMOVE_TRACKS_QUERY)) {
+				statement.setInt(1, playlist.getId());
+				statement.execute();
+			}
+			try (PreparedStatement statement = connection.prepareStatement(REMOVE_PLAYLIST_QUERY)){
+				statement.setInt(1, playlist.getId());
+				statement.execute();
+			}
+		}
+	}
+
 	private List<Playlist> getPlaylistsFromQuery(String ownerId, String query) {
 		Map<Integer, Playlist> playlists = null;
 		PreparedStatement statement = null;
