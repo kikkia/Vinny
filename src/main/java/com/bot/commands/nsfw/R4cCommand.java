@@ -10,7 +10,6 @@ import com.bot.exceptions.ScheduledCommandFailedException;
 import com.bot.utils.HttpUtils;
 import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONObject;
@@ -22,8 +21,6 @@ public class R4cCommand extends NSFWCommand {
         this.arguments = "<4chan board>";
         this.help = "Gets a random thread from a given 4chan board";
         this.aliases = new String[]{"random4chan", "r4chan", "random4c", "r4c"};
-        this.cooldown = 2;
-        this.cooldownScope = CooldownScope.USER;
     }
 
     @Override

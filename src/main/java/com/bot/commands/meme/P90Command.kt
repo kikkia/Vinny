@@ -4,9 +4,7 @@ import com.bot.commands.MemeCommand
 import com.bot.db.ChannelDAO
 import com.bot.models.InternalTextChannel
 import com.bot.utils.HttpUtils
-import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
-import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.PrivateChannel
 
 class P90Command : MemeCommand() {
@@ -18,8 +16,6 @@ class P90Command : MemeCommand() {
         this.help = "Gets a webm from P90.zone"
         this.arguments = "<Search terms or nothing>"
         this.aliases = arrayOf("p90")
-        this.cooldown = 1
-        this.cooldownScope = Command.CooldownScope.USER
 
         channelDAO = ChannelDAO.getInstance()
     }
