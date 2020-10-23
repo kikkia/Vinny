@@ -31,7 +31,6 @@ public class Rule34Command extends NSFWCommand {
         this.name = "r34";
         this.aliases = new String[]{"rule34"};
         this.arguments = "<tags to search for>";
-        this.cooldown = 1;
         this.help = "Gets rule 34 for the given tags";
 
         this.random = new Random(System.currentTimeMillis());
