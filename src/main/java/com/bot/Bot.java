@@ -142,7 +142,6 @@ public class Bot extends ListenerAdapter {
 				}
 			}
 		});
-		System.out.println(event.getMessage().getGuild().getName() + " - " + event.getAuthor().getName() + ": " + event.getMessage().getContentRaw());
 		super.onGuildMessageReceived(event);
 	}
 
