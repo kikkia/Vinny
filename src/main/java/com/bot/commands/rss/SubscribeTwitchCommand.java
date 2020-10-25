@@ -6,7 +6,6 @@ import com.bot.utils.ConstantStrings;
 import com.bot.utils.HttpUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -52,7 +51,8 @@ public class SubscribeTwitchCommand extends CreateSubscriptionCommand {
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
             String id;
-            if (subject.contains("https://www.twitch.tv/")) {
+            if (subject.toLowerCase().contains("https://www.twitch.tv/")
+                    || subject.toLowerCase().contains("https://twitch.tv/")) {
                 subject = subject.split("/")[subject.split("/").length - 1];
             }
 
