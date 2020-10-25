@@ -39,9 +39,9 @@ import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
@@ -79,7 +79,7 @@ public class ShardingManager {
         // Check if we are just doing a silent deploy (For debug and stress testing purposes)
         boolean silentDeploy = Boolean.parseBoolean(config.getConfig(Config.SILENT_DEPLOY));
 
-        shards = new HashMap<>();
+        shards = new ConcurrentHashMap<>();
         executor = Executors.newScheduledThreadPool(50);
         Bot bot = new Bot();
 
