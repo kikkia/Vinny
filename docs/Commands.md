@@ -166,7 +166,7 @@ Gives a link to detailed vinny statistics.
 ### `ping`
 Gets the ping from Vinny to discord.
   
-### `role`
+### `roll`
 Gives a random numbers from N-K (default 0-10)
 * `~roll 10-40` - gives a random number between 10 and 40.
   
