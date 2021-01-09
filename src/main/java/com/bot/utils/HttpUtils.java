@@ -34,6 +34,12 @@ public class HttpUtils {
     private static Random random = new Random(System.currentTimeMillis());
 
     private static final String P90_BASE_URL = "https://p90.zone/";
+    private static final String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 " +
+            "(KHTML, like Gecko) Chrome/99.0.3538.77 Safari/537.36";
+    // Unauthed cookies to tag on request to allow site to parse request as if we are an unauthed browser.
+    // Exposing these tokens causes no risk as they are anonymous
+    private static final String YT_COMMENT_PICK_S = "PHPSESSID=em0nb7ven1rdgndgmg7oopr7ft";
+    private static final String YT_PUBLIC_TOKEN = "c85bc757eb76eeb4e6ef783c074ced084234f422cc4ddaf8cc82590a75e50f7b";
 
     public static void postGuildCountToExternalSites() {
         GuildDAO guildDAO = GuildDAO.getInstance();
@@ -335,6 +341,8 @@ public class HttpUtils {
         try (CloseableHttpClient client = HttpClients.createDefault()){
             HttpGet httpget = new HttpGet(uri);
             httpget.addHeader("referer", "https://commentpicker.com/youtube-channel-id.php");
+            httpget.addHeader("User-Agent", USER_AGENT);
+            httpget.addHeader("Cookie", YT_COMMENT_PICK_S);
             HttpResponse response = client.execute(httpget);
             try {
                 JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
@@ -354,8 +362,7 @@ public class HttpUtils {
         }
         return "https://commentpicker.com/actions/youtube-channel-id.php?url=https%3A%2F%2Fwww.googleapis.com%2Fyoutube" +
                 "%2Fv3%2Fsearch%3Fpart%3Did%2Csnippet%26type%3Dchannel%26q%3D" +
-                channel.split("/")[channel.split("/").length-1] + "&token=403409fe2bcbc41adb8f8e439" +
-                "66bc8097d457aba8380fd4abc84da2a4d056c9f";
+                channel.split("/")[channel.split("/").length-1] + "&token=" + YT_PUBLIC_TOKEN;
     }
 
     private static String buildYoutubeLookupUri(String channel) throws InvalidInputException {
@@ -365,7 +372,8 @@ public class HttpUtils {
         String lookupUri = "https://commentpicker.com/actions/youtube-channel-id.php?url=https%3A%2F%2Fwww.googleapis.com" +
                 "%2Fyoutube%2Fv3%2Fchannels%3Fpart%3Did%2Csnippet%2Cstatistics%2CcontentDetails%2Cstatus";
         String idOrUsernamePrefix = channel.contains("/channel/") ? "%26id%3D" : "%26forUsername%3D";
-        return lookupUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length-1];
+        return lookupUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length-1] +
+                "&token=" + YT_PUBLIC_TOKEN;
     }
 
     // TODO: Replace with client to handle ratelimiting well enough to allow scheduling
