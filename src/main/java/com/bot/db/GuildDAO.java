@@ -54,6 +54,7 @@ public class GuildDAO {
         this.write = ConnectionPool.getDataSource();
         this.cache = GuildCache.getInstance();
         this.aliasDAO = AliasDAO.getInstance();
+
     }
 
     public InternalGuild getGuildById(String guildId) {
@@ -64,8 +65,9 @@ public class GuildDAO {
         String query = "SELECT * FROM guild WHERE id = ?";
         InternalGuild returned = null;
 
-        if (useCache)
+        if (useCache) {
             returned = cache.get(guildId);
+        }
 
         if (returned != null) {
             return returned;
