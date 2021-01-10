@@ -6,7 +6,6 @@ import com.bot.db.MembershipDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.models.InternalGuild;
-import com.bot.models.InternalTextChannel;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -38,9 +37,20 @@ public class CommandPermissions {
             return commandEvent.getAuthor().getId().equals(config.getConfig(Config.OWNER_ID));
         }
 
+        if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {
+            throw new ForbiddenCommandException("This channel is not marked in discord as nsfw. " +
+                    "To enable it, please go into the channel settings in discord and enable nsfw.");
+        }
+
+        if (commandEvent.getGuild().getOwnerId().equals(commandEvent.getAuthor().getId())) {
+            return true;
+        }
+
         InternalGuild guild;
         try {
-            guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
+            guild = ScheduledCommandUtils.isScheduled(commandEvent) ?
+                    guildDAO.getGuildById(commandEvent.getGuild().getId()) :
+                    guildDAO.getGuildById(commandEvent.getGuild().getId(), false);
             if (guild == null) { // Membership is missing
                 throw new SQLException("Guild is missing");
             }
@@ -99,13 +109,6 @@ public class CommandPermissions {
             if (!commandEvent.getMember().getVoiceState().inVoiceChannel()) {
                 throw new ForbiddenCommandException("You must be in a voice channel to use a voice command");
             }
-        }
-
-        InternalTextChannel textChannel;
-
-        if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {
-            throw new ForbiddenCommandException("This channel is not marked in discord as nsfw. " +
-                    "To enable it, please go into the channel settings in discord and enable nsfw.");
         }
 
         return true;
