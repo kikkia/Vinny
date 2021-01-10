@@ -337,7 +337,8 @@ public class HttpUtils {
 
     public static String getYoutubeIdForChannelUrl(String url) throws IOException, NoSuchResourceException, InvalidInputException {
         boolean lookup = url.contains("https://www.youtube.com/c/");
-        String uri = lookup ? buildYoutubeSearchUrl(url) : buildYoutubeLookupUri(url);
+        String token = getYTChannelIdToken();
+        String uri = lookup ? buildYoutubeSearchUrl(url, token) : buildYoutubeLookupUri(url, token);
         try (CloseableHttpClient client = HttpClients.createDefault()){
             HttpGet httpget = new HttpGet(uri);
             httpget.addHeader("referer", "https://commentpicker.com/youtube-channel-id.php");
@@ -355,17 +356,28 @@ public class HttpUtils {
         }
     }
 
+    private static String getYTChannelIdToken() throws IOException {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet httpget = new HttpGet("https://commentpicker.com/actions/token.php");
+            httpget.addHeader("referer", "https://commentpicker.com/youtube-channel-id.php");
+            httpget.addHeader("User-Agent", USER_AGENT);
+            httpget.addHeader("Cookie", YT_COMMENT_PICK_S);
+            HttpResponse response = client.execute(httpget);
+            return IOUtils.toString(response.getEntity().getContent());
+        }
+    }
+
     // With some channels we will need to search rather than direct lookup
-    private static String buildYoutubeSearchUrl(String channel) throws InvalidInputException {
+    private static String buildYoutubeSearchUrl(String channel, String token) throws InvalidInputException {
         if (!channel.contains("https://www.youtube.com/")) {
             throw new InvalidInputException("Not youtube url");
         }
         return "https://commentpicker.com/actions/youtube-channel-id.php?url=https%3A%2F%2Fwww.googleapis.com%2Fyoutube" +
                 "%2Fv3%2Fsearch%3Fpart%3Did%2Csnippet%26type%3Dchannel%26q%3D" +
-                channel.split("/")[channel.split("/").length-1] + "&token=" + YT_PUBLIC_TOKEN;
+                channel.split("/")[channel.split("/").length-1] + "&token=" + token;
     }
 
-    private static String buildYoutubeLookupUri(String channel) throws InvalidInputException {
+    private static String buildYoutubeLookupUri(String channel, String token) throws InvalidInputException {
         if (!channel.contains("https://www.youtube.com/")) {
             throw new InvalidInputException("Not youtube url");
         }
@@ -373,7 +385,7 @@ public class HttpUtils {
                 "%2Fyoutube%2Fv3%2Fchannels%3Fpart%3Did%2Csnippet%2Cstatistics%2CcontentDetails%2Cstatus";
         String idOrUsernamePrefix = channel.contains("/channel/") ? "%26id%3D" : "%26forUsername%3D";
         return lookupUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length-1] +
-                "&token=" + YT_PUBLIC_TOKEN;
+                "&token=" + token;
     }
 
     // TODO: Replace with client to handle ratelimiting well enough to allow scheduling
