@@ -71,6 +71,10 @@ class RssUtils {
                             val msg = "***${rssUpdate.displayName}*** just went live on twitch! ${rssUpdate.url}"
                             webhook.send(buildMessage(msg, jda))
                         }
+                        RssProvider.BDO -> {
+                            val msg = "New ${rssUpdate.displayName} for bdo!"
+                            webhook.send(buildMessage(msg, jda))
+                        }
                         else -> { // other
                             logger.warning("Invalid provider for rss event: ```$rssUpdate```")
                         }

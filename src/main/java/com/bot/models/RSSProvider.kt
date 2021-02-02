@@ -1,7 +1,7 @@
 package com.bot.models
 
 enum class RssProvider(val value: Int) {
-    REDDIT(1), TWITTER(2), CHAN(3), YOUTUBE(4), TWITCH(5), OTHER(0);
+    REDDIT(1), TWITTER(2), CHAN(3), YOUTUBE(4), TWITCH(5), BDO(7), OTHER(0);
 
     companion object {
         @JvmStatic
@@ -12,6 +12,7 @@ enum class RssProvider(val value: Int) {
                 3 -> CHAN
                 4 -> YOUTUBE
                 5 -> TWITCH
+                7 -> BDO
                 else -> OTHER
             }
         }
