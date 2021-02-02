@@ -33,7 +33,7 @@ public class RandomPostCommand extends RedditCommand{
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "RandomReddit")
+    @Trace(operationName = "executeCommand", resourceName = "RandomReddit")
     protected void executeCommand(CommandEvent commandEvent) {
         boolean isNSFWAllowed = true;
 

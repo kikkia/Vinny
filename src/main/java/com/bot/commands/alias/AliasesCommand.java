@@ -38,7 +38,7 @@ public class AliasesCommand extends GeneralCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "Aliases")
+    @Trace(operationName = "executeCommand", resourceName = "Aliases")
     protected void executeCommand(CommandEvent commandEvent) {
         // TODO: Will need updating for channel and user aliases
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());

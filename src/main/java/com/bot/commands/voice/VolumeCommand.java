@@ -14,7 +14,7 @@ public class VolumeCommand extends VoiceCommand {
 	}
 
 	@Override
-	//@trace(operationName = "executeCommand", resourceName = "Volume")
+	@Trace(operationName = "executeCommand", resourceName = "Volume")
 	protected void executeCommand(CommandEvent commandEvent) {
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		int newVolume;

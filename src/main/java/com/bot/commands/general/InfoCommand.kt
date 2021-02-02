@@ -14,7 +14,7 @@ class InfoCommand : GeneralCommand() {
         this.aliases = arrayOf("vinny", "about")
     }
 
-    //@trace(operationName = "executeCommand", resourceName = "Info")
+    @Trace(operationName = "executeCommand", resourceName = "Info")
     override fun executeCommand(commandEvent: CommandEvent) {
         val manager = ShardingManager.getInstance()
 

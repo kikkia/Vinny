@@ -8,6 +8,7 @@ import com.bot.commands.NSFWCommand;
 import com.bot.exceptions.ScheduledCommandFailedException;
 import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -38,7 +39,7 @@ public class Rule34Command extends NSFWCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "rule34")
+    @Trace(operationName = "executeCommand", resourceName = "rule34")
     protected void executeCommand(CommandEvent commandEvent) {
         // Get the tags
         String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + commandEvent.getArgs();

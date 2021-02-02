@@ -23,7 +23,7 @@ public class AddPrefixCommand extends ModerationCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "AddPrefix")
+    @Trace(operationName = "executeCommand", resourceName = "AddPrefix")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
 
