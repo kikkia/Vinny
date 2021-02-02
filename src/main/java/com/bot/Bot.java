@@ -53,8 +53,8 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;
 
 public class Bot extends ListenerAdapter {
@@ -67,7 +67,7 @@ public class Bot extends ListenerAdapter {
 	private MembershipDAO membershipDAO;
 	private ChannelDAO channelDAO;
 	private MetricsManager metricsManager;
-	private ScheduledExecutorService executor;
+	private ExecutorService executor;
 
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 
@@ -101,7 +101,7 @@ public class Bot extends ListenerAdapter {
 
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
-		executor = Executors.newScheduledThreadPool(80);
+		executor = Executors.newCachedThreadPool();
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import com.bot.db.MembershipDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.metrics.MetricsManager;
+import com.bot.tasks.CommandTaskExecutor;
 import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.bot.utils.ScheduledCommandUtils;
@@ -14,10 +15,13 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.MDC;
 
+import java.util.concurrent.ExecutorService;
+
 public abstract class BaseCommand extends Command {
     protected MetricsManager metricsManager;
     protected Logger logger;
     protected MembershipDAO membershipDAO;
+    protected ExecutorService commandExecutors;
 
     public boolean canSchedule;
 
@@ -25,6 +29,7 @@ public abstract class BaseCommand extends Command {
         this.metricsManager = MetricsManager.getInstance();
         this.logger = new Logger(this.getClass().getSimpleName());
         this.membershipDAO = MembershipDAO.getInstance();
+        this.commandExecutors = CommandTaskExecutor.getTaskExecutor();
     }
 
     @Override
@@ -60,7 +65,7 @@ public abstract class BaseCommand extends Command {
             return;
         }
         // Add some details to the MDC on the thread before executing
-        commandEvent.async(() -> {
+        commandExecutors.submit(() -> {
             // Add some details to the MDC on the thread before executing
             try (MDC.MDCCloseable commandCloseable = MDC.putCloseable("command", this.name);
                  MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
