@@ -9,6 +9,7 @@ import com.bot.utils.Logger;
 import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.MDC;
@@ -27,6 +28,7 @@ public abstract class BaseCommand extends Command {
     }
 
     @Override
+    @Trace(operationName = "pre-execute", resourceName = "baseCommand")
     protected void execute(CommandEvent commandEvent) {
         Guild guild = null;
         if (!commandEvent.isFromType(ChannelType.PRIVATE))
