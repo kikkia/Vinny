@@ -83,7 +83,7 @@ public abstract class BaseCommand extends Command {
         });
         // Kills runaway scheduled commands, I hate that I have to do this
         if (scheduled) {
-            commandCleanupScheduler.schedule(() -> future.cancel(true), 10, TimeUnit.SECONDS);
+            commandCleanupScheduler.schedule(() -> future.cancel(true), 5, TimeUnit.SECONDS);
         }
     }
 
