@@ -30,15 +30,12 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.channel.text.GenericTextChannelEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.api.events.channel.text.update.TextChannelUpdateNameEvent;
-import net.dv8tion.jda.api.events.channel.voice.GenericVoiceChannelEvent;
 import net.dv8tion.jda.api.events.channel.voice.VoiceChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.voice.VoiceChannelDeleteEvent;
 import net.dv8tion.jda.api.events.channel.voice.update.VoiceChannelUpdateNameEvent;
-import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -56,6 +53,7 @@ import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class Bot extends ListenerAdapter {
 	private final Logger LOGGER;
@@ -127,6 +125,11 @@ public class Bot extends ListenerAdapter {
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 		executor.execute(() -> {
 			InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
+			if (guild == null) {
+				LOGGER.warning("Guild not present when message received");
+				guildDAO.addFreshGuild(event.getGuild());
+				guild = guildDAO.getGuildById(event.getGuild().getId(), false);
+			}
 			MessageReceivedEvent aliasEvent = AliasUtils.getAliasMessageEvent(event, guild, null, null);
 
 			if (aliasEvent != null) {
@@ -163,13 +166,7 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-		executor.execute(() -> {
-			if (!addGuildIfNotPresent(event)) {
-				LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add membership.");
-				return;
-			}
-			membershipDAO.addUserToGuild(event.getUser(), event.getGuild());
-		});
+		executor.execute(() -> membershipDAO.addUserToGuild(event.getUser(), event.getGuild()));
 	}
 
 	@Override
@@ -206,24 +203,12 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onTextChannelCreate(TextChannelCreateEvent event) {
-		executor.execute(() -> {
-			if (!addGuildIfNotPresent(event)) {
-				LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add text channel.");
-				return;
-			}
-			channelDAO.addTextChannel(event.getChannel());
-		});
+		executor.execute(() -> channelDAO.addTextChannel(event.getChannel()));
 	}
 
 	@Override
 	public void onVoiceChannelCreate(VoiceChannelCreateEvent event) {
-		executor.execute(() -> {
-			if (!addGuildIfNotPresent(event)) {
-				LOGGER.log(Level.SEVERE, "Failed to add guild to db, dont add voice channel.");
-				return;
-			}
-			channelDAO.addVoiceChannel(event.getChannel());
-		});
+		executor.execute(() -> channelDAO.addVoiceChannel(event.getChannel()));
 	}
 
 	@Override
@@ -326,35 +311,4 @@ public class Bot extends ListenerAdapter {
 			manager.closeAudioConnection();
 		}
 	}
-
-	private boolean addGuildIfNotPresent(GenericGuildEvent event) {
-		InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
-
-		if (guild == null) {
-			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild " + event.getGuild().getId());
-			return guildDAO.addGuild(event.getGuild());
-		}
-		return true;
-	}
-
-	private boolean addGuildIfNotPresent(GenericTextChannelEvent event) {
-		InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
-
-		if (guild == null) {
-			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild " + event.getGuild().getId());
-			return guildDAO.addGuild(event.getGuild());
-		}
-		return true;
-	}
-
-	private boolean addGuildIfNotPresent(GenericVoiceChannelEvent event) {
-		InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
-
-		if (guild == null) {
-			LOGGER.log(Level.SEVERE, "Guild not in DB when adding membership, adding. Guild " + event.getGuild().getId());
-			return guildDAO.addGuild(event.getGuild());
-		}
-		return true;
-	}
-
 }
