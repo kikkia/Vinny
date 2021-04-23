@@ -25,7 +25,7 @@ public class ShitpostCommand extends MemeCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "Shitpost")
+    @Trace(operationName = "executeCommand", resourceName = "Shitpost")
     protected void executeCommand(CommandEvent commandEvent) {
         try{
             RedditHelper.getRandomSubmissionAndSend(redditConnection,

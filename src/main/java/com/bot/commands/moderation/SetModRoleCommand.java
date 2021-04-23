@@ -23,7 +23,7 @@ public class SetModRoleCommand extends ModerationCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "SetModRole")
+    @Trace(operationName = "executeCommand", resourceName = "SetModRole")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild = null;
         Guild commandGuild = commandEvent.getGuild();

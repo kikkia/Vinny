@@ -20,7 +20,7 @@ public class ServerInfoCommand extends GeneralCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "ServerInfo")
+    @Trace(operationName = "executeCommand", resourceName = "ServerInfo")
     protected void executeCommand(CommandEvent commandEvent) {
 
         Guild g = commandEvent.getGuild();

@@ -16,7 +16,7 @@ class CopyPastaCommand : MemeCommand() {
         redditConnection = RedditConnection.getInstance()
     }
 
-    //@trace(operationName = "executeCommand", resourceName = "CopyPasta")
+    @Trace(operationName = "executeCommand", resourceName = "CopyPasta")
     override fun executeCommand(commandEvent: CommandEvent) {
         try {
             commandEvent.reply(RedditHelper.getRandomCopyPasta(redditConnection))

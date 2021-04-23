@@ -28,7 +28,7 @@ class AyyCommand : MemeCommand() {
         this.help = "lmao"
     }
 
-    //@trace(operationName = "executeCommand", resourceName = "Ayy")
+    @Trace(operationName = "executeCommand", resourceName = "Ayy")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply(lmao)
     }

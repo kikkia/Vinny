@@ -20,7 +20,7 @@ class BanHammerCommand : MemeCommand() {
         this.help = "bring out the hammer"
     }
 
-    //@trace(operationName = "executeCommand", resourceName = "BanHammer")
+    @Trace(operationName = "executeCommand", resourceName = "BanHammer")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply(hammer)
     }
