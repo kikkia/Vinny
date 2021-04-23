@@ -2,9 +2,9 @@ package com.bot.commands.rss;
 
 import com.bot.models.RssProvider;
 import com.bot.utils.ConstantStrings;
+import com.bot.utils.RssUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -49,9 +49,10 @@ public class SubscribeTwitterCommand extends CreateSubscriptionCommand {
         //@trace(operationName = "executeCommand", resourceName = "SubscribeTwitter.stepOne")
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
+            subject = subject.replaceAll("@", "");
             // TODO: Check username is valid
-            if (false) {
-                commandEvent.replyWarning(ConstantStrings.TWITTER_SUB_NOT_FOUND);
+            if (!RssUtils.isTwitterHandleValid(subject)) {
+                commandEvent.replyWarning(ConstantStrings.TWITTER_HANDLE_NOT_VALID);
                 return;
             } else if (!event.getTextChannel().isNSFW()) {
                 commandEvent.replyWarning(ConstantStrings.TWITTER_NSFW);

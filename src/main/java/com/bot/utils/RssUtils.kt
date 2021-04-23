@@ -103,5 +103,10 @@ class RssUtils {
         fun isSubredditValid(name: String) : Boolean {
             return  !(name.length > 21 ||  name[0] == '_' || !Regex("[A-Za-z0-9_]").replace(name, "").isEmpty())
         }
+
+        @JvmStatic
+        fun isTwitterHandleValid(handle: String) : Boolean {
+            return handle.matches(Regex("^[a-zA-Z0-9_]+\$")) && handle.length < 16
+        }
     }
 }
