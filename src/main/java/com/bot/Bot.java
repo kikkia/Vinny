@@ -5,6 +5,7 @@ import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalShard;
+import com.bot.models.UsageLevel;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.utils.*;
@@ -40,6 +41,8 @@ import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
@@ -52,6 +55,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.logging.Level;
 
 public class Bot extends ListenerAdapter {
 	private final Logger LOGGER;
@@ -62,6 +66,7 @@ public class Bot extends ListenerAdapter {
 	private GuildDAO guildDAO;
 	private MembershipDAO membershipDAO;
 	private ChannelDAO channelDAO;
+	private UserDAO userDAO;
 	private MetricsManager metricsManager;
 	private ScheduledExecutorService executor;
 
@@ -94,6 +99,7 @@ public class Bot extends ListenerAdapter {
 		guildDAO = GuildDAO.getInstance();
 		membershipDAO = MembershipDAO.getInstance();
 		channelDAO = ChannelDAO.getInstance();
+		userDAO = UserDAO.getInstance();
 
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
@@ -198,6 +204,39 @@ public class Bot extends ListenerAdapter {
 		});
 	}
 
+	@Override
+	public void onGuildMemberRoleAdd(@NotNull GuildMemberRoleAddEvent event) {
+		// Hardcoded for now since not much time to work on project, and really needs a rework anyways.
+		// Checks for donor role assigned on support server
+		if (event.getGuild().getId().equals("294900956078800897")) {
+			String assignedId = event.getRoles().get(0).getId();
+			if (assignedId.equals("638201929591423010") || assignedId.equals("638202019152265226")) {
+				try {
+					userDAO.setUsageLevel(UsageLevel.DONOR, event.getUser().getId());
+				} catch (SQLException throwables) {
+					LOGGER.log(Level.SEVERE, "Failed to assign usage level", throwables);
+				}
+			}
+		}
+		super.onGuildMemberRoleAdd(event);
+	}
+
+	@Override
+	public void onGuildMemberRoleRemove(@NotNull GuildMemberRoleRemoveEvent event) {
+		// Hardcoded for now since not much time to work on project, and really needs a rework anyways.
+		// Checks for donor role removed on support server
+		if (event.getGuild().getId().equals("294900956078800897")) {
+			String assignedId = event.getRoles().get(0).getId();
+			if (assignedId.equals("638201929591423010") || assignedId.equals("638202019152265226")) {
+				try {
+					userDAO.setUsageLevel(UsageLevel.BASIC, event.getUser().getId());
+				} catch (SQLException throwables) {
+					LOGGER.log(Level.SEVERE, "Failed to assign usage level", throwables);
+				}
+			}
+		}
+		super.onGuildMemberRoleRemove(event);
+	}
 
 	@Override
 	public void onTextChannelCreate(TextChannelCreateEvent event) {

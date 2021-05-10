@@ -203,7 +203,8 @@ public class ShardingManager {
                 new FUserCommand(),
                 new ForceSendMessage(),
                 new ShardCommand(),
-                new ShardStatsCommand()
+                new ShardStatsCommand(),
+                new SetUsageCommand()
                 );
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +

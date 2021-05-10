@@ -3,23 +3,27 @@ package com.bot.commands.scheduled;
 import com.bot.commands.BaseCommand;
 import com.bot.commands.ModerationCommand;
 import com.bot.db.ScheduledCommandDAO;
+import com.bot.db.UserDAO;
 import com.bot.exceptions.IntervalFormatException;
+import com.bot.models.InternalUser;
 import com.bot.models.ScheduledCommand;
+import com.bot.models.UsageLevel;
 import com.bot.utils.*;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 public class ScheduleCommand extends ModerationCommand {
 
     private EventWaiter waiter;
     private ScheduledCommandDAO scheduledCommandDAO;
+    private UserDAO userDAO;
 
     public ScheduleCommand(EventWaiter waiter) {
         this.name = "schedule";
@@ -29,12 +33,21 @@ public class ScheduleCommand extends ModerationCommand {
         this.guildOnly = true;
         this.waiter = waiter;
         this.scheduledCommandDAO = ScheduledCommandDAO.getInstance();
+        this.userDAO = UserDAO.getInstance();
     }
 
     @Override
     //@trace(operationName = "executeCommand", resourceName = "Schedule")
     protected void executeCommand(CommandEvent commandEvent) {
-        if (!ScheduledCommandUtils.isUserDonator(commandEvent.getAuthor().getId())) {
+        // Shit code
+        InternalUser user = null;
+        try {
+            user = userDAO.getById(commandEvent.getAuthor().getId());
+        } catch (SQLException throwables) {
+           logger.log(Level.WARNING, "Did not find user", throwables);
+        }
+
+        if (user == null || user.usageLevel() == UsageLevel.BASIC) {
             if (scheduledCommandDAO.getCountOfScheduledForAuthor(commandEvent.getAuthor().getId()) >= 5) {
                 commandEvent.replyWarning("You can only make 5 scheduled commands. To be able to make unlimited can donate" +
                         " at " + ConstantStrings.DONATION_URL + ". If you have already donated, make sure you are in the Vinny support server." +

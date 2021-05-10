@@ -1,4 +1,15 @@
 package com.bot.models
 
-// WIP
-public data class InternalUser(val id: String)
+import java.sql.ResultSet
+
+public data class InternalUser(val id: String, val usageLevel: Int) {
+    fun usageLevel() : UsageLevel {
+        return UsageLevel.fromInt(usageLevel)!!
+    }
+
+    companion object {
+        fun mapSetToUser(set: ResultSet) : InternalUser {
+            return InternalUser(set.getString("id"), set.getInt("usage_level"));
+        }
+    }
+}

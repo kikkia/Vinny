@@ -1,0 +1,2 @@
+ALTER TABLE users
+ADD usage_level INT NOT NULL DEFAULT 0;
