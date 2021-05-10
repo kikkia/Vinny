@@ -29,6 +29,7 @@ public class AliasUtils {
         return new ReceivedMessage(message.getIdLong(),
                 message.getChannel(),
                 message.getType(),
+                message.getReferencedMessage(),
                 message.isWebhookMessage(),
                 message.mentionsEveryone(),
                 null,
@@ -44,6 +45,7 @@ public class AliasUtils {
                 message.getReactions(),
                 message.getAttachments(),
                 message.getEmbeds(),
+                message.getStickers(),
                 0);
     }
 
