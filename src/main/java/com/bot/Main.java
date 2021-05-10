@@ -60,7 +60,7 @@ public class Main {
 		scheduledTaskExecutor.scheduleAtFixedRate(new MetricsReporter(), 0, 10, TimeUnit.SECONDS);
 
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_SCHEDULED_COMMANDS))) {
-			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 120, 9, TimeUnit.SECONDS);
+			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 300, 9, TimeUnit.SECONDS);
 		}
 
 		// If nats is enabled, register subscribers
