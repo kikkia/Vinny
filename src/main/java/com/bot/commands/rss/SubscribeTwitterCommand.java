@@ -21,7 +21,7 @@ public class SubscribeTwitterCommand extends CreateSubscriptionCommand {
     }
 
     @Override
-    @Trace(operationName = "executeCommand", resourceName = "SubscribeTwitter")
+    //@Trace(operationName = "executeCommand", resourceName = "SubscribeTwitter")
     public void executeCommand(CommandEvent commandEvent) {
         if (!canMakeNewSubscription(commandEvent)) {
             return;
@@ -46,7 +46,7 @@ public class SubscribeTwitterCommand extends CreateSubscriptionCommand {
         }
 
         @Override
-        @Trace(operationName = "executeCommand", resourceName = "SubscribeTwitter.stepOne")
+        //@Trace(operationName = "executeCommand", resourceName = "SubscribeTwitter.stepOne")
         public void accept(MessageReceivedEvent event) {
             String subject = event.getMessage().getContentRaw();
             subject = subject.replaceAll("@", "");

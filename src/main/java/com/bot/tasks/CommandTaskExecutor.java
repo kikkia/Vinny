@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 
 public class CommandTaskExecutor {
     private static ExecutorService taskExecutor = Executors.newFixedThreadPool(400);
-    private static ExecutorService scheduledCommandExecutor = Executors.newFixedThreadPool(5);
+    private static ExecutorService scheduledCommandExecutor = Executors.newFixedThreadPool(6);
 
     public static ExecutorService getTaskExecutor() {
         return taskExecutor;

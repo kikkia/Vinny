@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 
 public class FormattingUtils {
 
+    private static int MIN_INTERVAL = 300000;
+
     public static ArrayList<String> splitTextIntoChunksByWords(String input, int chunkLength) {
         ArrayList<String> stringList = new ArrayList<>();
 
@@ -260,8 +262,8 @@ public class FormattingUtils {
                 }
 
                 // Min time is one minute
-                if (interval < convertUnits[1]) {
-                    throw new IntervalFormatException("Interval cannot be smaller than 1 minute");
+                if (interval < MIN_INTERVAL) {
+                    throw new IntervalFormatException("Interval cannot be smaller than 5 minutes");
                 }
 
                 return interval;
