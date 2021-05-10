@@ -14,7 +14,7 @@ public class StopCommand extends VoiceCommand {
 	}
 
 	@Override
-	//@trace(operationName = "executeCommand", resourceName = "Stop")
+	@Trace(operationName = "executeCommand", resourceName = "Stop")
 	protected void executeCommand(CommandEvent commandEvent) {
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		if (handler == null) {

@@ -14,7 +14,7 @@ public class SkipCommand extends VoiceCommand {
 	}
 
 	@Override
-	//@trace(operationName = "executeCommand", resourceName = "SkipTrack")
+	@Trace(operationName = "executeCommand", resourceName = "SkipTrack")
 	protected void executeCommand(CommandEvent commandEvent) {
 		VoiceSendHandler handler = (VoiceSendHandler) commandEvent.getGuild().getAudioManager().getSendingHandler();
 		if (handler == null) {

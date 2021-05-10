@@ -6,13 +6,14 @@ import com.bot.voice.VoiceSendHandler
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.Paginator
+import datadog.trace.api.Trace
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ListTracksCommand(waiter: EventWaiter) : VoiceCommand() {
     private val builder: Paginator.Builder
 
-    //@trace(operationName = "executeCommand", resourceName = "ListTracks")
+    @Trace(operationName = "executeCommand", resourceName = "ListTracks")
     override fun executeCommand(commandEvent: CommandEvent) {
         val handler = commandEvent.guild.audioManager.sendingHandler as VoiceSendHandler?
         if (handler == null) {

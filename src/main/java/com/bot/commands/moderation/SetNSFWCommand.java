@@ -23,7 +23,7 @@ public class SetNSFWCommand extends ModerationCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "SetNSFWRole")
+    @Trace(operationName = "executeCommand", resourceName = "SetNSFWRole")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild = null;
         Guild commandGuild = commandEvent.getGuild();

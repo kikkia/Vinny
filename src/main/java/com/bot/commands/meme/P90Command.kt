@@ -5,11 +5,11 @@ import com.bot.db.ChannelDAO
 import com.bot.models.InternalTextChannel
 import com.bot.utils.HttpUtils
 import com.jagrosh.jdautilities.command.CommandEvent
+import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.PrivateChannel
 
 class P90Command : MemeCommand() {
 
-    private val channelDAO: ChannelDAO
 
     init {
         this.name = "webm"
@@ -17,18 +17,11 @@ class P90Command : MemeCommand() {
         this.arguments = "<Search terms or nothing>"
         this.aliases = arrayOf("p90")
 
-        channelDAO = ChannelDAO.getInstance()
     }
 
-    //@trace(operationName = "executeCommand", resourceName = "P90")
+    @Trace(operationName = "executeCommand", resourceName = "P90")
     override fun executeCommand(commandEvent: CommandEvent) {
-        val channel = channelDAO.getTextChannelForId(commandEvent.channel.id, true)
-        var canNSFW = false
-        if (channel == null) {
-            channelDAO.addTextChannel(commandEvent.textChannel)
-        } else {
-            canNSFW = canNSFW(commandEvent, channel)
-        }
+        val canNSFW = canNSFW(commandEvent)
 
         if (!canNSFW && !commandEvent.args.isEmpty()) {
             commandEvent.replyWarning("You cannot search without nsfw enabled for this channel " + "(Both in Vinny and discord).")
@@ -48,12 +41,12 @@ class P90Command : MemeCommand() {
 
     }
 
-    private fun canNSFW(commandEvent: CommandEvent, channel: InternalTextChannel): Boolean {
+    private fun canNSFW(commandEvent: CommandEvent): Boolean {
         return if (commandEvent.channel is PrivateChannel) {
             true
         } else {
             // If no channel try to add it and keep going (not nsfw)
-            channel.isNSFWEnabled && commandEvent.textChannel.isNSFW
+            commandEvent.textChannel.isNSFW
         }
     }
 }

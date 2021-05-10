@@ -11,7 +11,7 @@ class SupportCommand : GeneralCommand() {
         this.aliases = arrayOf("bug", "report", "helppls", "pls")
     }
 
-    //@trace(operationName = "executeCommand", resourceName = "Support")
+    @Trace(operationName = "executeCommand", resourceName = "Support")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply("To report bugs, suggest features, or just hang out, join the Vinny support server: https://discord.gg/XMwyzxZ")
     }

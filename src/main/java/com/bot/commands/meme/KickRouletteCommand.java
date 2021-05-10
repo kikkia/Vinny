@@ -30,7 +30,7 @@ public class KickRouletteCommand extends MemeCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "KickRoulette")
+    @Trace(operationName = "executeCommand", resourceName = "KickRoulette")
     protected void executeCommand(CommandEvent commandEvent) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Kick Roulette");

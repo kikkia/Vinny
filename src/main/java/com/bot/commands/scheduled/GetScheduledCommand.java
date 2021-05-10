@@ -39,7 +39,7 @@ public class GetScheduledCommand extends GeneralCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "GetScheduled")
+    @Trace(operationName = "executeCommand", resourceName = "GetScheduled")
     protected void executeCommand(CommandEvent commandEvent) {
         String args = commandEvent.getArgs();
         if (!(args.equalsIgnoreCase("g") ||

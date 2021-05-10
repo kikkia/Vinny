@@ -67,8 +67,6 @@ public class Main {
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_NATS))) {
 			new RssSubscriber(config);
 		}
-//		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-//		service.scheduleAtFixedRate(new CleanupIdlePlayers(), 60, 300, TimeUnit.SECONDS);
 
 		System.out.println("Successfully started.");
 	}

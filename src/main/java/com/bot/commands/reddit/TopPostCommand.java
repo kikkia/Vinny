@@ -2,9 +2,7 @@ package com.bot.commands.reddit;
 
 import com.bot.RedditConnection;
 import com.bot.commands.RedditCommand;
-import com.bot.db.ChannelDAO;
 import com.bot.exceptions.ScheduledCommandFailedException;
-import com.bot.models.InternalTextChannel;
 import com.bot.utils.CommandCategories;
 import com.bot.utils.ConstantStrings;
 import com.bot.utils.RedditHelper;
@@ -21,7 +19,6 @@ import java.util.logging.Level;
 
 public class TopPostCommand extends RedditCommand{
     private RedditConnection redditConnection;
-    private ChannelDAO channelDAO;
 
     public TopPostCommand() {
         this.name = "tr";
@@ -29,24 +26,15 @@ public class TopPostCommand extends RedditCommand{
         this.arguments = "<subreddit name>";
         this.category = CommandCategories.REDDIT;
         redditConnection = RedditConnection.getInstance();
-        channelDAO = ChannelDAO.getInstance();
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "TopReddit")
+    @Trace(operationName = "executeCommand", resourceName = "TopReddit")
     protected void executeCommand(CommandEvent commandEvent) {
         boolean isNSFWAllowed = true;
 
         // TODO: Move to static helper
         if (!commandEvent.isFromType(ChannelType.PRIVATE)) {
-            InternalTextChannel channel = channelDAO.getTextChannelForId(commandEvent.getTextChannel().getId(), true);
-
-            if (channel == null) {
-                commandEvent.reply(commandEvent.getClient().getError() + " Something went wrong getting the channel from the db. Please try again.");
-                metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
-                return;
-            }
-
             isNSFWAllowed = commandEvent.getTextChannel().isNSFW();
         }
 

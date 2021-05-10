@@ -20,7 +20,7 @@ public class ListGuildPlaylistCommand extends VoiceCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "guildPlaylists")
+    @Trace(operationName = "executeCommand", resourceName = "guildPlaylists")
     protected void executeCommand(CommandEvent commandEvent) {
         List<Playlist> playlistList = playlistDAO.getPlaylistsForGuild(commandEvent.getGuild().getId());
 

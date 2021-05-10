@@ -16,7 +16,7 @@ class SayCommand : GeneralCommand() {
         this.arguments = "<Something to say>"
     }
 
-    //@trace(operationName = "executeCommand", resourceName = "Say")
+    @Trace(operationName = "executeCommand", resourceName = "Say")
     override fun executeCommand(commandEvent: CommandEvent) {
         if (ScheduledCommandUtils.isScheduled(commandEvent)) {
             try {

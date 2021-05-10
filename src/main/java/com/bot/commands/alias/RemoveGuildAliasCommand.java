@@ -25,7 +25,7 @@ public class RemoveGuildAliasCommand extends ModerationCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "RemoveGuildAlias")
+    @Trace(operationName = "executeCommand", resourceName = "RemoveGuildAlias")
     protected void executeCommand(CommandEvent commandEvent) {
         InternalGuild guild = guildDAO.getGuildById(commandEvent.getGuild().getId());
 

@@ -22,7 +22,7 @@ class LennyCommand : MemeCommand() {
         this.help = "prints a lenny face"
     }
 
-    //@trace(operationName = "executeCommand", resourceName = "Lenny")
+    @Trace(operationName = "executeCommand", resourceName = "Lenny")
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.reply(lenny)
     }

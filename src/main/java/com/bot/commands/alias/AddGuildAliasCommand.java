@@ -33,7 +33,7 @@ public class AddGuildAliasCommand extends ModerationCommand {
 
     // Step by step walkthrough for making an alias
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "AddGuildAlias")
+    @Trace(operationName = "executeCommand", resourceName = "AddGuildAlias")
     protected void executeCommand(CommandEvent commandEvent) {
         commandEvent.reply(ConstantStrings.GUILD_ALIAS_SETUP_HELLO);
 

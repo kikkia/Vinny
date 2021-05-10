@@ -4,19 +4,26 @@ import com.bot.db.MembershipDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.metrics.MetricsManager;
+import com.bot.tasks.CommandTaskExecutor;
 import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.MDC;
+
+import java.util.concurrent.*;
 
 public abstract class BaseCommand extends Command {
     protected MetricsManager metricsManager;
     protected Logger logger;
     protected MembershipDAO membershipDAO;
+    protected ExecutorService commandExecutors;
+    protected  ExecutorService scheduledComamndExecutor;
+    protected ScheduledExecutorService commandCleanupScheduler;
 
     public boolean canSchedule;
 
@@ -24,10 +31,15 @@ public abstract class BaseCommand extends Command {
         this.metricsManager = MetricsManager.getInstance();
         this.logger = new Logger(this.getClass().getSimpleName());
         this.membershipDAO = MembershipDAO.getInstance();
+        this.commandExecutors = CommandTaskExecutor.getTaskExecutor();
+        this.scheduledComamndExecutor = CommandTaskExecutor.getScheduledCommandExecutor();
+        this.commandCleanupScheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
     @Override
+    @Trace(operationName = "pre-execute", resourceName = "baseCommand")
     protected void execute(CommandEvent commandEvent) {
+        boolean scheduled = ScheduledCommandUtils.isScheduled(commandEvent);
         Guild guild = null;
         if (!commandEvent.isFromType(ChannelType.PRIVATE))
             guild = commandEvent.getGuild();
@@ -58,7 +70,8 @@ public abstract class BaseCommand extends Command {
             return;
         }
         // Add some details to the MDC on the thread before executing
-        commandEvent.async(() -> {
+        ExecutorService executorService = scheduled ? scheduledComamndExecutor : commandExecutors;
+        Future future = executorService.submit(() -> {
             // Add some details to the MDC on the thread before executing
             try (MDC.MDCCloseable commandCloseable = MDC.putCloseable("command", this.name);
                  MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
@@ -68,6 +81,10 @@ public abstract class BaseCommand extends Command {
                 commandEvent.replyError("Something went wrong executing that command. If this continues please contact the support server.");
             }
         });
+        // Kills runaway scheduled commands, I hate that I have to do this
+        if (scheduled) {
+            commandCleanupScheduler.schedule(() -> future.cancel(true), 5, TimeUnit.SECONDS);
+        }
     }
 
     protected abstract void executeCommand(CommandEvent commandEvent);

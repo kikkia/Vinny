@@ -29,7 +29,7 @@ class CommentCommand : MemeCommand() {
         markovCache = MarkovModelCache.getInstance()
     }
 
-    //@trace(operationName = "executeCommand", resourceName = "Comment")
+    @Trace(operationName = "executeCommand", resourceName = "Comment")
     override fun executeCommand(commandEvent: CommandEvent) {
         val mentionedUsers = ArrayList(commandEvent.message.mentionedUsers)
 

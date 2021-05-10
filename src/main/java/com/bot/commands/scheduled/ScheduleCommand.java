@@ -37,7 +37,7 @@ public class ScheduleCommand extends ModerationCommand {
     }
 
     @Override
-    //@trace(operationName = "executeCommand", resourceName = "Schedule")
+    @Trace(operationName = "executeCommand", resourceName = "Schedule")
     protected void executeCommand(CommandEvent commandEvent) {
         // Shit code
         InternalUser user = null;
@@ -77,7 +77,7 @@ public class ScheduleCommand extends ModerationCommand {
         }
 
         @Override
-        //@trace(operationName = "executeCommand", resourceName = "Schedule.stepOne")
+        @Trace(operationName = "executeCommand", resourceName = "Schedule.stepOne")
         public void accept(MessageReceivedEvent event) {
             if (event.getMessage().getContentRaw().equals("?")) {
                 commandEvent.reply(ConstantStrings.SCHEDULED_COMMANDS_HELP);
@@ -116,7 +116,7 @@ public class ScheduleCommand extends ModerationCommand {
         }
 
         @Override
-        //@trace(operationName = "executeCommand", resourceName = "Schedule.stepTwo")
+        @Trace(operationName = "executeCommand", resourceName = "Schedule.stepTwo")
         public void accept(MessageReceivedEvent event) {
             long interval;
             try {

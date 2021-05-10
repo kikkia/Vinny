@@ -25,7 +25,7 @@ public class SaveMyPlaylistCommand extends VoiceCommand {
 	}
 
 	@Override
-	//@trace(operationName = "executeCommand", resourceName = "SaveMyPlaylist")
+	@Trace(operationName = "executeCommand", resourceName = "SaveMyPlaylist")
 	protected void executeCommand(CommandEvent commandEvent) {
 		String args = commandEvent.getArgs();
 		if (args.isEmpty()) {
