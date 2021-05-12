@@ -9,4 +9,10 @@ data class RssChannelSubscription(val id: Int, val rssSubscription: RssSubscript
         val subject = rssSubscription.displayName ?: rssSubscription.subject
         return "ID: $id\nProvider: ${rssSubscription.provider.name}\nSubject: $subject\nChannel: $channelName (${channel})\nAuthor: $authorName"
     }
+
+    fun toCondensedString(): String {
+        val subject = rssSubscription.displayName ?: rssSubscription.subject
+        val authorName = ShardingManager.getInstance().getUserFromAnyShard(author)?.name ?: "Author not found :thonk:"
+        return "ID: $id Type: ${rssSubscription.provider.name} Subject: $subject Author: $authorName"
+    }
 }

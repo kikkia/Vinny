@@ -342,6 +342,10 @@ This command gets all of the subscriptions for a channel, or for you.
 * `~subscriptions me` - Get all subscriptions you have made
 * `~subscriptions c` - Get all subscriptions for this channel
 
+### `listsubs`
+Lists all of the subscriptions in the channel in a more compact way (Good if you have a TON of subs)
+* `~listsubs` - Get all subs in channel
+
 ### `unsubscribe`
 Removes a subscription of the given ID. You can find this ID from the `subscriptions` command
 * `~unsubscribe <id>`

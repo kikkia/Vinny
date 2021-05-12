@@ -136,6 +136,7 @@ public class ShardingManager {
                     new PixivCommand(),
                     new ReviewCommand(),
                     new GetScheduledCommand(waiter),
+                    new ListSubscriptionsCommand(waiter),
                     new HelpCommand(),
 
                     // Alias Commands
