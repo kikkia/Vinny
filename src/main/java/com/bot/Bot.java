@@ -51,14 +51,14 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.logging.Level;
 
+@Component
 public class Bot extends ListenerAdapter {
 	private final Logger LOGGER;
 	private final AudioPlayerManager manager;
@@ -75,8 +75,8 @@ public class Bot extends ListenerAdapter {
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 
 
-	Bot() {
-		this.config = Config.getInstance();
+	Bot(Config config, GuildDAO guildDAO, MembershipDAO membershipDAO, ChannelDAO channelDAO, UserDAO userDAO, MetricsManager metricsManager) {
+		this.config = config;
 		this.manager = new DefaultAudioPlayerManager();
 
 		YoutubeAudioSourceManager ytSource = new YoutubeAudioSourceManager(true);
@@ -98,13 +98,13 @@ public class Bot extends ListenerAdapter {
 		manager.registerSourceManager(new BeamAudioSourceManager());
 		manager.registerSourceManager(new HttpAudioSourceManager());
 
-		guildDAO = GuildDAO.getInstance();
-		membershipDAO = MembershipDAO.getInstance();
-		channelDAO = ChannelDAO.getInstance();
-		userDAO = UserDAO.getInstance();
+		this.guildDAO = guildDAO;
+		this.membershipDAO = membershipDAO;
+		this.channelDAO = channelDAO;
+		this.userDAO = userDAO;
 
 		LOGGER =  new Logger(Bot.class.getName());
-		metricsManager = MetricsManager.getInstance();
+		this.metricsManager = metricsManager;
 		executor = Executors.newScheduledThreadPool(30);
 	}
 

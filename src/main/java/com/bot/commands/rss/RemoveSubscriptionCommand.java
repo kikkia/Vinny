@@ -7,19 +7,21 @@ import com.bot.models.InternalChannel;
 import com.bot.models.RssChannelSubscription;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 
+@Component
 public class RemoveSubscriptionCommand extends ModerationCommand {
 
     private RssDAO rssDAO;
     private ChannelDAO channelDAO;
 
-    public RemoveSubscriptionCommand() {
+    public RemoveSubscriptionCommand(RssDAO rssDAO, ChannelDAO channelDAO) {
         this.name = "unsubscribe";
         this.aliases = new String[] {"removesub", "removesubscription"};
-        rssDAO = RssDAO.getInstance();
-        channelDAO = ChannelDAO.getInstance();
+        this.rssDAO = rssDAO;
+        this.channelDAO = channelDAO;
     }
 
     @Override

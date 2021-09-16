@@ -4,7 +4,9 @@ import com.bot.commands.VoiceCommand;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PauseCommand extends VoiceCommand {
 
 	public PauseCommand() {

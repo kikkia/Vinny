@@ -4,10 +4,12 @@ import com.bot.commands.MemeCommand
 import com.github.lalyos.jfiglet.FigletFont
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
 import java.io.IOException
 
-class AsciiCommand : MemeCommand() {
+@Component
+open class AsciiCommand : MemeCommand() {
     init {
         this.name = "ascii"
         this.help = "Generates a figlet of the text its given"

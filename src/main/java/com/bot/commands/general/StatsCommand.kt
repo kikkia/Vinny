@@ -3,8 +3,10 @@ package com.bot.commands.general
 import com.bot.commands.GeneralCommand
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class StatsCommand : GeneralCommand() {
+@Component
+open class StatsCommand : GeneralCommand() {
     init {
         this.name = "stats"
         this.help = "Gives a link to detailed vinny statistics"

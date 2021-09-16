@@ -3,8 +3,10 @@ package com.bot.commands.general
 import com.bot.commands.GeneralCommand
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class InviteCommand : GeneralCommand() {
+@Component
+open class InviteCommand : GeneralCommand() {
     init {
         this.name = "invite"
         this.help = "Sends a link to invite the bot to your server"

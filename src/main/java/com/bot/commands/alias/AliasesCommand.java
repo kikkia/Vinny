@@ -9,23 +9,24 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Paginator;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+@Component
 public class AliasesCommand extends GeneralCommand {
 
     private GuildDAO guildDAO;
     private AliasDAO aliasDAO;
     private final Paginator.Builder builder;
 
-    public AliasesCommand(EventWaiter waiter) {
+    public AliasesCommand(EventWaiter waiter, AliasDAO aliasDAO, GuildDAO guildDAO) {
         this.name = "aliases";
         this.help = "Shows a list of all aliases available to you";
-        this.aliasDAO = AliasDAO.getInstance();
-        this.guildDAO = GuildDAO.getInstance();
-
+        this.aliasDAO = aliasDAO;
+        this.guildDAO = guildDAO;
         builder = new Paginator.Builder()
                 .setColumns(1)
                 .setItemsPerPage(10)

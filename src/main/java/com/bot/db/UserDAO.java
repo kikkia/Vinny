@@ -4,31 +4,22 @@ import com.bot.models.InternalUser;
 import com.bot.models.UsageLevel;
 import com.bot.utils.Logger;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Service
 public class UserDAO {
     private static final Logger LOGGER = new Logger(RssDAO.class.getName());
 
     private HikariDataSource write;
     private static UserDAO instance;
 
-    private UserDAO() {
-        initialize();
-    }
-
-    public static UserDAO getInstance() {
-        if (instance == null) {
-            instance = new UserDAO();
-        }
-        return instance;
-    }
-
-    private void initialize() {
-        this.write = ConnectionPool.getDataSource();
+    public UserDAO(HikariDataSource hikariDataSource) {
+        this.write = hikariDataSource;
     }
 
     public InternalUser getById(String id) throws SQLException {

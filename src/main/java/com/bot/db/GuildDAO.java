@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,6 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 
+@Service
 public class GuildDAO {
     private static final Logger LOGGER = new Logger(PlaylistDAO.class.getName());
     private final int DEFAULT_VOLUME = 100;
@@ -26,35 +28,12 @@ public class GuildDAO {
     private HikariDataSource write;
     private GuildCache cache;
     private AliasDAO aliasDAO;
-    private static GuildDAO instance;
-
-
-    private GuildDAO() {
-        try {
-            initialize();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
-    public GuildDAO(HikariDataSource dataSource, AliasDAO aliasDAO) {
+    public GuildDAO(HikariDataSource dataSource, GuildCache guildCache, AliasDAO aliasDAO) {
         this.write = dataSource;
-        this.cache = GuildCache.getInstance();
+        this.cache = guildCache;
         this.aliasDAO = aliasDAO;
-    }
-
-    public static GuildDAO getInstance() {
-        if (instance == null)
-            instance = new GuildDAO();
-        return instance;
-    }
-
-    private void initialize() throws SQLException {
-        this.write = ConnectionPool.getDataSource();
-        this.cache = GuildCache.getInstance();
-        this.aliasDAO = AliasDAO.getInstance();
-
     }
 
     public InternalGuild getGuildById(String guildId) {

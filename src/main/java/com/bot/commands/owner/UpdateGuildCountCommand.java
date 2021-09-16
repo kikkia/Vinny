@@ -1,25 +1,28 @@
 package com.bot.commands.owner;
 
 import com.bot.commands.OwnerCommand;
+import com.bot.config.properties.ExternalServiceProperties;
 import com.bot.db.GuildDAO;
-import com.bot.utils.Config;
 import com.bot.utils.HttpUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UpdateGuildCountCommand extends OwnerCommand {
-    private Config config;
+    private ExternalServiceProperties config;
+    private GuildDAO guildDAO;
 
-    public UpdateGuildCountCommand() {
+    public UpdateGuildCountCommand(ExternalServiceProperties externalServiceProperties, GuildDAO guildDAO) {
         this.name = "updateguildcount";
-
-        this.config = Config.getInstance();
+        this.guildDAO = guildDAO;
+        this.config = externalServiceProperties;
     }
 
     @Override
     protected void executeCommand(CommandEvent commandEvent) {
-        String i = GuildDAO.getInstance().getActiveGuildCount() + "";
+        String i = guildDAO.getActiveGuildCount() + "";
         commandEvent.reply(i);
-        if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS))) {
+        if (config.getEnableExternalBotApis()) {
             try {
                 HttpUtils.postGuildCountToExternalSites();
                 commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();

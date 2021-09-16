@@ -1,31 +1,20 @@
 package com.bot.caching;
 
+import com.bot.config.properties.CacheProperties;
 import com.bot.utils.Logger;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class E621Cache {
     private final Logger logger;
 
-    private static E621Cache instance;
     private Cache<List<String>> cache;
-    private int MAX_SIZE;
-    private int CACHE_OBJECT_LIFETIME;
-    private int CACHE_CHECK_INTERVAL;
 
-    public static E621Cache getInstance() {
-        if (instance == null) {
-            instance = new E621Cache();
-        }
-        return instance;
-    }
-
-    private E621Cache() {
-        MAX_SIZE = 400;
-        CACHE_CHECK_INTERVAL = 661;
-        CACHE_OBJECT_LIFETIME = 3600;
-
-        cache = new Cache<>("e621", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
+    public E621Cache(CacheProperties cacheProperties) {
+        cache = new Cache<>("e621", cacheProperties.getE621Max(), cacheProperties.getE621MaxLife(),
+                cacheProperties.getE621CleanInterval());
 
         logger = new Logger(this.getClass().getName());
     }

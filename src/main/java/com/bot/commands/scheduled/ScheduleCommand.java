@@ -17,27 +17,29 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+@Component
 public class ScheduleCommand extends ModerationCommand {
 
     private EventWaiter waiter;
     private ScheduledCommandDAO scheduledCommandDAO;
     private UserDAO userDAO;
 
-    public ScheduleCommand(EventWaiter waiter) {
+    public ScheduleCommand(EventWaiter waiter, ScheduledCommandDAO scheduledCommandDAO, UserDAO userDAO) {
         this.name = "schedule";
         this.aliases = new String[] {"schedulecommand", "setupschedule"};
         this.help = "Adds a scheduled command to the channel";
         this.botPermissions = new Permission[] {Permission.MANAGE_WEBHOOKS};
         this.guildOnly = true;
         this.waiter = waiter;
-        this.scheduledCommandDAO = ScheduledCommandDAO.getInstance();
-        this.userDAO = UserDAO.getInstance();
+        this.scheduledCommandDAO = scheduledCommandDAO;
+        this.userDAO = userDAO;
     }
 
     @Override

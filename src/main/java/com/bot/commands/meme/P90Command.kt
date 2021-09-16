@@ -7,16 +7,16 @@ import com.bot.utils.HttpUtils
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.PrivateChannel
+import org.springframework.stereotype.Component
 
-class P90Command : MemeCommand() {
-
+@Component
+open class P90Command : MemeCommand() {
 
     init {
         this.name = "webm"
         this.help = "Gets a webm from P90.zone"
         this.arguments = "<Search terms or nothing>"
         this.aliases = arrayOf("p90")
-
     }
 
     @Trace(operationName = "executeCommand", resourceName = "P90")

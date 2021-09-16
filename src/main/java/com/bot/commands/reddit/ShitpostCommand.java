@@ -7,21 +7,23 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
+import org.springframework.stereotype.Component;
 
 import java.util.logging.Level;
 
 /**
  * This class is technically a reddit command but because of its nature we are calling it a meme category commande
  */
+@Component
 public class ShitpostCommand extends MemeCommand {
     private RedditConnection redditConnection;
 
-    public ShitpostCommand() {
+    public ShitpostCommand(RedditConnection redditConnection) {
         this.name = "shitpost";
         this.help = "Posts a shitpost";
         this.aliases = new String[]{"shit"};
 
-        redditConnection = RedditConnection.getInstance();
+        this.redditConnection = redditConnection;
     }
 
     @Override

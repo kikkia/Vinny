@@ -1,5 +1,7 @@
 package com.bot.commands.rss;
 
+import com.bot.db.RssDAO;
+import com.bot.db.UserDAO;
 import com.bot.models.RssProvider;
 import com.bot.utils.ConstantStrings;
 import com.bot.utils.RssUtils;
@@ -7,17 +9,24 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+@Component
 public class SubscribeTwitterCommand extends CreateSubscriptionCommand {
+    private RssDAO rssDAO;
+    private UserDAO userDAO;
 
-    public SubscribeTwitterCommand(EventWaiter waiter) {
+    public SubscribeTwitterCommand(EventWaiter waiter, RssDAO rssDAO, UserDAO userDAO) {
         this.name = "subscribetwitter";
         this.botPermissions = new Permission[] {Permission.MANAGE_WEBHOOKS};
         this.waiter = waiter;
+        this.rssDAO = rssDAO;
+        this.userDAO = userDAO;
     }
 
     @Override
@@ -36,6 +45,18 @@ public class SubscribeTwitterCommand extends CreateSubscriptionCommand {
                 new SubscribeTwitterCommand.StepOneConsumer(commandEvent),
                 // if the user takes more than a minute, time out
                 1, TimeUnit.MINUTES, () -> commandEvent.reply(ConstantStrings.EVENT_WAITER_TIMEOUT));
+    }
+
+    @NotNull
+    @Override
+    protected RssDAO getRssDAO() {
+        return rssDAO;
+    }
+
+    @NotNull
+    @Override
+    protected UserDAO getUserDAO() {
+        return userDAO;
     }
 
     class StepOneConsumer implements Consumer<MessageReceivedEvent> {

@@ -4,7 +4,9 @@ import com.bot.ShardingManager;
 import com.bot.commands.OwnerCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.entities.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FUserCommand extends OwnerCommand {
     public FUserCommand() {
         this.name = "fuser";

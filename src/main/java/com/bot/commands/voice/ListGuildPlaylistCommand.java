@@ -6,15 +6,17 @@ import com.bot.models.Playlist;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class ListGuildPlaylistCommand extends VoiceCommand {
 
     private PlaylistDAO playlistDAO;
 
-    public ListGuildPlaylistCommand() {
-        this.playlistDAO = PlaylistDAO.getInstance();
+    public ListGuildPlaylistCommand(PlaylistDAO playlistDAO) {
+        this.playlistDAO = playlistDAO;
         this.name = "gplaylists";
         this.help = "Returns all of the playlists the guild has.";
     }

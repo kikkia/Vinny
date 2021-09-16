@@ -3,8 +3,10 @@ package com.bot.commands.general
 import com.bot.commands.GeneralCommand
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class PingCommand : GeneralCommand() {
+@Component
+open class PingCommand : GeneralCommand() {
     init {
         this.name = "ping"
         this.guildOnly = false

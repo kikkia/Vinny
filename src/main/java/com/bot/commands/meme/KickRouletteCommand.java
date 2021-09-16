@@ -11,11 +11,13 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import org.springframework.stereotype.Component;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+@Component
 public class KickRouletteCommand extends MemeCommand {
 
     private EventWaiter waiter;

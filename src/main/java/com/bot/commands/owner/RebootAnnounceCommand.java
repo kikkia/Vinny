@@ -5,7 +5,9 @@ import com.bot.commands.OwnerCommand;
 import com.bot.utils.ConstantStrings;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RebootAnnounceCommand extends OwnerCommand {
 
 

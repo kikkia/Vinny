@@ -1,6 +1,5 @@
 package com.bot.db;
 
-import com.bot.caching.TextChannelCache;
 import com.bot.db.mappers.TextChannelMapper;
 import com.bot.db.mappers.VoiceChannelMapper;
 import com.bot.models.InternalTextChannel;
@@ -23,32 +22,12 @@ public class ChannelDAO {
     private static final Logger LOGGER = new Logger(ChannelDAO.class.getName());
 
     private HikariDataSource write;
-    private static ChannelDAO instance;
     private AliasDAO aliasDAO;
-    private TextChannelCache cache;
-
-    private ChannelDAO() {
-        initialize();
-    }
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
     public ChannelDAO(HikariDataSource dataSource, AliasDAO aliasDAO) {
         this.write = dataSource;
         this.aliasDAO = aliasDAO;
-    }
-
-
-    public static ChannelDAO getInstance() {
-        if (instance == null) {
-            instance = new ChannelDAO();
-        }
-        return instance;
-    }
-
-    private void initialize() {
-        this.write = ConnectionPool.getDataSource();
-        this.aliasDAO = AliasDAO.getInstance();
-        this.cache = TextChannelCache.getInstance();
     }
 
     public void addVoiceChannel(VoiceChannel voiceChannel) {
@@ -189,9 +168,6 @@ public class ChannelDAO {
         Connection connection = null;
         ResultSet set = null;
 
-        if (useCache)
-            toReturn = cache.get(channelId);
-
         if (toReturn != null) {
             return toReturn;
         }
@@ -287,10 +263,5 @@ public class ChannelDAO {
         }
 
         return channels;
-    }
-
-    private void updateChannelInCache(String channelId) {
-        InternalTextChannel channel = getTextChannelForId(channelId, false);
-        cache.put(channelId, channel);
     }
 }

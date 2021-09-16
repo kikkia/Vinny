@@ -1,13 +1,18 @@
 package com.bot.commands.owner;
 
 import com.bot.commands.OwnerCommand;
-import com.bot.utils.Config;
+import com.bot.config.properties.VoiceProperties;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SwitchDefaultSearchCommand extends OwnerCommand {
 
-    public SwitchDefaultSearchCommand() {
+    private VoiceProperties voiceProperties;
+
+    public SwitchDefaultSearchCommand(VoiceProperties voiceProperties) {
         this.name = "dsearch";
+        this.voiceProperties = voiceProperties;
     }
 
     @Override
@@ -15,12 +20,10 @@ public class SwitchDefaultSearchCommand extends OwnerCommand {
         String args = commandEvent.getArgs();
 
         if (args.equalsIgnoreCase("sc")) {
-            Config config = Config.getInstance();
-            config.setConfig(Config.DEFAULT_SEARCH_PROVIDER, "scsearch:");
+            voiceProperties.setDefaultSearchProvider("scsearch:");
             commandEvent.reactSuccess();
         } else if (args.equalsIgnoreCase("yt")){
-            Config config = Config.getInstance();
-            config.setConfig(Config.DEFAULT_SEARCH_PROVIDER, "ytsearch:");
+            voiceProperties.setDefaultSearchProvider("ytsearch:");
             commandEvent.reactSuccess();
         } else {
             commandEvent.reactWarning();

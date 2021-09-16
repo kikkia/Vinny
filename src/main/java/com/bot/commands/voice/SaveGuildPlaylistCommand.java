@@ -6,10 +6,12 @@ import com.bot.db.PlaylistDAO;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
 
+@Component
 public class SaveGuildPlaylistCommand extends VoiceCommand {
 	private PlaylistDAO playlistDAO;
 	private Bot bot;

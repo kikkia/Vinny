@@ -2,8 +2,8 @@ package com.bot.commands.voice;
 
 import com.bot.Bot;
 import com.bot.commands.VoiceCommand;
+import com.bot.config.properties.VoiceProperties;
 import com.bot.exceptions.MaxQueueSizeException;
-import com.bot.utils.Config;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -12,21 +12,25 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.Message;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.bot.utils.FormattingUtils.msToMinSec;
 
+@Component
 public class PlayCommand extends VoiceCommand {
 
 	private Bot bot;
+	private VoiceProperties voiceProperties;
 
-	public PlayCommand(Bot bot) {
+	public PlayCommand(Bot bot, VoiceProperties voiceProperties) {
 		this.bot = bot;
 		this.name = "play";
 		this.arguments = "<title|URL>";
 		this.help = "plays the provided audio track";
+		this.voiceProperties = voiceProperties;
 	}
 
 	@Override
@@ -58,7 +62,7 @@ public class PlayCommand extends VoiceCommand {
 		}
 		else {
 			// Not a URL, Treat as a search
-			String searchPrefix = Config.getInstance().getConfig(Config.DEFAULT_SEARCH_PROVIDER, "ytsearch:");
+			String searchPrefix = voiceProperties.getDefaultSearchProvider();
 			commandEvent.reply("\u231A Searching for `["+commandEvent.getArgs()+"]`", m -> bot.getManager().loadItemOrdered(commandEvent.getGuild(),  searchPrefix + commandEvent.getArgs(), new PlayHandler(m, commandEvent.getArgs(), commandEvent, true)));
 		}
 	}

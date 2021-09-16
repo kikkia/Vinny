@@ -8,8 +8,10 @@ import com.bot.utils.FormattingUtils
 import com.bot.utils.ScheduledCommandUtils
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class SayCommand : GeneralCommand() {
+@Component
+open class SayCommand : GeneralCommand() {
     init {
         this.name = "say"
         this.help = "Repeat after you"

@@ -4,14 +4,16 @@ import com.bot.commands.MemeCommand
 import com.bot.utils.FormattingUtils
 import com.bot.utils.SauceUtils
 import com.jagrosh.jdautilities.command.CommandEvent
+import com.kikkia.jsauce.SauceClient
 import com.kikkia.jsauce.models.exceptions.NoSauceFoundException
 import com.kikkia.jsauce.models.exceptions.TooMuchSauceException
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 import java.util.*
 import java.util.regex.Pattern
 
-
-class SauceCommand : MemeCommand() {
+@Component
+open class SauceCommand(val sauceClient: SauceClient) : MemeCommand() {
     private var urlP: Pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]",Pattern.CASE_INSENSITIVE)
 
     init {
@@ -47,8 +49,6 @@ class SauceCommand : MemeCommand() {
             }
             url = attachment.url
         }
-
-        val sauceClient = SauceUtils.getClient()
 
         try {
             val sauce = sauceClient.getSauce(url!!)

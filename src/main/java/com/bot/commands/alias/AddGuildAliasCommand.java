@@ -11,24 +11,26 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+@Component
 public class AddGuildAliasCommand extends ModerationCommand {
 
     private EventWaiter waiter;
     private AliasDAO aliasDAO;
     private GuildDAO guildDAO;
 
-    public AddGuildAliasCommand(EventWaiter waiter) {
+    public AddGuildAliasCommand(EventWaiter waiter, AliasDAO aliasDAO, GuildDAO guildDAO) {
         this.name = "addgalias";
         this.aliases = new String[]{"addguildalias"};
         this.help = "Adds an alias that will apply everywhere on the guild";
         this.waiter = waiter;
-        this.aliasDAO = AliasDAO.getInstance();
-        this.guildDAO = GuildDAO.getInstance();
+        this.aliasDAO = aliasDAO;
+        this.guildDAO = guildDAO;
     }
 
     // Step by step walkthrough for making an alias

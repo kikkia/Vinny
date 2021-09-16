@@ -8,18 +8,20 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.logging.Level;
 
+@Component
 public class SetNSFWCommand extends ModerationCommand {
     private GuildDAO guildDAO;
 
-    public SetNSFWCommand() {
+    public SetNSFWCommand(GuildDAO guildDAO) {
         this.name = "nsfwrole";
         this.help = "Sets the minimum required to use NSFW commands.";
         this.arguments = "<Role mention or empty for everyone>";
-        this.guildDAO = GuildDAO.getInstance();
+        this.guildDAO = guildDAO;
     }
 
     @Override

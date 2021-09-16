@@ -1,5 +1,7 @@
 package com.bot.commands.rss;
 
+import com.bot.db.RssDAO;
+import com.bot.db.UserDAO;
 import com.bot.models.RssProvider;
 import com.bot.utils.ChanUtils;
 import com.bot.utils.ConstantStrings;
@@ -9,6 +11,8 @@ import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -16,13 +20,19 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+@Component
 public class SubscribeChanCommand extends CreateSubscriptionCommand {
 
-    public SubscribeChanCommand(EventWaiter waiter) {
+    private RssDAO rssDAO;
+    private UserDAO userDAO;
+
+    public SubscribeChanCommand(EventWaiter waiter, RssDAO rssDAO, UserDAO userDAO) {
         this.name = "subscribe4chan";
         this.aliases = new String[] {"subscribechan"};
         this.botPermissions = new Permission[] {Permission.MANAGE_WEBHOOKS};
         this.waiter = waiter;
+        this.userDAO = userDAO;
+        this.rssDAO = rssDAO;
     }
 
     @Override
@@ -67,6 +77,18 @@ public class SubscribeChanCommand extends CreateSubscriptionCommand {
                 commandEvent.replyWarning(ConstantStrings.CHAN_BOARD_INVALID);
             }
         }
+    }
+
+    @NotNull
+    @Override
+    protected RssDAO getRssDAO() {
+        return rssDAO;
+    }
+
+    @NotNull
+    @Override
+    protected UserDAO getUserDAO() {
+        return userDAO;
     }
 
     class StepOneConsumer implements Consumer<MessageReceivedEvent> {

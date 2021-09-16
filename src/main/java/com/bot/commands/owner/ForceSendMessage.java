@@ -4,7 +4,9 @@ import com.bot.ShardingManager;
 import com.bot.commands.OwnerCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ForceSendMessage extends OwnerCommand {
     public ForceSendMessage() {
         this.name = "fsend";

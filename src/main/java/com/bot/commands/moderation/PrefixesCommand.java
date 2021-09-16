@@ -5,19 +5,21 @@ import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class PrefixesCommand extends GeneralCommand {
 
     private GuildDAO guildDAO;
 
-    public PrefixesCommand() {
+    public PrefixesCommand(GuildDAO guildDAO) {
         this.name = "prefixes";
         this.arguments = "";
         this.help = "Lists all set prefixes for the server.";
 
-        guildDAO = GuildDAO.getInstance();
+        guildDAO = guildDAO;
     }
 
     @Override

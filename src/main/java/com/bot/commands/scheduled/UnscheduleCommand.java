@@ -8,22 +8,24 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+@Component
 public class UnscheduleCommand extends ModerationCommand {
 
     private ScheduledCommandDAO scheduledCommandDAO;
     private EventWaiter waiter;
 
-    public UnscheduleCommand(EventWaiter waiter) {
+    public UnscheduleCommand(EventWaiter waiter, ScheduledCommandDAO scheduledCommandDAO) {
         this.name = "unschedule";
         this.help = "Unschedules a command";
         this.guildOnly = true;
         this.arguments = "<Scheduled command ID or none>";
         this.waiter = waiter;
-        this.scheduledCommandDAO = ScheduledCommandDAO.getInstance();
+        this.scheduledCommandDAO = scheduledCommandDAO;
     }
 
     @Override

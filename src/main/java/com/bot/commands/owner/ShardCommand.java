@@ -5,7 +5,9 @@ import com.bot.commands.OwnerCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ShardCommand extends OwnerCommand {
     public ShardCommand() {
         this.name = "shardinfo";

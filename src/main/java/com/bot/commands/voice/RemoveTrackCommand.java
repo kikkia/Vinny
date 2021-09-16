@@ -6,9 +6,11 @@ import com.bot.voice.QueuedAudioTrack;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.LinkedBlockingDeque;
 
+@Component
 public class RemoveTrackCommand extends VoiceCommand {
 	private Bot bot;
 

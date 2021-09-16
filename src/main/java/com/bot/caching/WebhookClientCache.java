@@ -1,30 +1,19 @@
 package com.bot.caching;
 
 import club.minnced.discord.webhook.WebhookClient;
+import com.bot.config.properties.CacheProperties;
 import com.bot.utils.Logger;
+import org.springframework.stereotype.Component;
 
+@Component
 public class WebhookClientCache {
     private final Logger logger;
 
-    private static WebhookClientCache instance;
     private CustomWebhookCache cache;
-    private int MAX_SIZE;
-    private int CACHE_OBJECT_LIFETIME;
-    private int CACHE_CHECK_INTERVAL;
 
-    public static WebhookClientCache getInstance() {
-        if (instance == null) {
-            instance = new WebhookClientCache();
-        }
-        return instance;
-    }
-
-    private WebhookClientCache() {
-        MAX_SIZE = 400;
-        CACHE_CHECK_INTERVAL = 6600;
-        CACHE_OBJECT_LIFETIME = 36000;
-
-        cache = new CustomWebhookCache("webhook", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
+    private WebhookClientCache(CacheProperties cacheProperties) {
+        cache = new CustomWebhookCache("webhook", cacheProperties.getWebhookMax(), cacheProperties.getWebhookMaxLife(),
+                cacheProperties.getWebhookCleanInterval());
 
         logger = new Logger(this.getClass().getName());
     }

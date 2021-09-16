@@ -10,10 +10,12 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.Paginator
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.User
+import org.springframework.stereotype.Component
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class PermissionsCommand(waiter: EventWaiter) : GeneralCommand() {
+@Component
+open class PermissionsCommand(val waiter: EventWaiter) : GeneralCommand() {
 
     private val builder: Paginator.Builder
 

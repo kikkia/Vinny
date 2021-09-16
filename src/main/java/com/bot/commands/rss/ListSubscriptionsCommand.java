@@ -6,22 +6,24 @@ import com.bot.models.RssChannelSubscription;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Paginator;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Component
 public class ListSubscriptionsCommand extends GeneralCommand {
 
     private RssDAO rssDAO;
     private final Paginator.Builder builder;
 
-    public ListSubscriptionsCommand(EventWaiter waiter) {
+    public ListSubscriptionsCommand(EventWaiter waiter, RssDAO rssDAO) {
         this.name = "listsubs";
         this.help = "Lists basic info for subs in the channel";
         this.guildOnly = true;
-        this.rssDAO = RssDAO.getInstance();
+        this.rssDAO = rssDAO;
 
         this.builder = new Paginator.Builder()
                 .setColumns(1)

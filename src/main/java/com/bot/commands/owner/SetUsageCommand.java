@@ -4,17 +4,19 @@ import com.bot.commands.OwnerCommand;
 import com.bot.db.UserDAO;
 import com.bot.models.UsageLevel;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.logging.Level;
 
+@Component
 public class SetUsageCommand extends OwnerCommand {
 
     private UserDAO userDAO;
 
-    public SetUsageCommand() {
+    public SetUsageCommand(UserDAO userDAO) {
         this.name = "setusage";
-        userDAO = UserDAO.getInstance();
+        this.userDAO = userDAO;
     }
 
     @Override

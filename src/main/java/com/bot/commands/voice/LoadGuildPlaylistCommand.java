@@ -8,19 +8,21 @@ import com.bot.models.Playlist;
 import com.bot.voice.LoadHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
 import java.util.logging.Level;
 
+@Component
 public class LoadGuildPlaylistCommand extends VoiceCommand {
     private PlaylistDAO playlistDAO;
     private Bot bot;
 
-    public LoadGuildPlaylistCommand(Bot bot) {
+    public LoadGuildPlaylistCommand(Bot bot, PlaylistDAO playlistDAO) {
         this.name = "loadgplaylist";
         this.arguments = "<playlist id|playlist name>";
         this.help = "Loads one of the guilds playlists. You must either specify the id or the name of the playlist.";
 
-        this.playlistDAO = PlaylistDAO.getInstance();
+        this.playlistDAO = playlistDAO;
         this.bot = bot;
     }
 

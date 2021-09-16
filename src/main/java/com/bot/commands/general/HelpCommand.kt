@@ -7,9 +7,11 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.PrivateChannel
+import org.springframework.stereotype.Component
 import java.util.function.Consumer
 
-class HelpCommand : GeneralCommand() {
+@Component
+open class HelpCommand : GeneralCommand() {
     init {
         this.name = "help"
         this.aliases = arrayOf("commands")

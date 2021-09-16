@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,18 +25,19 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
 public class Rule34Command extends NSFWCommand {
     private Random random;
     private R34Cache cache;
 
-    public Rule34Command() {
+    public Rule34Command(R34Cache r34Cache) {
         this.name = "r34";
         this.aliases = new String[]{"rule34"};
         this.arguments = "<tags to search for>";
         this.help = "Gets rule 34 for the given tags";
 
         this.random = new Random(System.currentTimeMillis());
-        this.cache = R34Cache.getInstance();
+        this.cache = r34Cache;
     }
 
     @Override

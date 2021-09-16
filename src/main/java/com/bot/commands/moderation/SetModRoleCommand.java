@@ -8,18 +8,20 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.logging.Level;
 
+@Component
 public class SetModRoleCommand extends ModerationCommand {
     private GuildDAO guildDAO;
 
-    public SetModRoleCommand() {
+    public SetModRoleCommand(GuildDAO guildDAO) {
         this.name = "modrole";
         this.help = "Sets the minimum role for moderation command.";
         this.arguments = "<Role mention or nothing for everyone>";
-        this.guildDAO = GuildDAO.getInstance();
+        this.guildDAO = guildDAO;
     }
 
     @Override

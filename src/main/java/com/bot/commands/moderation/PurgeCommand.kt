@@ -5,10 +5,12 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Message
+import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 import java.util.stream.Collectors
 
-class PurgeCommand() : ModerationCommand() {
+@Component
+open class PurgeCommand() : ModerationCommand() {
     val helpLink = "https://github.com/kikkia/Vinny/blob/master/docs/purge.md"
     val twoWeekWarning = " NOTE: I cannot purge messages that are older than 2 weeks old."
 

@@ -3,8 +3,10 @@ package com.bot.commands.meme
 import com.bot.commands.MemeCommand
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class FeelsCommand : MemeCommand() {
+@Component
+open class FeelsCommand : MemeCommand() {
 
     private val feels = "───────▄▀▀▀▀▀▀▀▀▀▀▄▄\n" +
             "────▄▀▀░░░░░░░░░░░░░▀▄\n" +

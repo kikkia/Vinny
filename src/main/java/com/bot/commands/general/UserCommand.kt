@@ -7,8 +7,10 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.User
+import org.springframework.stereotype.Component
 
-class UserCommand : GeneralCommand() {
+@Component
+open class UserCommand : GeneralCommand() {
 
     init {
         this.name = "user"

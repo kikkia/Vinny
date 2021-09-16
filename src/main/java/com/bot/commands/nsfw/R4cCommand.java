@@ -14,7 +14,9 @@ import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
+@Component
 public class R4cCommand extends NSFWCommand {
 
     public R4cCommand() {

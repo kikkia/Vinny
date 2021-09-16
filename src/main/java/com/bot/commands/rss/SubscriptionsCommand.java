@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.menu.Paginator;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,17 +15,18 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Component
 public class SubscriptionsCommand extends GeneralCommand {
 
     private RssDAO rssDAO;
     private final Paginator.Builder builder;
 
-    public SubscriptionsCommand(EventWaiter waiter) {
+    public SubscriptionsCommand(EventWaiter waiter, RssDAO rssDAO) {
         this.name = "subscriptions";
         this.help = "Shows all subscriptions for the channel or for you";
         this.arguments = "<{c} or {me}>";
         this.guildOnly = true;
-        this.rssDAO = RssDAO.getInstance();
+        this.rssDAO = rssDAO;
 
         this.builder = new Paginator.Builder()
                 .setColumns(1)

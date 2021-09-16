@@ -6,20 +6,22 @@ import com.bot.models.InternalGuild;
 import com.bot.utils.GuildUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@Component
 public class AddPrefixCommand extends ModerationCommand {
 
     private GuildDAO guildDAO;
 
-    public AddPrefixCommand() {
+    public AddPrefixCommand(GuildDAO guildDAO) {
         this.name = "addprefix";
         this.help = "Adds one or more custom prefixes to the server.";
         this.arguments = "<One or more custom prefixes, separated by spaces>";
 
-        guildDAO = GuildDAO.getInstance();
+        this.guildDAO = guildDAO;
     }
 
     @Override

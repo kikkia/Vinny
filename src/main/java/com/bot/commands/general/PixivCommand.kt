@@ -6,17 +6,16 @@ import com.bot.models.PixivPost
 import com.bot.utils.HttpUtils
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class PixivCommand : GeneralCommand() {
+@Component
+open class PixivCommand(channelDAO: ChannelDAO) : GeneralCommand() {
 
-    private val channelDAO: ChannelDAO
 
     init {
         this.name = "pixiv"
         this.help = "Gets a post from pixiv"
         this.arguments = "<blank|search terms>"
-
-        this.channelDAO = ChannelDAO.getInstance()
     }
 
     @Trace(operationName = "executeCommand", resourceName = "Pixiv")

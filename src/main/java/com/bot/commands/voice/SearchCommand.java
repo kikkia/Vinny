@@ -2,8 +2,8 @@ package com.bot.commands.voice;
 
 import com.bot.Bot;
 import com.bot.commands.VoiceCommand;
+import com.bot.config.properties.VoiceProperties;
 import com.bot.exceptions.MaxQueueSizeException;
-import com.bot.utils.Config;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -14,16 +14,19 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.Message;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
 import static com.bot.utils.FormattingUtils.msToMinSec;
 
+@Component
 public class SearchCommand extends VoiceCommand {
 	private Bot bot;
 	private final OrderedMenu.Builder builder;
+	private VoiceProperties voiceProperties;
 
-	public SearchCommand(Bot bot, EventWaiter eventWaiter) {
+	public SearchCommand(Bot bot, EventWaiter eventWaiter, VoiceProperties voiceProperties) {
 		this.name = "search";
 		this.arguments = "<Search terms>";
 		this.help = "Searches for the track and replies with a list of tracks to play.";
@@ -34,7 +37,7 @@ public class SearchCommand extends VoiceCommand {
 				.useCancelButton(true)
 				.setEventWaiter(eventWaiter)
 				.setTimeout(30, TimeUnit.SECONDS);
-
+		this.voiceProperties = voiceProperties;
 		this.bot = bot;
 	}
 
@@ -56,7 +59,7 @@ public class SearchCommand extends VoiceCommand {
 
 		commandEvent.reply("Searching for `[" + commandEvent.getArgs() + "]`",
 				m -> bot.getManager().loadItemOrdered(commandEvent.getGuild(),
-						Config.getInstance().getConfig(Config.DEFAULT_SEARCH_PROVIDER, "ytsearch:")
+						voiceProperties.getDefaultSearchProvider()
 								+ commandEvent.getArgs(), new PlayHandler(m, commandEvent)));
 	}
 

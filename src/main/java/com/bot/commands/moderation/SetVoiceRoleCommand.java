@@ -8,18 +8,20 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.logging.Level;
 
+@Component
 public class SetVoiceRoleCommand extends ModerationCommand {
     private GuildDAO guildDAO;
 
-    public SetVoiceRoleCommand() {
+    public SetVoiceRoleCommand(GuildDAO guildDAO) {
         this.name = "voicerole";
         this.help = "Sets the minimum role required to use voice commands.";
         this.arguments = "<Role mention or empty for everyone>";
-        this.guildDAO = GuildDAO.getInstance();
+        this.guildDAO = guildDAO;
     }
 
     @Override

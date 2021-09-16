@@ -13,19 +13,21 @@ import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
 import net.dv8tion.jda.api.entities.ChannelType;
+import org.springframework.stereotype.Component;
 
 import java.util.logging.Level;
 
+@Component
 public class RandomPostCommand extends RedditCommand{
     private RedditConnection redditConnection;
 
-    public RandomPostCommand() {
+    public RandomPostCommand(RedditConnection redditConnection) {
         this.name = "rr";
         this.help = "Grabs a random hot post from a given subreddit";
         this.arguments = "<subreddit name>";
         this.category = CommandCategories.REDDIT;
 
-        redditConnection = RedditConnection.getInstance();
+        this.redditConnection = redditConnection;
     }
 
     @Override

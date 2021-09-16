@@ -5,8 +5,10 @@ import com.bot.utils.FormattingUtils.clapify
 import com.bot.utils.GuildUtils.getLastMessageFromChannel
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class ClapCommand : MemeCommand() {
+@Component
+open class ClapCommand : MemeCommand() {
     init {
         this.name = "clap"
         this.help = ":clap:"

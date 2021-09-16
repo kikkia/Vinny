@@ -3,7 +3,9 @@ package com.bot.commands.voice
 import com.bot.commands.VoiceCommand
 import com.bot.voice.VoiceSendHandler
 import com.jagrosh.jdautilities.command.CommandEvent
+import org.springframework.stereotype.Component
 
+@Component
 class ClearQueueCommand : VoiceCommand() {
 
     init {

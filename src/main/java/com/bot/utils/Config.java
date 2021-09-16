@@ -1,11 +1,14 @@
 package com.bot.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+@Component
 public class Config {
 
     private static Config config = null;
@@ -114,7 +117,7 @@ public class Config {
 
     public static final String TWITCH_CLIENT_ID = "TWITCH_CLIENT_ID";
 
-    private Config() {
+    public Config() {
         this.configFile = new File("res/config/config.conf");
         configs = new HashMap<>();
 
@@ -125,13 +128,6 @@ public class Config {
             // If config file is gone we can try using env vars
             configs = new HashMap<>(System.getenv());
         }
-    }
-
-    public static Config getInstance() {
-        if (config == null) {
-            config = new Config();
-        }
-        return config;
     }
 
     private void setConfig() throws FileNotFoundException {

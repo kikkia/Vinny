@@ -8,6 +8,7 @@ import com.bot.utils.Logger;
 import com.zaxxer.hikari.HikariDataSource;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,35 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+@Service
 public class MembershipDAO {
     private static final Logger LOGGER = new Logger(MembershipDAO.class.getName());
 
     private HikariDataSource write;
-    private static MembershipDAO instance;
-
-    private MembershipDAO() {
-        try {
-            initialize();
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
-        }
-    }
 
     // This constructor is only to be used by integration tests so we can pass in a connection to the integration-db
     public MembershipDAO(HikariDataSource dataSource) {
         write = dataSource;
-    }
-
-
-    public static MembershipDAO getInstance() {
-        if (instance == null) {
-            instance = new MembershipDAO();
-        }
-        return instance;
-    }
-
-    private void initialize() throws SQLException {
-        this.write = ConnectionPool.getDataSource();
     }
 
     public InternalGuildMembership getUserMembershipByIdInGuild(String userId, String guildId) throws SQLException {

@@ -7,9 +7,11 @@ import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Guild;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+@Component
 public class ServerInfoCommand extends GeneralCommand {
 
     public ServerInfoCommand() {

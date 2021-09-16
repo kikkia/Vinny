@@ -7,9 +7,11 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.Paginator
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+@Component
 class ListTracksCommand(waiter: EventWaiter) : VoiceCommand() {
     private val builder: Paginator.Builder
 

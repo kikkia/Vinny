@@ -9,8 +9,8 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 
 abstract class CreateSubscriptionCommand : ModerationCommand() {
-    protected val rssDAO : RssDAO = RssDAO.getInstance()
-    private val userDAO : UserDAO = UserDAO.getInstance()
+    protected abstract val rssDAO : RssDAO
+    protected abstract val userDAO : UserDAO
     protected lateinit var waiter : EventWaiter
 
     fun canMakeNewSubscription(commandEvent: CommandEvent) : Boolean {

@@ -1,6 +1,8 @@
 package com.bot.commands.rss;
 
 import com.bot.RedditConnection;
+import com.bot.db.RssDAO;
+import com.bot.db.UserDAO;
 import com.bot.models.RssProvider;
 import com.bot.utils.ConstantStrings;
 import com.bot.utils.RssUtils;
@@ -11,20 +13,27 @@ import net.dean.jraw.RedditClient;
 import net.dean.jraw.models.Subreddit;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+@Component
 public class SubscribeRedditCommand extends CreateSubscriptionCommand {
     private RedditClient redditClient;
+    private RssDAO rssDAO;
+    private UserDAO userDAO;
 
-    public SubscribeRedditCommand(EventWaiter waiter) {
+    public SubscribeRedditCommand(EventWaiter waiter, RedditConnection redditConnection, RssDAO rssDAO, UserDAO userDAO) {
         this.name = "subscribereddit";
         this.aliases = new String[] {"redditsubscribe", "subscribesubreddit"};
         this.botPermissions = new Permission[] {Permission.MANAGE_WEBHOOKS};
         this.waiter = waiter;
-        this.redditClient = RedditConnection.getInstance().getClient();
+        this.redditClient = redditConnection.getClient();
+        this.rssDAO = rssDAO;
+        this.userDAO = userDAO;
     }
 
     @Override
@@ -43,6 +52,18 @@ public class SubscribeRedditCommand extends CreateSubscriptionCommand {
                 new SubscribeRedditCommand.StepOneConsumer(commandEvent),
                 // if the user takes more than a minute, time out
                 1, TimeUnit.MINUTES, () -> commandEvent.reply(ConstantStrings.EVENT_WAITER_TIMEOUT));
+    }
+
+    @NotNull
+    @Override
+    protected RssDAO getRssDAO() {
+        return rssDAO;
+    }
+
+    @NotNull
+    @Override
+    protected UserDAO getUserDAO() {
+        return userDAO;
     }
 
     class StepOneConsumer implements Consumer<MessageReceivedEvent> {

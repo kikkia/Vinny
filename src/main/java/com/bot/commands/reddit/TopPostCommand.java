@@ -20,12 +20,12 @@ import java.util.logging.Level;
 public class TopPostCommand extends RedditCommand{
     private RedditConnection redditConnection;
 
-    public TopPostCommand() {
+    public TopPostCommand(RedditConnection redditConnection) {
         this.name = "tr";
         this.help = "Grabs a random post from the top all time posts on a given subreddit";
         this.arguments = "<subreddit name>";
         this.category = CommandCategories.REDDIT;
-        redditConnection = RedditConnection.getInstance();
+        this.redditConnection = redditConnection;
     }
 
     @Override

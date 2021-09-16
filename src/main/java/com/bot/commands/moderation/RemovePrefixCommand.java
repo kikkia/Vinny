@@ -5,20 +5,22 @@ import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@Component
 public class RemovePrefixCommand extends ModerationCommand {
 
     private GuildDAO guildDAO;
 
-    public RemovePrefixCommand() {
+    public RemovePrefixCommand(GuildDAO guildDAO) {
         this.name = "removeprefix";
         this.help = "Removes one or more custom prefixes from the current custom prefixes.";
         this.arguments = "<One or more custom prefixes, separated by spaces>";
 
-        guildDAO = GuildDAO.getInstance();
+        this.guildDAO = guildDAO;
     }
 
     @Override

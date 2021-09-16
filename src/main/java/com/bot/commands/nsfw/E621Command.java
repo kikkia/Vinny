@@ -5,22 +5,24 @@ import com.bot.commands.NSFWCommand;
 import com.bot.exceptions.NoSuchResourceException;
 import com.bot.utils.HttpUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
+@Component
 public class E621Command extends NSFWCommand {
 
     private E621Cache cache;
     private Random random;
 
-    public E621Command() {
+    public E621Command(E621Cache cache) {
         this.name = "e621";
         this.canSchedule = false;
         this.cooldownScope = CooldownScope.GUILD;
         this.cooldown = 3;
-        this.cache = E621Cache.getInstance();
+        this.cache = cache;
         this.random = new Random();
     }
 

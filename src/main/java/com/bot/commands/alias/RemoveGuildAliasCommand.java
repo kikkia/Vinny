@@ -7,21 +7,23 @@ import com.bot.models.Alias;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 
+@Component
 public class RemoveGuildAliasCommand extends ModerationCommand {
 
     private GuildDAO guildDAO;
     private AliasDAO aliasDAO;
 
-    public RemoveGuildAliasCommand() {
+    public RemoveGuildAliasCommand(AliasDAO aliasDAO, GuildDAO guildDAO) {
         this.name = "removegalias";
         this.aliases = new String[]{"removeguildalias"};
         this.help = "removes an alias from the guild";
         this.arguments = "<alias>";
-        this.aliasDAO = AliasDAO.getInstance();
-        this.guildDAO = GuildDAO.getInstance();
+        this.aliasDAO = aliasDAO;
+        this.guildDAO = guildDAO;
     }
 
     @Override

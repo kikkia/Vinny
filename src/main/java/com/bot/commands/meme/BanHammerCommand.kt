@@ -3,8 +3,10 @@ package com.bot.commands.meme
 import com.bot.commands.MemeCommand
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class BanHammerCommand : MemeCommand() {
+@Component
+open class BanHammerCommand : MemeCommand() {
 
     private val hammer = "░░░░░░░░░░░░\n" +
             " ▄████▄░░░░░░░░░░░░░░░░░░░░\n" +

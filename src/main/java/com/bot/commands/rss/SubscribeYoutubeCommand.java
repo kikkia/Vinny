@@ -1,5 +1,7 @@
 package com.bot.commands.rss;
 
+import com.bot.db.RssDAO;
+import com.bot.db.UserDAO;
 import com.bot.exceptions.InvalidInputException;
 import com.bot.exceptions.NoSuchResourceException;
 import com.bot.models.RssProvider;
@@ -10,18 +12,25 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+@Component
 public class SubscribeYoutubeCommand extends CreateSubscriptionCommand {
+    private RssDAO rssDAO;
+    private UserDAO userDAO;
 
-    public SubscribeYoutubeCommand(EventWaiter waiter) {
+    public SubscribeYoutubeCommand(EventWaiter waiter, RssDAO rssDAO, UserDAO userDAO) {
         this.name = "subscribeyt";
         this.aliases = new String[] {"subscribeyoutube"};
         this.botPermissions = new Permission[] {Permission.MANAGE_WEBHOOKS};
         this.waiter = waiter;
+        this.rssDAO = rssDAO;
+        this.userDAO = userDAO;
     }
 
     @Override
@@ -40,6 +49,19 @@ public class SubscribeYoutubeCommand extends CreateSubscriptionCommand {
                 // if the user takes more than a minute, time out
                 1, TimeUnit.MINUTES, () -> commandEvent.reply(ConstantStrings.EVENT_WAITER_TIMEOUT));
     }
+
+    @NotNull
+    @Override
+    protected RssDAO getRssDAO() {
+        return rssDAO;
+    }
+
+    @NotNull
+    @Override
+    protected UserDAO getUserDAO() {
+        return userDAO;
+    }
+
     class StepOneConsumer implements Consumer<MessageReceivedEvent> {
         private CommandEvent commandEvent;
 

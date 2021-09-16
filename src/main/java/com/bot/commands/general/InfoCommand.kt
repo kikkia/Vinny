@@ -6,8 +6,10 @@ import com.bot.commands.GeneralCommand
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.EmbedBuilder
+import org.springframework.stereotype.Component
 
-class InfoCommand : GeneralCommand() {
+@Component
+open class InfoCommand : GeneralCommand() {
     init {
         this.name = "info"
         this.help = "Information about Vinny"
@@ -16,11 +18,9 @@ class InfoCommand : GeneralCommand() {
 
     @Trace(operationName = "executeCommand", resourceName = "Info")
     override fun executeCommand(commandEvent: CommandEvent) {
-        val manager = ShardingManager.getInstance()
-
         val builder = EmbedBuilder()
         builder.setImage(commandEvent.selfUser.avatarUrl)
-        builder.setTitle("Vinny\n" + manager.totalGuilds + " Servers")
+        builder.setTitle("Vinny")
         val desc = "Vinny is an open-source discord bot written in Java. Vinny is completely free and community driven. Spicing up your discord server has never been easier."
         builder.setDescription(desc)
         val support = "To report bugs, give feedback, request commands, or just say hi, you can find the Vinny support server here: " + Bot.SUPPORT_INVITE_LINK

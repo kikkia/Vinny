@@ -1,31 +1,20 @@
 package com.bot.caching;
 
+import com.bot.config.properties.CacheProperties;
 import com.bot.utils.Logger;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class R34Cache {
     private final Logger logger;
 
-    private static R34Cache instance;
     private Cache<List<String>> cache;
-    private int MAX_SIZE;
-    private int CACHE_OBJECT_LIFETIME;
-    private int CACHE_CHECK_INTERVAL;
 
-    public static R34Cache getInstance() {
-        if (instance == null) {
-            instance = new R34Cache();
-        }
-        return instance;
-    }
-
-    private R34Cache() {
-        MAX_SIZE = 400;
-        CACHE_CHECK_INTERVAL = 660;
-        CACHE_OBJECT_LIFETIME = 3600;
-
-        cache = new Cache<>("r34", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
+    public R34Cache(CacheProperties cacheProperties) {
+        cache = new Cache<>("r34", cacheProperties.getR34Max(), cacheProperties.getR34MaxLife(),
+                cacheProperties.getR34CleanInterval());
 
         logger = new Logger(this.getClass().getName());
     }

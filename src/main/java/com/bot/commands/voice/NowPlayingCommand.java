@@ -8,7 +8,9 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class NowPlayingCommand extends VoiceCommand {
 
     public NowPlayingCommand() {

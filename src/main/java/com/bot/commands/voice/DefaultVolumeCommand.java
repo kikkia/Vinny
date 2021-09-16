@@ -4,16 +4,18 @@ import com.bot.commands.VoiceCommand;
 import com.bot.db.GuildDAO;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DefaultVolumeCommand extends VoiceCommand {
 
     private GuildDAO guildDAO;
 
-    public DefaultVolumeCommand() {
+    public DefaultVolumeCommand(GuildDAO guildDAO) {
         this.name = "dvolume";
         this.arguments = "<Volume 1-200>";
         this.help = "Sets the default volume for the server";
-        this.guildDAO = GuildDAO.getInstance();
+        this.guildDAO = guildDAO;
     }
 
     @Override

@@ -3,8 +3,10 @@ package com.bot.commands.general
 import com.bot.commands.GeneralCommand
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class VoteCommand : GeneralCommand() {
+@Component
+open class VoteCommand : GeneralCommand() {
     init {
         this.name = "vote"
         this.help = "Support Vinny by upvoting on bot lists."

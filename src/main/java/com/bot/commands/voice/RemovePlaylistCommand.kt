@@ -5,9 +5,10 @@ import com.bot.db.PlaylistDAO
 import com.bot.models.Playlist
 import com.jagrosh.jdautilities.command.CommandEvent
 import net.dv8tion.jda.api.Permission
+import org.springframework.stereotype.Component
 
-class RemovePlaylistCommand : VoiceCommand() {
-    private val playlistDAO = PlaylistDAO.getInstance()
+@Component
+class RemovePlaylistCommand(private val playlistDAO: PlaylistDAO) : VoiceCommand() {
 
     override fun executeCommand(commandEvent: CommandEvent) {
         if (commandEvent.args.isEmpty()) {

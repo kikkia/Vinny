@@ -7,7 +7,9 @@ import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MetricsManager {
 
     // TODO: Health checks
@@ -15,15 +17,8 @@ public class MetricsManager {
     private Config config;
     private static MetricsManager instance;
 
-    public static MetricsManager getInstance() {
-        if (instance == null) {
-            instance = new MetricsManager();
-        }
-        return instance;
-    }
-
-    private MetricsManager() {
-        config = Config.getInstance();
+    public MetricsManager(Config config) {
+        this.config = config;
         // TODO: Better way of handling metrics names
         if (config.getConfig(Config.DISCORD_BOT_ID).equalsIgnoreCase("276855867796881408")) {
             statsd = new NonBlockingStatsDClient(

@@ -4,7 +4,9 @@ import com.bot.ShardingManager;
 import com.bot.commands.OwnerCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.JDA;
+import org.springframework.stereotype.Component;
 
+@Component
 public class InGuildCommand extends OwnerCommand {
 
     public InGuildCommand() {

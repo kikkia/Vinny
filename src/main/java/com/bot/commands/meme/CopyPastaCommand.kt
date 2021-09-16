@@ -5,15 +5,14 @@ import com.bot.commands.MemeCommand
 import com.bot.utils.RedditHelper
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class CopyPastaCommand : MemeCommand() {
-
-    private val redditConnection: RedditConnection
+@Component
+open class CopyPastaCommand(val redditConnection: RedditConnection) : MemeCommand() {
 
     init {
         this.name = "copypasta"
         this.help = "Gives a copy pasta"
-        redditConnection = RedditConnection.getInstance()
     }
 
     @Trace(operationName = "executeCommand", resourceName = "CopyPasta")

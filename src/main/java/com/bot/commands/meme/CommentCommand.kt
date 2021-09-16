@@ -11,12 +11,12 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
+import org.springframework.stereotype.Component
 import java.awt.Color
 import java.util.*
 
-class CommentCommand : MemeCommand() {
-
-    private val markovCache: MarkovModelCache
+@Component
+open class CommentCommand(val markovModelCache: MarkovModelCache) : MemeCommand() {
 
     init {
         this.name = "comment"
@@ -26,7 +26,6 @@ class CommentCommand : MemeCommand() {
         this.cooldown = 2
         this.botPermissions = arrayOf(Permission.MESSAGE_HISTORY, Permission.MESSAGE_WRITE)
 
-        markovCache = MarkovModelCache.getInstance()
     }
 
     @Trace(operationName = "executeCommand", resourceName = "Comment")
@@ -66,11 +65,11 @@ class CommentCommand : MemeCommand() {
         }
 
         // See if we have the model cached. If so we can skip rebuilding it. (We user server+user so that it does not go across servers)
-        markov = markovCache.get(commandEvent.guild.id + user!!.id)
+        markov = markovModelCache.get(commandEvent.guild.id + user!!.id)
 
         if (markov == null) {
             // Throw an entry into the cache to denote a cache building
-            markovCache.put(commandEvent.guild.id + user.id, MarkovModel())
+            markovModelCache.put(commandEvent.guild.id + user.id, MarkovModel())
             // No cached model found. Make a new one.
             val message = commandEvent.channel.sendMessage("No cached markov model found for user. I am building one. This will take a bit.").complete()
 
@@ -96,11 +95,11 @@ class CommentCommand : MemeCommand() {
                 e.printStackTrace()
                 logger.severe("Issue generating comment", e)
                 commandEvent.replyError("I failed to generate a model for them due to an error. Please try again later.")
-                markovCache.remove(commandEvent.guild.id + user.id)
+                markovModelCache.remove(commandEvent.guild.id + user.id)
             }
 
             // Cache it
-            markovCache.put(commandEvent.guild.id + user.id, markov)
+            markovModelCache.put(commandEvent.guild.id + user.id, markov)
             message.delete().queue()
         } else {
             if (markov.wordCount == 0) {
@@ -115,10 +114,10 @@ class CommentCommand : MemeCommand() {
         val channel = commandEvent.message.mentionedChannels[0]
 
         // Placeholder for generation
-        markovCache.put(channel.id, MarkovModel())
+        markovModelCache.put(channel.id, MarkovModel())
 
         // See if we have the model cached. If so we can skip rebuilding it.
-        var markov: MarkovModel? = markovCache.get(channel.id)
+        var markov: MarkovModel? = markovModelCache.get(channel.id)
 
         if (markov == null) {
             // No cached model found. Make a new one.
@@ -148,11 +147,11 @@ class CommentCommand : MemeCommand() {
                 e.printStackTrace()
                 logger.severe("Issue generating comment", e)
                 commandEvent.replyError("I failed to generate a model for them due to an error. Please try again later.")
-                markovCache.remove(channel.id)
+                markovModelCache.remove(channel.id)
             }
 
             // Cache it
-            markovCache.put(channel.id, markov)
+            markovModelCache.put(channel.id, markov)
         } else {
             if (markov.wordCount == 0) {
                 commandEvent.replyWarning(ConstantStrings.MARKOV_GENERATING)

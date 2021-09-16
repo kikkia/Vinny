@@ -13,18 +13,20 @@ import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
 import net.dv8tion.jda.api.entities.ChannelType;
+import org.springframework.stereotype.Component;
 
 import java.util.logging.Level;
 
+@Component
 public class NewPostCommand extends RedditCommand {
     private RedditConnection redditConnection;
 
-    public NewPostCommand() {
+    public NewPostCommand(RedditConnection redditConnection) {
         this.name = "nr";
         this.help = "Grabs a random new post from the newest 100 posts in a given subreddit";
         this.arguments = "<subreddit name>";
         this.category = CommandCategories.REDDIT;
-        redditConnection = RedditConnection.getInstance();
+        this.redditConnection = redditConnection;
     }
 
     @Override

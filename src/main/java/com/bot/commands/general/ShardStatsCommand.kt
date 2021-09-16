@@ -5,12 +5,14 @@ import com.bot.commands.GeneralCommand
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.EmbedBuilder
+import org.springframework.stereotype.Component
 
 /**
  * This is a "Dark" command. It should not be locked down to just the owner, but it is pretty
  * useless to normal users.
  */
-class ShardStatsCommand : GeneralCommand() {
+@Component
+open class ShardStatsCommand : GeneralCommand() {
     init {
         this.name = "shardstats"
         this.guildOnly = false

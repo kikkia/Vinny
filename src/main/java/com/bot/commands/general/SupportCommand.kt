@@ -3,8 +3,10 @@ package com.bot.commands.general
 import com.bot.commands.GeneralCommand
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class SupportCommand : GeneralCommand() {
+@Component
+open class SupportCommand : GeneralCommand() {
     init {
         this.name = "support"
         this.help = "Gives a link to the support server"

@@ -3,7 +3,9 @@ package com.bot.commands.owner;
 import com.bot.ShardingManager;
 import com.bot.commands.OwnerCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GuildDebugCommand extends OwnerCommand {
 
     ShardingManager shardingManager;

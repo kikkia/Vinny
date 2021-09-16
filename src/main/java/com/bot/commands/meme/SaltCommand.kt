@@ -3,8 +3,10 @@ package com.bot.commands.meme
 import com.bot.commands.MemeCommand
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import org.springframework.stereotype.Component
 
-class SaltCommand : MemeCommand() {
+@Component
+open class SaltCommand : MemeCommand() {
 
     private val salt = "▒▒▒▒▒▒▄▄██████▄\n" +
             "▒▒▒▒▒▒▒▒▒▒▄▄████████████▄\n" +

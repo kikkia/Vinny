@@ -19,9 +19,9 @@ import com.bot.commands.scheduled.GetScheduledCommand;
 import com.bot.commands.scheduled.ScheduleCommand;
 import com.bot.commands.scheduled.UnscheduleCommand;
 import com.bot.commands.voice.*;
+import com.bot.config.properties.DiscordProperties;
 import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
-import com.bot.utils.Config;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -37,6 +37,7 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +49,8 @@ import java.util.stream.Collectors;
 
 import static net.dv8tion.jda.api.requests.GatewayIntent.*;
 
+@Component
 public class ShardingManager {
-
-    private static ShardingManager instance;
 
     private Map<Integer, InternalShard> shards;
     private final ScheduledExecutorService executor;
@@ -60,36 +60,21 @@ public class ShardingManager {
     private List<Command.Category> commandCategories;
     private CommandClient client;
 
-    public static ShardingManager getInstance() {
-        return instance;
-    }
-
-    public static ShardingManager getInstance(int numShards, int startIndex, int endIndex) throws Exception {
-        if (instance == null)
-            instance = new ShardingManager(numShards, startIndex, endIndex);
-        return instance;
-    }
-
     // This adds a connection for each shard. Shards make it more efficient. ~1000 servers to shards is ideal
     // supportScript disables commands. Useful for running a supportScript simultaneously while the bot is going on prod
-    private ShardingManager(int numShards, int startIndex, int endIndex) throws Exception {
-        Config config = Config.getInstance();
+    public ShardingManager(DiscordProperties discordProperties, Bot bot) throws Exception {
         waiter = new EventWaiter();
-
-        // Check if we are just doing a silent deploy (For debug and stress testing purposes)
-        boolean silentDeploy = Boolean.parseBoolean(config.getConfig(Config.SILENT_DEPLOY));
 
         shards = new ConcurrentHashMap<>();
         executor = Executors.newScheduledThreadPool(50);
-        Bot bot = new Bot();
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
-        commandClientBuilder.setPrefix("~");
+        commandClientBuilder.setPrefix(discordProperties.getPrefix());
         commandClientBuilder.setAlternativePrefix("@mention");
-        commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
+        commandClientBuilder.setOwnerId(discordProperties.getOwnerId());
 
         // If we are deploying silently we are not registering commands.
-        if (!silentDeploy) {
+        if (!discordProperties.getSilent()) {
             commandClientBuilder.addCommands(
                     // Voice Commands
                     new PlayCommand(bot),
@@ -218,7 +203,7 @@ public class ShardingManager {
 
         shardManager = DefaultShardManagerBuilder
                 .createDefault(
-                        config.getConfig(Config.DISCORD_TOKEN),
+                        discordProperties.getToken(),
                         GUILD_MEMBERS,
                         GUILD_MESSAGES,
                         GUILD_EMOJIS,
@@ -226,9 +211,9 @@ public class ShardingManager {
                         GUILD_VOICE_STATES,
                         DIRECT_MESSAGES
                 )
-                .setShardsTotal(numShards)
+                .setShardsTotal(discordProperties.getTotalShards())
                 .setChunkingFilter(ChunkingFilter.NONE)
-                .setShards(startIndex, endIndex)
+                .setShards(discordProperties.getStartShard(), discordProperties.getEndShard())
                 .setCompression(Compression.NONE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(client, waiter, bot)

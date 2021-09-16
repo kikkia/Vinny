@@ -10,19 +10,21 @@ import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
+import org.springframework.stereotype.Component;
 
 import java.util.logging.Level;
 
+@Component
 public class GetSettingsCommand extends GeneralCommand {
     private GuildDAO guildDAO;
 
-    public GetSettingsCommand() {
+    public GetSettingsCommand(GuildDAO guildDAO) {
         this.name = "settings";
         this.help = "Gets the settings for the guild. (Requires mod command permissions)";
         this.arguments = "";
 
         // General since we are not setting any data
-        this.guildDAO = GuildDAO.getInstance();
+        this.guildDAO = guildDAO;
     }
 
     @Override
