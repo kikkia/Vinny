@@ -46,6 +46,9 @@ The play command is used to queue up a track for Vinny to play in a voice channe
 The search command is used to search youtube for a song. Unlike searching with the play command Vinny will give you the choice to choose between 5 different tracks.  
 * `~search Xylo afterlife` - Returns a list of 5 results for the search and allows you to add a reaction to pick one. 
 
+### `stop`
+Stops playing audio, leaves the channel, and clears the queue.
+
 ### `nowplaying`
 *Aliases*: `np`, `playing`  
 
