@@ -3,6 +3,7 @@ package com.bot;
 import com.bot.db.*;
 import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.metrics.MetricsManager;
+import com.bot.models.BannedImage;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalShard;
 import com.bot.models.UsageLevel;
@@ -53,10 +54,9 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;
 
 public class Bot extends ListenerAdapter {
@@ -68,6 +68,7 @@ public class Bot extends ListenerAdapter {
 	private GuildDAO guildDAO;
 	private MembershipDAO membershipDAO;
 	private ChannelDAO channelDAO;
+	private BannedImageDAO bannedImageDAO;
 	private UserDAO userDAO;
 	private MetricsManager metricsManager;
 	private ExecutorService executor;
@@ -102,6 +103,7 @@ public class Bot extends ListenerAdapter {
 		membershipDAO = MembershipDAO.getInstance();
 		channelDAO = ChannelDAO.getInstance();
 		userDAO = UserDAO.getInstance();
+		bannedImageDAO = BannedImageDAO.getInstance();
 
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
@@ -150,6 +152,20 @@ public class Bot extends ListenerAdapter {
 					LOGGER.warning("Command client was null???");
 				}
 			}
+
+			// Experimental, testing banned images based on neuralhash
+			if (event.getMessage().getAttachments().size() > 0 && event.getMessage().getAttachments().get(0).isImage()) {
+				// Scan for banned image
+				List<BannedImage> bannedImages = bannedImageDAO.getAllInGuild(event.getGuild().getId());
+				if (bannedImages.size() > 0) {
+					String hash = HttpUtils.getHashforImage(event.getMessage().getAttachments().get(0).getUrl());
+					if (bannedImages.stream().anyMatch(i -> i.getHash().equals(hash))) {
+						// Banned image found, delete
+						event.getMessage().delete().queue();
+					}
+				}
+			}
+
 		});
 		super.onGuildMessageReceived(event);
 	}

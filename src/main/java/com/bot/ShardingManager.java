@@ -205,7 +205,8 @@ public class ShardingManager {
                 new ForceSendMessage(),
                 new ShardCommand(),
                 new ShardStatsCommand(),
-                new SetUsageCommand()
+                new SetUsageCommand(),
+                new BanImageCommand()
                 );
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +

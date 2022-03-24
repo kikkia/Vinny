@@ -432,6 +432,23 @@ public class HttpUtils {
         String hash = jsonObject.getString("md5");
         return "https://static1.e621.net/data/" + hash.substring(0,2) + "/" + hash.substring(2,4) + "/" +
                 hash + "." + jsonObject.getString("ext");
+    }
 
+    public static String getHashforImage(String link) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpPost post = new HttpPost("https://hash.kikkia.dev/api/link");
+            JSONObject payload = new JSONObject().put("url", link);
+            StringEntity entity = new StringEntity(payload.toString());
+            post.setEntity(entity);
+            post.setHeader("Content-Type", "application/json");
+            HttpResponse response = client.execute(post);
+            return IOUtils.toString(response.getEntity().getContent());
+
+        }
+        catch (Exception e) {
+            logger.severe("Failed to get neuralhash response", e);
+            // In this case just return blank to allow image through
+            return "";
+        }
     }
 }
