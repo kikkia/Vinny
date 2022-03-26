@@ -1,20 +1,21 @@
-package com.bot.commands.general
+package com.bot.commands.nsfw
 
-import com.bot.commands.GeneralCommand
+import com.bot.commands.NSFWCommand
 import com.bot.db.ChannelDAO
 import com.bot.exceptions.PixivException
 import com.bot.utils.PixivClient
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 
-class PixivCommand : GeneralCommand() {
+class PixivNSFWCommand : NSFWCommand() {
 
     private val channelDAO: ChannelDAO
 
     init {
-        this.name = "pixiv"
-        this.help = "Gets a post from pixiv"
+        this.name = "pixivnsfw"
+        this.help = "Gets a nswf post from pixiv"
         this.arguments = "<search terms>"
+        this.aliases = arrayOf("npixiv", "nsfwpixiv")
 
         this.channelDAO = ChannelDAO.getInstance()
     }
@@ -23,7 +24,7 @@ class PixivCommand : GeneralCommand() {
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.channel.sendTyping().queue()
         try {
-            commandEvent.reply(PixivClient.getRandomPixivPostFromSearch(commandEvent.args, false))
+            commandEvent.reply(PixivClient.getRandomPixivPostFromSearch(commandEvent.args, true))
         } catch (e: PixivException ) {
             commandEvent.replyWarning("Something went wrong getting the pixiv post: " + e.message)
         }
