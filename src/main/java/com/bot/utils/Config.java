@@ -91,7 +91,8 @@ public class Config {
     // The IPv4 CIDR block to use
     public static final String IPV6_IP_BLOCK = "IPV6_IP_BLOCK";
 
-
+    public static final String PIXIV_USER = "PIXIV_USER";
+    public static final String PIXIC_PASS = "PIXIV_PASS";
 
     // Total shards
     public static final String TOTAL_SHARDS = "TOTAL_SHARDS";
