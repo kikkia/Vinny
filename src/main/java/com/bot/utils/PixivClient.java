@@ -24,6 +24,8 @@ public class PixivClient {
     private static final Random random = new Random();
 
     private static String pixivSession = "";
+    // Extremely basic locking mechanism to avoid spamming pixiv login server.
+    private static boolean loggingIn = false;
 
     public static String getRandomPixivPostFromSearch(String search, boolean nsfw) throws PixivException {
         String baseUrl = "https://www.pixiv.net/ajax/search/artworks/";
@@ -31,7 +33,7 @@ public class PixivClient {
         String page = String.valueOf(random.nextInt(5)); // Get random page to get result from to make pool bigger
 
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            if (pixivSession.isEmpty()) {
+            if (pixivSession.isEmpty() && !loggingIn) {
                 login();
             }
 
@@ -76,7 +78,8 @@ public class PixivClient {
         }
     }
 
-    private static void login() throws PixivException {
+    private static synchronized void login() throws PixivException {
+        loggingIn = true;
         Config config = Config.getInstance();
         String username = config.getConfig(Config.PIXIV_USER);
         String password = config.getConfig(Config.PIXIC_PASS);
