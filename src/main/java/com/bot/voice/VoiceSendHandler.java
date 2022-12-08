@@ -62,7 +62,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         }
         else if (tracks.size() >= MAX_QUEUE_SIZE) {
             throw new MaxQueueSizeException("Error: Loading track will exceed the max queue size of " + MAX_QUEUE_SIZE + "\n" +
-                    "Sorry but due to the Youtube banning crisis among music bots right now this limit is to help keep Vinny running. " +
+                    "Sorry but due to the banning crisis among bots right now this limit is to help keep Vinny running. " +
                     "It will hopefully be raised or removed soon.");
         }
         else {
