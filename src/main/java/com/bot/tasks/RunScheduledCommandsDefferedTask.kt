@@ -15,6 +15,8 @@ class RunScheduledCommandsDefferedTask() : Thread() {
     private val logger : Logger = Logger(RunScheduledCommandsDefferedTask::class.java.name)
     private val metrics : MetricsManager = MetricsManager.getInstance()
 
+    private val MAX_TO_RUN = 60
+
     override fun run() {
         try {
             logger.info("kicking off scheduled command run.")
@@ -49,6 +51,10 @@ class RunScheduledCommandsDefferedTask() : Thread() {
                     scheduledCommandDAO.recordFailure(sCommand, e.toString())
                     failed_count++
                     MDC.clear()
+                }
+
+                if (commandRanCount + failed_count >= MAX_TO_RUN) {
+                    break
                 }
             }
 
