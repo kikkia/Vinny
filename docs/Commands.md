@@ -20,7 +20,7 @@ Vinny has many commands that can be run on either a server or in DMs.
 
 # How-to
 Commands are run by typing a message in a channel that Vinny can see and post in. These messages comprise of two parts, the prefix (Default: `~` and `@Vinny`) and the command (For example `play`). You can set custom prefixes for any server.  
-Some commands take in arguments. These arguments effect what the command does. For example the `~play` command can take in either a link to audio, or a youtube search. (Example `~play rickroll` or `~play https://www.youtube.com/watch?v=dQw4w9WgXcQ`)  
+Some commands take in arguments. These arguments effect what the command does. For example the `~play` command can take in either a link to audio, a search. (Example `~play rickroll` or `~play <link to audio>`)  
 Commands can also have `aliases`, which are just other names for the command you can use to invoke it. You can also schedule commands to run at
 an interval. Using the scheduling feature, you can get all your Vinny automatically.
 
@@ -37,13 +37,13 @@ All voice commands require that you are in a voice channel. Some require Vinny t
 Commands that allow you to play audio and modify the audio stream. 
 
 ### `play`
-The play command is used to queue up a track for Vinny to play in a voice channel. You can use this command to play audio from many different sources (Youtube, Twitch, Soundcloud, etc).  
+The play command is used to queue up a track for Vinny to play in a voice channel. You can use this command to play audio from many different sources (video, Twitch, Soundcloud, etc).  
   
-* `~play Griz My friends and I` - Vinny will search youtube for `Griz My friends and I` and queue up the first track it finds. 
-* `~play https://www.youtube.com/watch?v=dQw4w9WgXcQ` - Vinny will play the track from the url.
+* `~play Griz My friends and I` - Vinny will search for `Griz My friends and I` and queue up the first track it finds. 
+* `~play <Link to audio>` - Vinny will play the track from the url.
 
 ### `search`
-The search command is used to search youtube for a song. Unlike searching with the play command Vinny will give you the choice to choose between 5 different tracks.  
+The search command is used to search for a song. Unlike searching with the play command Vinny will give you the choice to choose between 5 different tracks.  
 * `~search Xylo afterlife` - Returns a list of 5 results for the search and allows you to add a reaction to pick one. 
 
 ### `stop`
