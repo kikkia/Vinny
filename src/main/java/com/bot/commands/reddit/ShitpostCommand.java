@@ -2,6 +2,7 @@ package com.bot.commands.reddit;
 
 import com.bot.RedditConnection;
 import com.bot.commands.MemeCommand;
+import com.bot.exceptions.RedditRateLimitException;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
@@ -34,7 +35,10 @@ public class ShitpostCommand extends MemeCommand {
                     TimePeriod.WEEK,
                     200,
                     true,
-                    "shitpost");
+                    "shitposting");
+        } catch (RedditRateLimitException e) {
+            commandEvent.reply(commandEvent.getClient().getError() + "Reddit is rate limiting Vinny, please try again later.");
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error thrown:" + e);
             commandEvent.reply(commandEvent.getClient().getError() + " Sorry, something went wrong getting a reddit post.");

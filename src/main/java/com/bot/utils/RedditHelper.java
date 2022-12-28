@@ -7,6 +7,7 @@ import club.minnced.discord.webhook.send.WebhookMessage;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.bot.RedditConnection;
 import com.bot.caching.SubredditCache;
+import com.bot.exceptions.RedditRateLimitException;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
@@ -19,10 +20,13 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 public class RedditHelper {
 
     private static Random random = new Random(System.currentTimeMillis());
+    private static final Semaphore limiter = new Semaphore(3, true);
     private static final String REDDIT_SNOO_ICON_URL = "http://www.doomsteaddiner.net/blog/wp-content/uploads/2015/10/reddit-logo.png";
 
     public static void getRandomSubmissionAndSend(RedditConnection redditConnection,
@@ -65,19 +69,31 @@ public class RedditHelper {
             return;
         }
 
-        DefaultPaginator<Submission> paginator = subreddit
-                .posts()
-                .limit(limit)
-                .timePeriod(timePeriod)
-                .sorting(sortType)
-                .build();
-
         SubredditCache cache = SubredditCache.getInstance();
-        List<Listing<Submission>> submissions = cache.get(sortType.toString() + subredditName);
+        List<Listing<Submission>> submissions = cache.get(sortType + subredditName);
 
         if (submissions == null) {
-            submissions = paginator.accumulate(1);
-            cache.put(sortType.toString() + subredditName, submissions);
+            try {
+                if (limiter.tryAcquire(10, TimeUnit.SECONDS)) {
+                    DefaultPaginator<Submission> paginator = subreddit
+                            .posts()
+                            .limit(limit)
+                            .timePeriod(timePeriod)
+                            .sorting(sortType)
+                            .build();
+
+                    submissions = paginator.accumulate(1);
+                    cache.put(sortType + subredditName, submissions);
+                } else {
+                    // Timeout, try to fetch from cache again
+                    submissions = cache.get(sortType + subredditName);
+                    if (submissions == null) {
+                        throw new RedditRateLimitException("Reddit is rate limiting Vinny");
+                    }
+                }
+            } finally {
+                limiter.release();
+            }
         }
 
         Listing<Submission> page = submissions.get(0); // Get the only page

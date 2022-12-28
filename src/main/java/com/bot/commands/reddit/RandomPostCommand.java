@@ -2,6 +2,7 @@ package com.bot.commands.reddit;
 
 import com.bot.RedditConnection;
 import com.bot.commands.RedditCommand;
+import com.bot.exceptions.RedditRateLimitException;
 import com.bot.exceptions.ScheduledCommandFailedException;
 import com.bot.utils.CommandCategories;
 import com.bot.utils.ConstantStrings;
@@ -58,6 +59,9 @@ public class RandomPostCommand extends RedditCommand{
         } catch (ScheduledCommandFailedException e) {
             logger.warning("Failed to get webhook for scheduled command " + commandEvent.getTextChannel().getId(), e);
             commandEvent.replyWarning(ConstantStrings.SCHEDULED_WEBHOOK_FAIL);
+        } catch (RedditRateLimitException e) {
+            commandEvent.reply(commandEvent.getClient().getError() + "Reddit is rate limiting Vinny, please try again later.");
+            metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error thrown when getting reddit post", e);
             commandEvent.replyError("Sorry, something went wrong getting a reddit post.");
