@@ -25,7 +25,7 @@ class RunScheduledCommandsDefferedTask() : Thread() {
 
             val startTime = System.currentTimeMillis()
             var commandRanCount = 0
-            var failed_count = 0
+            var failedCount = 0
 
             for (sCommand in scheduledCommands) {
                 try {
@@ -49,17 +49,17 @@ class RunScheduledCommandsDefferedTask() : Thread() {
                     MDC.put("commandId", "" + sCommand.id)
                     logger.warning("Failed to run scheduled command.", e)
                     scheduledCommandDAO.recordFailure(sCommand, e.toString())
-                    failed_count++
+                    failedCount++
                     MDC.clear()
                 }
 
-                if (commandRanCount + failed_count >= MAX_TO_RUN) {
+                if (commandRanCount + failedCount >= MAX_TO_RUN) {
                     break
                 }
             }
 
             val runtime = System.currentTimeMillis() - startTime
-            scheduledCommandDAO.recordRunComplete(commandRanCount, runtime, failed_count)
+            scheduledCommandDAO.recordRunComplete(commandRanCount, runtime, failedCount)
             logger.info("Finished scheduled command task. Commands run: $commandRanCount")
         } catch (e: Exception) {
             logger.severe("Problem in scheduled command task", e)
