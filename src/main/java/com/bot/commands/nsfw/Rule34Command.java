@@ -42,9 +42,10 @@ public class Rule34Command extends NSFWCommand {
     @Trace(operationName = "executeCommand", resourceName = "rule34")
     protected void executeCommand(CommandEvent commandEvent) {
         // Get the tags
-        String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + commandEvent.getArgs();
-        String booruUrl = "https://yande.re/post.xml?limit=200&tags=" + commandEvent.getArgs();
-        String pahealUrl = "https://rule34.paheal.net/rss/images/" + commandEvent.getArgs() + "/1";
+        String args = commandEvent.getArgs().replaceAll(" ", "+");
+        String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + args;
+        String booruUrl = "https://yande.re/post.xml?limit=200&tags=" + args;
+        String pahealUrl = "https://rule34.paheal.net/rss/images/" + commandEvent.getArgs().replaceAll(" ", "%20") + "/1";
         List<String> imageUrls = cache.get(commandEvent.getArgs());
         String selected;
         try {
