@@ -55,7 +55,9 @@ public class ScheduledCommandUtils {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                0);
+                new ArrayList<>(),
+                0,
+                null);
     }
 
     public static JDA getShardForCommand(ScheduledCommand command) {

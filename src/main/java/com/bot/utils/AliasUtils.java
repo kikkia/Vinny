@@ -29,7 +29,7 @@ public class AliasUtils {
         return new ReceivedMessage(message.getIdLong(),
                 message.getChannel(),
                 message.getType(),
-                message.getReferencedMessage(),
+                message.getMessageReference(),
                 message.isWebhookMessage(),
                 message.mentionsEveryone(),
                 null,
@@ -46,7 +46,9 @@ public class AliasUtils {
                 message.getAttachments(),
                 message.getEmbeds(),
                 message.getStickers(),
-                0);
+                message.getActionRows(),
+                0,
+                message.getInteraction());
     }
 
     // If we find %% then replace it with whatever is after the trigger.
