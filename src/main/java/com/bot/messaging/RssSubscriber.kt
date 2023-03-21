@@ -25,7 +25,7 @@ class RssSubscriber(config: Config) {
     init {
         val rssDispatcher = natsConnection.createDispatcher { msg ->
             val json = JSONObject(String(msg.data, StandardCharsets.UTF_8))
-            logger.info(json.toString())
+            //logger.info(json.toString())
             val update = RssUtils.mapJsonToUpdate(json)
             metricsManager.markRssEventReceived(RssProvider.getProvider(update.provider))
 
