@@ -8,6 +8,7 @@ class StatsCommand : GeneralCommand() {
     init {
         this.name = "stats"
         this.help = "Gives a link to detailed vinny statistics"
+        this.guildOnly = false
     }
 
     @Trace(operationName = "executeCommand", resourceName = "Stats")
