@@ -1,4 +1,5 @@
 A complete rewrite and overhaul of the original VinnyBot.
+(This project is not in active development, but maintenance changes do occur)
 
 # Vinny-Redux
 [![Discord](https://img.shields.io/badge/Discord-Support-blue.svg)](https://discord.gg/XMwyzxZ)
