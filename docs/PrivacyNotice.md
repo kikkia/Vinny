@@ -25,6 +25,6 @@ When Vinny leaves your server he will purge all data tied to that server. When y
 ## Security 
 We take precautions to protect your information. All data collected is stored on secure servers under appropriate security measures. Only trusted developers have any access to the data.
 
-If you feel that we are not abiding by this privacy policy, you should contact us immediately by [opening an issue](https://github.com/JessWalters/Vinny-Redux/issues/new) or pinging us on the [Vinny support discord server](https://discord.gg/XMwyzxZ).
+If you feel that we are not abiding by this privacy policy, you should contact us immediately by [opening an issue](https://github.com/kikkia/Vinny-Redux/issues/new) or pinging us on the [Vinny support discord server](https://discord.gg/XMwyzxZ).
   
-NOTE: This document is subject to change at any time as Vinny adds more functionality the collection of more data may be needed. If you notice an inconsistancy please [open an issue](https://github.com/JessWalters/Vinny-Redux/issues/new) so we can update this notice ASAP.
+NOTE: This document is subject to change at any time as Vinny adds more functionality the collection of more data may be needed. If you notice an inconsistancy please [open an issue](https://github.com/kikkia/Vinny-Redux/issues/new) so we can update this notice ASAP.

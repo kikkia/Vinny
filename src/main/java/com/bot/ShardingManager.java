@@ -212,7 +212,7 @@ public class ShardingManager {
                 );
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
-                "https://github.com/JessWalters/Vinny-Redux/blob/master/docs/Commands.md");
+                "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
         commandClientBuilder.setEmojis("\u2705", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
         commandClientBuilder.setActivity(null);
