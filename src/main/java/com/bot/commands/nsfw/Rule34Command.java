@@ -7,6 +7,7 @@ import com.bot.caching.R34Cache;
 import com.bot.commands.NSFWCommand;
 import com.bot.exceptions.ScheduledCommandFailedException;
 import com.bot.utils.ScheduledCommandUtils;
+import com.bot.utils.TheGreatCCPFilter;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
 import org.apache.http.HttpEntity;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Rule34Command extends NSFWCommand {
     private Random random;
@@ -41,7 +43,12 @@ public class Rule34Command extends NSFWCommand {
     @Override
     @Trace(operationName = "executeCommand", resourceName = "rule34")
     protected void executeCommand(CommandEvent commandEvent) {
-        // Get the tags
+        // This stuff is against discord ToS
+        if (TheGreatCCPFilter.Companion.containsNoNoTags(commandEvent.getArgs())) {
+            commandEvent.replyWarning("The search terms contain tags that are banned on discord, so I can't post them here.");
+            return;
+        }
+
         String args = commandEvent.getArgs().replaceAll(" ", "+");
         String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + args;
         String booruUrl = "https://yande.re/post.xml?limit=200&tags=" + args;
@@ -122,12 +129,17 @@ public class Rule34Command extends NSFWCommand {
                     Pattern.compile("(<media:content url=)\"([\\s\\S]*?)\"\\/>")
                     : Pattern.compile("(sample_url)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?");
             Matcher matcher = expression.matcher(responseBody);
-            ArrayList<String> possibleLinks = new ArrayList<>();
+            List<String> possibleLinks = new ArrayList<>();
 
             while (matcher.find()) {
                 // Add the second group of regex
                 possibleLinks.add(matcher.group(2));
             }
+
+            // Some URLs contain post tags, scan URLs for things banned on discord
+            possibleLinks = possibleLinks.stream().filter(
+                    it -> !TheGreatCCPFilter.Companion.containsNoNoTags(it))
+                    .collect(Collectors.toList());
 
             return possibleLinks;
         } catch (Exception e) {
