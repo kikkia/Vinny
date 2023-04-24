@@ -25,6 +25,7 @@ class CommentCommand : MemeCommand() {
         this.cooldownScope = CooldownScope.USER
         this.cooldown = 2
         this.botPermissions = arrayOf(Permission.MESSAGE_HISTORY, Permission.MESSAGE_WRITE)
+        this.canSchedule = false
 
         markovCache = MarkovModelCache.getInstance()
     }

@@ -25,6 +25,7 @@ public class KickRouletteCommand extends MemeCommand {
         this.help = "Feeling lucky punk?";
         this.guildOnly = true;
         this.botPermissions = new Permission[]{Permission.KICK_MEMBERS, Permission.MANAGE_ROLES};
+        this.canSchedule = false;
 
         this.waiter = eventWaiter;
     }
