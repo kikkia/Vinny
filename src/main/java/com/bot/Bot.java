@@ -226,6 +226,8 @@ public class Bot extends ListenerAdapter {
 	public void onGuildMemberRoleAdd(@NotNull GuildMemberRoleAddEvent event) {
 		// Hardcoded for now since not much time to work on project, and really needs a rework anyways.
 		// Checks for donor role assigned on support server
+
+		// TODO: Generify this into some Eval level from roles for member helper
 		if (event.getGuild().getId().equals("294900956078800897")) {
 			String assignedId = event.getRoles().get(0).getId();
 			if (assignedId.equals("638201929591423010") || assignedId.equals("638202019152265226") || assignedId.equals("1106473246230073364")) {
@@ -250,9 +252,14 @@ public class Bot extends ListenerAdapter {
 	public void onGuildMemberRoleRemove(@NotNull GuildMemberRoleRemoveEvent event) {
 		// Hardcoded for now since not much time to work on project, and really needs a rework anyways.
 		// Checks for donor role removed on support server
+
+		// TODO: Generify this into some Eval level from roles for member helper
 		if (event.getGuild().getId().equals("294900956078800897")) {
 			String assignedId = event.getRoles().get(0).getId();
-			if (assignedId.equals("638201929591423010") || assignedId.equals("638202019152265226")) {
+			if (assignedId.equals("638201929591423010")
+					|| assignedId.equals("638202019152265226")
+					|| assignedId.equals("1106473242551664651")
+					|| assignedId.equals("1106473246230073364")) {
 				try {
 					userDAO.setUsageLevel(UsageLevel.BASIC, event.getUser().getId());
 				} catch (SQLException throwables) {
