@@ -228,11 +228,18 @@ public class Bot extends ListenerAdapter {
 		// Checks for donor role assigned on support server
 		if (event.getGuild().getId().equals("294900956078800897")) {
 			String assignedId = event.getRoles().get(0).getId();
-			if (assignedId.equals("638201929591423010") || assignedId.equals("638202019152265226")) {
+			if (assignedId.equals("638201929591423010") || assignedId.equals("638202019152265226") || assignedId.equals("1106473246230073364")) {
 				try {
 					userDAO.setUsageLevel(UsageLevel.DONOR, event.getUser().getId());
-				} catch (SQLException throwables) {
-					LOGGER.log(Level.SEVERE, "Failed to assign usage level", throwables);
+				} catch (SQLException throwable) {
+					LOGGER.log(Level.SEVERE, "Failed to assign usage level", throwable);
+				}
+			}
+			else if (assignedId.equals("1106473242551664651")) {
+				try {
+					userDAO.setUsageLevel(UsageLevel.UNLIMITED, event.getUser().getId());
+				} catch (SQLException throwable) {
+					LOGGER.log(Level.SEVERE, "Failed to assign usage level", throwable);
 				}
 			}
 		}

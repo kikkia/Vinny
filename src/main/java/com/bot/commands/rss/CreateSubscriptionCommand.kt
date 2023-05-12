@@ -15,14 +15,13 @@ abstract class CreateSubscriptionCommand : ModerationCommand() {
 
     fun canMakeNewSubscription(commandEvent: CommandEvent) : Boolean {
         val user = userDAO.getById(commandEvent.author.id)
-        if (user == null || user.usageLevel() == UsageLevel.BASIC) {
-            if (rssDAO.getCountForAuthor(commandEvent.author.id) >= 10) {
-                commandEvent.replyWarning("You can only make 10 subscriptions. To be able to make unlimited you can donate" +
-                        " at " + ConstantStrings.DONATION_URL + ". This is to help prevent abuse. If you have already donated, make sure you are in the Vinny support server." +
-                        " To get a support server invite use `~support`.\nYou can also remove your current scheduled commands with the " +
-                        "`~unschedule` command")
-                return false
-            }
+        val usage = user?.usageLevel() ?: UsageLevel.BASIC
+        if (rssDAO.getCountForAuthor(commandEvent.author.id) >= usage.maxSub) {
+            commandEvent.replyWarning("You can only make ${usage.maxSub} subscriptions." +
+                    "To be able to make more, you can subscribe on the Vinny support server." +
+                    " To get a support server invite use `~support`.\nYou can also remove your current subscriptions with the " +
+                            "`~unsubscribe` command");
+            return false
         }
         return true
     }
