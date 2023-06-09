@@ -5,6 +5,7 @@ import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.metrics.MetricsManager;
 import com.bot.tasks.CommandTaskExecutor;
+import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.bot.utils.ScheduledCommandUtils;
@@ -15,6 +16,7 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.MDC;
 
+import java.time.Instant;
 import java.util.concurrent.*;
 
 public abstract class BaseCommand extends Command {
@@ -69,6 +71,21 @@ public abstract class BaseCommand extends Command {
             logger.severe("Failed to get perms for " + this.getClass().getName(), e);
             return;
         }
+
+        // TEMP for reddit blackout
+        if (this.category == CommandCategories.REDDIT) {
+            if (!scheduled) {
+                commandEvent.replyWarning("Due to Reddit's insane increase in pricing on their API, meant to kill all " +
+                        "3rd party apps that use Reddit, Vinny included, Vinny is boycotting reddit from the 12th for an indefinite " +
+                        "amount of time. I am sorry for the inconvenience, but Reddit has forced 3rd party developer hands. " +
+                        "If there is no change in course of this new pricing model, Vinny like many other apps that tie " +
+                        "into Reddit will be forced to stop supporting Reddit on June 30th.\nIf this stuff passes and Vinny is locked " +
+                        "out of Reddit's API, subscriptions should still work, and I will be experimenting with ways to bring back " +
+                        "support for normal Reddit commands in any way I can. Sorry for the inconvenience.");
+            }
+            return;
+        }
+
         // Add some details to the MDC on the thread before executing
         ExecutorService executorService = scheduled ? scheduledComamndExecutor : commandExecutors;
         Future future = executorService.submit(() -> {
