@@ -51,14 +51,14 @@ public class ScheduleCommand extends ModerationCommand {
            logger.log(Level.WARNING, "Did not find user", throwables);
         }
 
-        if (user == null || user.usageLevel() == UsageLevel.BASIC) {
-            if (scheduledCommandDAO.getCountOfScheduledForAuthor(commandEvent.getAuthor().getId()) >= 5) {
-                commandEvent.replyWarning("You can only make 5 scheduled commands. To be able to make unlimited can donate" +
-                        " at " + ConstantStrings.DONATION_URL + ". If you have already donated, make sure you are in the Vinny support server." +
-                        " To get a support server invite use `~support`.\nYou can also remove your current scheduled commands with the " +
-                        "`~unschedule` command");
-                return;
-            }
+        UsageLevel usageLevel = user == null ? UsageLevel.BASIC : user.usageLevel();
+
+        if (scheduledCommandDAO.getCountOfScheduledForAuthor(commandEvent.getAuthor().getId()) >= usageLevel.getMaxScheduled()) {
+            commandEvent.replyWarning("You can only make "+usageLevel.getMaxScheduled()+" scheduled commands. " +
+                    "To be able to make more, you can subscribe on the Vinny support server." +
+                    " To get a support server invite use `~support`.\nYou can also remove your current scheduled commands with the " +
+                    "`~unschedule` command");
+            return;
         }
 
         commandEvent.reply(ConstantStrings.SCHEDULED_COMMAND_SETUP_HELLO);
