@@ -75,6 +75,7 @@ public class MetricsManager {
     public void markScheduledCommandRan(ScheduledCommand command) {
         String sourceTag = "scheduled";
         String guildTag = "guild:" + command.getGuild();
+        String commandTag = "command:" + command.getCommand();
         statsd.incrementCounter("command.scheduled", sourceTag, guildTag);
     }
 
