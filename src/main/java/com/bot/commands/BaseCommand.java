@@ -5,7 +5,6 @@ import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.metrics.MetricsManager;
 import com.bot.tasks.CommandTaskExecutor;
-import com.bot.utils.CommandCategories;
 import com.bot.utils.CommandPermissions;
 import com.bot.utils.Logger;
 import com.bot.utils.ScheduledCommandUtils;
@@ -16,7 +15,6 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.MDC;
 
-import java.time.Instant;
 import java.util.concurrent.*;
 
 public abstract class BaseCommand extends Command {

@@ -80,7 +80,7 @@ public class Bot extends ListenerAdapter {
 		this.config = Config.getInstance();
 		this.manager = new DefaultAudioPlayerManager();
 
-		YoutubeAudioSourceManager ytSource = new YoutubeAudioSourceManager(true);
+		YoutubeAudioSourceManager ytSource = new YoutubeAudioSourceManager();
 
 		manager.registerSourceManager(ytSource);
 

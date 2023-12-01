@@ -140,6 +140,11 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             }
         }
 
+        if (endReason == AudioTrackEndReason.LOAD_FAILED) {
+            lastUsedChannel.sendMessage("Failed to load audio track: " + track.getInfo().title).queue();
+            return;
+        }
+
         QueuedAudioTrack nextTrack = tracks.peek();
         // If nextTrack is null then we are done
         if (nextTrack == null) {
