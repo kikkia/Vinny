@@ -1,6 +1,7 @@
 package com.bot.voice;
 
 import com.bot.exceptions.MaxQueueSizeException;
+import com.bot.metrics.MetricsManager;
 import com.bot.utils.FormattingUtils;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
@@ -35,6 +36,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
     private boolean repeatAll;
     private boolean lockVolume;
     private double speed;
+    private MetricsManager metricsManager;
 
     public VoiceSendHandler(AudioPlayer player) {
         this.player = player;
@@ -48,10 +50,12 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         this.frame = new MutableAudioFrame();
         this.frame.setBuffer(buffer);
         this.speed = 1.0;
+        this.metricsManager = MetricsManager.getInstance();
     }
 
     public void queueTrack(AudioTrack track, long user, String requesterName, TextChannel channel) throws MaxQueueSizeException {
         if (player.getPlayingTrack() == null) {
+            metricsManager.markTrackLoaded();
             player.playTrack(track);
             requester = user;
             lastUsedChannel = channel;
@@ -142,7 +146,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
 
         if (endReason == AudioTrackEndReason.LOAD_FAILED) {
             lastUsedChannel.sendMessage("Failed to load audio track: " + track.getInfo().title).queue();
-            return;
+            metricsManager.markTrackLoadFailed();
         }
 
         QueuedAudioTrack nextTrack = tracks.peek();

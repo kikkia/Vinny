@@ -87,6 +87,14 @@ public class MetricsManager {
         statsd.incrementCounter("command.failed", userTag, guildTag, commandTag, categoryTag);
     }
 
+    public void markTrackLoaded() {
+        statsd.incrementCounter("voice.track.loaded");
+    }
+
+    public void markTrackLoadFailed() {
+        statsd.incrementCounter("voice.track.loaded.failed");
+    }
+
     public void updateCacheSize(String name, int count) {
         statsd.recordGaugeValue("cache." + name + ".size", count);
     }
