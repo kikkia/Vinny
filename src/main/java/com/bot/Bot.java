@@ -79,6 +79,7 @@ public class Bot extends ListenerAdapter {
 	Bot() {
 		this.config = Config.getInstance();
 		this.manager = new DefaultAudioPlayerManager();
+		this.manager.setFrameBufferDuration(10000);
 
 		YoutubeAudioSourceManager ytSource = new YoutubeAudioSourceManager();
 

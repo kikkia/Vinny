@@ -235,7 +235,7 @@ public class ShardingManager {
                 .setCompression(Compression.NONE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(client, waiter, bot)
-                .setAudioSendFactory(new NativeAudioSendFactory())
+                .setAudioSendFactory(new NativeAudioSendFactory(800))
                 .setActivity(null)
                 .setRequestTimeoutRetry(true)
                 .setContextEnabled(false)
