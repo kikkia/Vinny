@@ -34,14 +34,14 @@ class InternalShard(val jda: JDA) {
                 // Update active connections
                 if (manager.isConnected && handler.isPlaying) {
                     activeVoiceConnectionsCount++
-                    usersInVoiceCount += manager.connectedChannel!!.members.size - 1
                 }
 
                 // Update idle connection count
                 if (manager.isConnected && !handler.isPlaying) {
                     idleVoiceConnectionCount++
-                    usersInVoiceCount += manager.connectedChannel!!.members.size - 1
                 }
+
+                usersInVoiceCount += manager.connectedChannel!!.members.size - 1
 
                 if (handler != null) {
                     if (handler.nowPlaying != null)

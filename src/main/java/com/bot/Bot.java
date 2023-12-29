@@ -108,7 +108,7 @@ public class Bot extends ListenerAdapter {
 
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
-		executor = Executors.newScheduledThreadPool(30);
+		executor = Executors.newScheduledThreadPool(60);
 	}
 
 	@Override
