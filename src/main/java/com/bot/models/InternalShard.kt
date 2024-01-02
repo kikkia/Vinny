@@ -32,16 +32,14 @@ class InternalShard(val jda: JDA) {
                 val handler = manager.sendingHandler as? VoiceSendHandler ?: continue
 
                 // Update active connections
-                if (manager.isConnected && handler.isPlaying) {
-                    activeVoiceConnectionsCount++
+                if (manager.isConnected) {
+                    if (handler.isPlaying) {
+                        activeVoiceConnectionsCount++
+                    } else {
+                        idleVoiceConnectionCount++
+                    }
+                    usersInVoiceCount += manager.connectedChannel!!.members.size - 1
                 }
-
-                // Update idle connection count
-                if (manager.isConnected && !handler.isPlaying) {
-                    idleVoiceConnectionCount++
-                }
-
-                usersInVoiceCount += manager.connectedChannel!!.members.size - 1
 
                 if (handler != null) {
                     if (handler.nowPlaying != null)
