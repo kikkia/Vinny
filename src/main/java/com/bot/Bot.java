@@ -10,6 +10,7 @@ import com.bot.models.UsageLevel;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.utils.*;
+import com.bot.voice.LavaLinkClient;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
@@ -28,6 +29,7 @@ import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
 import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -50,7 +52,6 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
@@ -72,6 +73,7 @@ public class Bot extends ListenerAdapter {
 	private UserDAO userDAO;
 	private MetricsManager metricsManager;
 	private ExecutorService executor;
+	private LavaLinkClient lavaLinkClient;
 
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 
@@ -109,6 +111,7 @@ public class Bot extends ListenerAdapter {
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
 		executor = Executors.newScheduledThreadPool(60);
+		lavaLinkClient = LavaLinkClient.Companion.getInstance();
 	}
 
 	@Override
@@ -366,19 +369,20 @@ public class Bot extends ListenerAdapter {
 
 	private void checkVoiceLobby(GuildVoiceUpdateEvent event) {
 		Guild guild = event.getEntity().getGuild();
-		VoiceSendHandler handler = getHandler(guild);
-		AudioManager manager = guild.getAudioManager();
+		GuildVoiceState voiceState = guild.getSelfMember().getVoiceState();
+		if (voiceState == null || !voiceState.inVoiceChannel() || voiceState.getChannel() != event.getChannelLeft()) {
+			return;
+		}
 
 		// if there are no humans left, then leave
 		int users = 0;
-		for (Member member : manager.getConnectedChannel().getMembers()) {
+		for (Member member : event.getChannelLeft().getMembers()) {
 			if (!member.getUser().isBot())
 				users++;
 		}
 
-		if (manager.isConnected() && users < 1) {
-			handler.stop();
-			manager.closeAudioConnection();
+		if (users < 1) {
+			lavaLinkClient.cleanupPlayer(guild);
 		}
 	}
 }

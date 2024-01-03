@@ -5,6 +5,7 @@ import com.bot.messaging.RssSubscriber;
 import com.bot.metrics.MetricsReporter;
 import com.bot.tasks.RunScheduledCommandsDefferedTask;
 import com.bot.utils.Config;
+import com.bot.voice.LavaLinkClient;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 
@@ -67,6 +68,8 @@ public class Main {
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_NATS))) {
 			new RssSubscriber(config);
 		}
+
+		LavaLinkClient.Companion.getInstance();
 
 		System.out.println("Successfully started.");
 	}
