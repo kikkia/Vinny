@@ -102,7 +102,6 @@ public class ShardingManager {
                     new PauseCommand(),
                     new RepeatCommand(),
                     new StopCommand(),
-                    new ResumeCommand(),
                     new VolumeCommand(),
                     new DefaultVolumeCommand(),
                     new ListTracksCommand(waiter),
@@ -116,7 +115,6 @@ public class ShardingManager {
                     new ShuffleCommand(),
                     new ClearQueueCommand(),
                     new RemovePlaylistCommand(),
-                    new PlayLLCommand(),
                     //new SpeedCommand(),
 
                     // Battle Royale

@@ -60,7 +60,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             requester = user;
             lastUsedChannel = channel;
             this.requesterName = requesterName;
-            nowPlaying = new QueuedAudioTrack(track, requesterName, user);
+            //nowPlaying = new QueuedAudioTrack(track, requesterName, user);
 
             sendNowPlayingUpdate();
         }
@@ -70,7 +70,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
                     "It will hopefully be raised or removed soon.");
         }
         else {
-            tracks.add(new QueuedAudioTrack(track, requesterName, user));
+            //tracks.add(new QueuedAudioTrack(track, requesterName, user));
         }
         lastUsedChannel = channel;
     }
@@ -90,7 +90,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
             else {
                 player.stopTrack();
                 requester = nextTrack.getRequesterID();
-                player.playTrack(nextTrack.getTrack());
+                //player.playTrack(nextTrack.getTrack());
                 nowPlaying = nextTrack;
 
                 sendNowPlayingUpdate();
@@ -166,7 +166,7 @@ public class VoiceSendHandler extends AudioEventAdapter implements AudioSendHand
         else if (endReason.mayStartNext){
             requester = nextTrack.getRequesterID();
             requesterName = nextTrack.getRequesterName();
-            player.playTrack(nextTrack.getTrack());
+            //player.playTrack(nextTrack.getTrack());
             nowPlaying = nextTrack;
 
             sendNowPlayingUpdate();

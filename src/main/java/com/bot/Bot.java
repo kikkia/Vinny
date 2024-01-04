@@ -10,6 +10,7 @@ import com.bot.models.UsageLevel;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.utils.*;
+import com.bot.voice.GuildVoiceProvider;
 import com.bot.voice.LavaLinkClient;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -318,11 +319,7 @@ public class Bot extends ListenerAdapter {
 
 	// TODO: Move this audio handling stuff out of the bot class
 	public boolean queueTrack(AudioTrack track, CommandEvent event, Message m) throws MaxQueueSizeException {
-		if (event.getMember().getVoiceState().getChannel() == null) {
-			m.editMessage(event.getClient().getWarning() + " You are not in a voice channel! Please join one to use this command.").queue();
-			return false;
-		}
-		else if (!event.getSelfMember().hasPermission(event.getMember().getVoiceState().getChannel(), Permission.VOICE_CONNECT)) {
+		if (!event.getSelfMember().hasPermission(event.getMember().getVoiceState().getChannel(), Permission.VOICE_CONNECT)) {
 			m.editMessage(event.getClient().getWarning() + " I don't have permission to join your voice channel. :cry:").queue();
 			return false;
 		}
@@ -382,7 +379,7 @@ public class Bot extends ListenerAdapter {
 		}
 
 		if (users < 1) {
-			lavaLinkClient.cleanupPlayer(guild);
+			GuildVoiceProvider.Companion.getInstance().getGuildVoiceConnection(event.getGuild()).cleanupPlayer();
 		}
 	}
 }

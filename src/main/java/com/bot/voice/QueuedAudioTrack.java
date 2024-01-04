@@ -1,15 +1,15 @@
 package com.bot.voice;
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.arbjerg.lavalink.client.protocol.Track;
 
 import static com.bot.utils.FormattingUtils.msToMinSec;
 
 public class QueuedAudioTrack {
     private String requesterName;
     private long requesterID;
-    private AudioTrack track;
+    private Track track;
 
-    public QueuedAudioTrack(AudioTrack track, String requesterName, long requesterID) {
+    public QueuedAudioTrack(Track track, String requesterName, long requesterID) {
         this.track = track;
         this.requesterName = requesterName;
         this.requesterID = requesterID;
@@ -21,12 +21,12 @@ public class QueuedAudioTrack {
 
     public long getRequesterID() {return requesterID;}
 
-    public AudioTrack getTrack() {
+    public Track getTrack() {
         return track;
     }
 
     @Override
     public String toString() {
-        return "[" + msToMinSec(track.getDuration()) + "] *" + track.getInfo().title + "* requested by " + requesterName;
+        return "[" + msToMinSec(track.getInfo().getLength()) + "] *" + track.getInfo().getTitle() + "* requested by " + requesterName;
     }
 }

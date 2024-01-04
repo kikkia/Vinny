@@ -67,7 +67,7 @@ public class RemoveTrackCommand extends VoiceCommand {
 		handler.setTracks(rebuiltQ);
 
 		if (removedTrack != null) {
-			event.replySuccess("Removed `" + removedTrack.getTrack().getInfo().title + "` from the queue.");
+			event.replySuccess("Removed `" + removedTrack.getTrack().getInfo().getTitle() + "` from the queue.");
 		} else {
 			event.replyWarning("Could not find any track at that index :thinking:");
 		}
@@ -85,8 +85,8 @@ public class RemoveTrackCommand extends VoiceCommand {
 		for (int i = 0; i < size; i++) {
 			QueuedAudioTrack track = copyQ.poll();
 			// Remove all tracks with that url or name
-			if (track.getTrack().getInfo().uri.equalsIgnoreCase(args)
-					|| track.getTrack().getInfo().title.equalsIgnoreCase(args)){
+			if (track.getTrack().getInfo().getUri().equalsIgnoreCase(args)
+					|| track.getTrack().getInfo().getTitle().equalsIgnoreCase(args)){
 				removedTrack = track;
 				continue;
 			}
@@ -95,7 +95,7 @@ public class RemoveTrackCommand extends VoiceCommand {
 		handler.setTracks(rebuiltQ);
 
 		if (removedTrack != null) {
-			event.replySuccess("Removed all instances of `" + removedTrack.getTrack().getInfo().title + "` from the queue.");
+			event.replySuccess("Removed all instances of `" + removedTrack.getTrack().getInfo().getTitle() + "` from the queue.");
 		} else {
 			event.replyWarning("Could not find any tracks with that url in the queue.");
 		}

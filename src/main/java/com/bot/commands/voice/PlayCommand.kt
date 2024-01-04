@@ -5,6 +5,7 @@ import com.bot.commands.VoiceCommand
 import com.bot.exceptions.MaxQueueSizeException
 import com.bot.utils.Config
 import com.bot.utils.FormattingUtils
+import com.bot.voice.GuildVoiceProvider
 import com.bot.voice.LavaLinkClient
 import com.bot.voice.LavaLinkClient.Companion.getInstance
 import com.bot.voice.VoiceSendHandler
@@ -19,30 +20,29 @@ import net.dv8tion.jda.api.entities.Message
 import java.util.concurrent.TimeUnit
 
 class PlayCommand(private val bot: Bot) : VoiceCommand() {
-    private val client: LavaLinkClient
+    private val guildVoiceProvider: GuildVoiceProvider
 
-    val urlRegex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]"
+    private val urlRegex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]"
 
     init {
         name = "play"
         arguments = "<title|URL>"
         help = "plays the provided audio track"
-        client = getInstance()
+        guildVoiceProvider = GuildVoiceProvider.getInstance()
     }
 
     @Trace(operationName = "executeCommand", resourceName = "Play")
     override fun executeCommand(commandEvent: CommandEvent) {
-        val link = client.client.getLink(commandEvent.guild.idLong)
-        val player = link.getPlayer().toFuture().get(3, TimeUnit.SECONDS)
+        val guildVoiceConnection = guildVoiceProvider.getGuildVoiceConnection(commandEvent.guild)
         if (commandEvent.args.isEmpty()) {
-            if (link.state == LinkState.CONNECTED && player.paused) {
-                link.getPlayer().flatMap { it.setPaused(false).asMono() }.subscribe{ _ -> commandEvent.reply("Audio stream resumed") }
+            if (guildVoiceConnection.getPaused()) {
+                guildVoiceConnection.setPaused(false)
                 commandEvent.reply(commandEvent.client.success + " Resumed paused stream.")
             } else {
                 commandEvent.reply(
                     """${commandEvent.client.warning} You must give me something to play.
                     `${commandEvent.client.prefix}play <URL>` - Plays media at the provided URL
-                    `${commandEvent.client.prefix}play <search term>` - Searchs youtube for the first result of the search term"""
+                    `${commandEvent.client.prefix}play <search term>` - Searches youtube for the first result of the search term"""
                 )
             }
             return
@@ -53,7 +53,7 @@ class PlayCommand(private val bot: Bot) : VoiceCommand() {
             url = searchPrefix.plus(url)
         }
         commandEvent.reply("\u231A Loading... `[" + commandEvent.args + "]`") { _: Message? ->
-            client.loadTrack(link, url, commandEvent)
+            guildVoiceConnection.loadTrack(url, commandEvent)
         }
     }
 

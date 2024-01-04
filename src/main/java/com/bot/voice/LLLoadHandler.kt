@@ -11,21 +11,14 @@ import dev.arbjerg.lavalink.client.protocol.SearchResult
 import dev.arbjerg.lavalink.client.protocol.TrackLoaded
 import org.apache.log4j.Logger
 
-class LLLoadHandler(private val link: Link, private val event: CommandEvent) : AbstractAudioLoadResultHandler() {
+class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val link: Link, private val event: CommandEvent) : AbstractAudioLoadResultHandler() {
     val logger = Logger.getLogger(this::class.java.name)
     override fun ontrackLoaded(result: TrackLoaded) {
         try {
             val track = result.track
-
+            val queuedTrack = QueuedAudioTrack(track, event.author.name, event.author.idLong)
+            guildVoiceConnection.queueTrack(queuedTrack, event)
             // Inner class at the end of this file
-            link.createOrUpdatePlayer()
-                .setTrack(track)
-                .setVolume(35)
-                .subscribe { player ->
-                    val playingTrack = player.track
-                    val trackTitle = playingTrack!!.info.title
-                    event.textChannel.sendMessage("Now playing: $trackTitle").queue()
-                }
         } catch (e: Exception) {
             logger.error(e.message, e)
         }
@@ -46,12 +39,8 @@ class LLLoadHandler(private val link: Link, private val event: CommandEvent) : A
         }
         val firstTrack = tracks[0]
 
-        // This is a different way of updating the player! Choose your preference!
-        // This method will also create a player if there is not one in the server yet
-        link.updatePlayer { update: PlayerUpdateBuilder -> update.setTrack(firstTrack).setVolume(35) }
-            .subscribe { ignored: LavalinkPlayer? ->
-                event.textChannel.sendMessage("Now playing: " + firstTrack.info.title).queue()
-            }
+        val queuedTrack = QueuedAudioTrack(firstTrack, event.author.name, event.author.idLong)
+        guildVoiceConnection.queueTrack(queuedTrack, event)
     }
 
     override fun noMatches() {

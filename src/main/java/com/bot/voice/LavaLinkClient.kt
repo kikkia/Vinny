@@ -7,13 +7,16 @@ import dev.arbjerg.lavalink.client.*
 import dev.arbjerg.lavalink.client.loadbalancing.RegionGroup
 import net.dv8tion.jda.api.entities.Guild
 import java.net.URI
+import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Logger
 
 class LavaLinkClient private constructor() {
 
     private val logger = Logger.getLogger(LavaLinkClient::class.java.name)
 
-    public var client: LavalinkClient
+    var client: LavalinkClient
+
+    private var guildClients: ConcurrentHashMap<Long, GuildVoiceConnection>
 
     init {
         val config = Config.getInstance()
@@ -33,6 +36,18 @@ class LavaLinkClient private constructor() {
             val node: LavalinkNode = event.node
             logger.info("Node ${node.name} emitted event: $event")
         }
+        client.on(TrackEndEvent::class.java).subscribe {event ->
+            val gConn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(event.guildId)
+            if (gConn == null) {
+                logger.warning("Received track end event, when guild not in provider")
+                return@subscribe
+            } else if (!event.endReason.mayStartNext) {
+                logger.warning("Received track end event, may NOT start next: ${event.endReason.name}")
+                return@subscribe
+            }
+            gConn.onTrackEnd(event)
+        }
+        guildClients = ConcurrentHashMap()
     }
 
     fun joinEventChannel(event: CommandEvent) {
@@ -47,17 +62,11 @@ class LavaLinkClient private constructor() {
     fun cleanupPlayer(guild: Guild) {
         getLink(guild.idLong).destroyPlayer()
         guild.jda.directAudioController.disconnect(guild)
+        guildClients.remove(guild.idLong)
     }
 
     fun getLink(guildId: Long): Link {
         return client.getLink(guildId)
-    }
-
-    fun loadTrack(link: Link, toLoad: String, commandEvent: CommandEvent) {
-        if (link.state == LinkState.DISCONNECTED) {
-            joinEventChannel(commandEvent)
-        }
-        link.loadItem(toLoad).subscribe(LLLoadHandler(link, commandEvent))
     }
 
     companion object {
