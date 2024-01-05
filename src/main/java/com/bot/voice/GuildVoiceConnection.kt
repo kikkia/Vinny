@@ -1,6 +1,8 @@
 package com.bot.voice
 
+import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
+import com.bot.models.enums.RepeatMode
 import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.LinkState
@@ -14,10 +16,12 @@ import org.apache.log4j.Logger
 class GuildVoiceConnection(val guild: Guild) {
     val logger = Logger.getLogger(this::class.java.name)
     val lavalink: LavaLinkClient = LavaLinkClient.getInstance()
-    val trackProvider = TrackProvider()
+    private val trackProvider = TrackProvider()
     var currentVoiceChannel: VoiceChannel? = null
     var lastTextChannel: TextChannel? = null
     private var isPaused = false
+    private var volume = 100
+    private var volumeLocked = false
 
     fun setPaused(pause: Boolean) {
         lavalink.getLink(guild.idLong).getPlayer()
@@ -31,7 +35,7 @@ class GuildVoiceConnection(val guild: Guild) {
     fun joinChannel(commandEvent: CommandEvent) {
         val toJoin = commandEvent.member.voiceState?.channel
             ?: throw NotInVoiceException(commandEvent.client.warning + " You are not in a voice channel! Please join one to use this command.")
-        if (toJoin == currentVoiceChannel) {
+        if (toJoin == currentVoiceChannel && isConnected()) {
             return
         }
 
@@ -81,7 +85,7 @@ class GuildVoiceConnection(val guild: Guild) {
             getLink().createOrUpdatePlayer()
                 .setTrack(track.track)
                 // TODO - default volume
-                .setVolume(35)
+                .setVolume(volume)
                 .subscribe { player ->
                     val playingTrack = player.track
                     val trackTitle = playingTrack!!.info.title
@@ -95,19 +99,17 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun onTrackEnd(event: TrackEndEvent) {
-        val next = trackProvider.nextTrack()
+        nextTrack(false)
+    }
+
+    fun nextTrack(skipping: Boolean) {
+        val next = trackProvider.nextTrack(skipping)
         if (next == null) {
+            sendMessageToChannel("Finished playing all songs in queue.")
             cleanupPlayer()
             return
         }
-        getLink().createOrUpdatePlayer()
-            .setTrack(next.track).subscribe{
-                if (lastTextChannel != null) {
-                    val trackTitle = it.track!!.info.title
-                    // TODO
-                    lastTextChannel!!.sendMessage(("Now playing: $trackTitle")).queue()
-                }
-            }
+        playTrack(next)
     }
 
     fun cleanupPlayer() {
@@ -118,7 +120,57 @@ class GuildVoiceConnection(val guild: Guild) {
         trackProvider.clearAll()
     }
 
+    fun isConnected(): Boolean {
+        return getLink().state == LinkState.CONNECTED
+    }
+
+    fun clearQueue() {
+        trackProvider.clearAll()
+    }
+
+    fun setRepeatMode(mode: RepeatMode) {
+        trackProvider.setRepeatMode(mode)
+    }
+
+    fun getVolume() : Int {
+        return volume
+    }
+
+    fun setVolume(newVolume: Int) {
+        if (newVolume > 200 || newVolume < 0) {
+            throw NumberFormatException()
+        }
+        if (volumeLocked) {
+            throw InvalidInputException("Volume is currently locked. It can be unlocked by a mod with the `~lockvol` command.")
+        }
+        volume = newVolume
+        getLink().createOrUpdatePlayer().setVolume(volume).block()
+    }
+
+    fun nowPlaying() : QueuedAudioTrack? {
+        return trackProvider.getNowPlaying()
+    }
+
+    fun getQueuedTracks() : List<QueuedAudioTrack> {
+        return trackProvider.getQueued()
+    }
+
     private fun getLink() : Link {
         return lavalink.getLink(guild.idLong)
+    }
+
+    private fun playTrack(track: QueuedAudioTrack) {
+        getLink().createOrUpdatePlayer()
+            .setTrack(track.track).subscribe{
+                if (lastTextChannel != null) {
+                    val trackTitle = it.track!!.info.title
+                    // TODO
+                    sendMessageToChannel("Now playing: $trackTitle")
+                }
+            }
+    }
+
+    fun sendMessageToChannel(msg: String) {
+        lastTextChannel!!.sendMessage(msg).queue()
     }
 }

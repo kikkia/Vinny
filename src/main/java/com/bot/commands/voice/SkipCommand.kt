@@ -6,23 +6,21 @@ import com.bot.voice.VoiceSendHandler
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 
-class StopCommand : VoiceCommand() {
-    val guildVoiceProvider = GuildVoiceProvider.getInstance()
+class SkipCommand : VoiceCommand() {
+    private val guildVoiceProvider = GuildVoiceProvider.getInstance()
     init {
-        name = "stop"
+        name = "skip"
         arguments = ""
-        help = "Stops stream and clears the current playlist"
+        help = "skips to the next track"
     }
 
-    @Trace(operationName = "executeCommand", resourceName = "Stop")
+    @Trace(operationName = "executeCommand", resourceName = "SkipTrack")
     override fun executeCommand(commandEvent: CommandEvent) {
         val voiceConnection = guildVoiceProvider.getGuildVoiceConnection(commandEvent.guild)
         if (!voiceConnection.isConnected()) {
             commandEvent.reply(commandEvent.client.warning + " I am not connected to a voice channel.")
-        } else {
-            voiceConnection.cleanupPlayer()
-            commandEvent.reply(commandEvent.client.success + " Stopped audio stream")
-            commandEvent.guild.audioManager.closeAudioConnection()
+            return
         }
+        voiceConnection.nextTrack(true)
     }
 }

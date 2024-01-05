@@ -7,7 +7,7 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 
 class RepeatCommand : VoiceCommand() {
-    val guildVoiceProvider = GuildVoiceProvider.getInstance()
+    private val guildVoiceProvider = GuildVoiceProvider.getInstance()
     init {
         name = "repeat"
         arguments = "`all` for repeat all, no input for repeat one"
@@ -16,18 +16,19 @@ class RepeatCommand : VoiceCommand() {
 
     @Trace(operationName = "executeCommand", resourceName = "Repeat")
     override fun executeCommand(commandEvent: CommandEvent) {
-        val voiceConnection = guildVoiceProvider.getGuildVoiceConnection(commandEvent.guild.idLong)
-        if (voiceConnection == null) {
+        val voiceConnection = guildVoiceProvider.getGuildVoiceConnection(commandEvent.guild)
+        if (!voiceConnection.isConnected()) {
             commandEvent.reply(commandEvent.client.warning + " I am not currently connected to voice.")
-        } else {
-            var mode = RepeatMode.REPEAT_NONE
-            if (commandEvent.args.equals("all", ignoreCase = true)) {
-               mode = RepeatMode.REPEAT_ALL
-            } else if (commandEvent.args.equals("one", ignoreCase = false)) {
-                mode = RepeatMode.REPEAT_ONE
-            }
-            voiceConnection.trackProvider.setRepeatMode(mode)
-            commandEvent.reply("${commandEvent.client.success} Set the repeat mode to ${mode.ezName}")
+            return
         }
+        var mode = RepeatMode.REPEAT_NONE
+        if (commandEvent.args.equals("all", ignoreCase = true)) {
+           mode = RepeatMode.REPEAT_ALL
+        } else if (commandEvent.args.equals("one", ignoreCase = false)) {
+            mode = RepeatMode.REPEAT_ONE
+        }
+        voiceConnection.setRepeatMode(mode)
+        commandEvent.reply("${commandEvent.client.success} Set the repeat mode to ${mode.ezName}")
+
     }
 }

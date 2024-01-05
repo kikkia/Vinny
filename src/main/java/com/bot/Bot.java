@@ -10,8 +10,8 @@ import com.bot.models.UsageLevel;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.utils.*;
+import com.bot.voice.GuildVoiceConnection;
 import com.bot.voice.GuildVoiceProvider;
-import com.bot.voice.LavaLinkClient;
 import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
@@ -30,7 +30,6 @@ import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
 import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -74,7 +73,7 @@ public class Bot extends ListenerAdapter {
 	private UserDAO userDAO;
 	private MetricsManager metricsManager;
 	private ExecutorService executor;
-	private LavaLinkClient lavaLinkClient;
+	private GuildVoiceProvider guildVoiceProvider;
 
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 
@@ -112,7 +111,7 @@ public class Bot extends ListenerAdapter {
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.getInstance();
 		executor = Executors.newScheduledThreadPool(60);
-		lavaLinkClient = LavaLinkClient.Companion.getInstance();
+		guildVoiceProvider = GuildVoiceProvider.Companion.getInstance();
 	}
 
 	@Override
@@ -365,21 +364,30 @@ public class Bot extends ListenerAdapter {
 	}
 
 	private void checkVoiceLobby(GuildVoiceUpdateEvent event) {
-		Guild guild = event.getEntity().getGuild();
-		GuildVoiceState voiceState = guild.getSelfMember().getVoiceState();
-		if (voiceState == null || !voiceState.inVoiceChannel() || voiceState.getChannel() != event.getChannelLeft()) {
+		Guild guild = event.getGuild();
+		GuildVoiceConnection conn = GuildVoiceProvider.Companion.getInstance().getGuildVoiceConnection(guild.getIdLong());
+		if (conn == null || event.getChannelLeft() != conn.getCurrentVoiceChannel()) {
 			return;
+		}
+		if (event.getMember().equals(guild.getSelfMember())) {
+			if (event.getChannelJoined() == null) {
+				// Kicked from voice, maybe message or save tmp playlist
+				conn.cleanupPlayer();
+				return;
+			}
+			// update our currently playing channel if there are people in there
+			conn.setCurrentVoiceChannel(event.getChannelJoined());
 		}
 
 		// if there are no humans left, then leave
 		int users = 0;
-		for (Member member : event.getChannelLeft().getMembers()) {
+		for (Member member : conn.getCurrentVoiceChannel().getMembers()) {
 			if (!member.getUser().isBot())
 				users++;
 		}
-
 		if (users < 1) {
-			GuildVoiceProvider.Companion.getInstance().getGuildVoiceConnection(event.getGuild()).cleanupPlayer();
+			conn.sendMessageToChannel("Leaving voice, no one is in the channel.");
+			conn.cleanupPlayer();
 		}
 	}
 }

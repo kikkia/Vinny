@@ -18,8 +18,8 @@ class TrackProvider {
         }
     }
 
-    fun nextTrack() : QueuedAudioTrack? {
-        if (repeatMode == RepeatMode.REPEAT_ONE) {
+    fun nextTrack(skipping: Boolean) : QueuedAudioTrack? {
+        if (repeatMode == RepeatMode.REPEAT_ONE && !skipping) {
             return nowPlaying
         } else if (repeatMode == RepeatMode.REPEAT_ALL) {
             queue.add(nowPlaying)
@@ -40,6 +40,10 @@ class TrackProvider {
 
     fun getNowPlaying() : QueuedAudioTrack? {
         return nowPlaying
+    }
+
+    fun getQueued() : List<QueuedAudioTrack> {
+        return queue.toList()
     }
 
     fun setRepeatMode(mode: RepeatMode) {

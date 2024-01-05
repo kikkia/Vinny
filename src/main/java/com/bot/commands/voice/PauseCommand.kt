@@ -21,6 +21,10 @@ class PauseCommand : VoiceCommand() {
     @Trace(operationName = "executeCommand", resourceName = "pause")
     override fun executeCommand(commandEvent: CommandEvent) {
         val guildVoiceConnection = guildVoiceProvider.getGuildVoiceConnection(commandEvent.guild)
+        if (!guildVoiceConnection.isConnected()) {
+            commandEvent.reply(commandEvent.client.warning + " I am not currently connected to voice.")
+            return
+        }
         guildVoiceConnection.setPaused(!guildVoiceConnection.getPaused())
         commandEvent.reply("${commandEvent.client.success} + Stream has been ${if (guildVoiceConnection.getPaused()) "paused" else "resumed"}")
     }
