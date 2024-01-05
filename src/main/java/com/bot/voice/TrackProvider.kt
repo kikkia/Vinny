@@ -1,6 +1,7 @@
 package com.bot.voice
 
 import com.bot.models.enums.RepeatMode
+import dev.arbjerg.lavalink.client.protocol.Track
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class TrackProvider {
@@ -31,6 +32,10 @@ class TrackProvider {
         }
         nowPlaying = queue.poll()
         return nowPlaying
+    }
+
+    fun updateNowPlaying(np: QueuedAudioTrack) {
+        nowPlaying = np
     }
 
     fun clearAll() {

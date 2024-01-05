@@ -20,7 +20,7 @@ class GuildVoiceConnection(val guild: Guild) {
     var currentVoiceChannel: VoiceChannel? = null
     var lastTextChannel: TextChannel? = null
     private var isPaused = false
-    private var volume = 100
+    private var volume = 35
     private var volumeLocked = false
 
     fun setPaused(pause: Boolean) {
@@ -149,6 +149,10 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun nowPlaying() : QueuedAudioTrack? {
         return trackProvider.getNowPlaying()
+    }
+
+    fun getPosition() : Long? {
+        return getLink().getPlayer().block()?.position
     }
 
     fun getQueuedTracks() : List<QueuedAudioTrack> {

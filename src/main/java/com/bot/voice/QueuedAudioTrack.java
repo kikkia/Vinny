@@ -25,6 +25,11 @@ public class QueuedAudioTrack {
         return track;
     }
 
+    // Used to update metadata from LL
+    public void setTrack(Track track) {
+        this.track = track;
+    }
+
     @Override
     public String toString() {
         return "[" + msToMinSec(track.getInfo().getLength()) + "] *" + track.getInfo().getTitle() + "* requested by " + requesterName;
