@@ -12,7 +12,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ListTracksCommand(waiter: EventWaiter) : VoiceCommand() {
-    private val guildVoiceProvider = GuildVoiceProvider.getInstance()
     private val builder: Paginator.Builder
 
     @Trace(operationName = "executeCommand", resourceName = "ListTracks")

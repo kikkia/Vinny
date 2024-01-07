@@ -174,6 +174,33 @@ class GuildVoiceConnection(val guild: Guild) {
             }
     }
 
+    fun toggleVolumeLock() : Boolean {
+        volumeLocked = !volumeLocked
+        return volumeLocked
+    }
+
+    fun removeTrackAtIndex(index: Int): QueuedAudioTrack? {
+        val tracks = trackProvider.getQueued()
+        if (index >tracks.size) {
+            throw Exception("Provided track index: $index is more than the total tracks queued: ${tracks.size}")
+        }
+        val toRemove = tracks[index]
+        val newTracks = tracks.toMutableList()
+        newTracks.removeAt(index)
+        trackProvider.setTracks(newTracks)
+        return toRemove
+    }
+
+    fun removeTrackByURLOrSearch(url: String): QueuedAudioTrack? {
+        val tracks = trackProvider.getQueued()
+        val toRemove = tracks.toMutableList().firstOrNull { it.track.info.title == url || it.track.info.uri == url }
+        if (toRemove != null) {
+            tracks.toMutableList().removeIf { it.track.info.title == url || it.track.info.uri == url }
+            trackProvider.setTracks(tracks)
+        }
+        return toRemove
+    }
+
     fun sendMessageToChannel(msg: String) {
         lastTextChannel!!.sendMessage(msg).queue()
     }
