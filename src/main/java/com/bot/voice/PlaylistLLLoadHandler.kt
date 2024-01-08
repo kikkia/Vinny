@@ -40,7 +40,7 @@ class PlaylistLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnecti
     }
 
     override fun loadFailed(result: LoadFailed) {
-        event.replyWarning("Track, ${tracks[index]} failed to load, but continuing to load tracks.")
+        //event.replyWarning("Track, ${tracks[index]} failed to load, but continuing to load tracks.")
         guildVoiceConnection.queuePlaylistTrack(null, event, loadingMessage, tracks, index, failedCount+1)
     }
 }

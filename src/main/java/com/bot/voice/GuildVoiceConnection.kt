@@ -2,8 +2,8 @@ package com.bot.voice
 
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
-import com.bot.models.AudioTrack
 import com.bot.models.enums.RepeatMode
+import com.bot.utils.FormattingUtils
 import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.LinkState
@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.VoiceChannel
 import org.apache.log4j.Logger
+import java.text.Normalizer.Form
 
 class GuildVoiceConnection(val guild: Guild) {
     val logger = Logger.getLogger(this::class.java.name)
@@ -193,19 +194,25 @@ class GuildVoiceConnection(val guild: Guild) {
             .setVolume(volume)
             .setTrack(track.track).subscribe{
                 if (lastTextChannel != null) {
-                    val trackTitle = it.track!!.info.title
-                    // TODO
-                    sendMessageToChannel("Now playing: $trackTitle")
+                    sendNowPlayingUpdate()
                 }
             }
     }
 
     private fun updateLoadingMessage(loadingMessage: Message, tracks: List<String>, index: Int, failedCount: Int) {
-        val msg = "Loading playlist: ${index}/${tracks.size} completed. "
-        if (failedCount > 0) {
-            msg.plus("Failed to load $failedCount tracks.")
+        if (shouldUpdateLoadingMessage(tracks, index)) {
+            var msg = "Loading playlist: ${index}/${tracks.size} completed. "
+            if (failedCount > 0) {
+                msg = msg.plus("Failed to load $failedCount tracks.")
+            }
+            loadingMessage.editMessage(msg).queue()
         }
-        loadingMessage.editMessage(msg).queue()
+    }
+
+    // To not spam ratelimit, on larger playlists update less frequently
+    private fun shouldUpdateLoadingMessage(tracks: List<String>, index: Int): Boolean {
+        val updateInterval = (tracks.size / 8).coerceAtLeast(1)
+        return index % updateInterval == 0 || tracks.size == index
     }
 
     fun toggleVolumeLock() : Boolean {
@@ -241,6 +248,23 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun sendMessageToChannel(msg: String) {
-        lastTextChannel!!.sendMessage(msg).queue()
+        try {
+            lastTextChannel!!.sendMessage(msg).queue()
+        } catch (e: Exception) {
+            logger.error("Guild voice: could not send message to channel", e)
+        }
+    }
+
+    private fun sendNowPlayingUpdate() {
+        // If we sent the last message in the channel then just edit it
+        lastTextChannel!!.history.retrievePast(1).queue { m ->
+            val lastMessage: Message = m[0]
+            val embed = FormattingUtils.getAudioTrackEmbed(trackProvider.getNowPlaying(), volume)
+            if (lastMessage.author.id == lastTextChannel!!.jda.selfUser.id) {
+                lastMessage.editMessageEmbeds(embed).queue()
+            } else {
+                lastTextChannel!!.sendMessageEmbeds(embed).queue()
+            }
+        }
     }
 }
