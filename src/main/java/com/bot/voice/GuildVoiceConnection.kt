@@ -5,6 +5,7 @@ import com.bot.exceptions.NotInVoiceException
 import com.bot.models.enums.RepeatMode
 import com.bot.utils.FormattingUtils
 import com.jagrosh.jdautilities.command.CommandEvent
+import com.jagrosh.jdautilities.menu.OrderedMenu.Builder
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.LinkState
 import dev.arbjerg.lavalink.client.TrackEndEvent
@@ -120,6 +121,15 @@ class GuildVoiceConnection(val guild: Guild) {
             joinChannel(commandEvent)
         }
         link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, 0, 0))
+        lastTextChannel = commandEvent.textChannel
+    }
+
+    fun searchForTrack(search: String, commandEvent: CommandEvent, message: Message, builder: Builder) {
+        val link = getLink()
+        if (link.state == LinkState.DISCONNECTED) {
+            joinChannel(commandEvent)
+        }
+        link.loadItem(search).subscribe(SearchLLLoadHandler(this, commandEvent, message, builder))
         lastTextChannel = commandEvent.textChannel
     }
 
