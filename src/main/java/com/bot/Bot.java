@@ -1,7 +1,6 @@
 package com.bot;
 
 import com.bot.db.*;
-import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.BannedImage;
 import com.bot.models.InternalGuild;
@@ -12,10 +11,7 @@ import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.utils.*;
 import com.bot.voice.GuildVoiceConnection;
 import com.bot.voice.GuildVoiceProvider;
-import com.bot.voice.VoiceSendHandler;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
@@ -25,13 +21,10 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
 import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
@@ -314,53 +307,6 @@ public class Bot extends ListenerAdapter {
 
 	public AudioPlayerManager getManager() {
 		return manager;
-	}
-
-	// TODO: Move this audio handling stuff out of the bot class
-	public boolean queueTrack(AudioTrack track, CommandEvent event, Message m) throws MaxQueueSizeException {
-		if (!event.getSelfMember().hasPermission(event.getMember().getVoiceState().getChannel(), Permission.VOICE_CONNECT)) {
-			m.editMessage(event.getClient().getWarning() + " I don't have permission to join your voice channel. :cry:").queue();
-			return false;
-		}
-		else if (!event.getSelfMember().hasPermission(event.getMember().getVoiceState().getChannel(), Permission.VOICE_SPEAK)){
-			m.editMessage(event.getClient().getWarning() + " I don't have permission to speak in your voice channel. :cry:").queue();
-			return false;
-		}
-		else {
-			getHandler(event.getGuild()).queueTrack(track, event.getAuthor().getIdLong(), event.getAuthor().getName(), event.getTextChannel());
-			if (!event.getGuild().getAudioManager().isConnected()) {
-				event.getGuild().getAudioManager().openAudioConnection(event.getMember().getVoiceState().getChannel());
-			}
-			return true;
-		}
-	}
-
-	public VoiceSendHandler getHandler(Guild guild) {
-		VoiceSendHandler handler;
-		if (guild.getAudioManager().getSendingHandler() == null) {
-			AudioPlayer player = manager.createPlayer();
-			handler = new VoiceSendHandler(player);
-
-			// Get default volume
-			int dVolume = 100;
-			InternalGuild g = guildDAO.getGuildById(guild.getId());
-
-			if (g == null) {
-				LOGGER.warning("Failed to get guild when looking for volume. Attempting an add");
-				guildDAO.addFreshGuild(guild);
-				// Just play, no need to return
-			} else {
-				dVolume = g.getVolume();
-			}
-
-			handler.getPlayer().setVolume(dVolume);
-			player.addListener(handler);
-			guild.getAudioManager().setSendingHandler(handler);
-		}
-		else {
-			handler = (VoiceSendHandler) guild.getAudioManager().getSendingHandler();
-		}
-		return handler;
 	}
 
 	private void checkVoiceLobby(GuildVoiceUpdateEvent event) {

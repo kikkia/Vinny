@@ -24,7 +24,6 @@ import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
 import com.bot.utils.Config;
 import com.bot.voice.LavaLinkClient;
-import com.bot.voice.VoiceSendHandler;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
@@ -47,7 +46,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.stream.Collectors;
 
 import static net.dv8tion.jda.api.requests.GatewayIntent.*;
 
@@ -321,14 +319,5 @@ public class ShardingManager {
             }
         }
         return null;
-    }
-
-    public List<VoiceSendHandler> getActiveVoiceSendHandlers() {
-        List<VoiceSendHandler> activeHandlers = new ArrayList<>();
-
-        for (InternalShard shard : shards.values()) {
-            activeHandlers.addAll(shard.getVoiceSendHandlers().stream().filter(VoiceSendHandler::isActive).collect(Collectors.toList()));
-        }
-        return activeHandlers;
     }
 }

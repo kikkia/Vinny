@@ -1,11 +1,8 @@
 package com.bot.commands.voice
 
-import com.bot.Bot
 import com.bot.commands.VoiceCommand
 import com.bot.db.PlaylistDAO
 import com.bot.models.Playlist
-import com.bot.voice.LLLoadHandler
-import com.bot.voice.LoadHandler
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 import java.util.logging.Level

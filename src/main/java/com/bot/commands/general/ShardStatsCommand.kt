@@ -25,7 +25,6 @@ class ShardStatsCommand : GeneralCommand() {
             val jda = value.jda
             val builder = EmbedBuilder()
             builder.setTitle("Shard: $key")
-            builder.addField("Voice Streams", value.activeVoiceConnectionsCount.toString(), true)
             builder.addField("Guilds", jda.guilds.size.toString(), true)
             builder.addField("Users", jda.users.size.toString(), true)
             builder.addField("Ping", jda.gatewayPing.toString() + "ms", true)
