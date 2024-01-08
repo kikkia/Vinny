@@ -2,6 +2,7 @@ package com.bot.voice
 
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
+import com.bot.metrics.MetricsManager
 import com.bot.models.enums.RepeatMode
 import com.bot.utils.FormattingUtils
 import com.jagrosh.jdautilities.command.CommandEvent
@@ -20,6 +21,7 @@ import java.text.Normalizer.Form
 class GuildVoiceConnection(val guild: Guild) {
     val logger = Logger.getLogger(this::class.java.name)
     val lavalink: LavaLinkClient = LavaLinkClient.getInstance()
+    val metricsManager = MetricsManager.getInstance()
     private val trackProvider = TrackProvider()
     var currentVoiceChannel: VoiceChannel? = null
     var lastTextChannel: TextChannel? = null
@@ -75,6 +77,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun loadTrack(toLoad: String, commandEvent: CommandEvent) {
+        metricsManager.markTrackLoaded()
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(commandEvent)
@@ -134,6 +137,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun onTrackEnd(event: TrackEndEvent) {
+        metricsManager.markTrackEnd()
         nextTrack(false)
     }
 
@@ -200,6 +204,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     private fun playTrack(track: QueuedAudioTrack) {
+        metricsManager.markTrackPlayed()
         getLink().createOrUpdatePlayer()
             .setVolume(volume)
             .setTrack(track.track).subscribe{

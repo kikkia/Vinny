@@ -1,5 +1,6 @@
 package com.bot.voice
 
+import com.bot.metrics.MetricsManager
 import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
 import dev.arbjerg.lavalink.client.protocol.LoadFailed
@@ -41,6 +42,7 @@ class PlaylistLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnecti
 
     override fun loadFailed(result: LoadFailed) {
         //event.replyWarning("Track, ${tracks[index]} failed to load, but continuing to load tracks.")
+        MetricsManager.getInstance().markTrackLoadFailed()
         guildVoiceConnection.queuePlaylistTrack(null, event, loadingMessage, tracks, index, failedCount+1)
     }
 }

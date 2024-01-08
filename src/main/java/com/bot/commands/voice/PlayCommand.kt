@@ -2,22 +2,10 @@ package com.bot.commands.voice
 
 import com.bot.Bot
 import com.bot.commands.VoiceCommand
-import com.bot.exceptions.MaxQueueSizeException
 import com.bot.utils.Config
-import com.bot.utils.FormattingUtils
-import com.bot.voice.GuildVoiceProvider
-import com.bot.voice.LavaLinkClient
-import com.bot.voice.LavaLinkClient.Companion.getInstance
-import com.bot.voice.VoiceSendHandler
 import com.jagrosh.jdautilities.command.CommandEvent
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import datadog.trace.api.Trace
-import dev.arbjerg.lavalink.client.LinkState
 import net.dv8tion.jda.api.entities.Message
-import java.util.concurrent.TimeUnit
 
 class PlayCommand(private val bot: Bot) : VoiceCommand() {
 

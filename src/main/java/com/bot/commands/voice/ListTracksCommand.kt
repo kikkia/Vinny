@@ -1,9 +1,7 @@
 package com.bot.commands.voice
 
 import com.bot.commands.VoiceCommand
-import com.bot.voice.GuildVoiceProvider
 import com.bot.voice.QueuedAudioTrack
-import com.bot.voice.VoiceSendHandler
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.Paginator

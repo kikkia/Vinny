@@ -91,6 +91,13 @@ public class MetricsManager {
         statsd.incrementCounter("voice.track.loaded");
     }
 
+    public void markTrackPlayed() {
+        statsd.incrementCounter("voice.track.played");
+    }
+
+    public void markTrackEnd() {
+        statsd.incrementCounter("voice.track.ended");
+    }
     public void markTrackLoadFailed() {
         statsd.incrementCounter("voice.track.loaded.failed");
     }

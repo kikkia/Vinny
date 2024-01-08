@@ -1,8 +1,6 @@
 package com.bot.commands.voice
 
 import com.bot.commands.VoiceCommand
-import com.bot.voice.GuildVoiceProvider
-import com.bot.voice.VoiceSendHandler
 import com.jagrosh.jdautilities.command.CommandEvent
 
 class ClearQueueCommand : VoiceCommand() {

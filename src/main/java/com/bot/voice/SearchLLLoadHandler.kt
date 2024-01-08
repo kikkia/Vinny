@@ -1,6 +1,7 @@
 package com.bot.voice
 
 import com.bot.exceptions.MaxQueueSizeException
+import com.bot.metrics.MetricsManager
 import com.bot.utils.FormattingUtils
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.menu.OrderedMenu
@@ -69,6 +70,7 @@ class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection
     }
 
     override fun loadFailed(result: LoadFailed) {
+        MetricsManager.getInstance().markTrackLoadFailed()
         event.textChannel.sendMessage("Failed to load search! " + result.exception.message).queue()
     }
 }

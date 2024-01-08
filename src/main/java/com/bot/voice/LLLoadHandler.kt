@@ -1,6 +1,7 @@
 package com.bot.voice
 
 import com.bot.exceptions.MaxQueueSizeException
+import com.bot.metrics.MetricsManager
 import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
 import dev.arbjerg.lavalink.client.LavalinkPlayer
@@ -86,6 +87,7 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
     }
 
     override fun loadFailed(result: LoadFailed) {
+        MetricsManager.getInstance().markTrackLoadFailed()
         event.textChannel.sendMessage("Failed to load track! " + result.exception.message).queue()
     }
 }
