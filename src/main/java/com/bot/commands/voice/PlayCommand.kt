@@ -20,7 +20,6 @@ import net.dv8tion.jda.api.entities.Message
 import java.util.concurrent.TimeUnit
 
 class PlayCommand(private val bot: Bot) : VoiceCommand() {
-    private val guildVoiceProvider: GuildVoiceProvider
 
     private val urlRegex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]"
 
@@ -28,7 +27,6 @@ class PlayCommand(private val bot: Bot) : VoiceCommand() {
         name = "play"
         arguments = "<title|URL>"
         help = "plays the provided audio track"
-        guildVoiceProvider = GuildVoiceProvider.getInstance()
     }
 
     @Trace(operationName = "executeCommand", resourceName = "Play")

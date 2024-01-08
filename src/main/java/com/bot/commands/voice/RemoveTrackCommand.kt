@@ -1,22 +1,16 @@
 package com.bot.commands.voice
 
-import com.bot.Bot
 import com.bot.commands.VoiceCommand
-import com.bot.voice.GuildVoiceProvider
-import com.bot.voice.QueuedAudioTrack
-import com.bot.voice.VoiceSendHandler
+
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
-import java.util.concurrent.LinkedBlockingDeque
 
-class RemoveTrackCommand(bot: Bot) : VoiceCommand() {
-    private val bot: Bot
+class RemoveTrackCommand : VoiceCommand() {
 
     init {
         name = "remove"
         help = "Removes a track from the current queue"
         arguments = "<(Position in queue) or (url of track) or (track name)>"
-        this.bot = bot
     }
 
     @Trace(operationName = "executeCommand", resourceName = "RemoveTrack")

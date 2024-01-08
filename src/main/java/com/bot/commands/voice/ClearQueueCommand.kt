@@ -6,7 +6,6 @@ import com.bot.voice.VoiceSendHandler
 import com.jagrosh.jdautilities.command.CommandEvent
 
 class ClearQueueCommand : VoiceCommand() {
-    private val guildVoiceProvider = GuildVoiceProvider.getInstance()
     init {
         this.name = "clearqueue"
     }

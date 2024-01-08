@@ -44,6 +44,11 @@ class TrackProvider {
         nowPlaying = null
     }
 
+    fun clearQueue() {
+        queue.clear()
+    }
+
+
     fun getNowPlaying() : QueuedAudioTrack? {
         return nowPlaying
     }

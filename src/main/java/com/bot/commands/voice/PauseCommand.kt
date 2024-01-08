@@ -8,14 +8,11 @@ import datadog.trace.api.Trace
 import dev.arbjerg.lavalink.client.LavalinkPlayer
 
 class PauseCommand : VoiceCommand() {
-    private val guildVoiceProvider: GuildVoiceProvider
-
     init {
         name = "pause"
         aliases = arrayOf("resume")
         arguments = ""
         help = "Pauses or resumes the stream"
-        guildVoiceProvider = GuildVoiceProvider.getInstance()
     }
 
     @Trace(operationName = "executeCommand", resourceName = "pause")

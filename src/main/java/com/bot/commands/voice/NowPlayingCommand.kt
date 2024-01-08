@@ -9,7 +9,6 @@ import datadog.trace.api.Trace
 import net.dv8tion.jda.api.EmbedBuilder
 
 class NowPlayingCommand : VoiceCommand() {
-    private val guildVoiceProvider = GuildVoiceProvider.getInstance()
 
     init {
         name = "nowplaying"

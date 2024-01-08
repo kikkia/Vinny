@@ -2,6 +2,7 @@ package com.bot.voice
 
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
+import com.bot.models.AudioTrack
 import com.bot.models.enums.RepeatMode
 import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.Link
@@ -9,6 +10,7 @@ import dev.arbjerg.lavalink.client.LinkState
 import dev.arbjerg.lavalink.client.TrackEndEvent
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.VoiceChannel
 import org.apache.log4j.Logger
@@ -32,7 +34,7 @@ class GuildVoiceConnection(val guild: Guild) {
         return isPaused
     }
 
-    fun joinChannel(commandEvent: CommandEvent) {
+    private fun joinChannel(commandEvent: CommandEvent) {
         val toJoin = commandEvent.member.voiceState?.channel
             ?: throw NotInVoiceException(commandEvent.client.warning + " You are not in a voice channel! Please join one to use this command.")
         if (toJoin == currentVoiceChannel && isConnected()) {
@@ -75,27 +77,49 @@ class GuildVoiceConnection(val guild: Guild) {
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(commandEvent)
         }
-        link.loadItem(toLoad).subscribe(LLLoadHandler(this, link, commandEvent))
+        link.loadItem(toLoad).subscribe(LLLoadHandler(this, commandEvent))
         lastTextChannel = commandEvent.textChannel
     }
 
     fun queueTrack(track: QueuedAudioTrack, commandEvent: CommandEvent) {
         trackProvider.addTrack(track)
         if (trackProvider.getNowPlaying() == track) {
-            getLink().createOrUpdatePlayer()
-                .setTrack(track.track)
-                // TODO - default volume
-                .setVolume(volume)
-                .subscribe { player ->
-                    val playingTrack = player.track
-                    val trackTitle = playingTrack!!.info.title
-                    // TODO
-                    commandEvent.reply(("Now playing: $trackTitle"))
-                }
+            playTrack(track)
         } else {
             // TODO
             commandEvent.reply("Queued up ${track.track.info.title}.")
         }
+    }
+
+    // Queue up track from playlist and then start load if there is a next track
+    fun queuePlaylistTrack(queuedTrack: QueuedAudioTrack?, commandEvent: CommandEvent, loadingMessage: Message,
+                           tracks: List<String>, index: Int, failedCount: Int) {
+        val link = getLink()
+        if (link.state == LinkState.DISCONNECTED) {
+            joinChannel(commandEvent)
+        }
+        val newIndex = index+1
+        updateLoadingMessage(loadingMessage, tracks, newIndex, failedCount)
+        if (queuedTrack != null) {
+            if (trackProvider.getNowPlaying() == null) {
+                playTrack(queuedTrack)
+            }
+            trackProvider.addTrack(queuedTrack)
+        }
+        if (newIndex == tracks.size) {
+            return
+        }
+        link.loadItem(tracks[newIndex]).subscribe(
+            PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, newIndex, failedCount))
+    }
+
+    fun queuePlaylist(tracks: List<String>, commandEvent: CommandEvent, loadingMessage: Message) {
+        val link = getLink()
+        if (link.state == LinkState.DISCONNECTED) {
+            joinChannel(commandEvent)
+        }
+        link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, 0, 0))
+        lastTextChannel = commandEvent.textChannel
     }
 
     fun onTrackEnd(event: TrackEndEvent) {
@@ -118,6 +142,7 @@ class GuildVoiceConnection(val guild: Guild) {
         guild.jda.directAudioController.disconnect(guild)
         currentVoiceChannel = null
         trackProvider.clearAll()
+        setPaused(false)
     }
 
     fun isConnected(): Boolean {
@@ -125,7 +150,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun clearQueue() {
-        trackProvider.clearAll()
+        trackProvider.clearQueue()
     }
 
     fun setRepeatMode(mode: RepeatMode) {
@@ -165,6 +190,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
     private fun playTrack(track: QueuedAudioTrack) {
         getLink().createOrUpdatePlayer()
+            .setVolume(volume)
             .setTrack(track.track).subscribe{
                 if (lastTextChannel != null) {
                     val trackTitle = it.track!!.info.title
@@ -174,6 +200,14 @@ class GuildVoiceConnection(val guild: Guild) {
             }
     }
 
+    private fun updateLoadingMessage(loadingMessage: Message, tracks: List<String>, index: Int, failedCount: Int) {
+        val msg = "Loading playlist: ${index}/${tracks.size} completed. "
+        if (failedCount > 0) {
+            msg.plus("Failed to load $failedCount tracks.")
+        }
+        loadingMessage.editMessage(msg).queue()
+    }
+
     fun toggleVolumeLock() : Boolean {
         volumeLocked = !volumeLocked
         return volumeLocked
@@ -181,12 +215,13 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun removeTrackAtIndex(index: Int): QueuedAudioTrack? {
         val tracks = trackProvider.getQueued()
-        if (index >tracks.size) {
-            throw Exception("Provided track index: $index is more than the total tracks queued: ${tracks.size}")
-        }
-        val toRemove = tracks[index]
+        if (index > tracks.size) {
+            throw InvalidInputException("Provided track index: $index is more than the total tracks queued: ${tracks.size}")
+        } else if (index < 1) (
+            throw InvalidInputException("Provided track index: $index must be >= 1.")
+        )
         val newTracks = tracks.toMutableList()
-        newTracks.removeAt(index)
+        val toRemove = newTracks.removeAt(index-1)
         trackProvider.setTracks(newTracks)
         return toRemove
     }

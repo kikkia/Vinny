@@ -7,7 +7,6 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 
 class StopCommand : VoiceCommand() {
-    val guildVoiceProvider = GuildVoiceProvider.getInstance()
     init {
         name = "stop"
         arguments = ""

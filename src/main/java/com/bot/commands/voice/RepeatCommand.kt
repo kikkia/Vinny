@@ -7,7 +7,6 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 
 class RepeatCommand : VoiceCommand() {
-    private val guildVoiceProvider = GuildVoiceProvider.getInstance()
     init {
         name = "repeat"
         arguments = "`all` for repeat all, no input for repeat one"

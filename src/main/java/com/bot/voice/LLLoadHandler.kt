@@ -11,7 +11,7 @@ import dev.arbjerg.lavalink.client.protocol.SearchResult
 import dev.arbjerg.lavalink.client.protocol.TrackLoaded
 import org.apache.log4j.Logger
 
-class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val link: Link, private val event: CommandEvent) : AbstractAudioLoadResultHandler() {
+class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: CommandEvent) : AbstractAudioLoadResultHandler() {
     val logger = Logger.getLogger(this::class.java.name)
     override fun ontrackLoaded(result: TrackLoaded) {
         try {

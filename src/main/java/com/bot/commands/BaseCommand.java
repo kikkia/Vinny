@@ -2,6 +2,7 @@ package com.bot.commands;
 
 import com.bot.db.MembershipDAO;
 import com.bot.exceptions.ForbiddenCommandException;
+import com.bot.exceptions.InvalidInputException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.metrics.MetricsManager;
 import com.bot.tasks.CommandTaskExecutor;
@@ -92,6 +93,10 @@ public abstract class BaseCommand extends Command {
                  MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
                 executeCommand(commandEvent);
             } catch (Exception e) {
+                if (e instanceof InvalidInputException) {
+                    commandEvent.replyWarning(e.getMessage());
+                    return;
+                }
                 logger.severe("Exception Executing command", e);
                 commandEvent.replyError("Something went wrong executing that command. If this continues please contact the support server.");
             }
