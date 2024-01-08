@@ -48,6 +48,9 @@ class TrackProvider {
         queue.clear()
     }
 
+    fun shuffleQueue() {
+        queue = ConcurrentLinkedQueue(queue.shuffled())
+    }
 
     fun getNowPlaying() : QueuedAudioTrack? {
         return nowPlaying

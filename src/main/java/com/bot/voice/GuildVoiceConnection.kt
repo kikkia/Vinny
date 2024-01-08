@@ -213,6 +213,10 @@ class GuildVoiceConnection(val guild: Guild) {
         return volumeLocked
     }
 
+    fun shuffleTracks() {
+        trackProvider.shuffleQueue()
+    }
+
     fun removeTrackAtIndex(index: Int): QueuedAudioTrack? {
         val tracks = trackProvider.getQueued()
         if (index > tracks.size) {
