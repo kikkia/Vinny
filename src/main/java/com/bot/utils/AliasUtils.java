@@ -59,7 +59,7 @@ public class AliasUtils {
     // Checks if there is an alias to be applied for the channel, guild, user, in that order. Returns null if none.
     public static MessageReceivedEvent getAliasMessageEvent(GuildMessageReceivedEvent event, InternalGuild guild, InternalTextChannel channel, InternalUser user) {
         if (metricsManager == null)
-            metricsManager = MetricsManager.getInstance();
+            metricsManager = MetricsManager.Companion.getInstance();
 
         if (channel != null) {
             //TODO: Check channel aliases

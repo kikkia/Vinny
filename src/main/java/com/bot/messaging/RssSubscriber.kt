@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets
 class RssSubscriber(config: Config) {
     val logger : Logger = Logger(this.javaClass.simpleName)
     val shardingManager: ShardingManager = ShardingManager.getInstance()
-    val metricsManager = MetricsManager.getInstance()
+    val metricsManager = MetricsManager.instance!!
 
     val natsConnection: Connection = Nats.connect(Options.Builder()
             .server(config.getConfig(Config.NATS_SERVER))

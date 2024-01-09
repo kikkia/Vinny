@@ -28,7 +28,7 @@ class LavaLinkClient private constructor() {
 
         logger.info("LL Client booted")
 
-        val metricsManager = MetricsManager.getInstance()
+        val metricsManager = MetricsManager.instance!!
         client.on(EmittedEvent::class.java).subscribe { event ->
             if (event is TrackStartEvent) {
                 logger.info("Is a track start event!")

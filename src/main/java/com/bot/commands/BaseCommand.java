@@ -29,7 +29,7 @@ public abstract class BaseCommand extends Command {
     public boolean canSchedule;
 
     public BaseCommand() {
-        this.metricsManager = MetricsManager.getInstance();
+        this.metricsManager = MetricsManager.Companion.getInstance();
         this.logger = new Logger(this.getClass().getSimpleName());
         this.membershipDAO = MembershipDAO.getInstance();
         this.commandExecutors = CommandTaskExecutor.getTaskExecutor();

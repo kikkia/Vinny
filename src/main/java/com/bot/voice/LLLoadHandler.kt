@@ -35,7 +35,7 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
                 .toTypedArray()[1].split("-".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val trackUrls: MutableList<String>
         if (trackNums.size == 2) {
-            var to: Int
+            val to: Int
             val from: Int
             try {
                 from = trackNums[0].toInt() - 1 // Account for zero index
@@ -53,10 +53,6 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
             } else if (to > result.tracks.size) {
                 event.replyWarning("Error: Requesting tracks out of range. Only " + result.tracks.size + " tracks in playlist :x:")
                 return
-            } else if (to - from > 9) {
-               event.replyWarning("Warning: Requesting number of tracks that is greater than 10. Trimming results to " +
-                            "" + from + "-" + (from + 9) + " :exclamation:")
-                to = from + 9
             }
             trackUrls = result.tracks.subList(from, to).map { it.info.uri!! }.toMutableList()
         } else {
@@ -87,7 +83,7 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
     }
 
     override fun loadFailed(result: LoadFailed) {
-        MetricsManager.getInstance().markTrackLoadFailed()
+        MetricsManager.instance!!.markTrackLoadFailed()
         event.textChannel.sendMessage("Failed to load track! " + result.exception.message).queue()
     }
 }

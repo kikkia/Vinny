@@ -29,7 +29,7 @@ public class Cache<V> {
 
         this.name = name;
         cacheMap = new ConcurrentHashMap(maxSize);
-        metricsManager = MetricsManager.getInstance();
+        metricsManager = MetricsManager.Companion.getInstance();
 
         // Starts a thread that will cleanup the cache every CHECK_INTERVAL seconds
         if (this.maxIdleLifetime > 0 && this.cleanupInterval > 0) {

@@ -21,7 +21,7 @@ import java.text.Normalizer.Form
 class GuildVoiceConnection(val guild: Guild) {
     val logger = Logger.getLogger(this::class.java.name)
     val lavalink: LavaLinkClient = LavaLinkClient.getInstance()
-    val metricsManager = MetricsManager.getInstance()
+    val metricsManager = MetricsManager.instance!!
     private val trackProvider = TrackProvider()
     var currentVoiceChannel: VoiceChannel? = null
     var lastTextChannel: TextChannel? = null
@@ -226,7 +226,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
     // To not spam ratelimit, on larger playlists update less frequently
     private fun shouldUpdateLoadingMessage(tracks: List<String>, index: Int): Boolean {
-        val updateInterval = (tracks.size / 8).coerceAtLeast(1)
+        val updateInterval = (tracks.size / 5).coerceAtLeast(1)
         return index % updateInterval == 0 || tracks.size == index
     }
 

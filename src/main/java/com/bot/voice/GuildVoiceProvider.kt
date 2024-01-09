@@ -17,6 +17,10 @@ class GuildVoiceProvider {
         return guildVoiceConnections[id]
     }
 
+    fun getAll() : List<GuildVoiceConnection> {
+        return guildVoiceConnections.values.toList()
+    }
+
     companion object {
         @Volatile private var instance: GuildVoiceProvider? = null
         fun getInstance(): GuildVoiceProvider =

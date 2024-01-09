@@ -69,7 +69,7 @@ public class Bot extends ListenerAdapter {
 		bannedImageDAO = BannedImageDAO.getInstance();
 
 		LOGGER =  new Logger(Bot.class.getName());
-		metricsManager = MetricsManager.getInstance();
+		metricsManager = MetricsManager.Companion.getInstance();
 		executor = Executors.newScheduledThreadPool(60);
 		guildVoiceProvider = GuildVoiceProvider.Companion.getInstance();
 	}
