@@ -196,8 +196,10 @@ class MetricsManager private constructor() {
                     try {
                         val jsonResponse = response.body?.string()?.let { JSONObject(it) }
                         // Process the parsed JSON data
-                        updateActiveVoiceConnectionsCount(jsonResponse!!.getInt("playingPlayers"))
-                        updateIdleVoiceConnectionsCount(jsonResponse.getInt("players"))
+                        val active = jsonResponse!!.getInt("playingPlayers")
+                        val total = jsonResponse.getInt("players")
+                        updateActiveVoiceConnectionsCount(active)
+                        updateIdleVoiceConnectionsCount(total - active)
                     } catch (jsonException: JSONException) {
                         logger.warning("LL stats error parsing JSON response: ${jsonException.message}")
                     }

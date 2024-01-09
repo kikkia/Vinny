@@ -1,5 +1,7 @@
 package com.bot.voice
 
+import com.bot.db.models.ResumeAudioGuild
+import com.bot.db.models.ResumeAudioTrack
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
 import com.bot.metrics.MetricsManager
@@ -27,7 +29,7 @@ class GuildVoiceConnection(val guild: Guild) {
     var lastTextChannel: TextChannel? = null
     private var isPaused = false
     private var volume = 35
-    private var volumeLocked = false
+    var volumeLocked = false
 
     fun setPaused(pause: Boolean) {
         lavalink.getLink(guild.idLong).getPlayer()
@@ -41,37 +43,44 @@ class GuildVoiceConnection(val guild: Guild) {
     private fun joinChannel(commandEvent: CommandEvent) {
         val toJoin = commandEvent.member.voiceState?.channel
             ?: throw NotInVoiceException(commandEvent.client.warning + " You are not in a voice channel! Please join one to use this command.")
-        if (toJoin == currentVoiceChannel && isConnected()) {
+        joinChannel(toJoin)
+    }
+
+    private fun joinChannel(channel: VoiceChannel) {
+        if (channel.guild.selfMember.voiceState == null) {
+            throw NotInVoiceException("You are not in a voice channel! Please join one to use this command.")
+        }
+        if (channel == currentVoiceChannel && isConnected()) {
             return
         }
 
-        if (!commandEvent.selfMember.hasPermission(toJoin, Permission.VIEW_CHANNEL)) {
-            throw Exception("${commandEvent.client.warning} I do not have permissions to view that channel")
+        if (!channel.guild.selfMember.hasPermission(channel, Permission.VIEW_CHANNEL)) {
+            throw Exception("I do not have permissions to view that channel")
         }
 
-        if (!commandEvent.selfMember.hasPermission(toJoin, Permission.VOICE_CONNECT)) {
-            throw Exception("${commandEvent.client.warning} I do not have permissions to connect to that channel")
+        if (!channel.guild.selfMember.hasPermission(channel, Permission.VOICE_CONNECT)) {
+            throw Exception("I do not have permissions to connect to that channel")
         }
 
-        if (!commandEvent.selfMember.hasPermission(toJoin, Permission.VOICE_SPEAK)) {
-            throw Exception("${commandEvent.client.warning} I do not have permissions to speak in that channel")
+        if (!channel.guild.selfMember.hasPermission(channel, Permission.VOICE_SPEAK)) {
+            throw Exception("I do not have permissions to speak in that channel")
         }
 
-        if (toJoin.userLimit > 0 && toJoin.userLimit <= toJoin.members.size) {
-            throw Exception("${commandEvent.client.warning} Your voice channel is full")
+        if (channel.userLimit > 0 && channel.userLimit <= channel.members.size) {
+            throw Exception("Your voice channel is full")
         }
 
-        val link = lavalink.getLink(commandEvent.guild.idLong)
+        val link = lavalink.getLink(channel.guild.idLong)
 
-        if (link.state == LinkState.CONNECTED && currentVoiceChannel?.members?.contains(commandEvent.guild.selfMember) == false) {
+        if (link.state == LinkState.CONNECTED && currentVoiceChannel?.members?.contains(channel.guild.selfMember) == false) {
             link.destroyPlayer()
         }
 
         try {
-            commandEvent.jda.directAudioController.connect(toJoin)
-            currentVoiceChannel = toJoin
+            channel.jda.directAudioController.connect(channel)
+            currentVoiceChannel = channel
         } catch (e: Exception) {
-            logger.error("Failed to join voice channel $toJoin", e)
+            logger.error("Failed to join voice channel $channel", e)
             throw e
         }
     }
@@ -114,17 +123,54 @@ class GuildVoiceConnection(val guild: Guild) {
         if (newIndex == tracks.size) {
             return
         }
+        metricsManager.markTrackLoaded()
         link.loadItem(tracks[newIndex]).subscribe(
             PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, newIndex, failedCount))
     }
+
 
     fun queuePlaylist(tracks: List<String>, commandEvent: CommandEvent, loadingMessage: Message) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(commandEvent)
         }
+        metricsManager.markTrackLoaded()
         link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, 0, 0))
         lastTextChannel = commandEvent.textChannel
+    }
+
+    fun queueResumeTrack(queuedTrack: QueuedAudioTrack?, loadingMessage: Message, resumeSetup: ResumeAudioGuild, index: Int, failedCount: Int) {
+        val link = getLink()
+
+        val newIndex = index+1
+        updateLoadingMessage(loadingMessage, resumeSetup.tracks, newIndex, failedCount)
+        if (queuedTrack != null) {
+            if (trackProvider.getNowPlaying() == null) {
+                playTrack(queuedTrack)
+                seek(resumeSetup.tracks[index].position, queuedTrack)
+            }
+            trackProvider.addTrack(queuedTrack)
+        }
+        if (newIndex == resumeSetup.tracks.size) {
+            return
+        }
+        metricsManager.markTrackLoaded()
+        link.loadItem(resumeSetup.tracks[newIndex].trackUrl).subscribe(
+            ResumeLLLoadHandler(this, loadingMessage, resumeSetup, newIndex, failedCount))
+    }
+
+    fun resumeAudioAfterReboot(resumeSetup: ResumeAudioGuild) {
+        volume = resumeSetup.volume
+        volumeLocked = resumeSetup.volumeLocked
+
+        val link = getLink()
+        if (link.state == LinkState.DISCONNECTED) {
+            joinChannel(currentVoiceChannel!!)
+        }
+        metricsManager.markTrackLoaded()
+        lastTextChannel!!.sendMessage("Resuming play after Vinny restart").queue()
+        val loadingMessage = lastTextChannel!!.sendMessage("Loading previous queue...").complete()
+        link.loadItem(resumeSetup.tracks[0].trackUrl).subscribe(ResumeLLLoadHandler(this, loadingMessage, resumeSetup, 0, 0))
     }
 
     fun searchForTrack(search: String, commandEvent: CommandEvent, message: Message, builder: Builder) {
@@ -132,9 +178,11 @@ class GuildVoiceConnection(val guild: Guild) {
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(commandEvent)
         }
+        metricsManager.markTrackLoaded()
         link.loadItem(search).subscribe(SearchLLLoadHandler(this, commandEvent, message, builder))
         lastTextChannel = commandEvent.textChannel
     }
+
 
     fun onTrackEnd(event: TrackEndEvent) {
         metricsManager.markTrackEnd()
@@ -187,6 +235,13 @@ class GuildVoiceConnection(val guild: Guild) {
         getLink().createOrUpdatePlayer().setVolume(volume).block()
     }
 
+    private fun seek(pos: Long, track: QueuedAudioTrack) {
+        if (pos < 0 || pos > track.track.info.length) {
+            throw NumberFormatException()
+        }
+        getLink().createOrUpdatePlayer().setPosition(pos).block()
+    }
+
     fun nowPlaying() : QueuedAudioTrack? {
         return trackProvider.getNowPlaying()
     }
@@ -214,7 +269,7 @@ class GuildVoiceConnection(val guild: Guild) {
             }
     }
 
-    private fun updateLoadingMessage(loadingMessage: Message, tracks: List<String>, index: Int, failedCount: Int) {
+    private fun updateLoadingMessage(loadingMessage: Message, tracks: List<Any>, index: Int, failedCount: Int) {
         if (shouldUpdateLoadingMessage(tracks, index)) {
             var msg = "Loading playlist: ${index}/${tracks.size} completed. "
             if (failedCount > 0) {
@@ -225,7 +280,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     // To not spam ratelimit, on larger playlists update less frequently
-    private fun shouldUpdateLoadingMessage(tracks: List<String>, index: Int): Boolean {
+    private fun shouldUpdateLoadingMessage(tracks: List<Any>, index: Int): Boolean {
         val updateInterval = (tracks.size / 5).coerceAtLeast(1)
         return index % updateInterval == 0 || tracks.size == index
     }

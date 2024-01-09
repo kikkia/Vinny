@@ -4,9 +4,6 @@ import com.bot.exceptions.MaxQueueSizeException
 import com.bot.metrics.MetricsManager
 import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
-import dev.arbjerg.lavalink.client.LavalinkPlayer
-import dev.arbjerg.lavalink.client.Link
-import dev.arbjerg.lavalink.client.PlayerUpdateBuilder
 import dev.arbjerg.lavalink.client.protocol.LoadFailed
 import dev.arbjerg.lavalink.client.protocol.PlaylistLoaded
 import dev.arbjerg.lavalink.client.protocol.SearchResult
@@ -14,7 +11,7 @@ import dev.arbjerg.lavalink.client.protocol.TrackLoaded
 import org.apache.log4j.Logger
 
 class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: CommandEvent) : AbstractAudioLoadResultHandler() {
-    val logger = Logger.getLogger(this::class.java.name)
+    val logger: Logger = Logger.getLogger(this::class.java.name)
     override fun ontrackLoaded(result: TrackLoaded) {
         try {
             val track = result.track

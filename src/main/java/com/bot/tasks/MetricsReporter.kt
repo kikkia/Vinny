@@ -44,13 +44,16 @@ class MetricsReporter : Thread() {
         }
         val voiceConnections = GuildVoiceProvider.getInstance().getAll()
         var usersInVoice = 0
+        var queuedTracks = 0
         for (conn in voiceConnections) {
             if (conn.isConnected()) {
-               usersInVoice += conn.currentVoiceChannel!!.members.size - 1
+                usersInVoice += conn.currentVoiceChannel!!.members.size - 1
+                queuedTracks += (1 + conn.getQueuedTracks().size) // NP+queued
             }
         }
         metricsManager.updateUsersInVoice(usersInVoice)
         metricsManager.updateVoiceConnectionEntities(voiceConnections.size)
+        metricsManager.updateQueuedTracks(queuedTracks)
 
         metricsManager.updateGuildCount(guildCount)
         metricsManager.updateUserCount(userCount)

@@ -8,6 +8,7 @@ import com.bot.models.InternalShard;
 import com.bot.models.UsageLevel;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
+import com.bot.tasks.ResumeAudioTask;
 import com.bot.utils.*;
 import com.bot.voice.GuildVoiceConnection;
 import com.bot.voice.GuildVoiceProvider;
@@ -89,6 +90,8 @@ public class Bot extends ListenerAdapter {
 				e.printStackTrace();
 			}
 		}
+
+		executor.submit(new ResumeAudioTask(event));
 
 		super.onReady(event);
 	}
