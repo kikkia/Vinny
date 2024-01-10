@@ -28,14 +28,6 @@ class LavaLinkClient private constructor() {
 
         logger.info("LL Client booted")
 
-        val metricsManager = MetricsManager.instance!!
-        client.on(EmittedEvent::class.java).subscribe { event ->
-            if (event is TrackStartEvent) {
-                logger.info("Is a track start event!")
-            }
-            val node: LavalinkNode = event.node
-            logger.info("Node ${node.name} emitted event: $event")
-        }
         client.on(TrackEndEvent::class.java).subscribe {event ->
             val gConn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(event.guildId)
             if (gConn == null) {
