@@ -22,7 +22,8 @@ class PauseCommand : VoiceCommand() {
             commandEvent.replyWarning(" I am not currently connected to voice.")
             return
         }
-        guildVoiceConnection.setPaused(!guildVoiceConnection.getPaused())
-        commandEvent.replySuccess("Stream has been ${if (guildVoiceConnection.getPaused()) "paused" else "resumed"}")
+        val newState = !guildVoiceConnection.getPaused()
+        guildVoiceConnection.setPaused(newState)
+        commandEvent.replySuccess("Stream has been ${if (newState) "paused" else "resumed"}")
     }
 }

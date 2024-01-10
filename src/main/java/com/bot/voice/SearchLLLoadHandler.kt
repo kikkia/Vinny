@@ -52,7 +52,6 @@ class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection
                     event.replyWarning(e.message)
                     return@setSelection
                 }
-                event.replySuccess("Added `" + track.info.title + "` to the queue")
             }
             .setUsers(event.author)
             .setTimeout(2, TimeUnit.MINUTES)

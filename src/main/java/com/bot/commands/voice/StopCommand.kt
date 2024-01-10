@@ -19,7 +19,6 @@ class StopCommand : VoiceCommand() {
         } else {
             voiceConnection.cleanupPlayer()
             commandEvent.reply(commandEvent.client.success + " Stopped audio stream")
-            commandEvent.guild.audioManager.closeAudioConnection()
         }
     }
 }

@@ -100,8 +100,7 @@ class GuildVoiceConnection(val guild: Guild) {
         if (trackProvider.getNowPlaying() == track) {
             playTrack(track)
         } else {
-            // TODO
-            commandEvent.reply("Queued up ${track.track.info.title}.")
+            commandEvent.reply("Queued up `${track.track.info.title}`.")
         }
     }
 
