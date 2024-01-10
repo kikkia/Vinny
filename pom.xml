@@ -17,7 +17,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
+                <version>0.8.8</version>
                 <executions>
                     <execution>
                         <goals>
@@ -258,8 +258,8 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>4.11.0</version>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
             <scope>test</scope>
         </dependency>
         <dependency>
