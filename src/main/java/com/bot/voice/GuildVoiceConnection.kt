@@ -28,7 +28,7 @@ class GuildVoiceConnection(val guild: Guild) {
     var currentVoiceChannel: VoiceChannel? = null
     var lastTextChannel: TextChannel? = null
     private var isPaused = false
-    private var volume = 35
+    private var volume = 100
     var volumeLocked = false
 
     fun setPaused(pause: Boolean) {
