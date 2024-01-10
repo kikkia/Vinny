@@ -42,7 +42,7 @@ public class TestQueuedAudioTrack {
     public void testToString() {
         when(audioTrack.getInfo()).thenReturn(audioTrackInfo);
         QueuedAudioTrack track = new QueuedAudioTrack(audioTrack, "name", 1234L);
-        String expected = "[00:01] *testTitle* requested by name";
+        String expected = "[00:01] *title* requested by name";
 
         assertEquals(expected, track.toString());
     }
