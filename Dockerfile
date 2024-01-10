@@ -3,7 +3,7 @@ WORKDIR /app
 COPY . /app/
 RUN mvn clean package
 
-FROM openjdk:22-ea-17-slim-bullseye
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/ /app
 COPY --from=build /app/res/ /app/res
