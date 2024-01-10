@@ -229,7 +229,7 @@ class GuildVoiceConnection(val guild: Guild) {
             throw NumberFormatException()
         }
         if (volumeLocked) {
-            throw InvalidInputException("Volume is currently locked. It can be unlocked by a mod with the `~lockvol` command.")
+            throw InvalidInputException("Volume is currently locked. It can be unlocked by a mod with the `~lockv` command.")
         }
         volume = newVolume
         getLink().createOrUpdatePlayer().setVolume(volume).block()
