@@ -200,8 +200,8 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun cleanupPlayer() {
         val link = getLink()
-        link.destroyPlayer().subscribe()
         guild.jda.directAudioController.disconnect(guild)
+        link.destroyPlayer().subscribe()
         currentVoiceChannel = null
         trackProvider.clearAll()
         setPaused(false)

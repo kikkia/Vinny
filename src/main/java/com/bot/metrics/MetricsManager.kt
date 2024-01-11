@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.command.Command
 import com.timgroup.statsd.NonBlockingStatsDClient
 import com.timgroup.statsd.StatsDClient
 import kotlinx.serialization.json.JsonBuilder
+import net.dv8tion.jda.api.Region
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import okhttp3.*
@@ -172,6 +173,10 @@ class MetricsManager private constructor() {
     fun updateShards(healthy: Int, unhealthy: Int) {
         statsd!!.recordGaugeValue("shards.healthy", healthy.toLong())
         statsd!!.recordGaugeValue("shards.unhealthy", unhealthy.toLong())
+    }
+
+    fun markConnectedVoiceRegion(region: Region) {
+        statsd!!.incrementCounter("connections.voice.regional", "region:${region.name}")
     }
 
     fun updateLLStats() {

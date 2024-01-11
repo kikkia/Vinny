@@ -36,7 +36,7 @@ class PlayCommand(private val bot: Bot) : VoiceCommand() {
         var url = commandEvent.args.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
         if (!url.matches(urlRegex.toRegex())) {
             val searchPrefix = Config.getInstance().getConfig(Config.DEFAULT_SEARCH_PROVIDER, "ytsearch:")
-            url = searchPrefix.plus(url)
+            url = searchPrefix.plus(commandEvent.args)
         }
         commandEvent.reply("\u231A Loading... `[" + commandEvent.args + "]`") { _: Message? ->
             guildVoiceConnection.loadTrack(url, commandEvent)

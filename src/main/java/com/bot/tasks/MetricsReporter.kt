@@ -8,6 +8,7 @@ import com.bot.db.MembershipDAO
 import com.bot.metrics.MetricsManager
 import com.bot.utils.Logger
 import com.bot.voice.GuildVoiceProvider
+import net.dv8tion.jda.api.Region
 import net.dv8tion.jda.api.entities.Activity
 
 /**
@@ -49,6 +50,7 @@ class MetricsReporter : Thread() {
             if (conn.isConnected()) {
                 usersInVoice += conn.currentVoiceChannel!!.members.size - 1
                 queuedTracks += (1 + conn.getQueuedTracks().size) // NP+queued
+                metricsManager.markConnectedVoiceRegion(conn.currentVoiceChannel!!.region)
             }
         }
         metricsManager.updateUsersInVoice(usersInVoice)
