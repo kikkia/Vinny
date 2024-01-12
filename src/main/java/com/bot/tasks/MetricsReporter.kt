@@ -47,10 +47,9 @@ class MetricsReporter : Thread() {
         var usersInVoice = 0
         var queuedTracks = 0
         for (conn in voiceConnections) {
-            if (conn.isConnected()) {
+            if (conn.isConnected() && conn.currentVoiceChannel != null) {
                 usersInVoice += conn.currentVoiceChannel!!.members.size - 1
-                queuedTracks += (1 + conn.getQueuedTracks().size) // NP+queued
-                metricsManager.markConnectedVoiceRegion(conn.currentVoiceChannel!!.region)
+                queuedTracks += (1 + conn.getQueuedTracks().size)
             }
         }
         metricsManager.updateUsersInVoice(usersInVoice)

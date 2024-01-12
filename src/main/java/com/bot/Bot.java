@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
@@ -151,6 +152,13 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
 		executor.execute(() -> checkVoiceLobby(event));
+	}
+
+	@Override
+	public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
+		if (event.getMember().equals(event.getGuild().getSelfMember())) {
+			metricsManager.markConnectedVoiceRegion(event.getChannelJoined().getRegion());
+		}
 	}
 
 	@Override
