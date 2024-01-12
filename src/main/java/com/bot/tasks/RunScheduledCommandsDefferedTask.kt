@@ -13,7 +13,7 @@ class RunScheduledCommandsDefferedTask() : Thread() {
 
     private val scheduledCommandDAO : ScheduledCommandDAO = ScheduledCommandDAO.getInstance()
     private val logger : Logger = Logger(RunScheduledCommandsDefferedTask::class.java.name)
-    private val metrics : MetricsManager = MetricsManager.getInstance()
+    private val metrics : MetricsManager = MetricsManager.instance!!
 
     private val MAX_TO_RUN = 60
 

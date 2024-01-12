@@ -12,7 +12,7 @@ import java.util.function.Consumer
 class HelpCommand : GeneralCommand() {
     init {
         this.name = "help"
-        this.aliases = arrayOf("commands")
+        this.aliases = arrayOf("commands", "command")
         this.cooldown = 5
         this.cooldownScope = CooldownScope.USER
     }

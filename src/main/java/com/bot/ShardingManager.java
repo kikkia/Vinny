@@ -23,13 +23,13 @@ import com.bot.commands.voice.*;
 import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
 import com.bot.utils.Config;
-import com.bot.voice.VoiceSendHandler;
+import com.bot.voice.LavaLinkClient;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
+import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -38,6 +38,7 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.stream.Collectors;
 
 import static net.dv8tion.jda.api.requests.GatewayIntent.*;
 
@@ -96,19 +96,18 @@ public class ShardingManager {
                     new PlayCommand(bot),
                     new SearchCommand(bot, waiter),
                     new NowPlayingCommand(),
-                    new RemoveTrackCommand(bot),
+                    new RemoveTrackCommand(),
                     new PauseCommand(),
                     new RepeatCommand(),
                     new StopCommand(),
-                    new ResumeCommand(),
                     new VolumeCommand(),
                     new DefaultVolumeCommand(),
                     new ListTracksCommand(waiter),
                     new SkipCommand(),
                     new SaveMyPlaylistCommand(bot),
                     new ListMyPlaylistCommand(),
-                    new LoadMyPlaylistCommand(bot),
-                    new LoadGuildPlaylistCommand(bot),
+                    new LoadMyPlaylistCommand(),
+                    new LoadGuildPlaylistCommand(),
                     new SaveGuildPlaylistCommand(bot),
                     new ListGuildPlaylistCommand(),
                     new ShuffleCommand(),
@@ -235,10 +234,11 @@ public class ShardingManager {
                 .setCompression(Compression.NONE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(client, waiter, bot)
-                .setAudioSendFactory(new NativeAudioSendFactory(800))
                 .setActivity(null)
                 .setRequestTimeoutRetry(true)
-                .setContextEnabled(false)
+                .setContextEnabled(true)
+                .enableCache(CacheFlag.VOICE_STATE)
+                .setVoiceDispatchInterceptor(new JDAVoiceUpdateListener(LavaLinkClient.Companion.getInstance().getClient()))
                 .build();
     }
 
@@ -319,14 +319,5 @@ public class ShardingManager {
             }
         }
         return null;
-    }
-
-    public List<VoiceSendHandler> getActiveVoiceSendHandlers() {
-        List<VoiceSendHandler> activeHandlers = new ArrayList<>();
-
-        for (InternalShard shard : shards.values()) {
-            activeHandlers.addAll(shard.getVoiceSendHandlers().stream().filter(VoiceSendHandler::isActive).collect(Collectors.toList()));
-        }
-        return activeHandlers;
     }
 }

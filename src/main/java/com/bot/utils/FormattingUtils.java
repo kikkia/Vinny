@@ -4,7 +4,7 @@ import com.bot.exceptions.IntervalFormatException;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kikkia.jsauce.models.Sauce;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.arbjerg.lavalink.client.protocol.Track;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -75,19 +75,19 @@ public class FormattingUtils {
     public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume) {
         EmbedBuilder builder = new EmbedBuilder();
 
-        AudioTrack track = queuedAudioTrack.getTrack();
+        Track track = queuedAudioTrack.getTrack();
 
         builder.setTitle("Now Playing: ");
-        builder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")");
-        builder.addField("Duration", msToMinSec(track.getInfo().length), false);
+        builder.setDescription("[" + track.getInfo().getTitle() + "](" + track.getInfo().getUri() + ")");
+        builder.addField("Duration", msToMinSec(track.getInfo().getLength()), false);
         builder.addField("Requested by", queuedAudioTrack.getRequesterName(), false);
         builder.setFooter("Volume: " + volume, null);
 
-        builder.setColor(getColorForTrack(track.getInfo().uri));
+        builder.setColor(getColorForTrack(track.getInfo().getUri()));
 
         // If youtube, get the thumbnail
-        if (track.getInfo().uri.contains("www.youtube.com")) {
-            String videoID = track.getInfo().uri.split("=")[1];
+        if (track.getInfo().getUri().contains("www.youtube.com")) {
+            String videoID = track.getInfo().getUri().split("=")[1];
             builder.setThumbnail("https://img.youtube.com/vi/" + videoID + "/0.jpg");
         }
 

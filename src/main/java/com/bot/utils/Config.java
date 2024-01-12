@@ -114,6 +114,8 @@ public class Config {
     public static final String RSS_SUBJECT = "RSS_SUBJECT";
 
     public static final String TWITCH_CLIENT_ID = "TWITCH_CLIENT_ID";
+    public static final String LAVALINK_ADDRESS = "LL_ADDRESS";
+    public static final String LAVALINK_PASSWORD = "LL_PASSWORD";
 
     private Config() {
         this.configFile = new File("res/config/config.conf");

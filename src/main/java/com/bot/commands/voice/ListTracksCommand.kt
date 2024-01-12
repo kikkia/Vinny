@@ -2,7 +2,6 @@ package com.bot.commands.voice
 
 import com.bot.commands.VoiceCommand
 import com.bot.voice.QueuedAudioTrack
-import com.bot.voice.VoiceSendHandler
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.Paginator
@@ -15,18 +14,19 @@ class ListTracksCommand(waiter: EventWaiter) : VoiceCommand() {
 
     @Trace(operationName = "executeCommand", resourceName = "ListTracks")
     override fun executeCommand(commandEvent: CommandEvent) {
-        val handler = commandEvent.guild.audioManager.sendingHandler as VoiceSendHandler?
-        if (handler == null) {
+        val voiceConnection = guildVoiceProvider.getGuildVoiceConnection(commandEvent.guild)
+        if (!voiceConnection.isConnected()) {
             commandEvent.reply(commandEvent.client.warning + " I am not currently playing audio.")
             return
         }
-        if (!handler.isPlaying) {
-            commandEvent.reply(commandEvent.client.warning + " I am not currently playing audio.")
-            return
-        }
-        val nowPlaying = handler.nowPlaying
-        val tracks: List<QueuedAudioTrack> = ArrayList(handler.tracks)
+        val nowPlaying = voiceConnection.nowPlaying()
+        val tracks: List<QueuedAudioTrack> = voiceConnection.getQueuedTracks()
         val trackNames = ArrayList<String>()
+
+        if (nowPlaying == null) {
+            commandEvent.replyWarning("No tracks are being played")
+            return
+        }
 
         trackNames.add("Now Playing: ${nowPlaying.track.info.title}")
 

@@ -2,9 +2,10 @@ package com.bot;
 
 import com.bot.db.ConnectionPool;
 import com.bot.messaging.RssSubscriber;
-import com.bot.metrics.MetricsReporter;
+import com.bot.tasks.MetricsReporter;
 import com.bot.tasks.RunScheduledCommandsDefferedTask;
 import com.bot.utils.Config;
+import com.bot.voice.LavaLinkClient;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 
@@ -57,7 +58,7 @@ public class Main {
 
 		// Start a metrics reporter to keeps the metrics that are not frequently updates flowing to datadog
 		ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(3);
-		scheduledTaskExecutor.scheduleAtFixedRate(new MetricsReporter(), 1, 3, TimeUnit.MINUTES);
+		scheduledTaskExecutor.scheduleAtFixedRate(new MetricsReporter(), 1, 2, TimeUnit.MINUTES);
 
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_SCHEDULED_COMMANDS))) {
 			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 300, 9, TimeUnit.SECONDS);
@@ -67,6 +68,8 @@ public class Main {
 		if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_NATS))) {
 			new RssSubscriber(config);
 		}
+
+		LavaLinkClient.Companion.getInstance();
 
 		System.out.println("Successfully started.");
 	}
