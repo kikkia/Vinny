@@ -210,7 +210,7 @@ class GuildVoiceConnection(val guild: Guild) {
         guild.jda.directAudioController.disconnect(guild)
         currentVoiceChannel = null
         trackProvider.clearAll()
-        setPaused(false)
+        isPaused = false
     }
 
     fun isConnected(): Boolean {
