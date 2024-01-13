@@ -43,7 +43,13 @@ class GuildVoiceConnection(val guild: Guild) {
     private fun joinChannel(commandEvent: CommandEvent) {
         val toJoin = commandEvent.member.voiceState?.channel
             ?: throw NotInVoiceException(commandEvent.client.warning + " You are not in a voice channel! Please join one to use this command.")
-        joinChannel(toJoin)
+        try {
+            joinChannel(toJoin)
+        } catch (e: Exception) {
+            commandEvent.replyWarning("Failed to join voice channel: ${e.message}")
+            cleanupPlayer()
+            throw e
+        }
     }
 
     private fun joinChannel(channel: VoiceChannel) {
