@@ -33,6 +33,7 @@ class NowPlayingCommand : VoiceCommand() {
                 embedBuilder.addField("Time", "$currentTrackTime / $totalDuration", false)
                 embedBuilder.addField("Stream", track.info.isStream.toString(), false)
                 embedBuilder.addField("Volume", voiceConnection.getVolume().toString(), false)
+                embedBuilder.addField("Repeat Mode", voiceConnection.getRepeatMode().ezName, false)
 
                 // If youtube, get the thumbnail
                 if (track.info.uri!!.contains("www.youtube.com")) {

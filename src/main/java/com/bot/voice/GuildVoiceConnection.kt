@@ -199,9 +199,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun cleanupPlayer() {
-        val link = getLink()
         guild.jda.directAudioController.disconnect(guild)
-        link.destroyPlayer().subscribe()
         currentVoiceChannel = null
         trackProvider.clearAll()
         setPaused(false)
@@ -217,6 +215,10 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun setRepeatMode(mode: RepeatMode) {
         trackProvider.setRepeatMode(mode)
+    }
+
+    fun getRepeatMode() : RepeatMode {
+        return trackProvider.getRepeateMode()
     }
 
     fun getVolume() : Int {
@@ -328,7 +330,7 @@ class GuildVoiceConnection(val guild: Guild) {
         // If we sent the last message in the channel then just edit it
         lastTextChannel!!.history.retrievePast(1).queue { m ->
             val lastMessage: Message = m[0]
-            val embed = FormattingUtils.getAudioTrackEmbed(trackProvider.getNowPlaying(), volume)
+            val embed = FormattingUtils.getAudioTrackEmbed(trackProvider.getNowPlaying(), volume, trackProvider.getRepeateMode())
             if (lastMessage.author.id == lastTextChannel!!.jda.selfUser.id) {
                 lastMessage.editMessageEmbeds(embed).queue()
             } else {

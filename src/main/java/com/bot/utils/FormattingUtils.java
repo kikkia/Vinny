@@ -1,6 +1,7 @@
 package com.bot.utils;
 
 import com.bot.exceptions.IntervalFormatException;
+import com.bot.models.enums.RepeatMode;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kikkia.jsauce.models.Sauce;
@@ -72,7 +73,7 @@ public class FormattingUtils {
         }
     }
 
-    public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume) {
+    public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume, RepeatMode repeatMode) {
         EmbedBuilder builder = new EmbedBuilder();
 
         Track track = queuedAudioTrack.getTrack();
@@ -82,6 +83,7 @@ public class FormattingUtils {
         builder.addField("Duration", msToMinSec(track.getInfo().getLength()), false);
         builder.addField("Requested by", queuedAudioTrack.getRequesterName(), false);
         builder.setFooter("Volume: " + volume, null);
+        builder.addField("Repeat Mode", repeatMode.getEzName(), false);
 
         builder.setColor(getColorForTrack(track.getInfo().getUri()));
 

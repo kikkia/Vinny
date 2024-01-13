@@ -67,4 +67,8 @@ class TrackProvider {
     fun setRepeatMode(mode: RepeatMode) {
         repeatMode = mode
     }
+
+    fun getRepeateMode() : RepeatMode {
+        return repeatMode
+    }
 }
