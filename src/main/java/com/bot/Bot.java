@@ -9,7 +9,10 @@ import com.bot.models.UsageLevel;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.tasks.ResumeAudioTask;
-import com.bot.utils.*;
+import com.bot.utils.AliasUtils;
+import com.bot.utils.Config;
+import com.bot.utils.HttpUtils;
+import com.bot.utils.Logger;
 import com.bot.voice.GuildVoiceConnection;
 import com.bot.voice.GuildVoiceProvider;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
@@ -29,7 +32,6 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
@@ -152,13 +154,6 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
 		executor.execute(() -> checkVoiceLobby(event));
-	}
-
-	@Override
-	public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
-		if (event.getMember().equals(event.getGuild().getSelfMember())) {
-			metricsManager.markConnectedVoiceRegion(event.getChannelJoined().getRegion());
-		}
 	}
 
 	@Override

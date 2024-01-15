@@ -23,6 +23,7 @@ import com.bot.commands.voice.*;
 import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
 import com.bot.utils.Config;
+import com.bot.voice.CustomJDAVoiceUpdateListener;
 import com.bot.voice.LavaLinkClient;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -241,7 +242,8 @@ public class ShardingManager {
                 .setRequestTimeoutRetry(true)
                 .setContextEnabled(true)
                 .enableCache(CacheFlag.VOICE_STATE)
-                .setVoiceDispatchInterceptor(new JDAVoiceUpdateListener(LavaLinkClient.Companion.getInstance().getClient()))
+                .setVoiceDispatchInterceptor(new CustomJDAVoiceUpdateListener(
+                        new JDAVoiceUpdateListener(LavaLinkClient.Companion.getInstance().getClient())))
                 .build();
     }
 
