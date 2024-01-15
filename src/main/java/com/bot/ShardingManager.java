@@ -113,6 +113,9 @@ public class ShardingManager {
                     new ShuffleCommand(),
                     new ClearQueueCommand(),
                     new RemovePlaylistCommand(),
+                    new SeekCommand(),
+                    new FastForwardCommand(),
+                    new RewindCommand(),
                     //new SpeedCommand(),
 
                     // Battle Royale

@@ -244,9 +244,9 @@ class GuildVoiceConnection(val guild: Guild) {
         getLink().createOrUpdatePlayer().setVolume(volume).block()
     }
 
-    private fun seek(pos: Long, track: QueuedAudioTrack) {
+    fun seek(pos: Long, track: QueuedAudioTrack) {
         if (pos < 0 || pos > track.track.info.length) {
-            throw NumberFormatException()
+            throw InvalidInputException("Cannot seek to less than 0 or longer than the current track is.")
         }
         getLink().createOrUpdatePlayer().setPosition(pos).block()
     }

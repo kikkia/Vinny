@@ -61,6 +61,27 @@ Pauses the currently playing audio. Does not clear the queue.
 ### `resume`
 Resumes the audio queue if it is currently paused.
 
+### `seek`
+Seeks to a given point in the current playing track.
+* `~seek 1:20:15` - Seeks to 1 hour, 20 mins and 15 seconds into the track.
+* `~seek 1:30` - Seeks to 1 minute and 30 seconds into the track.
+* `~seek 0` - Seeks back to the beginning of the track.
+
+### `rewind`
+*Aliases*: `rw`
+Seeks a given amount of time backwards in the playing track.
+* `~rw 1:20:15` - Seeks to 1 hour, 20 mins and 15 seconds backwards in the track.
+* `~rewind 1:30` - Seeks to 1 minute and 30 seconds backwards in the track.
+* `~rr` - Seeks back to the beginning of the track.
+
+### `fastforward`
+*Aliases*: `ff`, `fforward`
+Seeks a given amount of time forwards in the playing track.
+* `~fastforward 1:20:15` - Seeks to 1 hour, 20 mins and 15 seconds further into the track.
+* `~ff 1:30` - Seeks to 1 minute and 30 seconds further into the track than you currently are.
+* `~ff` - Goes to the next track.
+
+
 ### `skip`
 Skips to the next track in the queue. (Only if there is a next track to skip to.)
 
