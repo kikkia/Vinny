@@ -175,7 +175,7 @@ class MetricsManager private constructor() {
     }
 
     fun markConnectedVoiceRegion(region: String) {
-        statsd!!.incrementCounter("connections.voice.regional.${region}")
+        statsd!!.incrementCounter("connections.voice.regional", "disc_region:$region")
     }
 
     fun updateLLStats() {
