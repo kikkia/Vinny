@@ -1,11 +1,8 @@
 package com.bot.commands.voice
 
 import com.bot.commands.VoiceCommand
-import com.bot.voice.GuildVoiceProvider
-import com.bot.voice.LavaLinkClient
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
-import dev.arbjerg.lavalink.client.LavalinkPlayer
 
 class PauseCommand : VoiceCommand() {
     init {

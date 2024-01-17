@@ -6,7 +6,6 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.Paginator
 import datadog.trace.api.Trace
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ListTracksCommand(waiter: EventWaiter) : VoiceCommand() {

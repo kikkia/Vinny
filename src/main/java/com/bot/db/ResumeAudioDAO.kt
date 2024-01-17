@@ -6,7 +6,7 @@ import com.bot.utils.Logger
 import com.zaxxer.hikari.HikariDataSource
 import java.sql.PreparedStatement
 import java.sql.SQLException
-import java.util.LinkedList
+import java.util.*
 
 class ResumeAudioDAO {
     private val LOGGER = Logger(ScheduledCommandDAO::class.java.name)

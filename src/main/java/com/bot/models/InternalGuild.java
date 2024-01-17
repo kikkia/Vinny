@@ -4,7 +4,10 @@ import com.bot.preferences.GuildPreferencesProvider;
 import com.bot.utils.CommandCategories;
 import com.jagrosh.jdautilities.command.Command;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class InternalGuild {
 

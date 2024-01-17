@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.Message
 import java.time.OffsetDateTime
 import java.util.*
 import java.util.stream.Collectors
-import kotlin.collections.ArrayList
 
 class PurgeCommand : ModerationCommand() {
     val helpLink = "https://github.com/kikkia/Vinny/blob/master/docs/purge.md"

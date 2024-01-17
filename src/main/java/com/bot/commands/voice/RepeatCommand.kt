@@ -2,7 +2,6 @@ package com.bot.commands.voice
 
 import com.bot.commands.VoiceCommand
 import com.bot.models.enums.RepeatMode
-import com.bot.voice.GuildVoiceProvider
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 

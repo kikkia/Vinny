@@ -4,7 +4,6 @@ import com.bot.commands.ModerationCommand
 import com.bot.db.RssDAO
 import com.bot.db.UserDAO
 import com.bot.models.UsageLevel
-import com.bot.utils.ConstantStrings
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 

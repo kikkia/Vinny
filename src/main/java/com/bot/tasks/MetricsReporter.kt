@@ -8,7 +8,6 @@ import com.bot.db.MembershipDAO
 import com.bot.metrics.MetricsManager
 import com.bot.utils.Logger
 import com.bot.voice.GuildVoiceProvider
-import net.dv8tion.jda.api.Region
 import net.dv8tion.jda.api.entities.Activity
 
 /**

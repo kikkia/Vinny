@@ -1,9 +1,10 @@
 package com.bot.voice
 
-import com.bot.metrics.MetricsManager
 import com.bot.utils.Config
 import com.jagrosh.jdautilities.command.CommandEvent
-import dev.arbjerg.lavalink.client.*
+import dev.arbjerg.lavalink.client.LavalinkClient
+import dev.arbjerg.lavalink.client.Link
+import dev.arbjerg.lavalink.client.TrackEndEvent
 import dev.arbjerg.lavalink.client.loadbalancing.RegionGroup
 import net.dv8tion.jda.api.entities.Guild
 import java.net.URI

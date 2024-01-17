@@ -1,7 +1,6 @@
 package com.bot.voice
 
 import com.bot.db.models.ResumeAudioGuild
-import com.bot.db.models.ResumeAudioTrack
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
 import com.bot.metrics.MetricsManager
@@ -18,7 +17,6 @@ import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.VoiceChannel
 import org.apache.log4j.Logger
-import java.text.Normalizer.Form
 
 class GuildVoiceConnection(val guild: Guild) {
     val logger = Logger.getLogger(this::class.java.name)

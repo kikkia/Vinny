@@ -1,9 +1,7 @@
 package com.bot.voice
 
 import com.bot.models.enums.RepeatMode
-import dev.arbjerg.lavalink.client.protocol.Track
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.PriorityBlockingQueue
 
 class TrackProvider {
 
