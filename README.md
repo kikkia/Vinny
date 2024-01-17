@@ -1,4 +1,4 @@
-A complete rewrite and overhaul of the original VinnyBot.  
+A very old discord bot I made in college in like 2016, use with caution lol
 (This project is not in active development, but maintenance changes do occur)
 
 # Vinny-Redux
