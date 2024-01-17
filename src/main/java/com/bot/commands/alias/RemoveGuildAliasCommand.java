@@ -12,8 +12,8 @@ import java.sql.SQLException;
 
 public class RemoveGuildAliasCommand extends ModerationCommand {
 
-    private GuildDAO guildDAO;
-    private AliasDAO aliasDAO;
+    private final GuildDAO guildDAO;
+    private final AliasDAO aliasDAO;
 
     public RemoveGuildAliasCommand() {
         this.name = "removegalias";

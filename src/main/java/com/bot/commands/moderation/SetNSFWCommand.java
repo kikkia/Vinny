@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class SetNSFWCommand extends ModerationCommand {
-    private GuildDAO guildDAO;
+    private final GuildDAO guildDAO;
 
     public SetNSFWCommand() {
         this.name = "nsfwrole";

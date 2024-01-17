@@ -16,8 +16,8 @@ import java.util.concurrent.TimeUnit;
 
 public class AliasesCommand extends GeneralCommand {
 
-    private GuildDAO guildDAO;
-    private AliasDAO aliasDAO;
+    private final GuildDAO guildDAO;
+    private final AliasDAO aliasDAO;
     private final Paginator.Builder builder;
 
     public AliasesCommand(EventWaiter waiter) {

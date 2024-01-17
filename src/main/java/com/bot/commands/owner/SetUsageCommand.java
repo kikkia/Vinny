@@ -10,7 +10,7 @@ import java.util.logging.Level;
 
 public class SetUsageCommand extends OwnerCommand {
 
-    private UserDAO userDAO;
+    private final UserDAO userDAO;
 
     public SetUsageCommand() {
         this.name = "setusage";

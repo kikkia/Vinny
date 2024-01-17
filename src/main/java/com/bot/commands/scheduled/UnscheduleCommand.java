@@ -14,8 +14,8 @@ import java.util.function.Consumer;
 
 public class UnscheduleCommand extends ModerationCommand {
 
-    private ScheduledCommandDAO scheduledCommandDAO;
-    private EventWaiter waiter;
+    private final ScheduledCommandDAO scheduledCommandDAO;
+    private final EventWaiter waiter;
 
     public UnscheduleCommand(EventWaiter waiter) {
         this.name = "unschedule";
@@ -48,7 +48,7 @@ public class UnscheduleCommand extends ModerationCommand {
 
     class StepOneConsumer implements Consumer<MessageReceivedEvent> {
 
-        private CommandEvent commandEvent;
+        private final CommandEvent commandEvent;
 
         public StepOneConsumer(CommandEvent commandEvent) {
             this.commandEvent = commandEvent;

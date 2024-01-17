@@ -57,14 +57,14 @@ public class DataLoader {
 
 	public static class LoadThread extends Thread {
 
-		private JDA bot;
-		private Connection connection;
-		private long startTime;
-		private String guildInsertQuery = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id, active) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE active=1";
-		private String textChannelInsertQuery = "INSERT INTO text_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
-		private String userInsertQuery = "INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
-		private String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild, can_use_bot) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE guild = guild";
-		private String voiceChannelInsertQuery = "INSERT INTO voice_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
+		private final JDA bot;
+		private final Connection connection;
+		private final long startTime;
+		private final String guildInsertQuery = "INSERT INTO guild(id, name, default_volume, min_base_role_id, min_mod_role_id, min_nsfw_role_id, min_voice_role_id, active) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE active=1";
+		private final String textChannelInsertQuery = "INSERT INTO text_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
+		private final String userInsertQuery = "INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE id = id";
+		private final String guildMembershipInsertQuery = "INSERT INTO guild_membership (user_id, guild, can_use_bot) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE guild = guild";
+		private final String voiceChannelInsertQuery = "INSERT INTO voice_channel (id, guild, name) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = id";
 		private final Logger LOGGER = new Logger(LoadThread.class.getName());
 
 		public LoadThread(JDA bot, long startTime) throws SQLException {

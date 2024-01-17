@@ -49,16 +49,16 @@ import java.util.logging.Level;
 public class Bot extends ListenerAdapter {
 	private final Logger LOGGER;
 
-	private Config config;
+	private final Config config;
 
-	private GuildDAO guildDAO;
-	private MembershipDAO membershipDAO;
-	private ChannelDAO channelDAO;
-	private BannedImageDAO bannedImageDAO;
-	private UserDAO userDAO;
-	private MetricsManager metricsManager;
-	private ExecutorService executor;
-	private GuildVoiceProvider guildVoiceProvider;
+	private final GuildDAO guildDAO;
+	private final MembershipDAO membershipDAO;
+	private final ChannelDAO channelDAO;
+	private final BannedImageDAO bannedImageDAO;
+	private final UserDAO userDAO;
+	private final MetricsManager metricsManager;
+	private final ExecutorService executor;
+	private final GuildVoiceProvider guildVoiceProvider;
 
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 

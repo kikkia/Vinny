@@ -14,10 +14,10 @@ public class GuildCache {
     private final Logger LOGGER;
 
     private static GuildCache instance;
-    private Cache<InternalGuild> cache;
-    private int MAX_SIZE;
-    private int CACHE_OBJECT_LIFETIME;
-    private int CACHE_CHECK_INTERVAL;
+    private final Cache<InternalGuild> cache;
+    private final int MAX_SIZE;
+    private final int CACHE_OBJECT_LIFETIME;
+    private final int CACHE_CHECK_INTERVAL;
 
     public static GuildCache getInstance() {
         if (instance == null)

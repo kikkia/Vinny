@@ -41,7 +41,7 @@ public class SubscribeYoutubeCommand extends CreateSubscriptionCommand {
                 1, TimeUnit.MINUTES, () -> commandEvent.reply(ConstantStrings.EVENT_WAITER_TIMEOUT));
     }
     class StepOneConsumer implements Consumer<MessageReceivedEvent> {
-        private CommandEvent commandEvent;
+        private final CommandEvent commandEvent;
 
         StepOneConsumer(CommandEvent commandEvent) {
             this.commandEvent = commandEvent;

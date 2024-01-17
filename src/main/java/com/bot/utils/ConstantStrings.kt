@@ -58,7 +58,7 @@ object ConstantStrings {
     const val SUBREDDIT_NSFW = "This is an NSFW subreddit, I cannot subscribe to an NSFW subreddit unless the " +
             "channel has NSFW enabled."
     const val TWITCH_SUB_HELLO = "Yo! Let's setup a twitch live stream subscription. Please reply with the username or a link " +
-            "to their channel";
+            "to their channel"
     const val TWITCH_SUB_NOT_FOUND = "Hold up, I could not find that user on twitch, please make sure that" +
             " you have their username or channel link right right. You can find it at the end of their channel url."
     const val TWITCH_SUB_SUCCESS = "Done! A message will be posted in this channel whenever they go live. " +

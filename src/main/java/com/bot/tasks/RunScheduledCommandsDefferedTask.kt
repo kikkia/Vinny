@@ -9,7 +9,7 @@ import com.bot.utils.ScheduledCommandUtils
 import net.dv8tion.jda.api.JDA
 import org.slf4j.MDC
 
-class RunScheduledCommandsDefferedTask() : Thread() {
+class RunScheduledCommandsDefferedTask : Thread() {
 
     private val scheduledCommandDAO : ScheduledCommandDAO = ScheduledCommandDAO.getInstance()
     private val logger : Logger = Logger(RunScheduledCommandsDefferedTask::class.java.name)

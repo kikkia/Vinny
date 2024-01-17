@@ -7,7 +7,7 @@ import com.bot.utils.HttpUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 public class UpdateGuildCountCommand extends OwnerCommand {
-    private Config config;
+    private final Config config;
 
     public UpdateGuildCountCommand() {
         this.name = "updateguildcount";

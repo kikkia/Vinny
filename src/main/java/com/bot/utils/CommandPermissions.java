@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class CommandPermissions {
-    private static Logger LOGGER = new Logger("Command Permissions");
+    private static final Logger LOGGER = new Logger("Command Permissions");
 
-    private static ChannelDAO channelDAO = ChannelDAO.getInstance();
-    private static MembershipDAO membershipDAO = MembershipDAO.getInstance();
-    private static GuildDAO guildDAO = GuildDAO.getInstance();
+    private static final ChannelDAO channelDAO = ChannelDAO.getInstance();
+    private static final MembershipDAO membershipDAO = MembershipDAO.getInstance();
+    private static final GuildDAO guildDAO = GuildDAO.getInstance();
 
 
     public static boolean canExecuteCommand(Command command, CommandEvent commandEvent) throws ForbiddenCommandException, PermsOutOfSyncException {

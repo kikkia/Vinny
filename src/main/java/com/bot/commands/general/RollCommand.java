@@ -7,7 +7,7 @@ import datadog.trace.api.Trace;
 import java.util.Random;
 
 public class RollCommand extends GeneralCommand {
-    private Random random;
+    private final Random random;
 
     public RollCommand() {
         this.name = "roll";

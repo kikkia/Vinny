@@ -16,7 +16,7 @@ import java.net.URI;
 import java.util.Random;
 
 public class PixivClient {
-    private static Logger logger = new Logger(PixivClient.class.getName());
+    private static final Logger logger = new Logger(PixivClient.class.getName());
 
     private static final String proxyUrl = "pixiv.kikkia.dev";
     private static final String pixivReplaceUrl = "i.pximg.net";

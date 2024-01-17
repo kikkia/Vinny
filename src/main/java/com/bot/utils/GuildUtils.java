@@ -40,7 +40,7 @@ public class GuildUtils {
 
         // Look for a general channel and post in there.
         List<TextChannel> tmpList = textChannels.stream()
-                .filter(c -> c.getName().toLowerCase().equals("general"))
+                .filter(c -> c.getName().equalsIgnoreCase("general"))
                 .collect(Collectors.toList());
 
         if (tmpList.size() > 0 && tmpList.get(0).canTalk()) {
@@ -53,7 +53,6 @@ public class GuildUtils {
                     .collect(Collectors.toList());
             if (postableChannels.size() < 1) {
                 // We cant post to any so just give up
-                return;
             } else if (postableChannels.size() == 1) {
                 postableChannels.get(0).sendMessage(ConstantStrings.WELCOME_MESSAGE).queue(c -> logger.info("Sent guild welcome message to " + c.getChannel().getName()));
             } else {

@@ -33,12 +33,12 @@ public class AliasIT {
     private static HikariDataSource dataSource;
 
 
-    private List<InternalGuild> guilds = Arrays.asList(
+    private final List<InternalGuild> guilds = Arrays.asList(
             new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", "! v jk", true),
             new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", null, true)
     );
 
-    private List<InternalTextChannel> textChannels = Arrays.asList(
+    private final List<InternalTextChannel> textChannels = Arrays.asList(
             new InternalTextChannel("1", "101", "general", false, false, true, true),
             new InternalTextChannel("3", "101", "test", false, false, true, true),
             new InternalTextChannel("4", "102", "general", false, false, true, true),

@@ -39,7 +39,7 @@ public class SubscribeTwitterCommand extends CreateSubscriptionCommand {
     }
 
     class StepOneConsumer implements Consumer<MessageReceivedEvent> {
-        private CommandEvent commandEvent;
+        private final CommandEvent commandEvent;
 
         StepOneConsumer(CommandEvent commandEvent) {
             this.commandEvent = commandEvent;

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class GetScheduledCommand extends GeneralCommand {
 
-    private ScheduledCommandDAO scheduledCommandDAO;
+    private final ScheduledCommandDAO scheduledCommandDAO;
     private final Paginator.Builder builder;
 
     public GetScheduledCommand(EventWaiter waiter) {

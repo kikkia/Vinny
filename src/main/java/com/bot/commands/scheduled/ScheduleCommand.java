@@ -25,9 +25,9 @@ import java.util.logging.Level;
 
 public class ScheduleCommand extends ModerationCommand {
 
-    private EventWaiter waiter;
-    private ScheduledCommandDAO scheduledCommandDAO;
-    private UserDAO userDAO;
+    private final EventWaiter waiter;
+    private final ScheduledCommandDAO scheduledCommandDAO;
+    private final UserDAO userDAO;
 
     public ScheduleCommand(EventWaiter waiter) {
         this.name = "schedule";
@@ -74,7 +74,7 @@ public class ScheduleCommand extends ModerationCommand {
 
     class StepOneConsumer implements Consumer<MessageReceivedEvent> {
         private String command;
-        private CommandEvent commandEvent;
+        private final CommandEvent commandEvent;
 
         StepOneConsumer(CommandEvent commandEvent) {
             this.commandEvent = commandEvent;
@@ -111,8 +111,8 @@ public class ScheduleCommand extends ModerationCommand {
     }
 
     class StepTwoConsumer implements Consumer<MessageReceivedEvent> {
-        private String command;
-        private CommandEvent commandEvent;
+        private final String command;
+        private final CommandEvent commandEvent;
 
         StepTwoConsumer(CommandEvent commandEvent, String command) {
             this.command = command;

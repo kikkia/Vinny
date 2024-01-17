@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import java.util.logging.Level;
 
 public class RandomPostCommand extends RedditCommand{
-    private RedditConnection redditConnection;
+    private final RedditConnection redditConnection;
 
     public RandomPostCommand() {
         this.name = "rr";

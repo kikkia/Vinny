@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RedditHelper {
 
-    private static Random random = new Random(System.currentTimeMillis());
+    private static final Random random = new Random(System.currentTimeMillis());
     private static final Semaphore limiter = new Semaphore(3, true);
     private static final String REDDIT_SNOO_ICON_URL = "http://www.doomsteaddiner.net/blog/wp-content/uploads/2015/10/reddit-logo.png";
 
@@ -251,11 +251,11 @@ public class RedditHelper {
                 .build();
 
         SubredditCache cache = SubredditCache.getInstance();
-        List<Listing<Submission>> submissions = cache.get(sortType.toString() + subredditName);
+        List<Listing<Submission>> submissions = cache.get(sortType + subredditName);
 
         if (submissions == null) {
             submissions = paginator.accumulate(1);
-            cache.put(sortType.toString() + subredditName, submissions);
+            cache.put(sortType + subredditName, submissions);
         }
 
         Listing<Submission> page = submissions.get(0); // Get the only page

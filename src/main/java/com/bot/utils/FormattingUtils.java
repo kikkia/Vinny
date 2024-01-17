@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 public class FormattingUtils {
 
-    private static int MIN_INTERVAL = 300000;
+    private static final int MIN_INTERVAL = 300000;
 
     public static ArrayList<String> splitTextIntoChunksByWords(String input, int chunkLength) {
         ArrayList<String> stringList = new ArrayList<>();
@@ -259,7 +259,7 @@ public class FormattingUtils {
                 // Add millis for each index
                 for (int i = array.length - 1; i >= 0; i--) {
                     int val = Integer.parseInt(array[i]);
-                    interval += val * convertUnits[index];
+                    interval += (long) val * convertUnits[index];
                     index++;
                 }
 
@@ -294,17 +294,16 @@ public class FormattingUtils {
         millis -= TimeUnit.MINUTES.toMillis(minutes);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
 
-        StringBuilder sb = new StringBuilder(64);
-        sb.append(days);
-        sb.append(" Days ");
-        sb.append(hours);
-        sb.append(" Hours ");
-        sb.append(minutes);
-        sb.append(" Minutes ");
-        sb.append(seconds);
-        sb.append(" Seconds");
+        String sb = days +
+                " Days " +
+                hours +
+                " Hours " +
+                minutes +
+                " Minutes " +
+                seconds +
+                " Seconds";
 
-        return(sb.toString());
+        return(sb);
     }
 
     public static String getDateForMillis(long millis) {

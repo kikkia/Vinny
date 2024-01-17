@@ -8,10 +8,10 @@ public class TextChannelCache {
     private final Logger LOGGER;
 
     private static TextChannelCache instance;
-    private Cache<InternalTextChannel> cache;
-    private int MAX_SIZE;
-    private int CACHE_OBJECT_LIFETIME;
-    private int CACHE_CHECK_INTERVAL;
+    private final Cache<InternalTextChannel> cache;
+    private final int MAX_SIZE;
+    private final int CACHE_OBJECT_LIFETIME;
+    private final int CACHE_CHECK_INTERVAL;
 
     public static TextChannelCache getInstance() {
         if (instance == null)

@@ -8,10 +8,10 @@ public class R34Cache {
     private final Logger logger;
 
     private static R34Cache instance;
-    private Cache<List<String>> cache;
-    private int MAX_SIZE;
-    private int CACHE_OBJECT_LIFETIME;
-    private int CACHE_CHECK_INTERVAL;
+    private final Cache<List<String>> cache;
+    private final int MAX_SIZE;
+    private final int CACHE_OBJECT_LIFETIME;
+    private final int CACHE_CHECK_INTERVAL;
 
     public static R34Cache getInstance() {
         if (instance == null) {

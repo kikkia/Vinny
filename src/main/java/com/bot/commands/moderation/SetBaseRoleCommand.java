@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class SetBaseRoleCommand extends ModerationCommand {
-    private GuildDAO guildDAO;
+    private final GuildDAO guildDAO;
 
     public SetBaseRoleCommand() {
         this.name = "baserole";

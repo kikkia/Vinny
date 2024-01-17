@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import java.util.logging.Level;
 
 public class NewPostCommand extends RedditCommand {
-    private RedditConnection redditConnection;
+    private final RedditConnection redditConnection;
 
     public NewPostCommand() {
         this.name = "nr";

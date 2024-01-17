@@ -12,8 +12,8 @@ import java.sql.SQLException;
 
 public class RemoveSubscriptionCommand extends ModerationCommand {
 
-    private RssDAO rssDAO;
-    private ChannelDAO channelDAO;
+    private final RssDAO rssDAO;
+    private final ChannelDAO channelDAO;
 
     public RemoveSubscriptionCommand() {
         this.name = "unsubscribe";

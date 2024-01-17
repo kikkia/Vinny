@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 public class AddPrefixCommand extends ModerationCommand {
 
-    private GuildDAO guildDAO;
+    private final GuildDAO guildDAO;
 
     public AddPrefixCommand() {
         this.name = "addprefix";

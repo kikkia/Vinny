@@ -51,7 +51,7 @@ class SauceCommand : MemeCommand() {
         val sauceClient = SauceUtils.getClient()
 
         try {
-            val sauce = sauceClient.getSauce(url!!)
+            val sauce = sauceClient.getSauce(url)
             commandEvent?.reply(FormattingUtils.getEmbedForSauce(sauce))
         } catch (e : TooMuchSauceException) {
             commandEvent?.replyError("I am experiencing high amounts of traffic searching for a sauce. Please try again later.")

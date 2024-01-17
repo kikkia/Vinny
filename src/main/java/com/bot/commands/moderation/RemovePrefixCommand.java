@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class RemovePrefixCommand extends ModerationCommand {
 
-    private GuildDAO guildDAO;
+    private final GuildDAO guildDAO;
 
     public RemovePrefixCommand() {
         this.name = "removeprefix";

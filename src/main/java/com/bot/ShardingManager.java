@@ -54,13 +54,13 @@ public class ShardingManager {
 
     private static ShardingManager instance;
 
-    private Map<Integer, InternalShard> shards;
+    private final Map<Integer, InternalShard> shards;
     private final ScheduledExecutorService executor;
     public ShardManager shardManager;
 
-    private EventWaiter waiter;
+    private final EventWaiter waiter;
     private List<Command.Category> commandCategories;
-    private CommandClient client;
+    private final CommandClient client;
 
     public static ShardingManager getInstance() {
         return instance;

@@ -5,7 +5,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class ConnectionPool {
-	private HikariDataSource dataSource;
+	private final HikariDataSource dataSource;
 	private static ConnectionPool connectionPool;
 
 	private ConnectionPool() {

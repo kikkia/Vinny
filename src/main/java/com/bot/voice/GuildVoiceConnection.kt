@@ -303,7 +303,7 @@ class GuildVoiceConnection(val guild: Guild) {
         trackProvider.shuffleQueue()
     }
 
-    fun removeTrackAtIndex(index: Int): QueuedAudioTrack? {
+    fun removeTrackAtIndex(index: Int): QueuedAudioTrack {
         val tracks = trackProvider.getQueued()
         if (index > tracks.size) {
             throw InvalidInputException("Provided track index: $index is more than the total tracks queued: ${tracks.size}")

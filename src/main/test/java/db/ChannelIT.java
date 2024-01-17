@@ -38,19 +38,19 @@ public class ChannelIT {
     private static HikariDataSource dataSource;
 
 
-    private List<InternalGuild> guilds = Arrays.asList(
+    private final List<InternalGuild> guilds = Arrays.asList(
             new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", "! v jk", true),
             new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", null, true)
     );
 
-    private List<InternalTextChannel> textChannels = Arrays.asList(
+    private final List<InternalTextChannel> textChannels = Arrays.asList(
             new InternalTextChannel("1", "101", "general", false, false, true, true),
             new InternalTextChannel("3", "101", "test", false, false, true, true),
             new InternalTextChannel("4", "102", "general", false, false, true, true),
             new InternalTextChannel("5", "102", "afk", false, false, true, true)
     );
 
-    private List<InternalVoiceChannel> voiceChannels = Arrays.asList(
+    private final List<InternalVoiceChannel> voiceChannels = Arrays.asList(
             new InternalVoiceChannel("2", "101", "voice", true),
             new InternalVoiceChannel("6", "101", "afk-voice", true),
             new InternalVoiceChannel("7", "101", "the-other-voice", true),

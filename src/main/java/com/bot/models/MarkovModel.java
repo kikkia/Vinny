@@ -9,10 +9,10 @@ public class MarkovModel {
     private static final String BEGINNING_PREFIX = "_s*";
     private static final String ENDING_SUFFIX = "_e*";
 
-    private Hashtable<String, Vector<String>> dataTable;
+    private final Hashtable<String, Vector<String>> dataTable;
     private int messageCount;
     private int wordCount;
-    private static Random random = new Random(System.currentTimeMillis());
+    private static final Random random = new Random(System.currentTimeMillis());
 
     public MarkovModel() {
         this.dataTable = new Hashtable<>();

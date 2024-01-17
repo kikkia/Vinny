@@ -36,7 +36,7 @@ public class GuildIT {
     private static final Logger LOGGER = Logger.getLogger(GuildIT.class.getName());
     private static HikariDataSource dataSource;
 
-    private List<InternalGuildMembership> memberships = Arrays.asList(
+    private final List<InternalGuildMembership> memberships = Arrays.asList(
             new InternalGuildMembership("1",  "101", true),
             new InternalGuildMembership("2",  "102", true),
             new InternalGuildMembership("3",  "101", true),
@@ -44,7 +44,7 @@ public class GuildIT {
             new InternalGuildMembership("3",  "102", false)
             );
 
-    private List<InternalGuild> guilds = Arrays.asList(
+    private final List<InternalGuild> guilds = Arrays.asList(
             new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", null, true),
             new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", "Dude ~ !", true)
     );

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BanImageCommand extends ModerationCommand {
-    private BannedImageDAO bannedImageDAO;
+    private final BannedImageDAO bannedImageDAO;
 
     public BanImageCommand() {
         this.name = "banimage";

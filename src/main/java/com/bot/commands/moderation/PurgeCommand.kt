@@ -6,9 +6,11 @@ import datadog.trace.api.Trace
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Message
 import java.time.OffsetDateTime
+import java.util.*
 import java.util.stream.Collectors
+import kotlin.collections.ArrayList
 
-class PurgeCommand() : ModerationCommand() {
+class PurgeCommand : ModerationCommand() {
     val helpLink = "https://github.com/kikkia/Vinny/blob/master/docs/purge.md"
     val twoWeekWarning = " NOTE: I cannot purge messages that are older than 2 weeks old."
 
@@ -139,7 +141,7 @@ class PurgeCommand() : ModerationCommand() {
             val COUNT_REGEX = Regex("\\b(\\d{1,4})\\b")
 
             fun fromArgs(arguments: String) : MessageFilter {
-                var args = arguments.toLowerCase()
+                var args = arguments.lowercase(Locale.getDefault())
 
                 val prefixes = ArrayList<String>()
 

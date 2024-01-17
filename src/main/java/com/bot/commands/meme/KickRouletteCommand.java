@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 
 public class KickRouletteCommand extends MemeCommand {
 
-    private EventWaiter waiter;
+    private final EventWaiter waiter;
 
     public KickRouletteCommand(EventWaiter eventWaiter) {
         this.name = "kickroulette";
@@ -53,7 +53,7 @@ public class KickRouletteCommand extends MemeCommand {
 
     class KickConsumer implements Consumer<MessageReactionAddEvent> {
 
-        private CommandEvent commandEvent;
+        private final CommandEvent commandEvent;
 
         KickConsumer(CommandEvent commandEvent) {
             this.commandEvent = commandEvent;

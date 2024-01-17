@@ -29,9 +29,9 @@ import java.util.Random;
 
 
 public class HttpUtils {
-    private static Logger logger = new Logger(HttpUtils.class.getName());
-    private static Config config = Config.getInstance();
-    private static Random random = new Random(System.currentTimeMillis());
+    private static final Logger logger = new Logger(HttpUtils.class.getName());
+    private static final Config config = Config.getInstance();
+    private static final Random random = new Random(System.currentTimeMillis());
 
     private static final String P90_BASE_URL = "https://p90.zone/";
     private static final String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 " +

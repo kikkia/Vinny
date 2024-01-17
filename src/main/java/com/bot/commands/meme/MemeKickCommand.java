@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MemeKickCommand extends MemeCommand {
 
-    private EventWaiter waiter;
+    private final EventWaiter waiter;
 
     public MemeKickCommand(EventWaiter waiter) {
         this.name = "memekick";

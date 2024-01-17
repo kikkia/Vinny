@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 public class RedditConnection {
     private static RedditConnection instance;
-    private RedditClient client;
+    private final RedditClient client;
 
     /**
      * Generates a new connection to reddit API.

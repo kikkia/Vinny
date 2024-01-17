@@ -9,10 +9,10 @@ public class MarkovModelCache {
     private static final Logger LOGGER = new Logger(MarkovModelCache.class.getName());
 
     private static MarkovModelCache instance;
-    private Cache<MarkovModel> cache;
-    private int MAX_SIZE;
-    private int CACHE_OBJECT_LIFETIME;
-    private int CACHE_CHECK_INTERVAL;
+    private final Cache<MarkovModel> cache;
+    private final int MAX_SIZE;
+    private final int CACHE_OBJECT_LIFETIME;
+    private final int CACHE_CHECK_INTERVAL;
 
     public static MarkovModelCache getInstance() {
         if (instance == null)

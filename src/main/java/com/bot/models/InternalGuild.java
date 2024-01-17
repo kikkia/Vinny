@@ -11,8 +11,8 @@ public class InternalGuild {
     private String id;
     private String name;
     private int volume;
-    private Map<Command.Category, String> roleRequirements;
-    private String prefixes;
+    private final Map<Command.Category, String> roleRequirements;
+    private final String prefixes;
     private Map<String, Alias> aliases;
     private boolean active;
 
