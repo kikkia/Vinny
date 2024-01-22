@@ -1,5 +1,6 @@
 package com.bot.voice
 
+import com.bot.db.GuildDAO
 import com.bot.db.models.ResumeAudioGuild
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
@@ -26,7 +27,7 @@ class GuildVoiceConnection(val guild: Guild) {
     var currentVoiceChannel: VoiceChannel? = null
     var lastTextChannel: TextChannel? = null
     private var isPaused = false
-    private var volume = 100
+    private var volume = GuildDAO.getInstance().getGuildById(guild.id).volume ?: 100
     var volumeLocked = false
 
     fun setPaused(pause: Boolean) {

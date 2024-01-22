@@ -2,6 +2,8 @@ package com.bot.commands.voice
 
 import com.bot.commands.ModerationCommand
 import com.bot.db.GuildDAO
+import com.bot.voice.GuildVoiceConnection
+import com.bot.voice.GuildVoiceProvider
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 
@@ -27,6 +29,10 @@ class DefaultVolumeCommand : ModerationCommand() {
                 commandEvent.reply(commandEvent.client.error + " Something went wrong updating the default volume.")
                 metricsManager.markCommandFailed(this, commandEvent.author, commandEvent.guild)
                 return
+            }
+            val conn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(commandEvent.guild.idLong)
+            if (conn != null) {
+                conn.setVolume(newVolume)
             }
             commandEvent.reactSuccess()
         } catch (e: NumberFormatException) {
