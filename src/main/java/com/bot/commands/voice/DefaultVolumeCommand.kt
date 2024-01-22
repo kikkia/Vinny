@@ -2,7 +2,6 @@ package com.bot.commands.voice
 
 import com.bot.commands.ModerationCommand
 import com.bot.db.GuildDAO
-import com.bot.voice.GuildVoiceConnection
 import com.bot.voice.GuildVoiceProvider
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
@@ -30,10 +29,7 @@ class DefaultVolumeCommand : ModerationCommand() {
                 metricsManager.markCommandFailed(this, commandEvent.author, commandEvent.guild)
                 return
             }
-            val conn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(commandEvent.guild.idLong)
-            if (conn != null) {
-                conn.setVolume(newVolume)
-            }
+            GuildVoiceProvider.getInstance().getGuildVoiceConnection(commandEvent.guild.idLong)?.setVolume(newVolume)
             commandEvent.reactSuccess()
         } catch (e: NumberFormatException) {
             commandEvent.reply(commandEvent.client.warning + " You must enter a volume between 0 and 200")
