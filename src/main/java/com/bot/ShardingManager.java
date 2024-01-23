@@ -22,7 +22,7 @@ import com.bot.commands.scheduled.UnscheduleCommand;
 import com.bot.commands.voice.*;
 import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
-import com.bot.utils.Config;
+import com.bot.utils.VinnyConfig;
 import com.bot.voice.CustomJDAVoiceUpdateListener;
 import com.bot.voice.LavaLinkClient;
 import com.jagrosh.jdautilities.command.Command;
@@ -75,11 +75,11 @@ public class ShardingManager {
     // This adds a connection for each shard. Shards make it more efficient. ~1000 servers to shards is ideal
     // supportScript disables commands. Useful for running a supportScript simultaneously while the bot is going on prod
     private ShardingManager(int numShards, int startIndex, int endIndex) throws Exception {
-        Config config = Config.getInstance();
+        VinnyConfig config = VinnyConfig.Companion.instance();
         waiter = new EventWaiter();
 
         // Check if we are just doing a silent deploy (For debug and stress testing purposes)
-        boolean silentDeploy = Boolean.parseBoolean(config.getConfig(Config.SILENT_DEPLOY));
+        boolean silentDeploy = config.getBotConfig().getSilentDeploy();
 
         shards = new ConcurrentHashMap<>();
         executor = Executors.newScheduledThreadPool(100);
@@ -88,7 +88,7 @@ public class ShardingManager {
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
         commandClientBuilder.setPrefix("~");
         commandClientBuilder.setAlternativePrefix("@mention");
-        commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
+        commandClientBuilder.setOwnerId(config.getDiscordConfig().getOwnerId());
 
         // If we are deploying silently we are not registering commands.
         if (!silentDeploy) {
@@ -199,7 +199,6 @@ public class ShardingManager {
         commandClientBuilder.addCommands(
                 // Owner Commands -- All hidden
                 new AvatarCommand(),
-                new UpdateGuildCountCommand(),
                 new ClearCacheCommand(),
                 new RebootAnnounceCommand(),
                 new GuildDebugCommand(),
@@ -211,8 +210,7 @@ public class ShardingManager {
                 new ShardCommand(),
                 new ShardStatsCommand(),
                 new SetUsageCommand(),
-                new BanImageCommand()
-                );
+                new BanImageCommand());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
@@ -224,7 +222,7 @@ public class ShardingManager {
 
         shardManager = DefaultShardManagerBuilder
                 .createDefault(
-                        config.getConfig(Config.DISCORD_TOKEN),
+                        config.getDiscordConfig().getToken(),
                         GUILD_MEMBERS,
                         GUILD_MESSAGES,
                         GUILD_EMOJIS,
