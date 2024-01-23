@@ -202,7 +202,6 @@ public class ShardingManager {
                 new ClearCacheCommand(),
                 new RebootAnnounceCommand(),
                 new GuildDebugCommand(),
-                new SwitchDefaultSearchCommand(),
                 new InGuildCommand(),
                 new InChannelCommand(),
                 new FUserCommand(),
