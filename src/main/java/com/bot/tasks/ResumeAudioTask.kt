@@ -26,16 +26,20 @@ class ResumeAudioTask(private val readyEvent: ReadyEvent) : Thread() {
             }
             logger.info("Shard ${jda.shardInfo.shardId} starting resume audio of ${toResumeGuilds.size} guilds.")
             for (guild in toResumeGuilds) {
-                val resumeSetup = resumeAudioDAO.getResumeGuild(guild.id)
-                val connection = guildVoiceProvider.getGuildVoiceConnection(guild)
-                connection.lastTextChannel = guild.getTextChannelById(resumeSetup.textChannelId)
-                connection.currentVoiceChannel = guild.getVoiceChannelById(resumeSetup.voiceChannelId)
-                if (connection.currentVoiceChannel == null || connection.lastTextChannel == null) {
-                    logger.warning("Voice or text channel not found when rebooting voice failing guild: ${guild.id}")
-                    return
+                try {
+                    val resumeSetup = resumeAudioDAO.getResumeGuild(guild.id)
+                    val connection = guildVoiceProvider.getGuildVoiceConnection(guild)
+                    connection.lastTextChannel = guild.getTextChannelById(resumeSetup.textChannelId)
+                    connection.currentVoiceChannel = guild.getVoiceChannelById(resumeSetup.voiceChannelId)
+                    if (connection.currentVoiceChannel == null || connection.lastTextChannel == null) {
+                        logger.warning("Voice or text channel not found when rebooting voice failing guild: ${guild.id}")
+                        return
+                    }
+                    connection.resumeAudioAfterReboot(resumeSetup)
+                    resumeAudioDAO.deleteAllForGuildId(guild.id)
+                } catch (e: Exception) {
+                    logger.severe("Failed to restart audio for guild: ${guild.id}", e)
                 }
-                connection.resumeAudioAfterReboot(resumeSetup)
-                resumeAudioDAO.deleteAllForGuildId(guild.id)
             }
             logger.info("Shard ${jda.shardInfo.shardId} finished with resume audio task")
         } catch (e: Exception) {

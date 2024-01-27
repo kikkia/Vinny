@@ -19,7 +19,7 @@ class RunScheduledCommandsDefferedTask : Thread() {
 
     override fun run() {
         try {
-            logger.info("kicking off scheduled command run.")
+            //logger.info("kicking off scheduled command run.")
 
             val scheduledCommands: List<ScheduledCommand> = scheduledCommandDAO.allScheduledCommands
 

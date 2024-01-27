@@ -32,7 +32,7 @@ class RssSubscriber(config: Config) {
             // Send the update to the channel
             val jda = shardingManager.getShardForChannel(update.channel)
             if (jda == null) {
-                logger.warning("Could not find channel for rss update ${update.channel}")
+                //logger.warning("Could not find channel for rss update ${update.channel}")
                 metricsManager.markRssEventChannelNotFound(RssProvider.getProvider(update.provider), update.channel)
             } else {
                 RssUtils.sendRssUpdate(update, jda)
