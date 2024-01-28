@@ -17,7 +17,7 @@ abstract class CreateSubscriptionCommand : ModerationCommand() {
         val usage = user?.usageLevel() ?: UsageLevel.BASIC
         if (rssDAO.getCountForAuthor(commandEvent.author.id) >= usage.maxSub) {
             commandEvent.replyWarning("You can only make ${usage.maxSub} subscriptions." +
-                    "To be able to make more, you can subscribe on the Vinny support server." +
+                    "To be able to make more, you can subscribe on the Vinny support server store." +
                     " To get a support server invite use `~support`.\nYou can also remove your current subscriptions with the " +
                             "`~unsubscribe` command")
             return false
