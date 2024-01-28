@@ -39,15 +39,16 @@ class MetricsManager private constructor() {
             }
     }
 
-    fun markCommand(command: Command, user: User, guild: Guild?) {
+    fun markCommand(command: Command, user: User, guild: Guild?, scheduled: Boolean) {
         val userTag = "user:" + user.id
         val commandTag = "command:" + command.name
         val categoryTag = "category:" + command.category.name
+        val scheduled = "scheduled:$scheduled"
 
         // Support guild being null (use in PMs)
         val guildOrPM = guild?.id ?: "PM"
         val guildTag = "guild:$guildOrPM"
-        statsd!!.incrementCounter("command", userTag, guildTag, commandTag, categoryTag)
+        statsd!!.incrementCounter("command", userTag, guildTag, commandTag, categoryTag, scheduled)
     }
 
     fun markGuildAliasExecuted(guild: InternalGuild) {
