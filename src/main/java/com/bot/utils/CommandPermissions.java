@@ -33,8 +33,8 @@ public class CommandPermissions {
             return true;
 
         if (commandCategory.equals(CommandCategories.OWNER)) {
-            Config config = Config.getInstance();
-            return commandEvent.getAuthor().getId().equals(config.getConfig(Config.OWNER_ID));
+            VinnyConfig config = VinnyConfig.Companion.instance();
+            return commandEvent.getAuthor().getId().equals(config.getDiscordConfig().getOwnerId());
         }
 
         if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {

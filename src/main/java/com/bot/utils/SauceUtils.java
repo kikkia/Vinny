@@ -9,9 +9,9 @@ public class SauceUtils {
     public static SauceClient getClient() {
         if (client == null) {
             SauceClient.Builder builder = new SauceClient.Builder();
-            Config config = Config.getInstance();
-            builder.addProxy(config.getConfig(Config.SAUCE_PROXY));
-            builder.setToken(config.getConfig(Config.SAUCE_TOKEN));
+            VinnyConfig config = VinnyConfig.Companion.instance();
+            builder.addProxy(config.getThirdPartyConfig().getSauceProxy());
+            builder.setToken(config.getThirdPartyConfig().getSauceToken());
             client = builder.build();
         }
         return client;

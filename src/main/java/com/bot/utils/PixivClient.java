@@ -80,9 +80,9 @@ public class PixivClient {
 
     private static synchronized void login() throws PixivException {
         loggingIn = true;
-        Config config = Config.getInstance();
-        String username = config.getConfig(Config.PIXIV_USER);
-        String password = config.getConfig(Config.PIXIC_PASS);
+        VinnyConfig config = VinnyConfig.Companion.instance();
+        String username = config.getThirdPartyConfig().getPixivUser();
+        String password = config.getThirdPartyConfig().getPixivPass();
         if (username == null || password == null) {
             throw new PixivException("Pixiv commands are not setup on this bot at the moment.");
         }

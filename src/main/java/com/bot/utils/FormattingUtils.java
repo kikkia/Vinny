@@ -59,18 +59,14 @@ public class FormattingUtils {
     }
 
     public static String getOnlineStatusEmoji(Member member) {
-        Config config = Config.getInstance();
+        VinnyConfig config = VinnyConfig.Companion.instance();
 
-        switch (member.getOnlineStatus()) {
-            case ONLINE:
-                return config.getConfig(Config.ONLINE_EMOJI);
-            case IDLE:
-                return config.getConfig(Config.IDLE_EMOJI);
-            case DO_NOT_DISTURB:
-                return config.getConfig(Config.DND_EMOJI);
-            default:
-                return config.getConfig(Config.OFFLINE_EMOJI);
-        }
+        return switch (member.getOnlineStatus()) {
+            case ONLINE -> config.getBotConfig().getOnlineEmoji();
+            case IDLE -> config.getBotConfig().getIdleEmoji();
+            case DO_NOT_DISTURB -> config.getBotConfig().getDndEmoji();
+            default -> config.getBotConfig().getOfflineEmoji();
+        };
     }
 
     public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume, RepeatMode repeatMode) {

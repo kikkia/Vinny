@@ -1,6 +1,6 @@
 package com.bot.voice
 
-import com.bot.utils.Config
+import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.LavalinkClient
 import dev.arbjerg.lavalink.client.Link
@@ -20,13 +20,13 @@ class LavaLinkClient private constructor() {
     private var guildClients: ConcurrentHashMap<Long, GuildVoiceConnection>
 
     init {
-        val config = Config.getInstance()
-        val botID = config.getConfig(Config.DISCORD_BOT_ID).toLong()
-        val lavaAddress = config.getConfig(Config.LAVALINK_ADDRESS)
-        val lavaPassword = config.getConfig(Config.LAVALINK_PASSWORD)
+        val config = VinnyConfig.instance()
+        val botID = config.discordConfig.botId.toLong()
         client = LavalinkClient(botID)
-        client.addNode("Vinny-1", URI.create(lavaAddress), lavaPassword, RegionGroup.US)
-
+        for (node in config.voiceConfig.nodes!!) {
+            // TODO: Region support
+            client.addNode(node.name, URI.create(node.address), node.password, RegionGroup.US)
+        }
         logger.info("LL Client booted")
 
         client.on(TrackEndEvent::class.java).subscribe {event ->

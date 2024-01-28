@@ -9,16 +9,25 @@ public class LoggerUtils {
 
     public static DislogClient getClient() {
         if (client == null) {
-            Config config = Config.getInstance();
+            VinnyConfig config = VinnyConfig.Companion.instance();
 
             DislogClient.Builder builder = new DislogClient.Builder()
                     .setUsername("Not Vinny")
-                    .addWebhook(LogLevel.DEBUG, config.getConfig(Config.DEBUG_WEBHOOK))
-                    .addWebhook(LogLevel.INFO, config.getConfig(Config.INFO_WEBHOOK))
-                    .addWebhook(LogLevel.WARN, config.getConfig(Config.WARN_WEBHOOK))
-                    .addWebhook(LogLevel.ERROR, config.getConfig(Config.ERROR_WEBHOOK))
-                    .setIdentifier(config.getConfig(Config.HOST_IDENTIFIER))
+                    .setIdentifier(config.getBotConfig().getHostIdentifier())
                     .printStackTrace(true);
+
+            for(String hook : config.getBotConfig().getDebugWebhooks()) {
+                builder.addWebhook(LogLevel.DEBUG, hook);
+            }
+            for(String hook : config.getBotConfig().getInfoWebhooks()) {
+                builder.addWebhook(LogLevel.INFO, hook);
+            }
+            for(String hook : config.getBotConfig().getWarningWebhooks()) {
+                builder.addWebhook(LogLevel.WARN, hook);
+            }
+            for(String hook : config.getBotConfig().getErrorWebhooks()) {
+                builder.addWebhook(LogLevel.ERROR, hook);
+            }
             client = builder.build();
         }
         return client;

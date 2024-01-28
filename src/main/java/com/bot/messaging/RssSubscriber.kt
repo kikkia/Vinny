@@ -3,23 +3,23 @@ package com.bot.messaging
 import com.bot.ShardingManager
 import com.bot.metrics.MetricsManager
 import com.bot.models.RssProvider
-import com.bot.utils.Config
 import com.bot.utils.Logger
 import com.bot.utils.RssUtils
+import com.bot.utils.VinnyConfig
 import io.nats.client.Connection
 import io.nats.client.Nats
 import io.nats.client.Options
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 
-class RssSubscriber(config: Config) {
+class RssSubscriber(config: VinnyConfig) {
     val logger : Logger = Logger(this.javaClass.simpleName)
     val shardingManager: ShardingManager = ShardingManager.getInstance()
     val metricsManager = MetricsManager.instance!!
 
     val natsConnection: Connection = Nats.connect(Options.Builder()
-            .server(config.getConfig(Config.NATS_SERVER))
-            .token(config.getConfig(Config.NATS_TOKEN).toCharArray())
+            .server(config.rssConfig.natsAddress)
+            .token(config.rssConfig.natsPassword)
             .build())
 
     init {
@@ -38,7 +38,7 @@ class RssSubscriber(config: Config) {
                 RssUtils.sendRssUpdate(update, jda)
             }
         }
-        rssDispatcher.subscribe(config.getConfig(Config.RSS_SUBJECT))
+        rssDispatcher.subscribe(config.rssConfig.natsSubject)
     }
 
 }

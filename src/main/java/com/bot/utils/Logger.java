@@ -17,11 +17,11 @@ public class Logger {
     private DislogClient dislogClient;
 
     public Logger(String name) {
-        Config config = Config.getInstance();
+        VinnyConfig config = VinnyConfig.Companion.instance();
         logger = java.util.logging.Logger.getLogger(name);
         this.name = name;
 
-        channelLoggingEnabled = Boolean.parseBoolean(config.getConfig(Config.ENABLE_LOGGING_CHANNELS));
+        channelLoggingEnabled = config.getBotConfig().getEnableLoggingChannels();
         if (channelLoggingEnabled) {
             dislogClient = LoggerUtils.getClient();
         }
