@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class ListSubscriptionsCommand extends GeneralCommand {
 
-    private RssDAO rssDAO;
+    private final RssDAO rssDAO;
     private final Paginator.Builder builder;
 
     public ListSubscriptionsCommand(EventWaiter waiter) {

@@ -28,7 +28,7 @@ public class PlaylistIT {
     private static final Logger LOGGER = Logger.getLogger(GuildIT.class.getName());
     private static HikariDataSource dataSource;
 
-    private List<InternalGuildMembership> memberships = Arrays.asList(
+    private final List<InternalGuildMembership> memberships = Arrays.asList(
             new InternalGuildMembership("1", "101", true),
             new InternalGuildMembership("2", "102", true),
             new InternalGuildMembership("3", "101", true),
@@ -36,22 +36,22 @@ public class PlaylistIT {
             new InternalGuildMembership("3", "102", false)
     );
 
-    private List<InternalGuild> guilds = Arrays.asList(
+    private final List<InternalGuild> guilds = Arrays.asList(
             new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", null, true),
             new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", null, true)
     );
 
-    private List<AudioTrack> tracks = Arrays.asList(
+    private final List<AudioTrack> tracks = Arrays.asList(
             new AudioTrack("url-track-1", "title-1", 1),
             new AudioTrack("url-track-2", "title-2", 2),
             new AudioTrack("url-track-3", "title-3", 3)
     );
 
-    private List<Playlist> userPlaylists = Arrays.asList(
+    private final List<Playlist> userPlaylists = List.of(
             new Playlist(1, "1", "Playlist-user-1", tracks)
     );
 
-    private List<Playlist> guildPlaylists = Arrays.asList(
+    private final List<Playlist> guildPlaylists = List.of(
             new Playlist(2, "101", "Playlist-Guild-101", tracks)
     );
 

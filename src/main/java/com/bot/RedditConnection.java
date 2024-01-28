@@ -1,6 +1,6 @@
 package com.bot;
 
-import com.bot.utils.Config;
+import com.bot.utils.VinnyConfig;
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.http.OkHttpNetworkAdapter;
 import net.dean.jraw.http.UserAgent;
@@ -14,15 +14,15 @@ import java.util.UUID;
  */
 public class RedditConnection {
     private static RedditConnection instance;
-    private RedditClient client;
+    private final RedditClient client;
 
     /**
      * Generates a new connection to reddit API.
      */
     private RedditConnection() {
-        Config config = Config.getInstance();
-        String clientID = config.getConfig(Config.REDDIT_CLIENT_ID);
-        String redditSecret = config.getConfig(Config.REDDIT_TOKEN);
+        VinnyConfig config = VinnyConfig.Companion.instance();
+        String clientID = config.getThirdPartyConfig().getRedditClientId();
+        String redditSecret = config.getThirdPartyConfig().getRedditClientToken();
         // Load Credentials
         Credentials oauthCreds = Credentials.userless(clientID, redditSecret, UUID.randomUUID());
 

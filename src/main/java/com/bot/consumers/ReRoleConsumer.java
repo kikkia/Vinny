@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class ReRoleConsumer implements Consumer<GuildMemberJoinEvent> {
 
-    private List<Role> roles;
-    private TextChannel channel;
+    private final List<Role> roles;
+    private final TextChannel channel;
 
     public ReRoleConsumer(List<Role> roles, TextChannel channel) {
         this.roles = roles;
@@ -32,7 +32,7 @@ public class ReRoleConsumer implements Consumer<GuildMemberJoinEvent> {
 
         // Wait for all of the role assignments to finish and alert the user if anything failed.
         long start = System.currentTimeMillis();
-        while (roles.size() != results.size() && System.currentTimeMillis() - start < 1000 * roles.size()) {
+        while (roles.size() != results.size() && System.currentTimeMillis() - start < 1000L * roles.size()) {
             try {
                 Thread.sleep(250);
             } catch (InterruptedException e) {

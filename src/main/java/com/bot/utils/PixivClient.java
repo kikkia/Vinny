@@ -16,7 +16,7 @@ import java.net.URI;
 import java.util.Random;
 
 public class PixivClient {
-    private static Logger logger = new Logger(PixivClient.class.getName());
+    private static final Logger logger = new Logger(PixivClient.class.getName());
 
     private static final String proxyUrl = "pixiv.kikkia.dev";
     private static final String pixivReplaceUrl = "i.pximg.net";
@@ -80,9 +80,9 @@ public class PixivClient {
 
     private static synchronized void login() throws PixivException {
         loggingIn = true;
-        Config config = Config.getInstance();
-        String username = config.getConfig(Config.PIXIV_USER);
-        String password = config.getConfig(Config.PIXIC_PASS);
+        VinnyConfig config = VinnyConfig.Companion.instance();
+        String username = config.getThirdPartyConfig().getPixivUser();
+        String password = config.getThirdPartyConfig().getPixivPass();
         if (username == null || password == null) {
             throw new PixivException("Pixiv commands are not setup on this bot at the moment.");
         }

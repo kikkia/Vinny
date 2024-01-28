@@ -18,9 +18,9 @@ import java.util.function.Consumer;
 
 public class AddGuildAliasCommand extends ModerationCommand {
 
-    private EventWaiter waiter;
-    private AliasDAO aliasDAO;
-    private GuildDAO guildDAO;
+    private final EventWaiter waiter;
+    private final AliasDAO aliasDAO;
+    private final GuildDAO guildDAO;
 
     public AddGuildAliasCommand(EventWaiter waiter) {
         this.name = "addgalias";
@@ -49,7 +49,7 @@ public class AddGuildAliasCommand extends ModerationCommand {
     class StepOneConsumer implements Consumer<MessageReceivedEvent> {
 
         private String alias;
-        private CommandEvent commandEvent;
+        private final CommandEvent commandEvent;
 
         public StepOneConsumer(CommandEvent commandEvent) {
             this.commandEvent = commandEvent;
@@ -88,9 +88,9 @@ public class AddGuildAliasCommand extends ModerationCommand {
 
     class StepTwoConsumer implements Consumer<MessageReceivedEvent> {
 
-        private String alias;
+        private final String alias;
         private String command;
-        private CommandEvent commandEvent;
+        private final CommandEvent commandEvent;
 
         public StepTwoConsumer(CommandEvent commandEvent, String alias) {
             this.commandEvent = commandEvent;

@@ -6,7 +6,6 @@ import com.bot.db.GuildDAO;
 import com.bot.models.InternalGuild;
 import com.bot.models.InternalGuildMembership;
 import com.bot.utils.CommandCategories;
-import com.bot.utils.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
@@ -36,7 +35,7 @@ public class GuildIT {
     private static final Logger LOGGER = Logger.getLogger(GuildIT.class.getName());
     private static HikariDataSource dataSource;
 
-    private List<InternalGuildMembership> memberships = Arrays.asList(
+    private final List<InternalGuildMembership> memberships = Arrays.asList(
             new InternalGuildMembership("1",  "101", true),
             new InternalGuildMembership("2",  "102", true),
             new InternalGuildMembership("3",  "101", true),
@@ -44,15 +43,13 @@ public class GuildIT {
             new InternalGuildMembership("3",  "102", false)
             );
 
-    private List<InternalGuild> guilds = Arrays.asList(
+    private final List<InternalGuild> guilds = Arrays.asList(
             new InternalGuild("101", "guild-1", 100, "1", "2", "2", "1", null, true),
             new InternalGuild("102", "guild-2", 100, "2", "2", "2", "3", "Dude ~ !", true)
     );
 
     @BeforeClass
     public static void setUpConnections() throws SQLException, InterruptedException {
-        Config.getInstance().setConfig(Config.DISCORD_BOT_ID, "test");
-        Config.getInstance().setConfig(Config.DATADOG_HOSTNAME, "localhost");
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl("jdbc:mysql://localhost:1337/testdb");
         hikariConfig.setUsername("mysql");

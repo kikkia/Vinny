@@ -1,10 +1,11 @@
 package com.bot.utils;
 
 import com.bot.exceptions.IntervalFormatException;
+import com.bot.models.enums.RepeatMode;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kikkia.jsauce.models.Sauce;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.arbjerg.lavalink.client.protocol.Track;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 
 public class FormattingUtils {
 
-    private static int MIN_INTERVAL = 300000;
+    private static final int MIN_INTERVAL = 300000;
 
     public static ArrayList<String> splitTextIntoChunksByWords(String input, int chunkLength) {
         ArrayList<String> stringList = new ArrayList<>();
@@ -58,36 +59,33 @@ public class FormattingUtils {
     }
 
     public static String getOnlineStatusEmoji(Member member) {
-        Config config = Config.getInstance();
+        VinnyConfig config = VinnyConfig.Companion.instance();
 
-        switch (member.getOnlineStatus()) {
-            case ONLINE:
-                return config.getConfig(Config.ONLINE_EMOJI);
-            case IDLE:
-                return config.getConfig(Config.IDLE_EMOJI);
-            case DO_NOT_DISTURB:
-                return config.getConfig(Config.DND_EMOJI);
-            default:
-                return config.getConfig(Config.OFFLINE_EMOJI);
-        }
+        return switch (member.getOnlineStatus()) {
+            case ONLINE -> config.getBotConfig().getOnlineEmoji();
+            case IDLE -> config.getBotConfig().getIdleEmoji();
+            case DO_NOT_DISTURB -> config.getBotConfig().getDndEmoji();
+            default -> config.getBotConfig().getOfflineEmoji();
+        };
     }
 
-    public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume) {
+    public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume, RepeatMode repeatMode) {
         EmbedBuilder builder = new EmbedBuilder();
 
-        AudioTrack track = queuedAudioTrack.getTrack();
+        Track track = queuedAudioTrack.getTrack();
 
         builder.setTitle("Now Playing: ");
-        builder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")");
-        builder.addField("Duration", msToMinSec(track.getInfo().length), false);
+        builder.setDescription("[" + track.getInfo().getTitle() + "](" + track.getInfo().getUri() + ")");
+        builder.addField("Duration", msToMinSec(track.getInfo().getLength()), false);
         builder.addField("Requested by", queuedAudioTrack.getRequesterName(), false);
         builder.setFooter("Volume: " + volume, null);
+        builder.addField("Repeat Mode", repeatMode.getEzName(), false);
 
-        builder.setColor(getColorForTrack(track.getInfo().uri));
+        builder.setColor(getColorForTrack(track.getInfo().getUri()));
 
         // If youtube, get the thumbnail
-        if (track.getInfo().uri.contains("www.youtube.com")) {
-            String videoID = track.getInfo().uri.split("=")[1];
+        if (track.getInfo().getUri().contains("www.youtube.com")) {
+            String videoID = track.getInfo().getUri().split("=")[1];
             builder.setThumbnail("https://img.youtube.com/vi/" + videoID + "/0.jpg");
         }
 
@@ -257,7 +255,7 @@ public class FormattingUtils {
                 // Add millis for each index
                 for (int i = array.length - 1; i >= 0; i--) {
                     int val = Integer.parseInt(array[i]);
-                    interval += val * convertUnits[index];
+                    interval += (long) val * convertUnits[index];
                     index++;
                 }
 
@@ -292,17 +290,16 @@ public class FormattingUtils {
         millis -= TimeUnit.MINUTES.toMillis(minutes);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
 
-        StringBuilder sb = new StringBuilder(64);
-        sb.append(days);
-        sb.append(" Days ");
-        sb.append(hours);
-        sb.append(" Hours ");
-        sb.append(minutes);
-        sb.append(" Minutes ");
-        sb.append(seconds);
-        sb.append(" Seconds");
+        String sb = days +
+                " Days " +
+                hours +
+                " Hours " +
+                minutes +
+                " Minutes " +
+                seconds +
+                " Seconds";
 
-        return(sb.toString());
+        return(sb);
     }
 
     public static String getDateForMillis(long millis) {

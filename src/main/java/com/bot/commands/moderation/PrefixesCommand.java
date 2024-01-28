@@ -10,7 +10,7 @@ import java.util.List;
 
 public class PrefixesCommand extends GeneralCommand {
 
-    private GuildDAO guildDAO;
+    private final GuildDAO guildDAO;
 
     public PrefixesCommand() {
         this.name = "prefixes";

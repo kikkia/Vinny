@@ -25,9 +25,9 @@ import java.util.logging.Level;
 
 public class ScheduleCommand extends ModerationCommand {
 
-    private EventWaiter waiter;
-    private ScheduledCommandDAO scheduledCommandDAO;
-    private UserDAO userDAO;
+    private final EventWaiter waiter;
+    private final ScheduledCommandDAO scheduledCommandDAO;
+    private final UserDAO userDAO;
 
     public ScheduleCommand(EventWaiter waiter) {
         this.name = "schedule";
@@ -51,14 +51,14 @@ public class ScheduleCommand extends ModerationCommand {
            logger.log(Level.WARNING, "Did not find user", throwables);
         }
 
-        if (user == null || user.usageLevel() == UsageLevel.BASIC) {
-            if (scheduledCommandDAO.getCountOfScheduledForAuthor(commandEvent.getAuthor().getId()) >= 5) {
-                commandEvent.replyWarning("You can only make 5 scheduled commands. To be able to make unlimited can donate" +
-                        " at " + ConstantStrings.DONATION_URL + ". If you have already donated, make sure you are in the Vinny support server." +
-                        " To get a support server invite use `~support`.\nYou can also remove your current scheduled commands with the " +
-                        "`~unschedule` command");
-                return;
-            }
+        UsageLevel usageLevel = user == null ? UsageLevel.BASIC : user.usageLevel();
+
+        if (scheduledCommandDAO.getCountOfScheduledForAuthor(commandEvent.getAuthor().getId()) >= usageLevel.getMaxScheduled()) {
+            commandEvent.replyWarning("You can only make "+usageLevel.getMaxScheduled()+" scheduled commands. " +
+                    "To be able to make more, you can subscribe on the Vinny support server." +
+                    " To get a support server invite use `~support`.\nYou can also remove your current scheduled commands with the " +
+                    "`~unschedule` command");
+            return;
         }
 
         commandEvent.reply(ConstantStrings.SCHEDULED_COMMAND_SETUP_HELLO);
@@ -74,7 +74,7 @@ public class ScheduleCommand extends ModerationCommand {
 
     class StepOneConsumer implements Consumer<MessageReceivedEvent> {
         private String command;
-        private CommandEvent commandEvent;
+        private final CommandEvent commandEvent;
 
         StepOneConsumer(CommandEvent commandEvent) {
             this.commandEvent = commandEvent;
@@ -111,8 +111,8 @@ public class ScheduleCommand extends ModerationCommand {
     }
 
     class StepTwoConsumer implements Consumer<MessageReceivedEvent> {
-        private String command;
-        private CommandEvent commandEvent;
+        private final String command;
+        private final CommandEvent commandEvent;
 
         StepTwoConsumer(CommandEvent commandEvent, String command) {
             this.command = command;

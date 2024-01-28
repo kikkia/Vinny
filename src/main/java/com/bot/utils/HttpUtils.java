@@ -1,6 +1,5 @@
 package com.bot.utils;
 
-import com.bot.db.GuildDAO;
 import com.bot.exceptions.InvalidInputException;
 import com.bot.exceptions.NoSuchResourceException;
 import com.bot.models.MarkovModel;
@@ -25,13 +24,15 @@ import org.slf4j.MDC;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 
 public class HttpUtils {
-    private static Logger logger = new Logger(HttpUtils.class.getName());
-    private static Config config = Config.getInstance();
-    private static Random random = new Random(System.currentTimeMillis());
+    private static final Logger logger = new Logger(HttpUtils.class.getName());
+    private static final Random random = new Random(System.currentTimeMillis());
+
+    private static final VinnyConfig config = VinnyConfig.Companion.instance();
 
     private static final String P90_BASE_URL = "https://p90.zone/";
     private static final String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 " +
@@ -39,142 +40,6 @@ public class HttpUtils {
     // Unauthed cookies to tag on request to allow site to parse request as if we are an unauthed browser.
     // Exposing these tokens causes no risk as they are anonymous
     private static final String YT_COMMENT_PICK_S = "PHPSESSID=em0nb7ven1rdgndgmg7oopr7ft";
-    private static final String YT_PUBLIC_TOKEN = "c85bc757eb76eeb4e6ef783c074ced084234f422cc4ddaf8cc82590a75e50f7b";
-
-    public static void postGuildCountToExternalSites() {
-        GuildDAO guildDAO = GuildDAO.getInstance();
-        Config config = Config.getInstance();
-        int totalGuilds = guildDAO.getActiveGuildCount();
-        int totalShards = Integer.parseInt(config.getConfig(Config.TOTAL_SHARDS));
-
-        postBotsForDiscord(totalGuilds);
-        postBotsGG(totalGuilds, totalShards);
-        postDiscordBotList(totalGuilds);
-        postDiscordBoats(totalGuilds);
-        postBotsOnDiscord(totalGuilds);
-        postDiscordBotsOrg(totalGuilds);
-        postBotlistSpace(totalGuilds, totalShards);
-        // postDivineDiscordBots(totalGuilds, totalShards);
-        // postMythicalBots(totalGuilds);
-        // postDiscordExtremeList(totalGuilds); // Their site broke as hell
-    }
-
-    private static void postBotsOnDiscord(int serverCount) {
-        String url = "https://bots.ondiscord.xyz/bot-api/bots/" + config.getConfig(Config.DISCORD_BOT_ID) + "/guilds";
-        String token = config.getConfig(Config.BOTS_ON_DISCORD_API_TOKEN);
-        JSONObject object = new JSONObject();
-        object.put("guildCount", serverCount);
-
-        sendPost(token, url, object);
-    }
-
-    private static void postDiscordBotList(int serverCount) {
-        String url = "https://discordbotlist.com/api/bots/" + config.getConfig(Config.DISCORD_BOT_ID) + "/stats";
-        String token = "Bot " + config.getConfig(Config.DISCORD_BOT_LIST_API_TOKEN);
-        JSONObject object = new JSONObject();
-        object.put("guilds", serverCount);
-
-        sendPost(token, url, object);
-    }
-
-    private static void postDiscordBotsOrg(int serverCount) {
-        String url = "https://discordbots.org/api/bots/" + config.getConfig(Config.DISCORD_BOT_ID) + "/stats";
-        String token = config.getConfig(Config.DISCORD_BOTS_ORG_API_TOKEN);
-        JSONObject object = new JSONObject();
-        object.put("server_count", serverCount);
-        object.put("shard_count", config.getConfig(Config.TOTAL_SHARDS));
-
-        sendPost(token, url, object);
-    }
-
-    private static void postDiscordBoats(int count) {
-        String url = "https://discord.boats/api/bot/" + config.getConfig(Config.DISCORD_BOT_ID);
-        String token = config.getConfig(Config.DISCORD_BOATS_TOKEN);
-        JSONObject object = new JSONObject();
-        object.put("server_count", count);
-
-        sendPost(token, url, object);
-    }
-
-    private static void postBotsGG(int serverCount, int shards) {
-        String url = "https://discord.bots.gg/api/v1/bots/" + config.getConfig(Config.DISCORD_BOT_ID) + "/stats";
-        String token = config.getConfig(Config.BOTS_GG_API_TOKEN);
-        JSONObject object = new JSONObject();
-        object.put("guildCount", serverCount);
-        object.put("shardCount", shards);
-
-        sendPost(token, url, object);
-    }
-
-    private static void postBotsForDiscord(int totalServerCount) {
-        String url = "https://botsfordiscord.com/api/bot/" + config.getConfig(Config.DISCORD_BOT_ID);
-        String token = config.getConfig(Config.BOTS_FOR_DISCORD_API_TOKEN);
-        JSONObject object = new JSONObject();
-        object.put("server_count",  totalServerCount);
-
-        sendPost(token, url, object);
-    }
-
-    private static void postBotlistSpace(int totalServerCount, int shardCount) {
-        String url = "https://api.botlist.space/v1/bots/" + config.getConfig(Config.DISCORD_BOT_ID);
-        String token = config.getConfig(Config.BOTLIST_SPACE_TOKEN);
-        JSONObject object = new JSONObject();
-        object.put("server_count", totalServerCount);
-        object.put("shards", shardCount);
-
-        sendPost(token, url, object);
-    }
-
-    private static void postDivineDiscordBots(int totalServerCount, int shardCount) {
-        String url = "https://divinediscordbots.com/bot/" + config.getConfig(Config.DISCORD_BOT_ID) + "/stats";
-        String token = config.getConfig(Config.DIVINE_BOTLIST_TOKEN);
-        JSONObject object = new JSONObject();
-        object.put("server_count", totalServerCount);
-        object.put("shard_count", shardCount);
-
-        sendPost(token, url, object);
-    }
-
-    private static void postMythicalBots(int totalServerCount) {
-        String url = "https://mythicalbots.xyz/api/bot/" + config.getConfig(Config.DISCORD_BOT_ID);
-        String token = config.getConfig(Config.MYTHICAL_BOTLIST_TOKEN);
-        JSONObject object = new JSONObject();
-        object.put("server_count",  totalServerCount);
-
-        sendPost(token, url, object);
-    }
-
-    private static void postDiscordExtremeList(int totalServerCount) {
-        String url = "https://api.discordextremelist.xyz/v1/bot/" + config.getConfig(Config.DISCORD_BOT_ID);
-        String token = config.getConfig(Config.EXTREME_BOTLIST_TOKEN);
-        JSONObject object = new JSONObject();
-        object.put("guildCount",  totalServerCount);
-
-        sendPost(token, url, object);
-    }
-
-    private static void sendPost(String token, String url, JSONObject body) {
-        try(CloseableHttpClient client = HttpClients.createDefault()) {
-            StringEntity entity = new StringEntity(body.toString());
-            HttpPost post = new HttpPost(url);
-            post.addHeader("Authorization", token);
-            post.addHeader("Content-type", "application/json");
-            post.setEntity(entity);
-
-            HttpResponse response = client.execute(post);
-
-            // If server error, just a warning
-            if (response.getStatusLine().getStatusCode() >= 500) {
-                logger.warning("Server error posting to: " + url + " Status code: "
-                        + response.getStatusLine().getStatusCode());
-            }
-            else if (response.getStatusLine().getStatusCode() != 200 && response.getStatusLine().getStatusCode() != 204
-                && response.getStatusLine().getStatusCode() != 429)
-                throw new RuntimeException("Status code not 200: " + response);
-        } catch (Exception e) {
-            logger.warning("Failed to post stats. url: " + url, e);
-        }
-    }
 
      //  |****************************************************|
      //  |                       4chan                        |
@@ -220,7 +85,7 @@ public class HttpUtils {
         String url = search.isEmpty() ? P90_BASE_URL + "api/random" : P90_BASE_URL + "api/search/" + search.split(" ")[0];
         // Search is always nsfw, random can be locked down.
         url = (canNSFW || !search.isEmpty()) ? url : url + "?nsfw=0";
-        String token = "key " + config.getConfig(Config.P90_TOKEN);
+        String token = "key " + Objects.requireNonNull(config.getThirdPartyConfig()).getP90Token();
         try(CloseableHttpClient client = HttpClients.createDefault()) {
             HttpGet get = new HttpGet(url);
             get.addHeader("Authorization", token);
@@ -324,7 +189,7 @@ public class HttpUtils {
         String uri = "https://api.twitch.tv/kraken/users?login=" + username;
         try (CloseableHttpClient client = HttpClients.createDefault()){
             HttpGet httpget = new HttpGet(uri);
-            httpget.addHeader("Client-ID", config.getConfig(Config.TWITCH_CLIENT_ID));
+            httpget.addHeader("Client-ID", Objects.requireNonNull(config.getThirdPartyConfig()).getTwitchClientId());
             httpget.addHeader("Accept", "application/vnd.twitchtv.v5+json");
             HttpResponse response = client.execute(httpget);
             JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));

@@ -24,7 +24,7 @@ object ConstantStrings {
     const val EVENT_WAITER_TIMEOUT = "Sorry you took too long, please try again."
     const val SCHEDULED_COMMAND_SETUP_HELLO = "Hey! Lets start setting up a scheduled command! If you dont know what a scheduled command is, reply with a `?`\n" +
             "Reply with the command that you want to be executed. (without a prefix) Example: `rr dankmemes`"
-    const val SCHEDULED_COMMAND_SETUP_INTERVAL = "Got it, now how often should I run that command? Minimum is 1 minute. Format should be ww:dd:hh:mm:ss\nExamples: \n`2:12:40` - 2 hours, 12 minutes, 40s" +
+    const val SCHEDULED_COMMAND_SETUP_INTERVAL = "Got it, now how often should I run that command? Minimum is 5 minutes. Format should be ww:dd:hh:mm:ss\nExamples: \n`2:12:40` - 2 hours, 12 minutes, 40s" +
             "\n`5:00` - 5 minutes\n`12:3:4:20:00` - 12 weeks, 3 days, 4 hours, 20 minutes."
     const val SCHEDULED_COMMAND_SETUP_COMPLETE = "The command has been successfully scheduled. The command will now run every "
     const val DONATION_URL = "https://www.patreon.com/Kikkia"
@@ -58,7 +58,7 @@ object ConstantStrings {
     const val SUBREDDIT_NSFW = "This is an NSFW subreddit, I cannot subscribe to an NSFW subreddit unless the " +
             "channel has NSFW enabled."
     const val TWITCH_SUB_HELLO = "Yo! Let's setup a twitch live stream subscription. Please reply with the username or a link " +
-            "to their channel";
+            "to their channel"
     const val TWITCH_SUB_NOT_FOUND = "Hold up, I could not find that user on twitch, please make sure that" +
             " you have their username or channel link right right. You can find it at the end of their channel url."
     const val TWITCH_SUB_SUCCESS = "Done! A message will be posted in this channel whenever they go live. " +

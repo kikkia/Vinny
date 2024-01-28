@@ -18,13 +18,14 @@ import java.util.function.Consumer;
 
 public class KickRouletteCommand extends MemeCommand {
 
-    private EventWaiter waiter;
+    private final EventWaiter waiter;
 
     public KickRouletteCommand(EventWaiter eventWaiter) {
         this.name = "kickroulette";
         this.help = "Feeling lucky punk?";
         this.guildOnly = true;
         this.botPermissions = new Permission[]{Permission.KICK_MEMBERS, Permission.MANAGE_ROLES};
+        this.canSchedule = false;
 
         this.waiter = eventWaiter;
     }
@@ -52,7 +53,7 @@ public class KickRouletteCommand extends MemeCommand {
 
     class KickConsumer implements Consumer<MessageReactionAddEvent> {
 
-        private CommandEvent commandEvent;
+        private final CommandEvent commandEvent;
 
         KickConsumer(CommandEvent commandEvent) {
             this.commandEvent = commandEvent;

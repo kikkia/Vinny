@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.Role;
 import java.util.logging.Level;
 
 public class GetSettingsCommand extends GeneralCommand {
-    private GuildDAO guildDAO;
+    private final GuildDAO guildDAO;
 
     public GetSettingsCommand() {
         this.name = "settings";

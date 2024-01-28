@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class SetVoiceRoleCommand extends ModerationCommand {
-    private GuildDAO guildDAO;
+    private final GuildDAO guildDAO;
 
     public SetVoiceRoleCommand() {
         this.name = "voicerole";

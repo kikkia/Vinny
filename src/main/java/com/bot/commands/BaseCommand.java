@@ -2,6 +2,7 @@ package com.bot.commands;
 
 import com.bot.db.MembershipDAO;
 import com.bot.exceptions.ForbiddenCommandException;
+import com.bot.exceptions.InvalidInputException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.metrics.MetricsManager;
 import com.bot.tasks.CommandTaskExecutor;
@@ -28,7 +29,7 @@ public abstract class BaseCommand extends Command {
     public boolean canSchedule;
 
     public BaseCommand() {
-        this.metricsManager = MetricsManager.getInstance();
+        this.metricsManager = MetricsManager.Companion.getInstance();
         this.logger = new Logger(this.getClass().getSimpleName());
         this.membershipDAO = MembershipDAO.getInstance();
         this.commandExecutors = CommandTaskExecutor.getTaskExecutor();
@@ -69,6 +70,21 @@ public abstract class BaseCommand extends Command {
             logger.severe("Failed to get perms for " + this.getClass().getName(), e);
             return;
         }
+
+//        // TEMP for reddit blackout
+//        if (this.category == CommandCategories.REDDIT) {
+//            if (!scheduled) {
+//                commandEvent.replyWarning("Due to Reddit's insane increase in pricing on their API, meant to kill all " +
+//                        "3rd party apps that use Reddit, Vinny included, Vinny is boycotting reddit from the 12th for an indefinite " +
+//                        "amount of time. I am sorry for the inconvenience, but Reddit has forced 3rd party developer hands. " +
+//                        "If there is no change in course of this new pricing model, Vinny like many other apps that tie " +
+//                        "into Reddit will be forced to stop supporting Reddit on June 30th.\nIf this stuff passes and Vinny is locked " +
+//                        "out of Reddit's API, subscriptions should still work, and I will be experimenting with ways to bring back " +
+//                        "support for normal Reddit commands in any way I can. Sorry for the inconvenience.");
+//            }
+//            return;
+//        }
+
         // Add some details to the MDC on the thread before executing
         ExecutorService executorService = scheduled ? scheduledComamndExecutor : commandExecutors;
         Future future = executorService.submit(() -> {
@@ -77,6 +93,10 @@ public abstract class BaseCommand extends Command {
                  MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
                 executeCommand(commandEvent);
             } catch (Exception e) {
+                if (e instanceof InvalidInputException) {
+                    commandEvent.replyWarning(e.getMessage());
+                    return;
+                }
                 logger.severe("Exception Executing command", e);
                 commandEvent.replyError("Something went wrong executing that command. If this continues please contact the support server.");
             }

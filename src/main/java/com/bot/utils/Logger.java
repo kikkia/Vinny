@@ -10,18 +10,18 @@ import java.util.logging.Level;
  * Wrapper around the slf4j logger that allows us to funnel logs to discord channels and log them normally.
  */
 public class Logger {
-    private java.util.logging.Logger logger;
-    private String name;
-    private boolean channelLoggingEnabled;
+    private final java.util.logging.Logger logger;
+    private final String name;
+    private final boolean channelLoggingEnabled;
 
     private DislogClient dislogClient;
 
     public Logger(String name) {
-        Config config = Config.getInstance();
+        VinnyConfig config = VinnyConfig.Companion.instance();
         logger = java.util.logging.Logger.getLogger(name);
         this.name = name;
 
-        channelLoggingEnabled = Boolean.parseBoolean(config.getConfig(Config.ENABLE_LOGGING_CHANNELS));
+        channelLoggingEnabled = config.getBotConfig().getEnableLoggingChannels();
         if (channelLoggingEnabled) {
             dislogClient = LoggerUtils.getClient();
         }

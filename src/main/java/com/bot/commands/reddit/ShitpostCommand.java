@@ -15,7 +15,7 @@ import java.util.logging.Level;
  * This class is technically a reddit command but because of its nature we are calling it a meme category commande
  */
 public class ShitpostCommand extends MemeCommand {
-    private RedditConnection redditConnection;
+    private final RedditConnection redditConnection;
 
     public ShitpostCommand() {
         this.name = "shitpost";

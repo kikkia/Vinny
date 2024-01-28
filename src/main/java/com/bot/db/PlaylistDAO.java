@@ -286,8 +286,8 @@ public class PlaylistDAO {
 			for (int i = 0; i < tracks.size(); i++) {
 				QueuedAudioTrack t = tracks.get(i);
 				statement = conn.prepareStatement(trackQuery, Statement.RETURN_GENERATED_KEYS);
-				statement.setString(1, t.getTrack().getInfo().uri);
-				statement.setString(2, t.getTrack().getInfo().title);
+				statement.setString(1, t.getTrack().getInfo().getUri());
+				statement.setString(2, t.getTrack().getInfo().getTitle());
 				statement.execute();
 				set = statement.getGeneratedKeys();
 				set.next();
@@ -298,7 +298,7 @@ public class PlaylistDAO {
 					trackId = set.getInt(1);
 				} catch (SQLException e) {
 					// if we hit an error writing the track then we can get the id another way
-					statement = conn.prepareStatement("SELECT * FROM track t WHERE t.url = \"" + t.getTrack().getInfo().uri + "\"");
+					statement = conn.prepareStatement("SELECT * FROM track t WHERE t.url = \"" + t.getTrack().getInfo().getUri() + "\"");
 					statement.execute();
 					set = statement.getResultSet();
 					set.next();
@@ -330,8 +330,8 @@ public class PlaylistDAO {
 		try {
 			conn = write.getConnection();
 			statement = conn.prepareStatement(addTrackQuery, Statement.RETURN_GENERATED_KEYS);
-			statement.setString(1, track.getTrack().getInfo().uri);
-			statement.setString(2, track.getTrack().getInfo().title);
+			statement.setString(1, track.getTrack().getInfo().getUri());
+			statement.setString(2, track.getTrack().getInfo().getTitle());
 			statement.execute();
 			set = statement.getGeneratedKeys();
 			set.next();

@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Rule34Command extends NSFWCommand {
-    private Random random;
-    private R34Cache cache;
+    private final Random random;
+    private final R34Cache cache;
 
     public Rule34Command() {
         this.name = "r34";

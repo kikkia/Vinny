@@ -10,7 +10,6 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.Paginator
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.User
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class PermissionsCommand(waiter: EventWaiter) : GeneralCommand() {

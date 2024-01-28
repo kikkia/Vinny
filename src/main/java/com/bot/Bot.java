@@ -1,7 +1,6 @@
 package com.bot;
 
 import com.bot.db.*;
-import com.bot.exceptions.MaxQueueSizeException;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.BannedImage;
 import com.bot.models.InternalGuild;
@@ -9,27 +8,16 @@ import com.bot.models.InternalShard;
 import com.bot.models.UsageLevel;
 import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
-import com.bot.utils.*;
-import com.bot.voice.VoiceSendHandler;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import com.bot.tasks.ResumeAudioTask;
+import com.bot.utils.AliasUtils;
+import com.bot.utils.HttpUtils;
+import com.bot.utils.Logger;
+import com.bot.utils.VinnyConfig;
+import com.bot.voice.GuildVoiceConnection;
+import com.bot.voice.GuildVoiceProvider;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
-import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
@@ -50,7 +38,6 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
@@ -61,43 +48,23 @@ import java.util.logging.Level;
 
 public class Bot extends ListenerAdapter {
 	private final Logger LOGGER;
-	private final AudioPlayerManager manager;
 
-	private Config config;
+	private final VinnyConfig config;
 
-	private GuildDAO guildDAO;
-	private MembershipDAO membershipDAO;
-	private ChannelDAO channelDAO;
-	private BannedImageDAO bannedImageDAO;
-	private UserDAO userDAO;
-	private MetricsManager metricsManager;
-	private ExecutorService executor;
+	private final GuildDAO guildDAO;
+	private final MembershipDAO membershipDAO;
+	private final ChannelDAO channelDAO;
+	private final BannedImageDAO bannedImageDAO;
+	private final UserDAO userDAO;
+	private final MetricsManager metricsManager;
+	private final ExecutorService executor;
+	private final GuildVoiceProvider guildVoiceProvider;
 
 	public final static String SUPPORT_INVITE_LINK = "https://discord.gg/XMwyzxZ";
 
 
 	Bot() {
-		this.config = Config.getInstance();
-		this.manager = new DefaultAudioPlayerManager();
-
-		YoutubeAudioSourceManager ytSource = new YoutubeAudioSourceManager(true);
-
-		manager.registerSourceManager(ytSource);
-
-		AbstractRoutePlanner planner = LavaPlayerUtils.getIPRoutePlanner();
-		if (planner != null) {
-			YoutubeIpRotatorSetup setup = new YoutubeIpRotatorSetup(planner);
-			setup.forSource(ytSource)
-					.forManager(manager);
-			setup.setup();
-		}
-
-		manager.registerSourceManager(new SoundCloudAudioSourceManager.Builder().withAllowSearch(true).build());
-		manager.registerSourceManager(new BandcampAudioSourceManager());
-		manager.registerSourceManager(new VimeoAudioSourceManager());
-		manager.registerSourceManager(new TwitchStreamAudioSourceManager());
-		manager.registerSourceManager(new BeamAudioSourceManager());
-		manager.registerSourceManager(new HttpAudioSourceManager());
+		this.config = VinnyConfig.Companion.instance();
 
 		guildDAO = GuildDAO.getInstance();
 		membershipDAO = MembershipDAO.getInstance();
@@ -106,8 +73,9 @@ public class Bot extends ListenerAdapter {
 		bannedImageDAO = BannedImageDAO.getInstance();
 
 		LOGGER =  new Logger(Bot.class.getName());
-		metricsManager = MetricsManager.getInstance();
-		executor = Executors.newScheduledThreadPool(30);
+		metricsManager = MetricsManager.Companion.getInstance();
+		executor = Executors.newScheduledThreadPool(60);
+		guildVoiceProvider = GuildVoiceProvider.Companion.getInstance();
 	}
 
 	@Override
@@ -116,7 +84,7 @@ public class Bot extends ListenerAdapter {
 		shardingManager.putShard(new InternalShard(event.getJDA()));
 		LOGGER.info("Shard: " + event.getJDA().getShardInfo().getShardId() + " ready");
 
-		if (Boolean.parseBoolean(config.getConfig(Config.DATA_LOADER))) {
+		if (config.getBotConfig().getDataLoader()) {
 			DataLoader.LoadThread t = null;
 			try {
 				t = new DataLoader.LoadThread(event.getJDA(), System.currentTimeMillis());
@@ -125,6 +93,8 @@ public class Bot extends ListenerAdapter {
 				e.printStackTrace();
 			}
 		}
+
+		executor.submit(new ResumeAudioTask(event));
 
 		super.onReady(event);
 	}
@@ -201,12 +171,6 @@ public class Bot extends ListenerAdapter {
 		// In some cases (large guilds) this can take a while, so put it on its own thread
 		AddFreshGuildDeferredTask deferredTask = new AddFreshGuildDeferredTask(guildJoinEvent);
 		deferredTask.start();
-
-		// If we are posting stats to external discord bot sites, then do it async
-		executor.execute(() -> {
-			if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
-				HttpUtils.postGuildCountToExternalSites();
-		});
 	}
 
 	@Override
@@ -214,25 +178,28 @@ public class Bot extends ListenerAdapter {
 		// In some cases (large guilds) this can take a while, so put it on its own thread
 		LeaveGuildDeferredTask deferredTask = new LeaveGuildDeferredTask(guildLeaveEvent);
 		deferredTask.start();
-
-		// If we are posting stats to external discord bot sites, then do it async
-		executor.execute(() -> {
-			if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
-				HttpUtils.postGuildCountToExternalSites();
-		});
 	}
 
 	@Override
 	public void onGuildMemberRoleAdd(@NotNull GuildMemberRoleAddEvent event) {
 		// Hardcoded for now since not much time to work on project, and really needs a rework anyways.
 		// Checks for donor role assigned on support server
+
+		// TODO: Generify this into some Eval level from roles for member helper
 		if (event.getGuild().getId().equals("294900956078800897")) {
 			String assignedId = event.getRoles().get(0).getId();
-			if (assignedId.equals("638201929591423010") || assignedId.equals("638202019152265226")) {
+			if (assignedId.equals("638201929591423010") || assignedId.equals("638202019152265226") || assignedId.equals("1106473246230073364")) {
 				try {
 					userDAO.setUsageLevel(UsageLevel.DONOR, event.getUser().getId());
-				} catch (SQLException throwables) {
-					LOGGER.log(Level.SEVERE, "Failed to assign usage level", throwables);
+				} catch (SQLException throwable) {
+					LOGGER.log(Level.SEVERE, "Failed to assign usage level", throwable);
+				}
+			}
+			else if (assignedId.equals("1106473242551664651")) {
+				try {
+					userDAO.setUsageLevel(UsageLevel.UNLIMITED, event.getUser().getId());
+				} catch (SQLException throwable) {
+					LOGGER.log(Level.SEVERE, "Failed to assign usage level", throwable);
 				}
 			}
 		}
@@ -243,9 +210,14 @@ public class Bot extends ListenerAdapter {
 	public void onGuildMemberRoleRemove(@NotNull GuildMemberRoleRemoveEvent event) {
 		// Hardcoded for now since not much time to work on project, and really needs a rework anyways.
 		// Checks for donor role removed on support server
+
+		// TODO: Generify this into some Eval level from roles for member helper
 		if (event.getGuild().getId().equals("294900956078800897")) {
 			String assignedId = event.getRoles().get(0).getId();
-			if (assignedId.equals("638201929591423010") || assignedId.equals("638202019152265226")) {
+			if (assignedId.equals("638201929591423010")
+					|| assignedId.equals("638202019152265226")
+					|| assignedId.equals("1106473242551664651")
+					|| assignedId.equals("1106473246230073364")) {
 				try {
 					userDAO.setUsageLevel(UsageLevel.BASIC, event.getUser().getId());
 				} catch (SQLException throwables) {
@@ -294,76 +266,31 @@ public class Bot extends ListenerAdapter {
 		executor.execute(() -> channelDAO.addVoiceChannel(event.getChannel()));
 	}
 
-	public AudioPlayerManager getManager() {
-		return manager;
-	}
-
-	// TODO: Move this audio handling stuff out of the bot class
-	public boolean queueTrack(AudioTrack track, CommandEvent event, Message m) throws MaxQueueSizeException {
-		if (event.getMember().getVoiceState().getChannel() == null) {
-			m.editMessage(event.getClient().getWarning() + " You are not in a voice channel! Please join one to use this command.").queue();
-			return false;
-		}
-		else if (!event.getSelfMember().hasPermission(event.getMember().getVoiceState().getChannel(), Permission.VOICE_CONNECT)) {
-			m.editMessage(event.getClient().getWarning() + " I don't have permission to join your voice channel. :cry:").queue();
-			return false;
-		}
-		else if (!event.getSelfMember().hasPermission(event.getMember().getVoiceState().getChannel(), Permission.VOICE_SPEAK)){
-			m.editMessage(event.getClient().getWarning() + " I don't have permission to speak in your voice channel. :cry:").queue();
-			return false;
-		}
-		else {
-			getHandler(event.getGuild()).queueTrack(track, event.getAuthor().getIdLong(), event.getAuthor().getName(), event.getTextChannel());
-			if (!event.getGuild().getAudioManager().isConnected()) {
-				event.getGuild().getAudioManager().openAudioConnection(event.getMember().getVoiceState().getChannel());
-			}
-			return true;
-		}
-	}
-
-	public VoiceSendHandler getHandler(Guild guild) {
-		VoiceSendHandler handler;
-		if (guild.getAudioManager().getSendingHandler() == null) {
-			AudioPlayer player = manager.createPlayer();
-			handler = new VoiceSendHandler(player);
-
-			// Get default volume
-			int dVolume = 100;
-			InternalGuild g = guildDAO.getGuildById(guild.getId());
-
-			if (g == null) {
-				LOGGER.warning("Failed to get guild when looking for volume. Attempting an add");
-				guildDAO.addFreshGuild(guild);
-				// Just play, no need to return
-			} else {
-				dVolume = g.getVolume();
-			}
-
-			handler.getPlayer().setVolume(dVolume);
-			player.addListener(handler);
-			guild.getAudioManager().setSendingHandler(handler);
-		}
-		else {
-			handler = (VoiceSendHandler) guild.getAudioManager().getSendingHandler();
-		}
-		return handler;
-	}
-
 	private void checkVoiceLobby(GuildVoiceUpdateEvent event) {
-		Guild guild = event.getEntity().getGuild();
-		VoiceSendHandler handler = getHandler(guild);
-		AudioManager manager = guild.getAudioManager();
+		Guild guild = event.getGuild();
+		GuildVoiceConnection conn = GuildVoiceProvider.Companion.getInstance().getGuildVoiceConnection(guild.getIdLong());
+		if (conn == null || event.getChannelLeft() != conn.getCurrentVoiceChannel()) {
+			return;
+		}
+		if (event.getMember().equals(guild.getSelfMember())) {
+			if (event.getChannelJoined() == null) {
+				// Kicked from voice, maybe message or save tmp playlist
+				conn.cleanupPlayer();
+				return;
+			}
+			// update our currently playing channel if there are people in there
+			conn.setCurrentVoiceChannel(event.getChannelJoined());
+		}
 
 		// if there are no humans left, then leave
 		int users = 0;
-		for (Member member : manager.getConnectedChannel().getMembers()) {
+		for (Member member : conn.getCurrentVoiceChannel().getMembers()) {
 			if (!member.getUser().isBot())
 				users++;
 		}
-
-		if (manager.isConnected() && users < 1) {
-			handler.stop();
-			manager.closeAudioConnection();
+		if (users < 1) {
+			conn.sendMessageToChannel("Leaving voice, no one is in the channel.");
+			conn.cleanupPlayer();
 		}
 	}
 }

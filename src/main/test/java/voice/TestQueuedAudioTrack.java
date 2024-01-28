@@ -1,8 +1,8 @@
 package voice;
 
 import com.bot.voice.QueuedAudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import dev.arbjerg.lavalink.client.protocol.Track;
+import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,18 +12,23 @@ import static org.mockito.Mockito.when;
 
 public class TestQueuedAudioTrack {
 
-    private AudioTrack audioTrack;
-    private AudioTrackInfo audioTrackInfo;
+    private Track audioTrack;
+    private TrackInfo audioTrackInfo;
 
     @Before
     public void setUp() {
-        audioTrack = mock(AudioTrack.class);
-        audioTrackInfo = new AudioTrackInfo("testTitle",
-                "testAuthor",
-                1000,
-                "testIdentifier",
+        audioTrack = mock(Track.class);
+        audioTrackInfo = new TrackInfo("id",
+                true,
+                "author",
+                1000L,
                 false,
-                "testUri");
+                0,
+                "title",
+                "url",
+                "source",
+                "artwork",
+                "src");
     }
 
     @Test
@@ -36,9 +41,8 @@ public class TestQueuedAudioTrack {
     @Test
     public void testToString() {
         when(audioTrack.getInfo()).thenReturn(audioTrackInfo);
-        when(audioTrack.getDuration()).thenReturn(1000L);
         QueuedAudioTrack track = new QueuedAudioTrack(audioTrack, "name", 1234L);
-        String expected = "[00:01] *testTitle* requested by name";
+        String expected = "[00:01] *title* requested by name";
 
         assertEquals(expected, track.toString());
     }

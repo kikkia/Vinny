@@ -15,12 +15,12 @@ public class Cache<V> {
     private static final Logger LOGGER = new Logger(GuildCache.class.getName());
 
     protected final ConcurrentHashMap cacheMap;
-    private MetricsManager metricsManager;
-    private String name;
-    private int maxIdleLifetime;
+    private final MetricsManager metricsManager;
+    private final String name;
+    private final int maxIdleLifetime;
     private final int maxTotalLifetime = 600; // 10 Mins, JDA caching does timeout eventually, we want to refresh this before it craps out
-    private int maxSize;
-    private int cleanupInterval;
+    private final int maxSize;
+    private final int cleanupInterval;
 
     protected Cache(String name, int max, int maxIdleLifetime, int cleanupInterval) {
         this.maxIdleLifetime = maxIdleLifetime;
@@ -29,7 +29,7 @@ public class Cache<V> {
 
         this.name = name;
         cacheMap = new ConcurrentHashMap(maxSize);
-        metricsManager = MetricsManager.getInstance();
+        metricsManager = MetricsManager.Companion.getInstance();
 
         // Starts a thread that will cleanup the cache every CHECK_INTERVAL seconds
         if (this.maxIdleLifetime > 0 && this.cleanupInterval > 0) {
@@ -37,7 +37,7 @@ public class Cache<V> {
             Thread t = new Thread(() -> {
                 while (true) {
                     try {
-                        Thread.sleep(cleanupInterval * 1000);
+                        Thread.sleep(cleanupInterval * 1000L);
                     } catch (InterruptedException ex) {
                     }
                     try {
@@ -104,7 +104,7 @@ public class Cache<V> {
         for (Object key : cacheMap.keySet()) {
             cacheObject = (CacheObject<V>) cacheMap.get(key);
 
-            if (cacheObject != null && (((now > ((maxIdleLifetime * 1000) + cacheObject.lastAccessed))) || (now > (maxTotalLifetime * 1000) + cacheObject.addedTime))) {
+            if (cacheObject != null && (((now > ((maxIdleLifetime * 1000L) + cacheObject.lastAccessed))) || (now > (maxTotalLifetime * 1000) + cacheObject.addedTime))) {
                 deleteKeys.add((String) key);
             }
         }

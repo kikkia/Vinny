@@ -19,7 +19,7 @@ import java.util.logging.Level;
 
 
 public class TopPostCommand extends RedditCommand{
-    private RedditConnection redditConnection;
+    private final RedditConnection redditConnection;
 
     public TopPostCommand() {
         this.name = "tr";

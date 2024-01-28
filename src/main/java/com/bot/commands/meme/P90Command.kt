@@ -1,8 +1,6 @@
 package com.bot.commands.meme
 
 import com.bot.commands.MemeCommand
-import com.bot.db.ChannelDAO
-import com.bot.models.InternalTextChannel
 import com.bot.utils.HttpUtils
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace

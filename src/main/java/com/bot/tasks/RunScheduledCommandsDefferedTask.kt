@@ -9,17 +9,17 @@ import com.bot.utils.ScheduledCommandUtils
 import net.dv8tion.jda.api.JDA
 import org.slf4j.MDC
 
-class RunScheduledCommandsDefferedTask() : Thread() {
+class RunScheduledCommandsDefferedTask : Thread() {
 
     private val scheduledCommandDAO : ScheduledCommandDAO = ScheduledCommandDAO.getInstance()
     private val logger : Logger = Logger(RunScheduledCommandsDefferedTask::class.java.name)
-    private val metrics : MetricsManager = MetricsManager.getInstance()
+    private val metrics : MetricsManager = MetricsManager.instance!!
 
     private val MAX_TO_RUN = 60
 
     override fun run() {
         try {
-            logger.info("kicking off scheduled command run.")
+            //logger.info("kicking off scheduled command run.")
 
             val scheduledCommands: List<ScheduledCommand> = scheduledCommandDAO.allScheduledCommands
 

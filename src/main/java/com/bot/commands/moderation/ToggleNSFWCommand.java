@@ -6,8 +6,8 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 public class ToggleNSFWCommand extends ModerationCommand {
 
-    private ChannelDAO channelDAO;
-    private boolean enabled;
+    private final ChannelDAO channelDAO;
+    private final boolean enabled;
 
     public ToggleNSFWCommand(boolean enabled) {
         String state = enabled ? "Enable" : "Disable";

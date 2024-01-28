@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 public class GuildPreferencesManager implements GuildSettingsManager {
     private static final Logger LOGGER = new Logger(GuildPreferencesManager.class.getName());
 
-    private GuildDAO guildDAO;
+    private final GuildDAO guildDAO;
 
     public GuildPreferencesManager() {
         guildDAO = GuildDAO.getInstance();

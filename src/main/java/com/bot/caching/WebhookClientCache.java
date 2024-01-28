@@ -7,10 +7,10 @@ public class WebhookClientCache {
     private final Logger logger;
 
     private static WebhookClientCache instance;
-    private CustomWebhookCache cache;
-    private int MAX_SIZE;
-    private int CACHE_OBJECT_LIFETIME;
-    private int CACHE_CHECK_INTERVAL;
+    private final CustomWebhookCache cache;
+    private final int MAX_SIZE;
+    private final int CACHE_OBJECT_LIFETIME;
+    private final int CACHE_CHECK_INTERVAL;
 
     public static WebhookClientCache getInstance() {
         if (instance == null) {

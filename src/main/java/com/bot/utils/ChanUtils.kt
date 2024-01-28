@@ -1,6 +1,6 @@
 package com.bot.utils
 
-class ChanUtils() {
+class ChanUtils {
     companion object {
         val SFW_BOARDS = listOf<String>(
                 "g", "3", "a", "adv", "an", "asp", "biz", "c", "cgl", "ck", "cm", "co", "diy", "fa", "fit", "gd",

@@ -9,9 +9,9 @@ import java.util.Map;
 
 public class GuildPreferencesProvider implements GuildSettingsProvider {
 
-    private List<String> prefixes;
-    private Map<String, Alias> aliases;
-    private String guildId;
+    private final List<String> prefixes;
+    private final Map<String, Alias> aliases;
+    private final String guildId;
 
     public GuildPreferencesProvider(List<String> prefixes, Map<String, Alias> aliases, String guildId) {
         this.prefixes = prefixes;

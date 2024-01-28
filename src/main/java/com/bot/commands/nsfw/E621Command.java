@@ -12,8 +12,8 @@ import java.util.Random;
 
 public class E621Command extends NSFWCommand {
 
-    private E621Cache cache;
-    private Random random;
+    private final E621Cache cache;
+    private final Random random;
 
     public E621Command() {
         this.name = "e621";

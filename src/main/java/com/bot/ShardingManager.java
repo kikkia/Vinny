@@ -22,14 +22,15 @@ import com.bot.commands.scheduled.UnscheduleCommand;
 import com.bot.commands.voice.*;
 import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
-import com.bot.utils.Config;
-import com.bot.voice.VoiceSendHandler;
+import com.bot.utils.VinnyConfig;
+import com.bot.voice.CustomJDAVoiceUpdateListener;
+import com.bot.voice.LavaLinkClient;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
+import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -38,6 +39,7 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.stream.Collectors;
 
 import static net.dv8tion.jda.api.requests.GatewayIntent.*;
 
@@ -53,13 +54,13 @@ public class ShardingManager {
 
     private static ShardingManager instance;
 
-    private Map<Integer, InternalShard> shards;
+    private final Map<Integer, InternalShard> shards;
     private final ScheduledExecutorService executor;
     public ShardManager shardManager;
 
-    private EventWaiter waiter;
+    private final EventWaiter waiter;
     private List<Command.Category> commandCategories;
-    private CommandClient client;
+    private final CommandClient client;
 
     public static ShardingManager getInstance() {
         return instance;
@@ -74,20 +75,20 @@ public class ShardingManager {
     // This adds a connection for each shard. Shards make it more efficient. ~1000 servers to shards is ideal
     // supportScript disables commands. Useful for running a supportScript simultaneously while the bot is going on prod
     private ShardingManager(int numShards, int startIndex, int endIndex) throws Exception {
-        Config config = Config.getInstance();
+        VinnyConfig config = VinnyConfig.Companion.instance();
         waiter = new EventWaiter();
 
         // Check if we are just doing a silent deploy (For debug and stress testing purposes)
-        boolean silentDeploy = Boolean.parseBoolean(config.getConfig(Config.SILENT_DEPLOY));
+        boolean silentDeploy = config.getBotConfig().getSilentDeploy();
 
         shards = new ConcurrentHashMap<>();
-        executor = Executors.newScheduledThreadPool(50);
+        executor = Executors.newScheduledThreadPool(100);
         Bot bot = new Bot();
 
         CommandClientBuilder commandClientBuilder = new CommandClientBuilder();
         commandClientBuilder.setPrefix("~");
         commandClientBuilder.setAlternativePrefix("@mention");
-        commandClientBuilder.setOwnerId(config.getConfig(Config.OWNER_ID));
+        commandClientBuilder.setOwnerId(config.getDiscordConfig().getOwnerId());
 
         // If we are deploying silently we are not registering commands.
         if (!silentDeploy) {
@@ -96,24 +97,26 @@ public class ShardingManager {
                     new PlayCommand(bot),
                     new SearchCommand(bot, waiter),
                     new NowPlayingCommand(),
-                    new RemoveTrackCommand(bot),
+                    new RemoveTrackCommand(),
                     new PauseCommand(),
                     new RepeatCommand(),
                     new StopCommand(),
-                    new ResumeCommand(),
                     new VolumeCommand(),
                     new DefaultVolumeCommand(),
                     new ListTracksCommand(waiter),
                     new SkipCommand(),
                     new SaveMyPlaylistCommand(bot),
                     new ListMyPlaylistCommand(),
-                    new LoadMyPlaylistCommand(bot),
-                    new LoadGuildPlaylistCommand(bot),
+                    new LoadMyPlaylistCommand(),
+                    new LoadGuildPlaylistCommand(),
                     new SaveGuildPlaylistCommand(bot),
                     new ListGuildPlaylistCommand(),
                     new ShuffleCommand(),
                     new ClearQueueCommand(),
                     new RemovePlaylistCommand(),
+                    new SeekCommand(),
+                    new FastForwardCommand(),
+                    new RewindCommand(),
                     //new SpeedCommand(),
 
                     // Battle Royale
@@ -196,11 +199,10 @@ public class ShardingManager {
         commandClientBuilder.addCommands(
                 // Owner Commands -- All hidden
                 new AvatarCommand(),
-                new UpdateGuildCountCommand(),
                 new ClearCacheCommand(),
                 new RebootAnnounceCommand(),
+                new TestRebootAnnounceCommand(),
                 new GuildDebugCommand(),
-                new SwitchDefaultSearchCommand(),
                 new InGuildCommand(),
                 new InChannelCommand(),
                 new FUserCommand(),
@@ -208,8 +210,7 @@ public class ShardingManager {
                 new ShardCommand(),
                 new ShardStatsCommand(),
                 new SetUsageCommand(),
-                new BanImageCommand()
-                );
+                new BanImageCommand());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
@@ -221,7 +222,7 @@ public class ShardingManager {
 
         shardManager = DefaultShardManagerBuilder
                 .createDefault(
-                        config.getConfig(Config.DISCORD_TOKEN),
+                        config.getDiscordConfig().getToken(),
                         GUILD_MEMBERS,
                         GUILD_MESSAGES,
                         GUILD_EMOJIS,
@@ -235,10 +236,12 @@ public class ShardingManager {
                 .setCompression(Compression.NONE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(client, waiter, bot)
-                .setAudioSendFactory(new NativeAudioSendFactory())
                 .setActivity(null)
                 .setRequestTimeoutRetry(true)
-                .setContextEnabled(false)
+                .setContextEnabled(true)
+                .enableCache(CacheFlag.VOICE_STATE)
+                .setVoiceDispatchInterceptor(new CustomJDAVoiceUpdateListener(
+                        new JDAVoiceUpdateListener(LavaLinkClient.Companion.getInstance().getClient())))
                 .build();
     }
 
@@ -319,14 +322,5 @@ public class ShardingManager {
             }
         }
         return null;
-    }
-
-    public List<VoiceSendHandler> getActiveVoiceSendHandlers() {
-        List<VoiceSendHandler> activeHandlers = new ArrayList<>();
-
-        for (InternalShard shard : shards.values()) {
-            activeHandlers.addAll(shard.getVoiceSendHandlers().stream().filter(VoiceSendHandler::isActive).collect(Collectors.toList()));
-        }
-        return activeHandlers;
     }
 }
