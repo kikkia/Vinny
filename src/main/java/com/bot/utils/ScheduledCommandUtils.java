@@ -77,14 +77,14 @@ public class ScheduledCommandUtils {
             return;
         }
 
-        Config config = Config.getInstance();
+        VinnyConfig config = VinnyConfig.Companion.instance();
 
         try {
             ScheduledCommand scheduledCommand = scheduledCommandDAO.getScheduledCommandByID(id);
             boolean canDelete = scheduledCommand.getAuthor().equals(commandEvent.getAuthor().getId()) ||
                     scheduledCommand.getGuild().equals(commandEvent.getGuild().getId());
             // Allow owner to remove any scheduled command
-            if (canDelete || commandEvent.getAuthor().getId().equals(config.getConfig(Config.OWNER_ID))) {
+            if (canDelete || commandEvent.getAuthor().getId().equals(config.getDiscordConfig().getOwnerId())) {
                 scheduledCommandDAO.removeScheduledCommand(id);
                 commandEvent.replySuccess("Successfully unscheduled command.");
             } else {

@@ -1,6 +1,6 @@
 package com.bot.db;
 
-import com.bot.utils.Config;
+import com.bot.utils.VinnyConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -9,12 +9,12 @@ public class ConnectionPool {
 	private static ConnectionPool connectionPool;
 
 	private ConnectionPool() {
-		Config config = Config.getInstance();
+		VinnyConfig config = VinnyConfig.Companion.instance();
 
 		HikariConfig hikariConfig = new HikariConfig();
-		hikariConfig.setJdbcUrl("jdbc:mysql://" + config.getConfig(Config.DB_URI) + "/"  + config.getConfig(Config.DB_SCHEMA) + "?useSSL=false");
-		hikariConfig.setUsername(config.getConfig(Config.DB_USERNAME));
-		hikariConfig.setPassword(config.getConfig(Config.DB_PASSWORD));
+		hikariConfig.setJdbcUrl("jdbc:mysql://" + config.getDatabaseConfig().getAddress() + "/"  + config.getDatabaseConfig().getSchema() + "?useSSL=false");
+		hikariConfig.setUsername(config.getDatabaseConfig().getUsername());
+		hikariConfig.setPassword(config.getDatabaseConfig().getPassword());
 		hikariConfig.setIdleTimeout(600*1000);
 		hikariConfig.setMaxLifetime(900*1000);
 		hikariConfig.setMaximumPoolSize(50);

@@ -2,7 +2,7 @@ package com.bot.commands.voice
 
 import com.bot.Bot
 import com.bot.commands.VoiceCommand
-import com.bot.utils.Config
+import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.Message
@@ -35,7 +35,7 @@ class PlayCommand(private val bot: Bot) : VoiceCommand() {
         }
         var url = commandEvent.args.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
         if (!url.matches(urlRegex.toRegex())) {
-            val searchPrefix = Config.getInstance().getConfig(Config.DEFAULT_SEARCH_PROVIDER, "ytsearch:")
+            val searchPrefix = VinnyConfig.instance().voiceConfig.defaultSearchProvider ?: "scsearch:"
             url = searchPrefix.plus(commandEvent.args)
         }
         commandEvent.reply("\u231A Loading... `[" + commandEvent.args + "]`") { _: Message? ->

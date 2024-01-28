@@ -10,9 +10,9 @@ import com.bot.tasks.AddFreshGuildDeferredTask;
 import com.bot.tasks.LeaveGuildDeferredTask;
 import com.bot.tasks.ResumeAudioTask;
 import com.bot.utils.AliasUtils;
-import com.bot.utils.Config;
 import com.bot.utils.HttpUtils;
 import com.bot.utils.Logger;
+import com.bot.utils.VinnyConfig;
 import com.bot.voice.GuildVoiceConnection;
 import com.bot.voice.GuildVoiceProvider;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
@@ -49,7 +49,7 @@ import java.util.logging.Level;
 public class Bot extends ListenerAdapter {
 	private final Logger LOGGER;
 
-	private final Config config;
+	private final VinnyConfig config;
 
 	private final GuildDAO guildDAO;
 	private final MembershipDAO membershipDAO;
@@ -64,7 +64,7 @@ public class Bot extends ListenerAdapter {
 
 
 	Bot() {
-		this.config = Config.getInstance();
+		this.config = VinnyConfig.Companion.instance();
 
 		guildDAO = GuildDAO.getInstance();
 		membershipDAO = MembershipDAO.getInstance();
@@ -84,7 +84,7 @@ public class Bot extends ListenerAdapter {
 		shardingManager.putShard(new InternalShard(event.getJDA()));
 		LOGGER.info("Shard: " + event.getJDA().getShardInfo().getShardId() + " ready");
 
-		if (Boolean.parseBoolean(config.getConfig(Config.DATA_LOADER))) {
+		if (config.getBotConfig().getDataLoader()) {
 			DataLoader.LoadThread t = null;
 			try {
 				t = new DataLoader.LoadThread(event.getJDA(), System.currentTimeMillis());
@@ -171,12 +171,6 @@ public class Bot extends ListenerAdapter {
 		// In some cases (large guilds) this can take a while, so put it on its own thread
 		AddFreshGuildDeferredTask deferredTask = new AddFreshGuildDeferredTask(guildJoinEvent);
 		deferredTask.start();
-
-		// If we are posting stats to external discord bot sites, then do it async
-		executor.execute(() -> {
-			if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
-				HttpUtils.postGuildCountToExternalSites();
-		});
 	}
 
 	@Override
@@ -184,12 +178,6 @@ public class Bot extends ListenerAdapter {
 		// In some cases (large guilds) this can take a while, so put it on its own thread
 		LeaveGuildDeferredTask deferredTask = new LeaveGuildDeferredTask(guildLeaveEvent);
 		deferredTask.start();
-
-		// If we are posting stats to external discord bot sites, then do it async
-		executor.execute(() -> {
-			if (Boolean.parseBoolean(config.getConfig(Config.ENABLE_EXTERNAL_APIS)))
-				HttpUtils.postGuildCountToExternalSites();
-		});
 	}
 
 	@Override

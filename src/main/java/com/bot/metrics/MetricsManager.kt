@@ -1,8 +1,8 @@
 package com.bot.metrics
 
 import com.bot.models.*
-import com.bot.utils.Config
 import com.bot.utils.Logger
+import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.Command
 import com.timgroup.statsd.NonBlockingStatsDClient
 import com.timgroup.statsd.StatsDClient
@@ -16,23 +16,23 @@ import java.io.IOException
 class MetricsManager private constructor() {
     // TODO: Health checks
     private var statsd: StatsDClient? = null
-    private val config: Config = Config.getInstance()
+    private val config: VinnyConfig = VinnyConfig.instance()
     private val logger = Logger(this::class.java.name)
 
     init {
         // TODO: Better way of handling metrics names
         statsd =
-            if (config.getConfig(Config.DISCORD_BOT_ID).equals("276855867796881408", ignoreCase = true)) {
+            if (config.discordConfig.botId.equals("276855867796881408", ignoreCase = true)) {
                 NonBlockingStatsDClient(
                     "vinny-redux.live",  /* prefix to any stats; may be null or empty string */
-                    config.getConfig(Config.DATADOG_HOSTNAME),  /* common case: localhost */
+                    config.thirdPartyConfig?.datadogHostname ?: "localhost",  /* common case: localhost */
                     8125,  /* port */
                     *arrayOf("vinny:live") /* Datadog extension: Constant tags, always applied */
                 )
             } else {
                 NonBlockingStatsDClient(
                     "vinny-redux.test",  /* prefix to any stats; may be null or empty string */
-                    config.getConfig(Config.DATADOG_HOSTNAME),  /* common case: localhost */
+                    config.thirdPartyConfig?.datadogHostname ?: "localhost",  /* common case: localhost */
                     8125,  /* port */
                     *arrayOf("vinny:test") /* Datadog extension: Constant tags, always applied */
                 )
@@ -143,12 +143,12 @@ class MetricsManager private constructor() {
         statsd!!.recordGaugeValue("users.count", count.toLong())
     }
 
-    fun updateActiveVoiceConnectionsCount(count: Int) {
-        statsd!!.recordGaugeValue("connections.voice.active", count.toLong())
+    fun updateActiveVoiceConnectionsCount(nodeName: String, nodeRegion: String, count: Int) {
+        statsd!!.recordGaugeValue("connections.voice.active", count.toLong(), "node:${nodeName}", "node_region:${nodeRegion}")
     }
 
-    fun updateIdleVoiceConnectionsCount(count: Int) {
-        statsd!!.recordGaugeValue("connections.voice.idle", count.toLong())
+    fun updateIdleVoiceConnectionsCount(nodeName: String, nodeRegion: String, count: Int) {
+        statsd!!.recordGaugeValue("connections.voice.idle", count.toLong(), "node:${nodeName}", "node_region:${nodeRegion}")
     }
 
     fun updateUsersInVoice(count: Int) {
@@ -178,37 +178,41 @@ class MetricsManager private constructor() {
     }
 
     fun updateLLStats() {
-        val llUrl = config.getConfig(Config.LAVALINK_ADDRESS).replace("ws://", "")
-        val llToken = config.getConfig(Config.LAVALINK_PASSWORD)
-        val request = Request.Builder()
-            .url("http://$llUrl/v4/stats")  // Build the URL from the request
-            .addHeader("Authorization", llToken)
-            .build()
+        for (node in config.voiceConfig.nodes!!) {
+            val llUrl = node.address.replace("ws://", "")
+            val llToken = node.password
+            val nodeName = node.name
+            val nodeRegion = node.region ?: "N/A"
+            val request = Request.Builder()
+                .url("http://$llUrl/v4/stats")  // Build the URL from the request
+                .addHeader("Authorization", llToken)
+                .build()
 
-        OkHttpClient().newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                // Handle request failure here
-                logger.severe("LL stats request failed with error: ${e.message}", e)
-            }
+            OkHttpClient().newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    // Handle request failure here
+                    logger.severe("LL stats request failed with error: ${e.message}", e)
+                }
 
-            override fun onResponse(call: Call, response: Response) {
-                // Handle successful response here
-                if (!response.isSuccessful) {
-                    logger.warning("LL stats request failed with status code: ${response.code}")
-                } else {
-                    try {
-                        val jsonResponse = response.body?.string()?.let { JSONObject(it) }
-                        // Process the parsed JSON data
-                        val active = jsonResponse!!.getInt("playingPlayers")
-                        val total = jsonResponse.getInt("players")
-                        updateActiveVoiceConnectionsCount(active)
-                        updateIdleVoiceConnectionsCount(total - active)
-                    } catch (jsonException: JSONException) {
-                        logger.warning("LL stats error parsing JSON response: ${jsonException.message}")
+                override fun onResponse(call: Call, response: Response) {
+                    // Handle successful response here
+                    if (!response.isSuccessful) {
+                        logger.warning("LL stats request failed with status code: ${response.code}")
+                    } else {
+                        try {
+                            val jsonResponse = response.body?.string()?.let { JSONObject(it) }
+                            // Process the parsed JSON data
+                            val active = jsonResponse!!.getInt("playingPlayers")
+                            val total = jsonResponse.getInt("players")
+                            updateActiveVoiceConnectionsCount(nodeName, nodeRegion, active)
+                            updateIdleVoiceConnectionsCount(nodeName, nodeRegion, total - active)
+                        } catch (jsonException: JSONException) {
+                            logger.warning("LL stats error parsing JSON response: ${jsonException.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     companion object {

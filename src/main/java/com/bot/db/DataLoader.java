@@ -1,7 +1,6 @@
 package com.bot.db;
 
 import com.bot.ShardingManager;
-import com.bot.utils.Config;
 import com.bot.utils.GuildUtils;
 import com.bot.utils.Logger;
 import net.dv8tion.jda.api.JDA;
@@ -25,23 +24,7 @@ public class DataLoader {
 
 	public DataLoader() throws Exception {
 		// Config gets tokens
-		Config config = Config.getInstance();
 		long startTime = System.currentTimeMillis();
-
-		if (config.getConfig(Config.DB_URI) == null) {
-			System.out.println("DB_URI not set in the config file. Exiting...");
-			return;
-		}
-
-		if (config.getConfig(Config.DB_USERNAME) == null) {
-			System.out.println("DB_Username not set in the config file. Exiting...");
-			return;
-		}
-
-		if (config.getConfig(Config.DB_PASSWORD) == null) {
-			System.out.println("DB_Password not set in the config file. Exiting...");
-			return;
-		}
 
 		try {
 			for (JDA jda: shardingManager.shardManager.getShards()){

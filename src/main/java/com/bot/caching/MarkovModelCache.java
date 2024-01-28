@@ -1,13 +1,9 @@
 package com.bot.caching;
 
 import com.bot.models.MarkovModel;
-import com.bot.utils.Config;
-import com.bot.utils.Logger;
 
 
 public class MarkovModelCache {
-    private static final Logger LOGGER = new Logger(MarkovModelCache.class.getName());
-
     private static MarkovModelCache instance;
     private final Cache<MarkovModel> cache;
     private final int MAX_SIZE;
@@ -21,11 +17,10 @@ public class MarkovModelCache {
     }
 
     private MarkovModelCache() {
-        Config config = Config.getInstance();
         // Set or default the settings for the map
-        MAX_SIZE = config.getConfig(Config.MARKOV_CACHE_MAX_ITEMS) == null ? 50 : Integer.parseInt(config.getConfig(Config.MARKOV_CACHE_MAX_ITEMS));
-        CACHE_OBJECT_LIFETIME = config.getConfig(Config.MARKOV_CACHE_OBJECT_LIFETIME) == null ? 7200 : Integer.parseInt(config.getConfig(Config.MARKOV_CACHE_OBJECT_LIFETIME));
-        CACHE_CHECK_INTERVAL = config.getConfig(Config.MARKOV_CACHE_CLEANUP_INTERVAL) == null ? 1200 : Integer.parseInt(config.getConfig(Config.MARKOV_CACHE_CLEANUP_INTERVAL));
+        MAX_SIZE = 50;
+        CACHE_OBJECT_LIFETIME = 7200;
+        CACHE_CHECK_INTERVAL = 1200;
 
         cache = new Cache<>("markov", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
     }
