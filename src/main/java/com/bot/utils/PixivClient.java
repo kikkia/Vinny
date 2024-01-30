@@ -27,6 +27,10 @@ public class PixivClient {
     // Extremely basic locking mechanism to avoid spamming pixiv login server.
     private static boolean loggingIn = false;
 
+    public static void setSession(String session) {
+        pixivSession = session;
+    }
+
     public static String getRandomPixivPostFromSearch(String search, boolean nsfw) throws PixivException {
         String baseUrl = "https://www.pixiv.net/ajax/search/artworks/";
         String nsfwTag = nsfw ? "r18" : "safe";
