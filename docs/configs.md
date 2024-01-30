@@ -2,6 +2,7 @@
 Vinny now uses yaml config files. Your yaml config should be at `src/main/resources/config.yaml` or located at the root of the classpath and named `config.yaml`.
 
 ## Example config file
+```yaml
 discordConfig:
   token: <DISCORD_BOT_TOKEN>
   botId: <DISCORD_BOT_CLIENT_ID>
@@ -52,3 +53,4 @@ botConfig:
   infoWebhooks: [""] # List of webhook urls for info logs
   warningWebhooks: [""] # List of webhook urls for warning logs
   errorWebhooks: [""] # List of webhook urls for error logs
+```
