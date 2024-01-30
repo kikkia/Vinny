@@ -210,6 +210,7 @@ class GuildVoiceConnection(val guild: Guild) {
         currentVoiceChannel = null
         trackProvider.clearAll()
         isPaused = false
+        GuildVoiceProvider.getInstance().remove(guild.idLong)
     }
 
     fun isConnected(): Boolean {

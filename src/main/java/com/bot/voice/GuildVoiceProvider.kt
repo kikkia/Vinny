@@ -21,6 +21,10 @@ class GuildVoiceProvider {
         return guildVoiceConnections.values.toList()
     }
 
+    fun remove(id: Long) {
+        guildVoiceConnections.remove(id)
+    }
+
     companion object {
         @Volatile private var instance: GuildVoiceProvider? = null
         fun getInstance(): GuildVoiceProvider =

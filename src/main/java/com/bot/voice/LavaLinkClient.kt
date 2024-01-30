@@ -32,7 +32,6 @@ class LavaLinkClient private constructor() {
         client.on(TrackEndEvent::class.java).subscribe {event ->
             val gConn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(event.guildId)
             if (gConn == null) {
-                logger.warning("Received track end event, when guild not in provider")
                 return@subscribe
             } else if (!event.endReason.mayStartNext) {
                 logger.warning("Received track end event, may NOT start next: ${event.endReason.name}")

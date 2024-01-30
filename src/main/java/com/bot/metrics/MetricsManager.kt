@@ -177,6 +177,9 @@ class MetricsManager private constructor() {
     fun markConnectedVoiceRegion(region: String) {
         statsd!!.incrementCounter("connections.voice.regional", "disc_region:$region")
     }
+    fun markConnectionAge(minutes: Long) {
+        statsd!!.recordDistributionValue("connections.voice.age", minutes)
+    }
 
     fun updateLLStats() {
         for (node in config.voiceConfig.nodes!!) {
