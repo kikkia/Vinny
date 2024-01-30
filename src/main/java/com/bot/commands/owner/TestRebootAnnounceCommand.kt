@@ -24,6 +24,7 @@ class TestRebootAnnounceCommand : OwnerCommand() {
                         conn.volumeLocked,
                         ResumeAudioTrackMapper.queueToTracks(conn))
                 } catch (e: Exception) {
+                    logger.severe("Failed to store guild ${conn.guild.id}", e)
                     commandEvent.replyError("Failed to store for ${conn.guild}, $e")
                 }
             }
