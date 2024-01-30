@@ -26,6 +26,8 @@ hs_err_pid*
 *.conf
 .idea/
 
+*.yaml
+
 target/
 .vs/
 
