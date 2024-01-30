@@ -1,5 +1,5 @@
 # Config setup
-Vinny now uses yaml config files. Your yaml config should be at `src/main/resources/config.yaml` or located at the root of the classpath and named `config.yaml`.
+Vinny now uses yaml config files. Your yaml config should be at `src/main/resources/config.yaml` or located at the root of the classpath and named `config.yaml`. You can find the most up to date config definition [here](../src/main/java/com/bot/utils/VinnyConfig.kt).
 
 ## Example config file
 ```yaml
