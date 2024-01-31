@@ -15,6 +15,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
+// TODO: Caching mechanism
 class PixivClient private constructor() {
     private val logger = Logger(PixivClient::class.java.name)
     private val proxyUrl = "pixiv.kikkia.dev"
