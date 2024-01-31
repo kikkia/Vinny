@@ -22,6 +22,10 @@ class PixivNSFWCommand : NSFWCommand() {
 
     @Trace(operationName = "executeCommand", resourceName = "Pixiv")
     override fun executeCommand(commandEvent: CommandEvent) {
+        if (commandEvent.args.isEmpty()) {
+            commandEvent.replyWarning("You must give me something to search")
+            return
+        }
         commandEvent.channel.sendTyping().queue()
         try {
             val post = PixivClient.instance!!.getRandomPixivPostFromSearch(commandEvent.args, true)
