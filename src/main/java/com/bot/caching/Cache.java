@@ -5,6 +5,9 @@ import com.bot.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is an in-memory cache for caching any type of objects. This can be used to cache things that may take a while to
@@ -12,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * TODO: Eventually we should shift this off to something like redis.
  */
 public class Cache<V> {
-    private static final Logger LOGGER = new Logger(GuildCache.class.getName());
+    private final Logger LOGGER = new Logger(this.getClass().getName());
 
     protected final ConcurrentHashMap cacheMap;
     private final MetricsManager metricsManager;
@@ -21,6 +24,7 @@ public class Cache<V> {
     private final int maxTotalLifetime = 600; // 10 Mins, JDA caching does timeout eventually, we want to refresh this before it craps out
     private final int maxSize;
     private final int cleanupInterval;
+    private final ScheduledExecutorService executorService;
 
     protected Cache(String name, int max, int maxIdleLifetime, int cleanupInterval) {
         this.maxIdleLifetime = maxIdleLifetime;
@@ -30,26 +34,11 @@ public class Cache<V> {
         this.name = name;
         cacheMap = new ConcurrentHashMap(maxSize);
         metricsManager = MetricsManager.Companion.getInstance();
+        executorService = new ScheduledThreadPoolExecutor(1);
 
         // Starts a thread that will cleanup the cache every CHECK_INTERVAL seconds
         if (this.maxIdleLifetime > 0 && this.cleanupInterval > 0) {
-
-            Thread t = new Thread(() -> {
-                while (true) {
-                    try {
-                        Thread.sleep(cleanupInterval * 1000L);
-                    } catch (InterruptedException ex) {
-                    }
-                    try {
-                        cleanup();
-                    } catch (Exception e) {
-                        LOGGER.warning("Failed to cleanup " + name, e);
-                    }
-                }
-            });
-
-            t.setDaemon(true);
-            t.start();
+            executorService.scheduleAtFixedRate(this::cleanup, cleanupInterval, cleanupInterval, TimeUnit.SECONDS);
         }
         LOGGER.info(name + " cache initialized");
     }
@@ -110,9 +99,7 @@ public class Cache<V> {
         }
 
         for (String deleteKey : deleteKeys) {
-                removeEntity(deleteKey);
-
-            Thread.yield();
+            removeEntity(deleteKey);
         }
 
         LOGGER.info(name + " Cache cleanup complete. Removed " + deleteKeys.size() + " stale objects. " + name);

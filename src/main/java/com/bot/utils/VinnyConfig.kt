@@ -10,7 +10,8 @@ data class VinnyConfig(val discordConfig: DiscordConfig,
                        val botConfig: BotConfig,
                        val thirdPartyConfig: ThirdPartyConfig?,
                        val rssConfig: RSSConfig,
-                       val voiceConfig: VoiceConfig) {
+                       val voiceConfig: VoiceConfig,
+                       val cachingConfig: CachingConfig?) {
 
     companion object {
         private var inst: VinnyConfig? = null
@@ -77,3 +78,9 @@ data class ThirdPartyConfig(val p90Token: String?,
                             val datadogHostname: String?,
                             val redditClientId: String?,
                             val redditClientToken: String?)
+
+data class CachingConfig(val r34enabled: Boolean,
+    val redisUrl: String?,
+    val redisUser: String?,
+    val redisPassword: String?,
+    val redisPort: String?)
