@@ -55,8 +55,8 @@ public class R34Cache {
         if (redisEnabled) {
             redisThreadPool.submit(() -> {
                 try {
-                    redisConn.rpush(key, value.toArray(new String[0]));
-                    redisConn.expire(key, CACHE_OBJECT_LIFETIME);
+                    redisConn.rpush(redisKey(key), value.toArray(new String[0]));
+                    redisConn.expire(redisKey(key), CACHE_OBJECT_LIFETIME);
                 } catch(Exception e) {
                    logger.warning("Failed to store entry in cache", e);
                 }
@@ -67,7 +67,7 @@ public class R34Cache {
     public List<String> get(String key) {
         List<String> val = cache.get(key);
         if (redisEnabled && val == null) {
-            List<String> retrievedValues = redisConn.lrange(key, 0, -1);
+            List<String> retrievedValues = redisConn.lrange(redisKey(key), 0, -1);
             if (!retrievedValues.isEmpty()) {
                 cache.put(key, retrievedValues);
                 return retrievedValues;
@@ -82,4 +82,8 @@ public class R34Cache {
     }
 
     public int getSize() {return cache.size();}
+
+    private String redisKey(String key) {
+        return "r34Cache:" + key;
+    }
 }
