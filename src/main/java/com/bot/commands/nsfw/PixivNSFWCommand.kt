@@ -24,7 +24,9 @@ class PixivNSFWCommand : NSFWCommand() {
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.channel.sendTyping().queue()
         try {
-            commandEvent.reply(PixivClient.getRandomPixivPostFromSearch(commandEvent.args, true))
+            val post = PixivClient.getRandomPixivPostFromSearch(commandEvent.args, true)
+            commandEvent.reply(post.url)
+            commandEvent.reply(post.previewUrl)
         } catch (e: PixivException ) {
             commandEvent.replyWarning("Something went wrong getting the pixiv post: " + e.message)
         }

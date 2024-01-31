@@ -3,7 +3,6 @@ package com.bot.utils;
 import com.bot.exceptions.InvalidInputException;
 import com.bot.exceptions.NoSuchResourceException;
 import com.bot.models.MarkovModel;
-import com.bot.models.PixivPost;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Webhook;
@@ -107,31 +106,6 @@ public class HttpUtils {
             return P90_BASE_URL + name;
         }
     }
-
-    public static PixivPost getRandomNewPixivPost(String search) throws Exception {
-        String postBaseUrl = "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=";
-        String getUrl = search == null ? "https://api.imjad.cn/pixiv/v1/?per_page=100&content=illust" :
-                "https://api.imjad.cn/pixiv/v1/?type=search&mode=tag&per_page=500&word=" + search;
-        JSONObject selectedPost = null;
-
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet get = new HttpGet(getUrl);
-            HttpResponse response = client.execute(get);
-            JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
-            JSONArray resultsArray = jsonResponse.getJSONArray("response");
-            selectedPost = PixivHelperKt.getSFWSubmission(resultsArray);
-        }
-        if (selectedPost == null)
-            return null;
-
-        return new PixivPost(selectedPost.getInt("id"),
-                selectedPost.getString("title"),
-                postBaseUrl + selectedPost.getInt("id"),
-                selectedPost.getJSONObject("user").getString("name"),
-                selectedPost.getJSONObject("user").getInt("id"),
-                PixivHelperKt.buildPreviewString(selectedPost.getJSONObject("image_urls").getString("large")));
-    }
-
 
     // TODO: Port to use a Webhook client like used for some scheduled commands
     public static void sendCommentHook(Webhook webhook, MarkovModel model, Member member, TextChannel channel) throws Exception {
