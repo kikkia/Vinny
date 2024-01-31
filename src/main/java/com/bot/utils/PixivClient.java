@@ -105,6 +105,7 @@ public class PixivClient {
                 .replace("square", "master")
                 .replace("c/250x250_80_a2/", "")
                 .replace("custom_thumb", "img-master")
+                .replace("custom-thumb", "img-master")
                 .replace("_custom", "_master");
     }
 
