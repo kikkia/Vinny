@@ -2,11 +2,8 @@ package com.bot.caching;
 
 import com.bot.utils.Logger;
 import com.bot.utils.VinnyConfig;
-import redis.clients.jedis.JedisPooled;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class R34Cache {
     private final Logger logger;
@@ -16,9 +13,8 @@ public class R34Cache {
     private final int MAX_SIZE;
     private final int CACHE_OBJECT_LIFETIME;
     private final int CACHE_CHECK_INTERVAL;
-    private JedisPooled redisConn;
+    private RedisCache redisCache;
     private VinnyConfig config;
-    private ExecutorService redisThreadPool;
     private boolean redisEnabled = false;
 
     public static R34Cache getInstance() {
@@ -38,14 +34,9 @@ public class R34Cache {
         logger = new Logger(this.getClass().getName());
         config = VinnyConfig.Companion.instance();
         if (config.getCachingConfig() != null) {
-            redisEnabled = config.getCachingConfig().getR34enabled();
+            redisEnabled = Boolean.TRUE.equals(config.getCachingConfig().getR34enabled());
             if (redisEnabled) {
-                String uri = "redis://" + config.getCachingConfig().getRedisUser() + ":" +
-                        config.getCachingConfig().getRedisPassword() + "@" +
-                        config.getCachingConfig().getRedisUrl() + ":" + config.getCachingConfig().getRedisPort();
-                redisConn = new JedisPooled(uri);
-                redisThreadPool = new ScheduledThreadPoolExecutor(2);
-                logger.info("Connected to r34 redis");
+                redisCache = RedisCache.Companion.getInstance();
             }
         }
     }
@@ -53,21 +44,14 @@ public class R34Cache {
     public void put(String key, List<String> value) {
         cache.put(key, value);
         if (redisEnabled) {
-            redisThreadPool.submit(() -> {
-                try {
-                    redisConn.rpush(redisKey(key), value.toArray(new String[0]));
-                    redisConn.expire(redisKey(key), CACHE_OBJECT_LIFETIME);
-                } catch(Exception e) {
-                   logger.warning("Failed to store entry in cache", e);
-                }
-            });
+            redisCache.putStrList(redisKey(key), value, (CACHE_OBJECT_LIFETIME - 10));
         }
     }
 
     public List<String> get(String key) {
         List<String> val = cache.get(key);
         if (redisEnabled && val == null) {
-            List<String> retrievedValues = redisConn.lrange(redisKey(key), 0, -1);
+            List<String> retrievedValues = redisCache.getStrList(redisKey(key));
             if (!retrievedValues.isEmpty()) {
                 cache.put(key, retrievedValues);
                 return retrievedValues;

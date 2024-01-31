@@ -24,7 +24,7 @@ class PixivCommand : GeneralCommand() {
     override fun executeCommand(commandEvent: CommandEvent) {
         commandEvent.channel.sendTyping().queue()
         try {
-            val post = PixivClient.getRandomPixivPostFromSearch(commandEvent.args, false)
+            val post = PixivClient.instance!!.getRandomPixivPostFromSearch(commandEvent.args, false)
             commandEvent.reply(post.url)
             commandEvent.reply(post.previewUrl)
         } catch (e: PixivException ) {

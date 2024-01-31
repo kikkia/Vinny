@@ -10,7 +10,7 @@ class SetPixivSessionCommand : OwnerCommand() {
     }
 
     override fun executeCommand(commandEvent: CommandEvent) {
-        PixivClient.setSession(commandEvent.args)
+        PixivClient.instance!!.setSession(commandEvent.args)
         commandEvent.reactSuccess()
     }
 }

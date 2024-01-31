@@ -2,6 +2,7 @@ package com.bot.utils
 
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
+import jdk.jfr.Enabled
 
 
 data class VinnyConfig(val discordConfig: DiscordConfig,
@@ -79,7 +80,9 @@ data class ThirdPartyConfig(val p90Token: String?,
                             val redditClientId: String?,
                             val redditClientToken: String?)
 
-data class CachingConfig(val r34enabled: Boolean,
+data class CachingConfig(val enabled: Boolean,
+    val pixivEnabled: Boolean?,
+    val r34enabled: Boolean?,
     val redisUrl: String?,
     val redisUser: String?,
     val redisPassword: String?,
