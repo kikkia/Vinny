@@ -27,6 +27,9 @@ class RedisCache private constructor() {
     }
 
     fun putStrList(key: String, value: List<String>, ttl: Long) {
+        if (value.isEmpty()) {
+            return
+        }
         executor!!.submit {
             try {
                 redis!!.rpush(key, *value.toTypedArray())
