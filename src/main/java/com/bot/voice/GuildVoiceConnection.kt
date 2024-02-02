@@ -215,6 +215,7 @@ class GuildVoiceConnection(val guild: Guild) {
         trackProvider.clearAll()
         isPaused = false
         GuildVoiceProvider.getInstance().remove(guild.idLong)
+        GuildDAO.getInstance().recordTimeInVoice(guild.id, getAge().toInt())
     }
 
     fun isConnected(): Boolean {

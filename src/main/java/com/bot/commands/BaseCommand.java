@@ -1,5 +1,6 @@
 package com.bot.commands;
 
+import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.InvalidInputException;
@@ -22,6 +23,7 @@ public abstract class BaseCommand extends Command {
     protected MetricsManager metricsManager;
     protected Logger logger;
     protected MembershipDAO membershipDAO;
+    protected GuildDAO guildDAO;
     protected ExecutorService commandExecutors;
     protected  ExecutorService scheduledComamndExecutor;
     protected ScheduledExecutorService commandCleanupScheduler;
@@ -32,6 +34,7 @@ public abstract class BaseCommand extends Command {
         this.metricsManager = MetricsManager.Companion.getInstance();
         this.logger = new Logger(this.getClass().getSimpleName());
         this.membershipDAO = MembershipDAO.getInstance();
+        this.guildDAO = GuildDAO.getInstance();
         this.commandExecutors = CommandTaskExecutor.getTaskExecutor();
         this.scheduledComamndExecutor = CommandTaskExecutor.getScheduledCommandExecutor();
         this.commandCleanupScheduler = Executors.newSingleThreadScheduledExecutor();
@@ -46,7 +49,7 @@ public abstract class BaseCommand extends Command {
             guild = commandEvent.getGuild();
 
         metricsManager.markCommand(this, commandEvent.getAuthor(), guild, scheduled);
-        if (!ScheduledCommandUtils.isScheduled(commandEvent)) {
+        if (!scheduled) {
             commandEvent.getTextChannel().sendTyping().queue();
             membershipDAO.addUserToGuild(commandEvent.getMember().getUser(), commandEvent.getGuild());
         }
@@ -71,19 +74,10 @@ public abstract class BaseCommand extends Command {
             return;
         }
 
-//        // TEMP for reddit blackout
-//        if (this.category == CommandCategories.REDDIT) {
-//            if (!scheduled) {
-//                commandEvent.replyWarning("Due to Reddit's insane increase in pricing on their API, meant to kill all " +
-//                        "3rd party apps that use Reddit, Vinny included, Vinny is boycotting reddit from the 12th for an indefinite " +
-//                        "amount of time. I am sorry for the inconvenience, but Reddit has forced 3rd party developer hands. " +
-//                        "If there is no change in course of this new pricing model, Vinny like many other apps that tie " +
-//                        "into Reddit will be forced to stop supporting Reddit on June 30th.\nIf this stuff passes and Vinny is locked " +
-//                        "out of Reddit's API, subscriptions should still work, and I will be experimenting with ways to bring back " +
-//                        "support for normal Reddit commands in any way I can. Sorry for the inconvenience.");
-//            }
-//            return;
-//        }
+        // Update last command used timestamp for eventual stale guild purge
+        if (!scheduled && guild != null) {
+            guildDAO.updateLastCommandRanTime(guild.getId());
+        }
 
         // Add some details to the MDC on the thread before executing
         ExecutorService executorService = scheduled ? scheduledComamndExecutor : commandExecutors;

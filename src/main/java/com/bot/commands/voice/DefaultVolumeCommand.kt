@@ -7,13 +7,11 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 
 class DefaultVolumeCommand : ModerationCommand() {
-    private val guildDAO: GuildDAO
 
     init {
         name = "dvolume"
         arguments = "<Volume 1-200>"
         help = "Sets the default volume for the server"
-        guildDAO = GuildDAO.getInstance()
     }
 
     @Trace(operationName = "executeCommand", resourceName = "dvolume")

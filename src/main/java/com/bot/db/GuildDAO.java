@@ -328,7 +328,41 @@ public class GuildDAO {
         updateGuildInCache(guildId);
     }
 
+    public void updateLastCommandRanTime(String id) {
+        String query = "UPDATE guild SET last_command = current_timestamp() WHERE id = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
 
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
+
+            statement.setString(1, id);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update last command time: " + id + " " + e.getMessage());
+        } finally {
+            DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+    }
+
+    public void recordTimeInVoice(String id, int length) {
+        String query = "UPDATE guild SET minutes_in_voice = minutes_in_voice + ? WHERE id = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
+            statement.setInt(1, length);
+            statement.setString(2, id);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update last command time: " + id + " " + e.getMessage());
+        } finally {
+            DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+    }
 
     private ResultSet executeGetQuery(String query, String guildId) throws SQLException {
         Connection connection = write.getConnection();
