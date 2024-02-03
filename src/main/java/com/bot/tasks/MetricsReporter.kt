@@ -4,7 +4,9 @@ import com.bot.ShardingManager
 import com.bot.caching.MarkovModelCache
 import com.bot.caching.R34Cache
 import com.bot.caching.SubredditCache
+import com.bot.db.GuildDAO
 import com.bot.db.MembershipDAO
+import com.bot.db.UserDAO
 import com.bot.metrics.MetricsManager
 import com.bot.utils.Logger
 import com.bot.voice.GuildVoiceProvider
@@ -20,6 +22,8 @@ class MetricsReporter : Thread() {
     private val subredditCache: SubredditCache = SubredditCache.getInstance()
     private val r34Cache: R34Cache = R34Cache.getInstance()
     private val membershipDAO: MembershipDAO = MembershipDAO.getInstance()
+    private val guildDAO = GuildDAO.getInstance()
+    private val userDAO = UserDAO.getInstance()
     private val logger = Logger(this.javaClass.simpleName)
     private var userCount = 0
 
@@ -63,6 +67,22 @@ class MetricsReporter : Thread() {
         metricsManager.updateCacheSize("r34", r34Cache.size)
         metricsManager.updateShards(shardManager.shardManager.shardsRunning, shardManager.shardManager.shardsQueued)
         metricsManager.updateLLStats()
+
+        try {
+            metricsManager.updateDailyActiveUsers(userDAO.getActiveUsersInLastDays(1))
+            metricsManager.updateWeeklyActiveUsers(userDAO.getActiveUsersInLastDays(7))
+            metricsManager.updateMonthlyActiveUsers(userDAO.getActiveUsersInLastDays(30))
+
+            metricsManager.updateDailyActiveGuilds(guildDAO.getActiveGuildsInLastDays(1))
+            metricsManager.updateWeeklyActiveGuilds(guildDAO.getActiveGuildsInLastDays(7))
+            metricsManager.updateMonthlyActiveGuilds(guildDAO.getActiveGuildsInLastDays(30))
+
+            metricsManager.updateDailyActiveVoiceGuilds(guildDAO.getActiveVoiceGuildsInLastDays(1))
+            metricsManager.updateWeeklyActiveVoiceGuilds(guildDAO.getActiveVoiceGuildsInLastDays(7))
+            metricsManager.updateMonthlyActiveVoiceGuilds(guildDAO.getActiveVoiceGuildsInLastDays(30))
+        } catch (e: Exception) {
+            logger.warning("Failed to capture active guild/user counts", e)
+        }
 
         // We need to set this status after the sharding manager is built. This will ensure that it is set to this, not the default
         shardManager.shardManager.setActivity(Activity.playing("@Vinny help"))
