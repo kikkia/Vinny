@@ -5,6 +5,7 @@ import com.bot.utils.Logger
 import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.Command
 import com.timgroup.statsd.NonBlockingStatsDClient
+import com.timgroup.statsd.NonBlockingStatsDClientBuilder
 import com.timgroup.statsd.StatsDClient
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
@@ -21,22 +22,13 @@ class MetricsManager private constructor() {
 
     init {
         // TODO: Better way of handling metrics names
-        statsd =
-            if (config.discordConfig.botId.equals("276855867796881408", ignoreCase = true)) {
-                NonBlockingStatsDClient(
-                    "vinny-redux.live",  /* prefix to any stats; may be null or empty string */
-                    config.thirdPartyConfig?.datadogHostname ?: "localhost",  /* common case: localhost */
-                    8125,  /* port */
-                    *arrayOf("vinny:live") /* Datadog extension: Constant tags, always applied */
-                )
-            } else {
-                NonBlockingStatsDClient(
-                    "vinny-redux.test",  /* prefix to any stats; may be null or empty string */
-                    config.thirdPartyConfig?.datadogHostname ?: "localhost",  /* common case: localhost */
-                    8125,  /* port */
-                    *arrayOf("vinny:test") /* Datadog extension: Constant tags, always applied */
-                )
-            }
+        val env = if (config.discordConfig.botId.equals("276855867796881408", ignoreCase = true)) "live" else "test"
+        val builder = NonBlockingStatsDClientBuilder()
+        builder.hostname = config.thirdPartyConfig?.datadogHostname ?: "localhost"  /* common case: localhost */
+        builder.prefix = "vinny-redux.$env"
+        builder.port = 8125
+        builder.constantTags = arrayOf("vinny:$env")
+        statsd = builder.build()
     }
 
     fun markCommand(command: Command, user: User, guild: Guild?, scheduled: Boolean) {
