@@ -128,6 +128,41 @@ class MetricsManager private constructor() {
         statsd!!.incrementCounter("cache.$name.miss")
     }
 
+    fun updateDailyActiveGuilds(count: Int) {
+        statsd!!.recordGaugeValue("active.daily.guilds", count.toLong())
+    }
+
+    fun updateDailyActiveUsers(count: Int) {
+        statsd!!.recordGaugeValue("active.daily.users", count.toLong())
+    }
+
+    fun updateDailyActiveVoiceGuilds(count: Int) {
+        statsd!!.recordGaugeValue("active.daily.gvoice", count.toLong())
+    }
+    fun updateWeeklyActiveGuilds(count: Int) {
+        statsd!!.recordGaugeValue("active.weekly.guilds", count.toLong())
+    }
+
+    fun updateWeeklyActiveUsers(count: Int) {
+        statsd!!.recordGaugeValue("active.weekly.users", count.toLong())
+    }
+    fun updateWeeklyActiveVoiceGuilds(count: Int) {
+        statsd!!.recordGaugeValue("active.weekly.gvoice", count.toLong())
+    }
+
+
+    fun updateMonthlyActiveGuilds(count: Int) {
+        statsd!!.recordGaugeValue("active.monthly.guilds", count.toLong())
+    }
+
+    fun updateMonthlyActiveUsers(count: Int) {
+        statsd!!.recordGaugeValue("active.monthly.users", count.toLong())
+    }
+
+    fun updateMonthlyActiveVoiceGuilds(count: Int) {
+        statsd!!.recordGaugeValue("active.monthly.gvoice", count.toLong())
+    }
+
     fun updateGuildCount(count: Int) {
         statsd!!.recordGaugeValue("guild.count", count.toLong())
     }

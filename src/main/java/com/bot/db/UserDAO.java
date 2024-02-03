@@ -2,6 +2,7 @@ package com.bot.db;
 
 import com.bot.models.InternalUser;
 import com.bot.models.UsageLevel;
+import com.bot.utils.DbHelpers;
 import com.bot.utils.Logger;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -9,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class UserDAO {
     private static final Logger LOGGER = new Logger(RssDAO.class.getName());
@@ -55,5 +57,45 @@ public class UserDAO {
                 statement.execute();
             }
         }
+    }
+
+    public void updateLastCommandRanTime(String id) {
+        String query = "UPDATE users SET last_command = current_timestamp() WHERE id = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
+
+            statement.setString(1, id);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update last command time: " + id + " " + e.getMessage());
+        } finally {
+            DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+    }
+
+    public int getActiveUsersInLastDays(int days) {
+        String query = "SELECT count(*) FROM users WHERE last_command >= CURDATE() - INTERVAL ? DAY";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
+
+            statement.setInt(1, days);
+            ResultSet set = statement.executeQuery();
+            if (set.next()) {
+                return set.getInt(1);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to get active user count for: " + days + " " + e.getMessage());
+        } finally {
+            DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+        return -1;
     }
 }

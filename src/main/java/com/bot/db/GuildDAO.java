@@ -346,6 +346,24 @@ public class GuildDAO {
         }
     }
 
+    public void updateLastVoiceConnectTime(String id) {
+        String query = "UPDATE guild SET last_voice_join = current_timestamp() WHERE id = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
+
+            statement.setString(1, id);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to update last command time: " + id + " " + e.getMessage());
+        } finally {
+            DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+    }
+
     public void recordTimeInVoice(String id, int length) {
         String query = "UPDATE guild SET minutes_in_voice = minutes_in_voice + ? WHERE id = ?";
         Connection connection = null;
@@ -362,6 +380,50 @@ public class GuildDAO {
         } finally {
             DbHelpers.INSTANCE.close(statement, null, connection);
         }
+    }
+
+    public int getActiveGuildsInLastDays(int days) {
+        String query = "SELECT count(*) FROM guild WHERE last_command >= CURDATE() - INTERVAL ? DAY";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
+
+            statement.setInt(1, days);
+            ResultSet set = statement.executeQuery();
+            if (set.next()) {
+                return set.getInt(1);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to get active command guild count for: " + days + " " + e.getMessage());
+        } finally {
+            DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+        return -1;
+    }
+
+    public int getActiveVoiceGuildsInLastDays(int days) {
+        String query = "SELECT count(*) FROM guild WHERE last_voice_join >= CURDATE() - INTERVAL ? DAY";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(query);
+
+            statement.setInt(1, days);
+            ResultSet set = statement.executeQuery();
+            if (set.next()) {
+                return set.getInt(1);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to get active voice guild count for: " + days + " " + e.getMessage());
+        } finally {
+            DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+        return -1;
     }
 
     private ResultSet executeGetQuery(String query, String guildId) throws SQLException {

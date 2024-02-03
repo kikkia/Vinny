@@ -2,6 +2,7 @@ package com.bot.commands;
 
 import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
+import com.bot.db.UserDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.InvalidInputException;
 import com.bot.exceptions.PermsOutOfSyncException;
@@ -24,6 +25,7 @@ public abstract class BaseCommand extends Command {
     protected Logger logger;
     protected MembershipDAO membershipDAO;
     protected GuildDAO guildDAO;
+    protected UserDAO userDAO;
     protected ExecutorService commandExecutors;
     protected  ExecutorService scheduledComamndExecutor;
     protected ScheduledExecutorService commandCleanupScheduler;
@@ -35,6 +37,7 @@ public abstract class BaseCommand extends Command {
         this.logger = new Logger(this.getClass().getSimpleName());
         this.membershipDAO = MembershipDAO.getInstance();
         this.guildDAO = GuildDAO.getInstance();
+        this.userDAO = UserDAO.getInstance();
         this.commandExecutors = CommandTaskExecutor.getTaskExecutor();
         this.scheduledComamndExecutor = CommandTaskExecutor.getScheduledCommandExecutor();
         this.commandCleanupScheduler = Executors.newSingleThreadScheduledExecutor();
@@ -77,6 +80,7 @@ public abstract class BaseCommand extends Command {
         // Update last command used timestamp for eventual stale guild purge
         if (!scheduled && guild != null) {
             guildDAO.updateLastCommandRanTime(guild.getId());
+            userDAO.updateLastCommandRanTime(commandEvent.getAuthor().getId());
         }
 
         // Add some details to the MDC on the thread before executing

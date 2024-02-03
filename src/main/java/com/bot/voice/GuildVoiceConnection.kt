@@ -92,6 +92,7 @@ class GuildVoiceConnection(val guild: Guild) {
             logger.error("Failed to join voice channel $channel", e)
             throw e
         }
+        GuildDAO.getInstance().updateLastVoiceConnectTime(guild.id)
     }
 
     fun loadTrack(toLoad: String, commandEvent: CommandEvent) {
