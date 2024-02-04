@@ -6,9 +6,11 @@ import net.dv8tion.jda.api.hooks.VoiceDispatchInterceptor
 
 class CustomJDAVoiceUpdateListener(private val jdaVoiceUpdateListener: JDAVoiceUpdateListener) : VoiceDispatchInterceptor{
     private val metricsManager = MetricsManager.instance
+    private val guildVoiceProvider = GuildVoiceProvider.getInstance()
     private val endpointRegex = "^([a-z\\-]+)[0-9]+.*:443\$".toRegex()
     override fun onVoiceServerUpdate(update: VoiceDispatchInterceptor.VoiceServerUpdate) {
         metricsManager!!.markConnectedVoiceRegion(trimEndpoint(update.endpoint))
+        guildVoiceProvider.getGuildVoiceConnection(update.guild).region = trimEndpoint(update.endpoint)
         jdaVoiceUpdateListener.onVoiceServerUpdate(update)
     }
 

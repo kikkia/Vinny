@@ -10,6 +10,7 @@ import com.bot.db.UserDAO
 import com.bot.metrics.MetricsManager
 import com.bot.utils.Logger
 import com.bot.voice.GuildVoiceProvider
+import com.bot.voice.LavaLinkClient
 import net.dv8tion.jda.api.entities.Activity
 
 /**
@@ -49,11 +50,16 @@ class MetricsReporter : Thread() {
         val voiceConnections = GuildVoiceProvider.getInstance().getAll()
         var usersInVoice = 0
         var queuedTracks = 0
+        val lavaLinkClient = LavaLinkClient.getInstance()
         for (conn in voiceConnections) {
+            val link = lavaLinkClient.client.getLink(conn.guild.idLong)
             if (conn.isConnected() && conn.currentVoiceChannel != null) {
                 usersInVoice += conn.currentVoiceChannel!!.members.size - 1
                 queuedTracks += (1 + conn.getQueuedTracks().size)
                 metricsManager.markConnectionAge(conn.getAge())
+                metricsManager.markActiveVoiceConnection(link.node.name, conn.region)
+            } else {
+                metricsManager.markIdleVoiceConnection(link.node.name, conn.region)
             }
         }
         metricsManager.updateUsersInVoice(usersInVoice)
@@ -66,7 +72,6 @@ class MetricsReporter : Thread() {
         metricsManager.updateCacheSize("subreddit", subredditCache.size)
         metricsManager.updateCacheSize("r34", r34Cache.size)
         metricsManager.updateShards(shardManager.shardManager.shardsRunning, shardManager.shardManager.shardsQueued)
-        metricsManager.updateLLStats()
 
         try {
             metricsManager.updateDailyActiveUsers(userDAO.getActiveUsersInLastDays(1))

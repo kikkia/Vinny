@@ -20,7 +20,6 @@ import net.dv8tion.jda.api.entities.VoiceChannel
 import org.apache.log4j.Logger
 import java.time.Instant
 import java.time.temporal.ChronoField
-import java.time.temporal.TemporalField
 
 class GuildVoiceConnection(val guild: Guild) {
     val logger = Logger.getLogger(this::class.java.name)
@@ -32,7 +31,8 @@ class GuildVoiceConnection(val guild: Guild) {
     private var isPaused = false
     private var volume = GuildDAO.getInstance().getGuildById(guild.id).volume ?: 100
     var volumeLocked = false
-    var created = Instant.now()
+    private var created = Instant.now()
+    var region = "N/A"
 
     fun setPaused(pause: Boolean) {
         lavalink.getLink(guild.idLong).getPlayer()
