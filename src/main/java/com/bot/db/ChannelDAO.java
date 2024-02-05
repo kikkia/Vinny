@@ -63,7 +63,7 @@ public class ChannelDAO {
             preparedStatement.setString(3, voiceChannel.getName());
             preparedStatement.execute();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to add voice channel to the db " +e.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to add voice channel to the db " + e.getMessage() + voiceChannel.toString());
         } finally {
             DbHelpers.INSTANCE.close(preparedStatement, null, connection);
         }
