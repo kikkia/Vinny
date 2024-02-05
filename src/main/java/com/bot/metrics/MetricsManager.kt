@@ -172,12 +172,21 @@ class MetricsManager private constructor() {
     }
 
     fun markActiveVoiceConnection(nodeName: String, region: String) {
-        statsd!!.incrementCounter("connections.voice.active", "node:${nodeName}", "player_region:${region}")
+        statsd!!.incrementCounter("connections.voice.rate.active", "node:${nodeName}", "player_region:${region}")
     }
 
     fun markIdleVoiceConnection(nodeName: String, region: String) {
-        statsd!!.incrementCounter("connections.voice.idle", "node:${nodeName}", "player_region:${region}")
+        statsd!!.incrementCounter("connections.voice.rate.idle", "node:${nodeName}", "player_region:${region}")
     }
+
+    fun updateActiveVoiceConnectionsCount(nodeName: String, nodeRegion: String, count: Long) {
+        statsd!!.recordGaugeValue("connections.voice.active", count, "node:${nodeName}", "node_region:$nodeRegion")
+    }
+
+    fun updateIdleVoiceConnectionsCount(nodeName: String, nodeRegion: String, count: Long) {
+        statsd!!.recordGaugeValue("connections.voice.idle", count, "node:${nodeName}", "node_region:$nodeRegion")
+    }
+
 
     fun updateUsersInVoice(count: Int) {
         statsd!!.recordGaugeValue("connections.voice.users", count.toLong())
@@ -206,6 +215,44 @@ class MetricsManager private constructor() {
     }
     fun markConnectionAge(minutes: Long) {
         statsd!!.recordDistributionValue("connections.voice.age", minutes)
+    }
+
+    fun updateLLStats() {
+        for (node in config.voiceConfig.nodes!!) {
+            val llUrl = node.address.replace("ws://", "")
+            val llToken = node.password
+            val nodeName = node.name
+            val nodeRegion = node.region ?: "N/A"
+            val request = Request.Builder()
+                .url("http://$llUrl/v4/stats")  // Build the URL from the request
+                .addHeader("Authorization", llToken)
+                .build()
+
+            OkHttpClient().newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    // Handle request failure here
+                    logger.severe("LL stats request failed with error: ${e.message}", e)
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    // Handle successful response here
+                    if (!response.isSuccessful) {
+                        logger.warning("LL stats request failed with status code: ${response.code}")
+                    } else {
+                        try {
+                            val jsonResponse = response.body?.string()?.let { JSONObject(it) }
+                            // Process the parsed JSON data
+                            val active = jsonResponse!!.getInt("playingPlayers")
+                            val total = jsonResponse.getInt("players")
+                            updateActiveVoiceConnectionsCount(nodeName, nodeRegion, active.toLong())
+                            updateIdleVoiceConnectionsCount(nodeName, nodeRegion, (total - active).toLong())
+                        } catch (jsonException: JSONException) {
+                            logger.warning("LL stats error parsing JSON response: ${jsonException.message}")
+                        }
+                    }
+                }
+            })
+        }
     }
 
     companion object {
