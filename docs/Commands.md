@@ -37,6 +37,7 @@ All voice commands require that you are in a voice channel. Some require Vinny t
 Commands that allow you to play audio and modify the audio stream. 
 
 ### `play`
+*Aliases*: `p`
 The play command is used to queue up a track for Vinny to play in a voice channel. You can use this command to play audio from many different sources (video, Twitch, Soundcloud, etc).  
   
 * `~play Griz My friends and I` - Vinny will search for `Griz My friends and I` and queue up the first track it finds. 

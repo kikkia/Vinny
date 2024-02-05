@@ -14,6 +14,7 @@ class PlayCommand(private val bot: Bot) : VoiceCommand() {
     init {
         name = "play"
         arguments = "<title|URL>"
+        aliases = arrayOf("p")
         help = "plays the provided audio track"
     }
 
