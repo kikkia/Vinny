@@ -1,25 +1,25 @@
 package com.bot;
 
-import com.bot.commands.alias.AddGuildAliasCommand;
-import com.bot.commands.alias.AliasesCommand;
-import com.bot.commands.alias.RemoveGuildAliasCommand;
-import com.bot.commands.general.*;
-import com.bot.commands.meme.*;
-import com.bot.commands.moderation.*;
-import com.bot.commands.nsfw.E621Command;
-import com.bot.commands.nsfw.PixivNSFWCommand;
-import com.bot.commands.nsfw.R4cCommand;
-import com.bot.commands.nsfw.Rule34Command;
-import com.bot.commands.owner.*;
-import com.bot.commands.reddit.NewPostCommand;
-import com.bot.commands.reddit.RandomPostCommand;
-import com.bot.commands.reddit.ShitpostCommand;
-import com.bot.commands.reddit.TopPostCommand;
-import com.bot.commands.rss.*;
-import com.bot.commands.scheduled.GetScheduledCommand;
-import com.bot.commands.scheduled.ScheduleCommand;
-import com.bot.commands.scheduled.UnscheduleCommand;
-import com.bot.commands.voice.*;
+import com.bot.interactions.commands.alias.AddGuildAliasCommand;
+import com.bot.interactions.commands.alias.AliasesCommand;
+import com.bot.interactions.commands.alias.RemoveGuildAliasCommand;
+import com.bot.interactions.commands.general.*;
+import com.bot.interactions.commands.meme.*;
+import com.bot.interactions.commands.moderation.*;
+import com.bot.interactions.commands.nsfw.E621Command;
+import com.bot.interactions.commands.nsfw.PixivNSFWCommand;
+import com.bot.interactions.commands.nsfw.R4CCommand;
+import com.bot.interactions.commands.nsfw.Rule34Command;
+import com.bot.interactions.commands.owner.*;
+import com.bot.interactions.commands.reddit.NewPostCommand;
+import com.bot.interactions.commands.reddit.RandomPostCommand;
+import com.bot.interactions.commands.reddit.ShitpostCommand;
+import com.bot.interactions.commands.reddit.TopPostCommand;
+import com.bot.interactions.commands.rss.*;
+import com.bot.interactions.commands.scheduled.GetScheduledCommand;
+import com.bot.interactions.commands.scheduled.ScheduleCommand;
+import com.bot.interactions.commands.scheduled.UnscheduleCommand;
+import com.bot.interactions.commands.voice.*;
 import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
 import com.bot.utils.VinnyConfig;
@@ -125,7 +125,6 @@ public class ShardingManager {
                     // General Commands
                     new InfoCommand(),
                     new SayCommand(),
-                    new VoteCommand(),
                     new InviteCommand(),
                     new SupportCommand(),
                     new StatsCommand(),
@@ -138,7 +137,6 @@ public class ShardingManager {
                     new ServerInfoCommand(),
                     new GamesCommand(waiter),
                     new PixivCommand(),
-                    new ReviewCommand(),
                     new GetScheduledCommand(waiter),
                     new ListSubscriptionsCommand(waiter),
                     new HelpCommand(),
@@ -191,7 +189,7 @@ public class ShardingManager {
                     new PixivNSFWCommand(),
 
                     // 4chan commands
-                    new R4cCommand()
+                    new R4CCommand()
             );
         }
         commandClientBuilder.useHelpBuilder(false);
