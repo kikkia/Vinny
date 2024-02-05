@@ -72,6 +72,7 @@ class MetricsReporter : Thread() {
         metricsManager.updateCacheSize("subreddit", subredditCache.size)
         metricsManager.updateCacheSize("r34", r34Cache.size)
         metricsManager.updateShards(shardManager.shardManager.shardsRunning, shardManager.shardManager.shardsQueued)
+        metricsManager.updateLLStats()
 
         try {
             metricsManager.updateDailyActiveUsers(userDAO.getActiveUsersInLastDays(1))
