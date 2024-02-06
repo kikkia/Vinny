@@ -46,7 +46,7 @@ public class Main {
 		scheduledTaskExecutor.scheduleAtFixedRate(new MetricsReporter(), 1, 2, TimeUnit.MINUTES);
 
 		if (config.getBotConfig().getEnableScheduledCommands()) {
-			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 300, 9, TimeUnit.SECONDS);
+			scheduledTaskExecutor.scheduleAtFixedRate(new RunScheduledCommandsDefferedTask(), 360, 9, TimeUnit.SECONDS);
 		}
 
 		// If nats is enabled, register subscribers
