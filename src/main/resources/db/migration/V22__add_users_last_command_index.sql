@@ -1,0 +1,1 @@
+CREATE INDEX idx_last_command ON users (last_command);
