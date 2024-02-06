@@ -20,6 +20,7 @@ import com.bot.interactions.commands.scheduled.GetScheduledCommand;
 import com.bot.interactions.commands.scheduled.ScheduleCommand;
 import com.bot.interactions.commands.scheduled.UnscheduleCommand;
 import com.bot.interactions.commands.voice.*;
+import com.bot.interactions.slashCommands.SlashCommandClient;
 import com.bot.models.InternalShard;
 import com.bot.preferences.GuildPreferencesManager;
 import com.bot.utils.VinnyConfig;
@@ -219,6 +220,9 @@ public class ShardingManager {
         commandClientBuilder.setScheduleExecutor(executor);
         client = commandClientBuilder.build();
 
+        var slashCommandClient = new SlashCommandClient();
+        slashCommandClient.addCommand(new AsciiCommand());
+
         shardManager = DefaultShardManagerBuilder
                 .createDefault(
                         config.getDiscordConfig().getToken(),
@@ -234,7 +238,7 @@ public class ShardingManager {
                 .setShards(startIndex, endIndex)
                 .setCompression(Compression.NONE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .addEventListeners(client, waiter, bot)
+                .addEventListeners(client, waiter, bot, slashCommandClient)
                 .setActivity(null)
                 .setRequestTimeoutRetry(true)
                 .setContextEnabled(true)

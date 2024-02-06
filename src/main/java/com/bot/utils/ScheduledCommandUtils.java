@@ -5,6 +5,7 @@ import com.bot.ShardingManager;
 import com.bot.caching.WebhookClientCache;
 import com.bot.db.ScheduledCommandDAO;
 import com.bot.exceptions.ScheduledCommandFailedException;
+import com.bot.interactions.InteractionEvent;
 import com.bot.metrics.MetricsManager;
 import com.bot.models.ScheduledCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -123,6 +124,13 @@ public class ScheduledCommandUtils {
         } else {
             throw new ScheduledCommandFailedException(ConstantStrings.SCHEDULED_WEBHOOK_FAIL);
         }
+    }
+
+    public static boolean isScheduled(InteractionEvent event) {
+        if (event instanceof CommandEvent) {
+            return isScheduled((CommandEvent) event);
+        }
+        return false;
     }
 
     public static boolean isScheduled(CommandEvent event) {

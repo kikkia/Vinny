@@ -5,6 +5,8 @@ import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
+import com.bot.interactions.InteractionEvent;
+import com.bot.interactions.TextCommandInteraction;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -24,25 +26,33 @@ public class CommandPermissions {
 
 
     public static boolean canExecuteCommand(Command command, CommandEvent commandEvent) throws ForbiddenCommandException, PermsOutOfSyncException {
+        return canExecuteCommand(command.getCategory(), new TextCommandInteraction(commandEvent));
+    }
+
+    public static boolean canExecuteCommand(Command.Category category, CommandEvent commandEvent) throws ForbiddenCommandException, PermsOutOfSyncException {
+        return canExecuteCommand(category, new TextCommandInteraction(commandEvent));
+    }
+
+    public static boolean canExecuteCommand(Command command, InteractionEvent commandEvent) throws ForbiddenCommandException, PermsOutOfSyncException {
         return canExecuteCommand(command.getCategory(), commandEvent);
     }
 
-    public static boolean canExecuteCommand(Command.Category commandCategory, CommandEvent commandEvent) throws ForbiddenCommandException, PermsOutOfSyncException {
+    public static boolean canExecuteCommand(Command.Category commandCategory, InteractionEvent commandEvent) throws ForbiddenCommandException, PermsOutOfSyncException {
         // If its a PM then screw permissions
         if (commandEvent.isFromType(ChannelType.PRIVATE))
             return true;
 
         if (commandCategory.equals(CommandCategories.OWNER)) {
             VinnyConfig config = VinnyConfig.Companion.instance();
-            return commandEvent.getAuthor().getId().equals(config.getDiscordConfig().getOwnerId());
+            return commandEvent.getUser().getId().equals(config.getDiscordConfig().getOwnerId());
         }
 
-        if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {
+        if (commandCategory == CommandCategories.NSFW && !commandEvent.getChannel().isNSFW()) {
             throw new ForbiddenCommandException("This channel is not marked in discord as nsfw. " +
                     "To enable it, please go into the channel settings in discord and enable nsfw.");
         }
 
-        if (commandEvent.getGuild().getOwnerId().equals(commandEvent.getAuthor().getId())) {
+        if (commandEvent.getGuild().getOwnerId().equals(commandEvent.getUser().getId())) {
             return true;
         }
 

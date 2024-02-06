@@ -1,18 +1,22 @@
 package com.bot.interactions
 
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.Member
-import net.dv8tion.jda.api.entities.TextChannel
-import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 
 class SlashCommandInteraction(val event: SlashCommandEvent) : InteractionEvent {
+
+    var deferred = false
     override fun ack() {
         event.deferReply().queue()
+        deferred = true
     }
 
     override fun reply(msg: String) {
-        event.reply(msg).queue()
+        if (deferred) {
+            event.hook.sendMessage(msg).queue()
+        } else {
+            event.reply(msg).queue()
+        }
     }
 
     override fun replyWarning(msg: String) {
@@ -43,6 +47,14 @@ class SlashCommandInteraction(val event: SlashCommandEvent) : InteractionEvent {
 
     override fun getArgs(): String {
         // TODO
-        return event.options.toString()
+        val sb = StringBuilder()
+        for (opt in event.options) {
+            sb.append("${opt.asString} ")
+        }
+        return sb.toString()
+    }
+
+    override fun isFromType(type: ChannelType): Boolean {
+        return event.channelType == type
     }
 }

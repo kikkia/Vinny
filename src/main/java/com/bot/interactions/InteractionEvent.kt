@@ -1,5 +1,6 @@
 package com.bot.interactions
 
+import net.dv8tion.jda.api.entities.ChannelType
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.TextChannel
@@ -26,4 +27,6 @@ interface InteractionEvent {
     fun getGuild() : Guild
 
     fun getArgs() : String
+
+    fun isFromType(type: ChannelType) : Boolean
 }

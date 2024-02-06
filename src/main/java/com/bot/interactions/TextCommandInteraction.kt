@@ -1,10 +1,7 @@
 package com.bot.interactions
 
 import com.jagrosh.jdautilities.command.CommandEvent
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.Member
-import net.dv8tion.jda.api.entities.TextChannel
-import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.*
 
 class TextCommandInteraction(val event: CommandEvent) : InteractionEvent {
     override fun ack() {
@@ -41,5 +38,9 @@ class TextCommandInteraction(val event: CommandEvent) : InteractionEvent {
 
     override fun getArgs(): String {
         return event.args
+    }
+
+    override fun isFromType(type: ChannelType): Boolean {
+        return event.channelType == type
     }
 }

@@ -6,6 +6,8 @@ import com.bot.interactions.commands.MemeCommand
 import com.github.lalyos.jfiglet.FigletFont
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
 
 import java.io.IOException
 
@@ -14,6 +16,7 @@ class AsciiCommand : MemeCommand() {
         this.name = "ascii"
         this.help = "Generates a figlet of the text its given"
         this.arguments = "<Text to make ascii>"
+        this.options.add(OptionData(OptionType.STRING, "text", "Text to change to ascii art", true))
     }
 
     override fun executeCommand(commandEvent: CommandEvent?) {
