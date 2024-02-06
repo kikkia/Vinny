@@ -7,6 +7,8 @@ import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
 
 class PlayCommand(private val bot: Bot) : VoiceCommand() {
 
@@ -16,6 +18,7 @@ class PlayCommand(private val bot: Bot) : VoiceCommand() {
         name = "play"
         arguments = "<title|URL>"
         help = "plays the provided audio track"
+        options.add(OptionData(OptionType.STRING, "Url or search", "Url to play or search", true))
     }
 
     @Trace(operationName = "executeCommand", resourceName = "Play")
@@ -44,7 +47,16 @@ class PlayCommand(private val bot: Bot) : VoiceCommand() {
         }
     }
 
-    override fun executeCommand(commandEvent: InteractionEvent?) {
-        TODO("Not yet implemented")
+    override fun executeCommand(commandEvent: InteractionEvent) {
+        val guildVoiceConnection = guildVoiceProvider.getGuildVoiceConnection(commandEvent.getGuild())
+
+        var url = commandEvent.getArgs().split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+        if (!url.matches(urlRegex.toRegex())) {
+            val searchPrefix = VinnyConfig.instance().voiceConfig.defaultSearchProvider ?: "scsearch:"
+            url = searchPrefix.plus(commandEvent.getArgs())
+        }
+        commandEvent.reply("\u231A Loading... `[" + commandEvent.getArgs() + "]`") { _: Message? ->
+            guildVoiceConnection.loadTrack(url, commandEvent)
+        }
     }
 }

@@ -3,8 +3,6 @@ package com.bot.interactions.slashCommands
 import com.bot.exceptions.InvalidInputException
 import com.bot.interactions.SlashCommandInteraction
 import com.bot.interactions.commands.BaseCommandText
-import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
