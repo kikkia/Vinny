@@ -18,7 +18,7 @@ class InviteCommand : GeneralCommand() {
         // No need to check perms here
         val user = commandEvent.author
         val privateChannel = user.openPrivateChannel().complete()
-        privateChannel.sendMessage("https://discord.com/oauth2/authorize?client_id=276855867796881408&scope=bot+applications.commands&permissions=1744305473").queue()
+        privateChannel.sendMessage("https://discord.com/oauth2/authorize?client_id=276855867796881408&scope=bot+applications.commands&permissions=277796481399").queue()
         commandEvent.reactSuccess()
     }
 }
