@@ -3,6 +3,9 @@ package com.bot.interactions.slashCommands
 import com.bot.exceptions.InvalidInputException
 import com.bot.interactions.SlashCommandInteraction
 import com.bot.interactions.commands.BaseCommandText
+import com.bot.models.InternalShard
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
@@ -37,5 +40,9 @@ class SlashCommandClient : ListenerAdapter() {
 
     override fun onGuildJoin(event: GuildJoinEvent) {
         event.guild.updateCommands().addCommands(guildCommands).queue()
+    }
+
+    fun registerCommandsForAll(shard: InternalShard) {
+        shard.jda.guilds.forEach {it.updateCommands().addCommands(guildCommands).queue()}
     }
 }

@@ -4,6 +4,8 @@ import com.bot.db.GuildDAO
 import com.bot.db.models.ResumeAudioGuild
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
+import com.bot.interactions.InteractionEvent
+import com.bot.interactions.TextCommandInteraction
 import com.bot.metrics.MetricsManager
 import com.bot.models.enums.RepeatMode
 import com.bot.utils.FormattingUtils
@@ -43,9 +45,9 @@ class GuildVoiceConnection(val guild: Guild) {
         return isPaused
     }
 
-    private fun joinChannel(commandEvent: CommandEvent) {
-        val toJoin = commandEvent.member.voiceState?.channel
-            ?: throw NotInVoiceException(commandEvent.client.warning + " You are not in a voice channel! Please join one to use this command.")
+    private fun joinChannel(commandEvent: InteractionEvent) {
+        val toJoin = commandEvent.getMember()!!.voiceState?.channel
+            ?: throw NotInVoiceException("❗ You are not in a voice channel! Please join one to use this command.")
         try {
             joinChannel(toJoin)
         } catch (e: Exception) {
@@ -96,16 +98,23 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun loadTrack(toLoad: String, commandEvent: CommandEvent) {
+        loadTrack(toLoad, TextCommandInteraction(commandEvent))
+    }
+
+    fun loadTrack(toLoad: String, commandEvent: InteractionEvent) {
         metricsManager.markTrackLoaded()
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(commandEvent)
         }
         link.loadItem(toLoad).subscribe(LLLoadHandler(this, commandEvent))
-        lastTextChannel = commandEvent.textChannel
+        lastTextChannel = commandEvent.getChannel()
     }
 
     fun queueTrack(track: QueuedAudioTrack, commandEvent: CommandEvent) {
+        queueTrack(track, commandEvent)
+    }
+    fun queueTrack(track: QueuedAudioTrack, commandEvent: InteractionEvent) {
         trackProvider.addTrack(track)
         if (trackProvider.getNowPlaying() == track) {
             playTrack(track)
@@ -116,6 +125,12 @@ class GuildVoiceConnection(val guild: Guild) {
 
     // Queue up track from playlist and then start load if there is a next track
     fun queuePlaylistTrack(queuedTrack: QueuedAudioTrack?, commandEvent: CommandEvent, loadingMessage: Message,
+                           tracks: List<String>, index: Int, failedCount: Int) {
+        queuePlaylistTrack(queuedTrack, TextCommandInteraction(commandEvent), loadingMessage, tracks, index, failedCount)
+    }
+
+    // Queue up track from playlist and then start load if there is a next track
+    fun queuePlaylistTrack(queuedTrack: QueuedAudioTrack?, commandEvent: InteractionEvent, loadingMessage: Message,
                            tracks: List<String>, index: Int, failedCount: Int) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
@@ -137,15 +152,18 @@ class GuildVoiceConnection(val guild: Guild) {
             PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, newIndex, failedCount))
     }
 
-
     fun queuePlaylist(tracks: List<String>, commandEvent: CommandEvent, loadingMessage: Message) {
+        queuePlaylist(tracks, TextCommandInteraction(commandEvent), loadingMessage)
+    }
+
+    fun queuePlaylist(tracks: List<String>, commandEvent: InteractionEvent, loadingMessage: Message) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(commandEvent)
         }
         metricsManager.markTrackLoaded()
         link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, 0, 0))
-        lastTextChannel = commandEvent.textChannel
+        lastTextChannel = commandEvent.getChannel()
     }
 
     fun queueResumeTrack(queuedTrack: QueuedAudioTrack?, loadingMessage: Message, resumeSetup: ResumeAudioGuild, index: Int, failedCount: Int) {
@@ -183,13 +201,17 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun searchForTrack(search: String, commandEvent: CommandEvent, message: Message, builder: Builder) {
+        searchForTrack(search, TextCommandInteraction(commandEvent), message, builder)
+    }
+
+    fun searchForTrack(search: String, commandEvent: InteractionEvent, message: Message, builder: Builder) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(commandEvent)
         }
         metricsManager.markTrackLoaded()
         link.loadItem(search).subscribe(SearchLLLoadHandler(this, commandEvent, message, builder))
-        lastTextChannel = commandEvent.textChannel
+        lastTextChannel = commandEvent.getChannel()
     }
 
 

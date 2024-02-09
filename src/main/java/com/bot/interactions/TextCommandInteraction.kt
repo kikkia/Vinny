@@ -2,6 +2,7 @@ package com.bot.interactions
 
 import com.jagrosh.jdautilities.command.CommandEvent
 import net.dv8tion.jda.api.entities.*
+import java.util.function.Consumer
 
 class TextCommandInteraction(val event: CommandEvent) : InteractionEvent {
     override fun ack() {
@@ -10,6 +11,10 @@ class TextCommandInteraction(val event: CommandEvent) : InteractionEvent {
 
     override fun reply(msg: String) {
         event.reply(msg)
+    }
+
+    override fun reply(msg: String, success: Consumer<Message>) {
+        event.reply(msg, success)
     }
 
     override fun replyWarning(msg: String) {
@@ -38,6 +43,10 @@ class TextCommandInteraction(val event: CommandEvent) : InteractionEvent {
 
     override fun getArgs(): String {
         return event.args
+    }
+
+    override fun getSelfMember(): Member {
+        return event.selfMember
     }
 
     override fun isFromType(type: ChannelType): Boolean {

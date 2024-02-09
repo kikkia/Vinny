@@ -32,5 +32,7 @@ interface InteractionEvent {
 
     fun getArgs() : String
 
+    fun getSelfMember() : Member
+
     fun isFromType(type: ChannelType) : Boolean
 }

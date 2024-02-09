@@ -1,9 +1,9 @@
 package com.bot.voice
 
 import com.bot.exceptions.MaxQueueSizeException
+import com.bot.interactions.InteractionEvent
 import com.bot.metrics.MetricsManager
 import com.bot.utils.FormattingUtils
-import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.menu.OrderedMenu
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
 import dev.arbjerg.lavalink.client.protocol.LoadFailed
@@ -14,13 +14,13 @@ import net.dv8tion.jda.api.entities.Message
 import org.apache.log4j.Logger
 import java.util.concurrent.TimeUnit
 
-class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: CommandEvent,
+class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: InteractionEvent,
                           private val message: Message, private val builder: OrderedMenu.Builder) : AbstractAudioLoadResultHandler() {
     val logger = Logger.getLogger(this::class.java.name)
     override fun ontrackLoaded(result: TrackLoaded) {
         try {
             val track = result.track
-            val queuedTrack = QueuedAudioTrack(track, event.author.name, event.author.idLong)
+            val queuedTrack = QueuedAudioTrack(track, event.getUser().name, event.getUser().idLong)
             guildVoiceConnection.queueTrack(queuedTrack, event)
             // Inner class at the end of this file
         } catch (e: Exception) {
@@ -35,25 +35,25 @@ class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection
     override fun onSearchResultLoaded(result: SearchResult) {
         val tracks = result.tracks
         if (tracks.isEmpty()) {
-            event.textChannel.sendMessage("No tracks found!").queue()
+            event.getChannel().sendMessage("No tracks found!").queue()
             return
         }
         builder.setCancel { message1: Message? -> }
             .setChoices(*arrayOfNulls(0))
-            .setUsers(event.author)
-            .setColor(event.selfMember.color)
-            .setText(event.client.success + " Results from search:")
+            .setUsers(event.getUser())
+            .setColor(event.getSelfMember().color)
+            .setText("Results from search:")
             .setSelection { message: Message?, i: Int ->
                 val track = result.tracks[i - 1]
                 try {
-                    val queuedAudioTrack = QueuedAudioTrack(track, event.author.name, event.author.idLong)
+                    val queuedAudioTrack = QueuedAudioTrack(track, event.getUser().name, event.getUser().idLong)
                     guildVoiceConnection.queueTrack(queuedAudioTrack, event)
                 } catch (e: MaxQueueSizeException) {
-                    event.replyWarning(e.message)
+                    event.replyWarning(e.message!!)
                     return@setSelection
                 }
             }
-            .setUsers(event.author)
+            .setUsers(event.getUser())
             .setTimeout(2, TimeUnit.MINUTES)
         var i = 0
         while (i < 5 && i < result.tracks.size) {
@@ -70,6 +70,6 @@ class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection
 
     override fun loadFailed(result: LoadFailed) {
         MetricsManager.instance!!.markTrackLoadFailed()
-        event.textChannel.sendMessage("Failed to load search! " + result.exception.message).queue()
+        event.getChannel().sendMessage("Failed to load search! " + result.exception.message).queue()
     }
 }

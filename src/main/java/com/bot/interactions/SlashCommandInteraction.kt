@@ -26,9 +26,9 @@ class SlashCommandInteraction(val event: SlashCommandEvent) : InteractionEvent {
         } else {
             event.reply(msg)
         }
-        action.queue(Consumer { m: Message? ->
-            success.accept(m!!)
-        } as (Any) -> Unit)
+        action.queue {
+            success.accept(it as Message)
+        }
     }
 
     override fun reply(msg: String) {
@@ -70,6 +70,10 @@ class SlashCommandInteraction(val event: SlashCommandEvent) : InteractionEvent {
             sb.append("${opt.asString} ")
         }
         return sb.toString()
+    }
+
+    override fun getSelfMember(): Member {
+        return event.member!!
     }
 
     override fun isFromType(type: ChannelType): Boolean {

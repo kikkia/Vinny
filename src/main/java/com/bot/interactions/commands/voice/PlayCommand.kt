@@ -1,6 +1,5 @@
 package com.bot.interactions.commands.voice
 
-import com.bot.Bot
 import com.bot.interactions.InteractionEvent
 import com.bot.interactions.commands.VoiceCommand
 import com.bot.utils.VinnyConfig
@@ -10,7 +9,7 @@ import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 
-class PlayCommand(private val bot: Bot) : VoiceCommand() {
+class PlayCommand() : VoiceCommand() {
 
     private val urlRegex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]"
 
@@ -18,7 +17,7 @@ class PlayCommand(private val bot: Bot) : VoiceCommand() {
         name = "play"
         arguments = "<title|URL>"
         help = "plays the provided audio track"
-        options.add(OptionData(OptionType.STRING, "Url or search", "Url to play or search", true))
+        options.add(OptionData(OptionType.STRING, "track", "Url to play or search", true))
     }
 
     @Trace(operationName = "executeCommand", resourceName = "Play")

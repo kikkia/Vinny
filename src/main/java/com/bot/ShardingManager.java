@@ -63,6 +63,8 @@ public class ShardingManager {
     private List<Command.Category> commandCategories;
     private final CommandClient client;
 
+    private final SlashCommandClient slashCommandClient;
+
     public static ShardingManager getInstance() {
         return instance;
     }
@@ -95,7 +97,7 @@ public class ShardingManager {
         if (!silentDeploy) {
             commandClientBuilder.addCommands(
                     // Voice Commands
-                    new PlayCommand(bot),
+                    new PlayCommand(),
                     new SearchCommand(bot, waiter),
                     new NowPlayingCommand(),
                     new RemoveTrackCommand(),
@@ -210,7 +212,8 @@ public class ShardingManager {
                 new ShardStatsCommand(),
                 new SetUsageCommand(),
                 new BanImageCommand(),
-                new SetPixivSessionCommand());
+                new SetPixivSessionCommand(),
+                new RegisterSlashCommands());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
@@ -220,8 +223,9 @@ public class ShardingManager {
         commandClientBuilder.setScheduleExecutor(executor);
         client = commandClientBuilder.build();
 
-        var slashCommandClient = new SlashCommandClient();
+        slashCommandClient = new SlashCommandClient();
         slashCommandClient.addCommand(new AsciiCommand());
+        slashCommandClient.addCommand(new PlayCommand());
 
         shardManager = DefaultShardManagerBuilder
                 .createDefault(
@@ -255,6 +259,12 @@ public class ShardingManager {
     public void putShard(InternalShard shard) {shards.put(shard.getId(), shard);}
 
     public ScheduledExecutorService getExecutor() {return executor;}
+
+    public void registerCommandsToAllGuilds() {
+        for (InternalShard shard : shards.values()) {
+            slashCommandClient.registerCommandsForAll(shard);
+        }
+    }
 
     public int getTotalGuilds() {
         int guilds = 0;

@@ -1,8 +1,8 @@
 package com.bot.voice
 
 import com.bot.exceptions.MaxQueueSizeException
+import com.bot.interactions.InteractionEvent
 import com.bot.metrics.MetricsManager
-import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
 import dev.arbjerg.lavalink.client.protocol.LoadFailed
 import dev.arbjerg.lavalink.client.protocol.PlaylistLoaded
@@ -10,12 +10,12 @@ import dev.arbjerg.lavalink.client.protocol.SearchResult
 import dev.arbjerg.lavalink.client.protocol.TrackLoaded
 import org.apache.log4j.Logger
 
-class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: CommandEvent) : AbstractAudioLoadResultHandler() {
+class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: InteractionEvent) : AbstractAudioLoadResultHandler() {
     val logger: Logger = Logger.getLogger(this::class.java.name)
     override fun ontrackLoaded(result: TrackLoaded) {
         try {
             val track = result.track
-            val queuedTrack = QueuedAudioTrack(track, event.author.name, event.author.idLong)
+            val queuedTrack = QueuedAudioTrack(track, event.getUser().name, event.getUser().idLong)
             guildVoiceConnection.queueTrack(queuedTrack, event)
             // Inner class at the end of this file
         } catch (e: Exception) {
@@ -26,9 +26,9 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
     override fun onPlaylistLoaded(result: PlaylistLoaded) {
         // They gave multiple args, assume one is the tracks.
         var trackNums = arrayOf<String>()
-        if (event.args.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
+        if (event.getArgs().split(" ".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray().size == 2) trackNums =
-            event.args.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
+            event.getArgs().split(" ".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray()[1].split("-".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val trackUrls: MutableList<String>
         if (trackNums.size == 2) {
@@ -55,7 +55,7 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
         } else {
            trackUrls = result.tracks.map { it.info.uri!! }.toMutableList()
         }
-        val msg = event.textChannel.sendMessage("Loading tracks from playlist...").complete()
+        val msg = event.getChannel().sendMessage("Loading tracks from playlist...").complete()
         try {
             guildVoiceConnection.queuePlaylist(trackUrls, event, msg)
         } catch (e: MaxQueueSizeException) {
@@ -66,21 +66,21 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
     override fun onSearchResultLoaded(result: SearchResult) {
         val tracks = result.tracks
         if (tracks.isEmpty()) {
-            event.textChannel.sendMessage("No tracks found!").queue()
+            event.getChannel().sendMessage("No tracks found!").queue()
             return
         }
         val firstTrack = tracks[0]
 
-        val queuedTrack = QueuedAudioTrack(firstTrack, event.author.name, event.author.idLong)
+        val queuedTrack = QueuedAudioTrack(firstTrack, event.getUser().name, event.getUser().idLong)
         guildVoiceConnection.queueTrack(queuedTrack, event)
     }
 
     override fun noMatches() {
-        event.textChannel.sendMessage("No matches found for your input!").queue()
+        event.getChannel().sendMessage("No matches found for your input!").queue()
     }
 
     override fun loadFailed(result: LoadFailed) {
         MetricsManager.instance!!.markTrackLoadFailed()
-        event.textChannel.sendMessage("Failed to load track! " + result.exception.message).queue()
+        event.getChannel().sendMessage("Failed to load track! " + result.exception.message).queue()
     }
 }
