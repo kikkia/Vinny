@@ -24,7 +24,6 @@ public class TopPostCommand extends RedditCommand{
     public TopPostCommand() {
         this.name = "tr";
         this.help = "Grabs a random post from the top all time posts on a given subreddit";
-        this.arguments = "<subreddit name>";
         this.category = CommandCategories.REDDIT;
         redditConnection = RedditConnection.getInstance();
     }
@@ -33,6 +32,8 @@ public class TopPostCommand extends RedditCommand{
     @Trace(operationName = "executeCommand", resourceName = "TopReddit")
     protected void executeCommand(CommandEvent commandEvent) {
         boolean isNSFWAllowed = true;
+        boolean postOnly = commandEvent.getArgs().contains("--post-only");
+        String args = parseArgs(commandEvent.getArgs());
 
         // TODO: Move to static helper
         if (!commandEvent.isFromType(ChannelType.PRIVATE)) {
@@ -45,7 +46,9 @@ public class TopPostCommand extends RedditCommand{
                     SubredditSort.TOP,
                     TimePeriod.ALL,
                     200,
-                    isNSFWAllowed);
+                    isNSFWAllowed,
+                    postOnly,
+                    args);
         } catch (NullPointerException e) {
             commandEvent.replyWarning("I could not find that subreddit, please make sure it is public, and spelled correctly.");
         } catch (ApiException e) {

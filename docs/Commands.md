@@ -150,6 +150,7 @@ Removes a guild or user playlist by either name or id
 
 ## Reddit
 Reddit commands can get new, hot and top posts from any subreddit. (NOTE: NSFW posts/subreddits require the channel to have nsfw enabled.)
+All reddit commands can add an optional `--post-only` to post without the reddit post metadata.
 
 ### `rr`
 Gives a random hot post from a given subreddit.

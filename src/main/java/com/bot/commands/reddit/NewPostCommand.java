@@ -23,7 +23,6 @@ public class NewPostCommand extends RedditCommand {
     public NewPostCommand() {
         this.name = "nr";
         this.help = "Grabs a random new post from the newest 100 posts in a given subreddit";
-        this.arguments = "<subreddit name>";
         this.category = CommandCategories.REDDIT;
         redditConnection = RedditConnection.getInstance();
     }
@@ -32,6 +31,8 @@ public class NewPostCommand extends RedditCommand {
     @Trace(operationName = "executeCommand", resourceName = "NewReddit")
     protected void executeCommand(CommandEvent commandEvent) {
         boolean isNSFWAllowed = true;
+        boolean postOnly = commandEvent.getArgs().contains("--post-only");
+        String args = parseArgs(commandEvent.getArgs());
 
         // TODO: Move to static helper
         if (!commandEvent.isFromType(ChannelType.PRIVATE)) {
@@ -44,7 +45,9 @@ public class NewPostCommand extends RedditCommand {
                     SubredditSort.NEW,
                     TimePeriod.ALL,
                     100,
-                    isNSFWAllowed);
+                    isNSFWAllowed,
+                    postOnly,
+                    args);
         } catch (NullPointerException e) {
             commandEvent.replyWarning("I could not find that subreddit, please make sure it is public, and spelled correctly.");
         } catch (ApiException e) {

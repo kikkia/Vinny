@@ -23,7 +23,6 @@ public class RandomPostCommand extends RedditCommand{
     public RandomPostCommand() {
         this.name = "rr";
         this.help = "Grabs a random hot post from a given subreddit";
-        this.arguments = "<subreddit name>";
         this.category = CommandCategories.REDDIT;
 
         redditConnection = RedditConnection.getInstance();
@@ -33,6 +32,8 @@ public class RandomPostCommand extends RedditCommand{
     @Trace(operationName = "executeCommand", resourceName = "RandomReddit")
     protected void executeCommand(CommandEvent commandEvent) {
         boolean isNSFWAllowed = true;
+        boolean postOnly = commandEvent.getArgs().contains("--post-only");
+        String args = parseArgs(commandEvent.getArgs());
 
         // TODO: Move to static helper
         if (!commandEvent.isFromType(ChannelType.PRIVATE)) {
@@ -45,7 +46,9 @@ public class RandomPostCommand extends RedditCommand{
                     SubredditSort.HOT,
                     TimePeriod.WEEK,
                     150,
-                    isNSFWAllowed);
+                    isNSFWAllowed,
+                    postOnly,
+                    args);
         } catch (NullPointerException e) {
             commandEvent.replyWarning("I could not find that subreddit, please make sure it is public, and spelled correctly.");
         } catch (ApiException e) {

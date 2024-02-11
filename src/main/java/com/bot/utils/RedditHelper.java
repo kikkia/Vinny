@@ -54,6 +54,24 @@ public class RedditHelper {
                                                   boolean isChannelNSFW,
                                                   String subredditName) throws Exception {
 
+        getRandomSubmissionAndSend(redditConnection,
+                commandEvent,
+                sortType,
+                timePeriod,
+                limit,
+                isChannelNSFW,
+                false,
+                subredditName);
+    }
+
+    public static void getRandomSubmissionAndSend(RedditConnection redditConnection,
+                                                  CommandEvent commandEvent,
+                                                  SubredditSort sortType,
+                                                  TimePeriod timePeriod,
+                                                  int limit,
+                                                  boolean isChannelNSFW,
+                                                  boolean postOnly,
+                                                  String subredditName) throws Exception {
         // If the subreddit name contains an invalid character throw a error response
         if (!subredditName.matches("^[^<>@!#$%^&*() ,.=+;]+$")) {
             commandEvent.reply(commandEvent.getClient().getError() + " Invalid subreddit. Please ensure you are using only the name with no symbols.");
@@ -118,11 +136,15 @@ public class RedditHelper {
         // Scheduled commands generate an insane amount of traffic, lets send them to webhooks to help with global ratelimiting
         if (ScheduledCommandUtils.isScheduled(commandEvent)) {
             WebhookClient client = ScheduledCommandUtils.getWebhookForChannel(commandEvent);
-            client.send(buildWebhookEmbedMessageForSubmission(commandEvent, submission));
+            if (!postOnly) {
+                client.send(buildWebhookEmbedMessageForSubmission(commandEvent, submission));
+            }
             client.send(buildWebhookMessageForSubmission(commandEvent, submission));
         } else {
             // Send the embed, content will be sent separatly below
-            commandEvent.reply(buildEmbedForSubmission(submission));
+            if (!postOnly) {
+                commandEvent.reply(buildEmbedForSubmission(submission));
+            }
 
             String text = submission.getSelfText();
             if (submission.isSelfPost() && text != null && !text.isEmpty()) {
