@@ -8,7 +8,7 @@ import datadog.trace.api.Trace
 class RepeatCommand : VoiceCommand() {
     init {
         name = "repeat"
-        arguments = "`all` for repeat all, 'one' input for repeat one, no input to disable repeat"
+        arguments = "`all` for repeat all, `one` for repeat one, no input to disable repeat"
         help = "Toggles repeating the current track or all based on input"
     }
 
