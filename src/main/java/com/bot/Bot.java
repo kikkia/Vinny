@@ -268,7 +268,7 @@ public class Bot extends ListenerAdapter {
 
 	private void checkVoiceLobby(GuildVoiceUpdateEvent event) {
 		Guild guild = event.getGuild();
-		GuildVoiceConnection conn = GuildVoiceProvider.Companion.getInstance().getGuildVoiceConnection(guild.getIdLong());
+		GuildVoiceConnection conn = guildVoiceProvider.getGuildVoiceConnection(guild.getIdLong());
 		if (conn == null || event.getChannelLeft() != conn.getCurrentVoiceChannel()) {
 			return;
 		}
