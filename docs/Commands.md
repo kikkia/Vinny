@@ -94,7 +94,8 @@ Removes tracks from the current queue by either a given (position in queue, url,
 
 ### `repeat`
 Sets the current queue to loop through all tracks, or the next track
-* `~repeat` - Repeats the next track in the loop (Run command again or `repeat all` to turn it off)
+* `~repeat` - Turns repeat off
+* `~repeat one` - Repeats the current track
 * `~repeat all` - Loops over the whole queue continuously. (When track ends it gets added to the end.)
 
 ### `shuffle`
