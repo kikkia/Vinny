@@ -11,7 +11,6 @@ abstract class RedditCommand : BaseCommand() {
         this.botPermissions = arrayOf(Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_EMBED_LINKS)
         this.canSchedule = true
         this.arguments = "<subreddit name> (optional --post-only)"
-
     }
 
     fun parseArgs(args: String) : String {

@@ -27,7 +27,7 @@ public abstract class BaseCommand extends Command {
     protected GuildDAO guildDAO;
     protected UserDAO userDAO;
     protected ExecutorService commandExecutors;
-    protected  ExecutorService scheduledComamndExecutor;
+    protected  ExecutorService scheduledCommandExecutor;
     protected ScheduledExecutorService commandCleanupScheduler;
 
     public boolean canSchedule;
@@ -39,7 +39,7 @@ public abstract class BaseCommand extends Command {
         this.guildDAO = GuildDAO.getInstance();
         this.userDAO = UserDAO.getInstance();
         this.commandExecutors = CommandTaskExecutor.getTaskExecutor();
-        this.scheduledComamndExecutor = CommandTaskExecutor.getScheduledCommandExecutor();
+        this.scheduledCommandExecutor = CommandTaskExecutor.getScheduledCommandExecutor();
         this.commandCleanupScheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
@@ -84,8 +84,8 @@ public abstract class BaseCommand extends Command {
         }
 
         // Add some details to the MDC on the thread before executing
-        ExecutorService executorService = scheduled ? scheduledComamndExecutor : commandExecutors;
-        Future future = executorService.submit(() -> {
+        ExecutorService executorService = scheduled ? scheduledCommandExecutor : commandExecutors;
+        Future<?> future = executorService.submit(() -> {
             // Add some details to the MDC on the thread before executing
             try (MDC.MDCCloseable commandCloseable = MDC.putCloseable("command", this.name);
                  MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){

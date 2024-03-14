@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.api.events.channel.text.update.TextChannelUpdateNameEvent;
@@ -74,7 +75,7 @@ public class Bot extends ListenerAdapter {
 
 		LOGGER =  new Logger(Bot.class.getName());
 		metricsManager = MetricsManager.Companion.getInstance();
-		executor = Executors.newScheduledThreadPool(60);
+		executor = Executors.newCachedThreadPool();
 		guildVoiceProvider = GuildVoiceProvider.Companion.getInstance();
 	}
 
@@ -168,16 +169,12 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onGuildJoin(GuildJoinEvent guildJoinEvent) {
-		// In some cases (large guilds) this can take a while, so put it on its own thread
-		AddFreshGuildDeferredTask deferredTask = new AddFreshGuildDeferredTask(guildJoinEvent);
-		deferredTask.start();
+		executor.submit(new AddFreshGuildDeferredTask(guildJoinEvent));
 	}
 
 	@Override
 	public void onGuildLeave(GuildLeaveEvent guildLeaveEvent) {
-		// In some cases (large guilds) this can take a while, so put it on its own thread
-		LeaveGuildDeferredTask deferredTask = new LeaveGuildDeferredTask(guildLeaveEvent);
-		deferredTask.start();
+		executor.submit(new LeaveGuildDeferredTask(guildLeaveEvent));
 	}
 
 	@Override
@@ -264,6 +261,12 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onVoiceChannelUpdateName(VoiceChannelUpdateNameEvent event) {
 		executor.execute(() -> channelDAO.addVoiceChannel(event.getChannel()));
+	}
+
+	@Override
+	public void onShutdown(@NotNull ShutdownEvent event) {
+		executor.shutdown();
+		super.onShutdown(event);
 	}
 
 	private void checkVoiceLobby(GuildVoiceUpdateEvent event) {

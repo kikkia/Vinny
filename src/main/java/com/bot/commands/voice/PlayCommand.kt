@@ -16,6 +16,8 @@ class PlayCommand(private val bot: Bot) : VoiceCommand() {
         arguments = "<title|URL>"
         aliases = arrayOf("p")
         help = "plays the provided audio track"
+        cooldown = 3
+        cooldownScope = CooldownScope.USER
     }
 
     @Trace(operationName = "executeCommand", resourceName = "Play")
