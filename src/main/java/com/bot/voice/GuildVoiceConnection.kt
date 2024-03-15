@@ -7,6 +7,7 @@ import com.bot.exceptions.NotInVoiceException
 import com.bot.metrics.MetricsManager
 import com.bot.models.enums.RepeatMode
 import com.bot.utils.FormattingUtils
+import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.menu.OrderedMenu.Builder
 import dev.arbjerg.lavalink.client.Link
@@ -20,16 +21,19 @@ import net.dv8tion.jda.api.entities.VoiceChannel
 import org.apache.log4j.Logger
 import java.time.Instant
 import java.time.temporal.ChronoField
+import java.util.*
 
 class GuildVoiceConnection(val guild: Guild) {
     val logger = Logger.getLogger(this::class.java.name)
     val lavalink: LavaLinkClient = LavaLinkClient.getInstance()
     val metricsManager = MetricsManager.instance!!
     private val trackProvider = TrackProvider()
+    private val autoplayQueue = LinkedList<String>()
     var currentVoiceChannel: VoiceChannel? = null
     var lastTextChannel: TextChannel? = null
     private var isPaused = false
     private var volume = GuildDAO.getInstance().getGuildById(guild.id).volume ?: 100
+    var autoplay = false
     var volumeLocked = false
     private var created = Instant.now()
     var region = "N/A"
@@ -105,12 +109,18 @@ class GuildVoiceConnection(val guild: Guild) {
         lastTextChannel = commandEvent.textChannel
     }
 
-    fun queueTrack(track: QueuedAudioTrack, commandEvent: CommandEvent) {
+    private fun loadAutoplayTrack(toLoad: String) {
+        metricsManager.markTrackLoaded()
+        val link = getLink()
+        link.loadItem(toLoad).subscribe(AutoplayLoadHandler(this))
+    }
+
+    fun queueTrack(track: QueuedAudioTrack) {
         trackProvider.addTrack(track)
         if (trackProvider.getNowPlaying() == track) {
             playTrack(track)
         } else {
-            commandEvent.reply("Queued up `${track.track.info.title}`.")
+            lastTextChannel!!.sendMessage("Queued up `${track.track.info.title}`.").queue()
         }
     }
 
@@ -199,13 +209,27 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun nextTrack(skipping: Boolean) {
+        // Make sure autoplay is populated before going to next track
+        refreshAutoPlay()
+
         val next = trackProvider.nextTrack(skipping)
         if (next == null) {
-            sendMessageToChannel("Finished playing all songs in queue.")
-            cleanupPlayer()
-            return
+            if (!autoplay) {
+                sendMessageToChannel("Finished playing all songs in queue.")
+                cleanupPlayer()
+                return
+            }
+            // Autoplay failed to load tracks and we have no now playing. Fail softly.
+            if (autoplayQueue.isEmpty()) {
+                sendMessageToChannel("Sadge, autoplay failed to keep the jams going. Feel free to queue up more " +
+                        "music, and report the issue in the support server if this keeps up.")
+                cleanupPlayer()
+                return
+            }
+            loadAutoplayTrack(autoplayQueue.poll())
+        } else {
+            playTrack(next)
         }
-        playTrack(next)
     }
 
     fun cleanupPlayer() {
@@ -279,7 +303,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     private fun playTrack(track: QueuedAudioTrack) {
-        metricsManager.markTrackPlayed()
+        metricsManager.markTrackPlayed(autoplay, track.track.info.sourceName)
         getLink().createOrUpdatePlayer()
             .setVolume(volume)
             .setTrack(track.track).subscribe{
@@ -337,6 +361,39 @@ class GuildVoiceConnection(val guild: Guild) {
         return toRemove
     }
 
+    fun autoplayFail() {
+        lastTextChannel!!.sendMessage("Failed to load autoplay track, trying to load another.").queue()
+        nextTrack(false)
+    }
+
+    private fun refreshAutoPlay() {
+        if (autoplay) {
+            // Refresh if we are on the last track
+            if (trackProvider.getQueued().isEmpty()) {
+                val np = trackProvider.getNowPlaying()!!
+                // If we are autoplaying, only update the queue when at the end.
+                if (!np.isAutoplay()) {
+                    // If not autoplaying right now, clear the autoplay queue so we refresh it all to whats just finished.
+                    autoplayQueue.clear()
+                } else if (!autoplayQueue.isEmpty()) {
+                    // If we are autoplaying and there is some queue left, no need to refresh till last track.
+                    return
+                }
+
+                if (np.track.info.sourceName.contains(VinnyConfig.instance().voiceConfig.autoplaySource ?: "NONE")) {
+                    autoplayQueue.addAll(AutoplayClient.VideoRequester.getRecommendedVideoIds(np.track.info.identifier))
+                } else if (VinnyConfig.instance().voiceConfig.autoplaySearch != null) {
+                    // If the current track is not from preferred autoplay provider, then we can do some cool search magic to
+                    // transition the preferred platform.
+                    autoplayQueue.addAll(AutoplayClient.VideoRequester.getRecommendedVideoIdsSearch(np.track.info.title))
+                } else {
+                    sendMessageToChannel("Attempted to prep auto play tracks, but autoplay is not supported for " +
+                            "that audio source at this time. Sorry, feel free to request it as a feature on our discord server.")
+                }
+            }
+        }
+    }
+
     fun sendMessageToChannel(msg: String) {
         try {
             lastTextChannel!!.sendMessage(msg).queue()
@@ -349,7 +406,7 @@ class GuildVoiceConnection(val guild: Guild) {
         // If we sent the last message in the channel then just edit it
         lastTextChannel!!.history.retrievePast(1).queue { m ->
             val lastMessage: Message = m[0]
-            val embed = FormattingUtils.getAudioTrackEmbed(trackProvider.getNowPlaying(), volume, trackProvider.getRepeateMode())
+            val embed = FormattingUtils.getAudioTrackEmbed(trackProvider.getNowPlaying(), volume, trackProvider.getRepeateMode(), autoplay)
             if (lastMessage.author.id == lastTextChannel!!.jda.selfUser.id) {
                 lastMessage.editMessageEmbeds(embed).queue()
             } else {

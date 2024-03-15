@@ -10,4 +10,8 @@ class QueuedAudioTrack(// Used to update metadata from LL
     override fun toString(): String {
         return "[" + FormattingUtils.msToMinSec(track.info.length) + "] *" + track.info.title + "* requested by " + requesterName
     }
+
+    fun isAutoplay(): Boolean {
+        return requesterID == 0L
+    }
 }

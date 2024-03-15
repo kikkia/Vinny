@@ -60,7 +60,10 @@ data class ShardingConfig(val total: Int,
 data class VoiceConfig(val nodes: List<LavalinkNode>?,
                        val defaultSearchProvider: String?,
                        val autoplayProvider: String?,
-                       val autoplayToken: String?)
+                       val autoplayToken: String?,
+                       val autoplayPrefix: String?,
+                       val autoplaySource: String?,
+                       val autoplaySearch: String?)
 
 data class LavalinkNode(val address: String,
                         val password: String,
