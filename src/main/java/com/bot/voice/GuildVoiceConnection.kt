@@ -33,7 +33,7 @@ class GuildVoiceConnection(val guild: Guild) {
     var lastTextChannel: TextChannel? = null
     private var isPaused = false
     private var volume = GuildDAO.getInstance().getGuildById(guild.id).volume ?: 100
-    var autoplay = false
+    var autoplay = GuildDAO.getInstance().isGuildPremium(guild.id)
     var volumeLocked = false
     private var created = Instant.now()
     var region = "N/A"

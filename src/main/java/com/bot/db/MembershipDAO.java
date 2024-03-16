@@ -127,6 +127,24 @@ public class MembershipDAO {
         addUser(userInsertQuery, user);
     }
 
+    public void setPremium(String userId, String guildId, boolean enable) {
+        String updatePremiumQuery = "UPDATE guild_membership SET premium = ? WHERE user_id = ? AND guild = ?";
+        PreparedStatement statement = null;
+        Connection connection = null;
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(updatePremiumQuery);
+            statement.setBoolean(1, enable);
+            statement.setString(2, userId);
+            statement.setString(3, guildId);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to set premium user membership from guild. " + e.getMessage());
+        } finally {
+            DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+    }
+
     private void addMembership(String membershipInsertQuery, User user, Guild guild) {
         PreparedStatement statement = null;
         Connection connection = null;

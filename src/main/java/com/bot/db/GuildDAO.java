@@ -426,6 +426,30 @@ public class GuildDAO {
         return -1;
     }
 
+    // Check all guild memberships to see if there are any that are premium
+    public boolean isGuildPremium(String guildId) {
+        String premiumQuery = "SELECT * FROM guild_membership WHERE guild = ? AND premium = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(premiumQuery);
+
+            statement.setString(1, guildId);
+            statement.setBoolean(2, true);
+            ResultSet set = statement.executeQuery();
+            if (set.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to get guild premium status" + e.getMessage());
+        } finally {
+            DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+        return false;
+    }
+
     private ResultSet executeGetQuery(String query, String guildId) throws SQLException {
         Connection connection = write.getConnection();
         PreparedStatement statement = connection.prepareStatement(query);

@@ -1,0 +1,2 @@
+ALTER TABLE guild_membership
+ADD premium TINYINT(1) NOT NULL DEFAULT 0;
