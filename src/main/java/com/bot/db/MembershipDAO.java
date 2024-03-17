@@ -145,6 +145,48 @@ public class MembershipDAO {
         }
     }
 
+    // Get list of server names user has used premium on
+    public List<String> getPremiumServersForUser(String userId) {
+        String query = "SELECT g.name, g.id FROM guild_membership gm JOIN guild g ON gm.guild = g.id WHERE gm.user_id = ? AND gm.premium = 1";
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet set = null;
+        List<String> memberships = null;
+
+        try {
+            connection = write.getConnection();
+
+            statement = connection.prepareStatement(query);
+            statement.setString(1, userId);
+            set = statement.executeQuery();
+            memberships = new ArrayList<>();
+            while (set.next()) {
+                memberships.add(set.getString("g.name") + " - " + set.getString("g.id"));
+            }
+        } catch (SQLException e) {
+            LOGGER.severe("Failed to get memberships for user.", e);
+        } finally {
+            DbHelpers.INSTANCE.close(statement, set, connection);
+        }
+        return memberships;
+    }
+
+    public void removeAllPremium(String userId) {
+        String removePremiumQuery = "UPDATE guild_membership SET premium = 0 WHERE user_id = ?";
+        PreparedStatement statement = null;
+        Connection connection = null;
+        try {
+            connection = write.getConnection();
+            statement = connection.prepareStatement(removePremiumQuery);
+            statement.setString(1, userId);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to remove premium user membership from guild. " + e.getMessage());
+        } finally {
+            DbHelpers.INSTANCE.close(statement, null, connection);
+        }
+    }
+
     private void addMembership(String membershipInsertQuery, User user, Guild guild) {
         PreparedStatement statement = null;
         Connection connection = null;

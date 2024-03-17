@@ -217,6 +217,7 @@ public class Bot extends ListenerAdapter {
 					|| assignedId.equals("1106473246230073364")) {
 				try {
 					userDAO.setUsageLevel(UsageLevel.BASIC, event.getUser().getId());
+					membershipDAO.removeAllPremium(event.getUser().getId());
 				} catch (SQLException throwables) {
 					LOGGER.log(Level.SEVERE, "Failed to assign usage level", throwables);
 				}

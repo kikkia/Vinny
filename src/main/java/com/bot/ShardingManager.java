@@ -117,6 +117,7 @@ public class ShardingManager {
                     new SeekCommand(),
                     new FastForwardCommand(),
                     new RewindCommand(),
+                    new AutoplayCommand(),
                     //new SpeedCommand(),
 
                     // Battle Royale
@@ -142,6 +143,7 @@ public class ShardingManager {
                     new GetScheduledCommand(waiter),
                     new ListSubscriptionsCommand(waiter),
                     new HelpCommand(),
+                    new PremiumServerCommand(),
 
                     // Alias Commands
                     new AliasesCommand(waiter),
