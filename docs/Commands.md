@@ -119,6 +119,9 @@ List all of the current tracks in the queue.
 ### `clearqueue`
 Clears all tracks from the queue without stopping the now playing track
 
+### `autoplay`
+Enables automatically playing tracks related to the last played track when your queue runs out. (Donor required for now)
+
 ---
 ### Playlists
 Make and load custom playlists for a server or for yourself. Playlists are used to save and load a list of tracks instantly. Playlists can either be for a guild, which allows any user with permission to load them, or for yourself. Which allows you to load them and save them on any server you and Vinny are on. 
@@ -210,6 +213,9 @@ Get info of the current server.
 
 ### `games`
 Lists all games being played on the server and the users playing them.
+
+### `donor`
+Enables or disables donor status on a server.
 
 ### `pixiv`
 Get a random new image from pixiv, or a random image for a search term. 

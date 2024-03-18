@@ -69,7 +69,7 @@ public class FormattingUtils {
         };
     }
 
-    public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume, RepeatMode repeatMode) {
+    public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume, RepeatMode repeatMode, boolean autoplay) {
         EmbedBuilder builder = new EmbedBuilder();
 
         Track track = queuedAudioTrack.getTrack();
@@ -78,6 +78,7 @@ public class FormattingUtils {
         builder.setDescription("[" + track.getInfo().getTitle() + "](" + track.getInfo().getUri() + ")");
         builder.addField("Duration", msToMinSec(track.getInfo().getLength()), false);
         builder.addField("Requested by", queuedAudioTrack.getRequesterName(), false);
+        builder.addField("Autoplay", "" + autoplay, false);
         builder.setFooter("Volume: " + volume, null);
         builder.addField("Repeat Mode", repeatMode.getEzName(), false);
 

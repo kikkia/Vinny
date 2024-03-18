@@ -16,12 +16,12 @@ import java.util.concurrent.TimeUnit
 
 class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: CommandEvent,
                           private val message: Message, private val builder: OrderedMenu.Builder) : AbstractAudioLoadResultHandler() {
-    val logger = Logger.getLogger(this::class.java.name)
+    val logger: Logger = Logger.getLogger(this::class.java.name)
     override fun ontrackLoaded(result: TrackLoaded) {
         try {
             val track = result.track
             val queuedTrack = QueuedAudioTrack(track, event.author.name, event.author.idLong)
-            guildVoiceConnection.queueTrack(queuedTrack, event)
+            guildVoiceConnection.queueTrack(queuedTrack)
             // Inner class at the end of this file
         } catch (e: Exception) {
             logger.error(e.message, e)
@@ -38,16 +38,16 @@ class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection
             event.textChannel.sendMessage("No tracks found!").queue()
             return
         }
-        builder.setCancel { message1: Message? -> }
+        builder.setCancel { }
             .setChoices(*arrayOfNulls(0))
             .setUsers(event.author)
             .setColor(event.selfMember.color)
             .setText(event.client.success + " Results from search:")
-            .setSelection { message: Message?, i: Int ->
+            .setSelection { _: Message?, i: Int ->
                 val track = result.tracks[i - 1]
                 try {
                     val queuedAudioTrack = QueuedAudioTrack(track, event.author.name, event.author.idLong)
-                    guildVoiceConnection.queueTrack(queuedAudioTrack, event)
+                    guildVoiceConnection.queueTrack(queuedAudioTrack)
                 } catch (e: MaxQueueSizeException) {
                     event.replyWarning(e.message)
                     return@setSelection

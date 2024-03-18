@@ -36,11 +36,11 @@ public class GuildIT {
     private static HikariDataSource dataSource;
 
     private final List<InternalGuildMembership> memberships = Arrays.asList(
-            new InternalGuildMembership("1",  "101", true),
-            new InternalGuildMembership("2",  "102", true),
-            new InternalGuildMembership("3",  "101", true),
-            new InternalGuildMembership("4",  "101", true),
-            new InternalGuildMembership("3",  "102", false)
+            new InternalGuildMembership("1",  "101", true, true),
+            new InternalGuildMembership("2",  "102", true, true),
+            new InternalGuildMembership("3",  "101", true, true),
+            new InternalGuildMembership("4",  "101", true, true),
+            new InternalGuildMembership("3",  "102", false, true)
             );
 
     private final List<InternalGuild> guilds = Arrays.asList(

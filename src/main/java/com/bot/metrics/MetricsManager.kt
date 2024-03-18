@@ -80,8 +80,8 @@ class MetricsManager private constructor() {
         statsd!!.incrementCounter("voice.track.loaded")
     }
 
-    fun markTrackPlayed() {
-        statsd!!.incrementCounter("voice.track.played")
+    fun markTrackPlayed(autoplay: Boolean, source: String) {
+        statsd!!.incrementCounter("voice.track.played", "autoplay:${autoplay}", "source:$source")
     }
 
     fun markTrackEnd() {
@@ -171,8 +171,8 @@ class MetricsManager private constructor() {
         statsd!!.recordGaugeValue("users.count", count.toLong())
     }
 
-    fun markActiveVoiceConnection(nodeName: String, region: String) {
-        statsd!!.incrementCounter("connections.voice.rate.active", "node:${nodeName}", "player_region:${region}")
+    fun markActiveVoiceConnection(nodeName: String, region: String, autoplay: Boolean) {
+        statsd!!.incrementCounter("connections.voice.rate.active", "node:${nodeName}", "player_region:${region}", "autoplay:${autoplay}")
     }
 
     fun markIdleVoiceConnection(nodeName: String, region: String) {

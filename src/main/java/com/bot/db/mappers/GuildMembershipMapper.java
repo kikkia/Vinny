@@ -9,6 +9,7 @@ public class GuildMembershipMapper {
     public static InternalGuildMembership mapGuildMembership(ResultSet set) throws SQLException {
         return new InternalGuildMembership(set.getString("gm.user_id"),
                 set.getString("gm.guild"),
-                set.getBoolean("gm.can_use_bot"));
+                set.getBoolean("gm.can_use_bot"),
+                set.getBoolean("gm.premium"));
     }
 }

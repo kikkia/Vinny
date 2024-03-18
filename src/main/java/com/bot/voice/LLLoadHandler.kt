@@ -16,7 +16,7 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
         try {
             val track = result.track
             val queuedTrack = QueuedAudioTrack(track, event.author.name, event.author.idLong)
-            guildVoiceConnection.queueTrack(queuedTrack, event)
+            guildVoiceConnection.queueTrack(queuedTrack)
             // Inner class at the end of this file
         } catch (e: Exception) {
             logger.error(e.message, e)
@@ -72,7 +72,7 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
         val firstTrack = tracks[0]
 
         val queuedTrack = QueuedAudioTrack(firstTrack, event.author.name, event.author.idLong)
-        guildVoiceConnection.queueTrack(queuedTrack, event)
+        guildVoiceConnection.queueTrack(queuedTrack)
     }
 
     override fun noMatches() {
