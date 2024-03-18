@@ -211,7 +211,8 @@ public class ShardingManager {
                 new ShardStatsCommand(),
                 new SetUsageCommand(),
                 new BanImageCommand(),
-                new SetPixivSessionCommand());
+                new SetPixivSessionCommand(),
+                new ThreadDumpCommand());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
