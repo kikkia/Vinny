@@ -54,15 +54,15 @@ public class Rule34Command extends NSFWCommand {
         String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + args;
         String booruUrl = "https://yande.re/post.xml?limit=200&tags=" + args;
         String pahealUrl = "https://rule34.paheal.net/rss/images/" + commandEvent.getArgs().replaceAll(" ", "%20") + "/1";
-        List<String> imageUrls = cache.get(commandEvent.getArgs());
+        List<String> imageUrls = cache.get(args);
         String selected;
         try {
             if (imageUrls == null) {
                 imageUrls = new ArrayList<>();
-                imageUrls.addAll(getImageURLFromSearch(r34url, R34Provider.XXX));
+                // imageUrls.addAll(getImageURLFromSearch(r34url, R34Provider.XXX));
                 imageUrls.addAll(getImageURLFromSearch(booruUrl, R34Provider.YANDERE));
                 imageUrls.addAll(getImageURLFromSearch(pahealUrl, R34Provider.PAHEAL));
-                cache.put(commandEvent.getArgs(), imageUrls);
+                cache.put(args, imageUrls);
             }
             selected = imageUrls.get(random.nextInt(imageUrls.size()));
         } catch (IllegalArgumentException e) {
