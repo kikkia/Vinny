@@ -1,6 +1,7 @@
 package com.bot.metrics
 
 import com.bot.models.*
+import com.bot.models.enums.R34Provider
 import com.bot.utils.Logger
 import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.Command
@@ -215,6 +216,18 @@ class MetricsManager private constructor() {
     }
     fun markConnectionAge(minutes: Long) {
         statsd!!.recordDistributionValue("connections.voice.age", minutes)
+    }
+
+    fun markR34Request(provider: R34Provider) {
+        statsd!!.incrementCounter("r34.request", "provider:${provider.name}")
+    }
+
+    fun markR34ResponseSize(provider: R34Provider, size: Long) {
+        statsd!!.recordDistributionValue("r34.responsesize", size, "provider:${provider.name}")
+    }
+
+    fun markR34Response(provider: R34Provider, success: Boolean) {
+        statsd!!.incrementCounter("r34.response", "provider:${provider.name}", "success:$success")
     }
 
     fun updateLLStats() {

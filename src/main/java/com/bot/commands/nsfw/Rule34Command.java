@@ -6,6 +6,7 @@ import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.bot.caching.R34Cache;
 import com.bot.commands.NSFWCommand;
 import com.bot.exceptions.ScheduledCommandFailedException;
+import com.bot.models.enums.R34Provider;
 import com.bot.utils.ScheduledCommandUtils;
 import com.bot.utils.TheGreatCCPFilter;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -58,9 +59,9 @@ public class Rule34Command extends NSFWCommand {
         try {
             if (imageUrls == null) {
                 imageUrls = new ArrayList<>();
-                imageUrls.addAll(getImageURLFromSearch(r34url));
-                imageUrls.addAll(getImageURLFromSearch(booruUrl));
-                imageUrls.addAll(getImageURLFromSearch(pahealUrl));
+                imageUrls.addAll(getImageURLFromSearch(r34url, R34Provider.XXX));
+                imageUrls.addAll(getImageURLFromSearch(booruUrl, R34Provider.YANDERE));
+                imageUrls.addAll(getImageURLFromSearch(pahealUrl, R34Provider.PAHEAL));
                 cache.put(commandEvent.getArgs(), imageUrls);
             }
             selected = imageUrls.get(random.nextInt(imageUrls.size()));
@@ -101,8 +102,9 @@ public class Rule34Command extends NSFWCommand {
         return builder.build();
     }
 
-    private List<String> getImageURLFromSearch(String url) throws Exception{
+    private List<String> getImageURLFromSearch(String url, R34Provider provider) throws Exception{
         HttpGet get = new HttpGet(url);
+        metricsManager.markR34Request(provider);
         int timeout = 4;
         RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(timeout * 1000)
@@ -140,9 +142,11 @@ public class Rule34Command extends NSFWCommand {
             possibleLinks = possibleLinks.stream().filter(
                     it -> !TheGreatCCPFilter.Companion.containsNoNoTags(it))
                     .collect(Collectors.toList());
-
+            metricsManager.markR34Response(provider, true);
+            metricsManager.markR34ResponseSize(provider, possibleLinks.size());
             return possibleLinks;
         } catch (Exception e) {
+            metricsManager.markR34Response(provider, false);
             logger.warning("Failed to fetch r34 posts for source: " + url, e);
             return new ArrayList<>();
         }
