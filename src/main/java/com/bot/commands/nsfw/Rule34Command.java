@@ -51,7 +51,7 @@ public class Rule34Command extends NSFWCommand {
         }
 
         String args = commandEvent.getArgs().replaceAll(" ", "+");
-        String r34url = "http://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + args;
+        String r34url = "http://api.rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + args;
         String booruUrl = "https://yande.re/post.xml?limit=200&tags=" + args;
         String pahealUrl = "https://rule34.paheal.net/rss/images/" + commandEvent.getArgs().replaceAll(" ", "%20") + "/1";
         List<String> imageUrls = cache.get(args);
