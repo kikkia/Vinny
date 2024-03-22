@@ -4,7 +4,6 @@ import com.bot.exceptions.IntervalFormatException;
 import com.bot.models.enums.RepeatMode;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kikkia.jsauce.models.Sauce;
 import dev.arbjerg.lavalink.client.protocol.Track;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -307,38 +306,5 @@ public class FormattingUtils {
         Date date = new Date(millis);
         DateFormat df = new SimpleDateFormat("dd:MM:yy:HH:mm:ss");
         return df.format(date);
-    }
-
-    public static MessageEmbed getEmbedForSauce(Sauce sauce) {
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setTitle("Sauce found in index: " + sauce.getIndexName());
-        builder.setDescription("Similarity: " + sauce.getSimilarity() + "%");
-        builder.setThumbnail(sauce.getThumbnail());
-
-        if (sauce.getTitle() != null) {
-            builder.addField("Title", sauce.getTitle(), false);
-        }
-
-        if (sauce.getAuthor() != null) {
-            builder.addField("Author", sauce.getAuthor(), false);
-        }
-
-        if (sauce.getCharacters() != null) {
-            builder.addField("Characters", sauce.getCharacters(), false);
-        }
-
-        if (sauce.getEpisode() != null) {
-            builder.addField("Part", sauce.getEpisode(), false);
-        }
-
-        if (sauce.getSource() != null) {
-            builder.addField("Source", sauce.getSource(), false);
-        }
-
-        if (sauce.getExtUrl() != null) {
-            builder.addField("Link", "[Source](" + sauce.getExtUrl() + ")", false);
-        }
-
-        return builder.build();
     }
 }

@@ -157,7 +157,6 @@ public class ShardingManager {
                     new CopyPastaCommand(),
                     new KickRouletteCommand(waiter),
                     new MemeKickCommand(waiter),
-                    new SauceCommand(),
 
                     // Reddit Commands
                     new RandomPostCommand(),

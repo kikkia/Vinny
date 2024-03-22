@@ -248,12 +248,6 @@ Generates a message based on what a user or channel has posted to discord using 
 * `~comment @kikkia` - Generates a comment for Kikkia.  
 * `~comment #general` - Generates a comment from the #general channel.  
 
-### `sauce`
-*Aliases*: `source`
-Gets the source for a linked or attached image. Great for finding where that meme originated from or where that pic you found came from.
-* `~sauce <image link>` - Gets the source of the linked image
-* `~sauce <image attached>` - Gets the source of the attached image
-
 ### `p90`
 Gets a webm from p90.zone. You can leave it blank to get a random webm, or add in a word after to search. Searching requires nsfw to be enabled.
 * `~p90 dank` - Gets a dank webm from P90
