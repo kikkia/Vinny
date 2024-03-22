@@ -85,8 +85,8 @@ class MetricsManager private constructor() {
         statsd!!.incrementCounter("voice.track.played", "autoplay:${autoplay}", "source:$source")
     }
 
-    fun markTrackEnd() {
-        statsd!!.incrementCounter("voice.track.ended")
+    fun markTrackEnd(eventName: String, startNext: Boolean) {
+        statsd!!.incrementCounter("voice.track.ended", "eventName:$eventName", "mayStartNext:$startNext")
     }
 
     fun markTrackLoadFailed() {

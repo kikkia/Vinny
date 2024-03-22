@@ -204,8 +204,10 @@ class GuildVoiceConnection(val guild: Guild) {
 
 
     fun onTrackEnd(event: TrackEndEvent) {
-        metricsManager.markTrackEnd()
-        nextTrack(false)
+        metricsManager.markTrackEnd(event.endReason.name, event.endReason.mayStartNext)
+        if (event.endReason.mayStartNext) {
+            nextTrack(false)
+        }
     }
 
     fun nextTrack(skipping: Boolean) {
