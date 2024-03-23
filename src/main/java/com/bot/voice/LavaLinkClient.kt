@@ -5,6 +5,7 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.LavalinkClient
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.TrackEndEvent
+import dev.arbjerg.lavalink.client.TrackExceptionEvent
 import dev.arbjerg.lavalink.client.loadbalancing.RegionGroup
 import net.dv8tion.jda.api.entities.Guild
 import java.net.URI
@@ -38,6 +39,9 @@ class LavaLinkClient private constructor() {
                 return@subscribe
             }
             gConn.onTrackEnd(event)
+        }
+        client.on(TrackExceptionEvent::class.java).subscribe {
+            logger.warning("TRACK EXCEPTION EVENT: ${it.exception}")
         }
         guildClients = ConcurrentHashMap()
     }
