@@ -1,5 +1,6 @@
 package com.bot.voice
 
+import com.bot.metrics.MetricsManager
 import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.LavalinkClient
@@ -15,6 +16,7 @@ import java.util.logging.Logger
 class LavaLinkClient private constructor() {
 
     private val logger = Logger.getLogger(LavaLinkClient::class.java.name)
+    private val metricsManager = MetricsManager.instance
 
     var client: LavalinkClient
 
@@ -41,6 +43,7 @@ class LavaLinkClient private constructor() {
             gConn.onTrackEnd(event)
         }
         client.on(TrackExceptionEvent::class.java).subscribe {
+            metricsManager!!.markLLTrackException(it)
             logger.warning("TRACK EXCEPTION EVENT: ${it.exception}")
         }
         guildClients = ConcurrentHashMap()

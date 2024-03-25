@@ -8,6 +8,7 @@ import com.jagrosh.jdautilities.command.Command
 import com.timgroup.statsd.NonBlockingStatsDClient
 import com.timgroup.statsd.NonBlockingStatsDClientBuilder
 import com.timgroup.statsd.StatsDClient
+import dev.arbjerg.lavalink.client.TrackExceptionEvent
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import okhttp3.*
@@ -228,6 +229,10 @@ class MetricsManager private constructor() {
 
     fun markR34Response(provider: R34Provider, success: Boolean) {
         statsd!!.incrementCounter("r34.response", "provider:${provider.name}", "success:$success")
+    }
+
+    fun markLLTrackException(trackExceptionEvent: TrackExceptionEvent) {
+        statsd!!.incrementCounter("voice.track.exception", "message:${trackExceptionEvent.exception.message}")
     }
 
     fun updateLLStats() {
