@@ -5,8 +5,10 @@ import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.LavalinkClient
 import dev.arbjerg.lavalink.client.Link
-import dev.arbjerg.lavalink.client.TrackEndEvent
-import dev.arbjerg.lavalink.client.TrackExceptionEvent
+import dev.arbjerg.lavalink.client.NodeOptions
+import dev.arbjerg.lavalink.client.event.TrackEndEvent
+import dev.arbjerg.lavalink.client.event.TrackExceptionEvent
+import dev.arbjerg.lavalink.client.loadbalancing.IRegionFilter
 import dev.arbjerg.lavalink.client.loadbalancing.RegionGroup
 import net.dv8tion.jda.api.entities.Guild
 import java.net.URI
@@ -27,12 +29,13 @@ class LavaLinkClient private constructor() {
         val botID = config.discordConfig.botId.toLong()
         client = LavalinkClient(botID)
         for (node in config.voiceConfig.nodes!!) {
-            // TODO: Region support
-            client.addNode(node.name, URI.create(node.address), node.password, RegionGroup.US)
+            val nodeOptions = NodeOptions.Builder(node.name, URI.create(node.address), node.password, regionGroupFromString(node.region)).build()
+            val added = client.addNode(nodeOptions)
+            logger.info("Added node ${added.name} to region ${added.regionFilter.toString()}")
         }
         logger.info("LL Client booted")
 
-        client.on(TrackEndEvent::class.java).subscribe {event ->
+        client.on(TrackEndEvent::class.java).subscribe { event ->
             val gConn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(event.guildId)
             if (gConn == null) {
                 return@subscribe
@@ -59,13 +62,20 @@ class LavaLinkClient private constructor() {
     }
 
     fun cleanupPlayer(guild: Guild) {
-        getLink(guild.idLong).destroyPlayer()
+        getLink(guild.idLong).destroy()
         guild.jda.directAudioController.disconnect(guild)
         guildClients.remove(guild.idLong)
     }
 
     fun getLink(guildId: Long): Link {
-        return client.getLink(guildId)
+        return client.getOrCreateLink(guildId)
+    }
+
+    fun regionGroupFromString(name: String?): IRegionFilter {
+        if ((name?.lowercase() ?: "") == "eu") {
+            return RegionGroup.EUROPE
+        }
+        return RegionGroup.US
     }
 
     companion object {

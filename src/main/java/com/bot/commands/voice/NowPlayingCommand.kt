@@ -34,6 +34,7 @@ class NowPlayingCommand : VoiceCommand() {
                 embedBuilder.addField("Stream", track.info.isStream.toString(), false)
                 embedBuilder.addField("Volume", voiceConnection.getVolume().toString(), false)
                 embedBuilder.addField("Repeat Mode", voiceConnection.getRepeatMode().ezName, false)
+                embedBuilder.addField("Server Location", voiceConnection.lavalink.getLink(voiceConnection.guild.idLong).node.name, false)
 
                 // If youtube, get the thumbnail
                 if (track.info.uri!!.contains("www.youtube.com")) {

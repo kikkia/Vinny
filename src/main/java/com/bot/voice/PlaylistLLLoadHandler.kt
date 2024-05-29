@@ -3,10 +3,10 @@ package com.bot.voice
 import com.bot.metrics.MetricsManager
 import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
-import dev.arbjerg.lavalink.client.protocol.LoadFailed
-import dev.arbjerg.lavalink.client.protocol.PlaylistLoaded
-import dev.arbjerg.lavalink.client.protocol.SearchResult
-import dev.arbjerg.lavalink.client.protocol.TrackLoaded
+import dev.arbjerg.lavalink.client.player.LoadFailed
+import dev.arbjerg.lavalink.client.player.PlaylistLoaded
+import dev.arbjerg.lavalink.client.player.SearchResult
+import dev.arbjerg.lavalink.client.player.TrackLoaded
 import net.dv8tion.jda.api.entities.Message
 import org.apache.log4j.Logger
 

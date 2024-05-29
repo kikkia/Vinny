@@ -5,10 +5,9 @@ import com.bot.models.enums.R34Provider
 import com.bot.utils.Logger
 import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.Command
-import com.timgroup.statsd.NonBlockingStatsDClient
 import com.timgroup.statsd.NonBlockingStatsDClientBuilder
 import com.timgroup.statsd.StatsDClient
-import dev.arbjerg.lavalink.client.TrackExceptionEvent
+import dev.arbjerg.lavalink.client.event.TrackExceptionEvent
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import okhttp3.*

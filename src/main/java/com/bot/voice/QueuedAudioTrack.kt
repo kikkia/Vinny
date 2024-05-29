@@ -1,7 +1,7 @@
 package com.bot.voice
 
 import com.bot.utils.FormattingUtils
-import dev.arbjerg.lavalink.client.protocol.Track
+import dev.arbjerg.lavalink.client.player.Track
 
 class QueuedAudioTrack(// Used to update metadata from LL
     var track: Track, val requesterName: String, val requesterID: Long

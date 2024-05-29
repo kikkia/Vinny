@@ -12,13 +12,14 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.menu.OrderedMenu.Builder
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.LinkState
-import dev.arbjerg.lavalink.client.TrackEndEvent
+import dev.arbjerg.lavalink.client.event.TrackEndEvent
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.VoiceChannel
 import org.apache.log4j.Logger
+import reactor.kotlin.core.publisher.toMono
 import java.time.Instant
 import java.time.temporal.ChronoField
 import java.util.*
@@ -40,7 +41,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun setPaused(pause: Boolean) {
         lavalink.getLink(guild.idLong).getPlayer()
-            .flatMap { it.setPaused(pause).asMono() }.subscribe{ this.isPaused = it.paused }
+            .flatMap { it.setPaused(pause).toMono() }.subscribe{ this.isPaused = it.paused }
     }
 
     fun getPaused() : Boolean {
@@ -86,7 +87,7 @@ class GuildVoiceConnection(val guild: Guild) {
         val link = lavalink.getLink(channel.guild.idLong)
 
         if (link.state == LinkState.CONNECTED && currentVoiceChannel?.members?.contains(channel.guild.selfMember) == false) {
-            link.destroyPlayer()
+            link.destroy()
         }
 
         try {
@@ -236,7 +237,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun cleanupPlayer() {
         val link = getLink()
-        link.destroyPlayer().block()
+        link.destroy().block()
         guild.jda.directAudioController.disconnect(guild)
         currentVoiceChannel = null
         trackProvider.clearAll()
@@ -309,7 +310,7 @@ class GuildVoiceConnection(val guild: Guild) {
         getLink().createOrUpdatePlayer()
             .setVolume(volume)
             .setTrack(track.track).subscribe{
-                if (lastTextChannel != null) {
+                if (lastTextChannel != null && getRepeatMode() != RepeatMode.REPEAT_ONE) {
                     sendNowPlayingUpdate()
                 }
             }

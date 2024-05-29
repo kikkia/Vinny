@@ -52,7 +52,7 @@ class MetricsReporter : Thread() {
         var queuedTracks = 0
         val lavaLinkClient = LavaLinkClient.getInstance()
         for (conn in voiceConnections) {
-            val link = lavaLinkClient.client.getLink(conn.guild.idLong)
+            val link = lavaLinkClient.client.getOrCreateLink(conn.guild.idLong)
             if (conn.isConnected() && conn.currentVoiceChannel != null) {
                 usersInVoice += conn.currentVoiceChannel!!.members.size - 1
                 queuedTracks += (1 + conn.getQueuedTracks().size)

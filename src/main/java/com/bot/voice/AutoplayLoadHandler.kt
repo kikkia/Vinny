@@ -2,10 +2,10 @@ package com.bot.voice
 
 import com.bot.metrics.MetricsManager
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
-import dev.arbjerg.lavalink.client.protocol.LoadFailed
-import dev.arbjerg.lavalink.client.protocol.PlaylistLoaded
-import dev.arbjerg.lavalink.client.protocol.SearchResult
-import dev.arbjerg.lavalink.client.protocol.TrackLoaded
+import dev.arbjerg.lavalink.client.player.LoadFailed
+import dev.arbjerg.lavalink.client.player.PlaylistLoaded
+import dev.arbjerg.lavalink.client.player.SearchResult
+import dev.arbjerg.lavalink.client.player.TrackLoaded
 import org.apache.log4j.Logger
 
 class AutoplayLoadHandler(private val guildVoiceConnection: GuildVoiceConnection) : AbstractAudioLoadResultHandler() {
