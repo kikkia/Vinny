@@ -1,7 +1,7 @@
 package voice;
 
 import com.bot.voice.QueuedAudioTrack;
-import dev.arbjerg.lavalink.client.protocol.Track;
+import dev.arbjerg.lavalink.client.player.Track;
 import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
 import org.junit.Before;
 import org.junit.Test;
