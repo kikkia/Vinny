@@ -30,7 +30,7 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
                 .toTypedArray().size == 2) trackNums =
             event.args.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray()[1].split("-".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        val trackUrls: MutableList<String>
+        var trackUrls: MutableList<String>
         if (trackNums.size == 2) {
             val to: Int
             val from: Int
@@ -54,6 +54,10 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
             trackUrls = result.tracks.subList(from, to).map { it.info.uri!! }.toMutableList()
         } else {
            trackUrls = result.tracks.map { it.info.uri!! }.toMutableList()
+        }
+        if (trackUrls.size > 20) {
+            event.reply("Long playlist detected, only loading the first 20 tracks of the playlist.")
+            trackUrls = trackUrls.subList(0, 19)
         }
         val msg = event.textChannel.sendMessage("Loading tracks from playlist...").complete()
         try {
