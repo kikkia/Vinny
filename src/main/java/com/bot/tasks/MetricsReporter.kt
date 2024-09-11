@@ -47,24 +47,6 @@ class MetricsReporter : Thread() {
         } catch (e: Exception) {
             logger.warning("Failed to get user count", e)
         }
-        val voiceConnections = GuildVoiceProvider.getInstance().getAll()
-        var usersInVoice = 0
-        var queuedTracks = 0
-        val lavaLinkClient = LavaLinkClient.getInstance()
-        for (conn in voiceConnections) {
-            val link = lavaLinkClient.client.getOrCreateLink(conn.guild.idLong)
-            if (conn.isConnected() && conn.currentVoiceChannel != null) {
-                usersInVoice += conn.currentVoiceChannel!!.members.size - 1
-                queuedTracks += (1 + conn.getQueuedTracks().size)
-                metricsManager.markConnectionAge(conn.getAge())
-                metricsManager.markActiveVoiceConnection(link.node.name, conn.region, conn.autoplay)
-            } else {
-                metricsManager.markIdleVoiceConnection(link.node.name, conn.region)
-            }
-        }
-        metricsManager.updateUsersInVoice(usersInVoice)
-        metricsManager.updateVoiceConnectionEntities(voiceConnections.size)
-        metricsManager.updateQueuedTracks(queuedTracks)
 
         metricsManager.updateGuildCount(guildCount)
         metricsManager.updateUserCount(userCount)
@@ -92,5 +74,24 @@ class MetricsReporter : Thread() {
 
         // We need to set this status after the sharding manager is built. This will ensure that it is set to this, not the default
         shardManager.shardManager.setActivity(Activity.playing("@Vinny help"))
+
+        val voiceConnections = GuildVoiceProvider.getInstance().getAll()
+        var usersInVoice = 0
+        var queuedTracks = 0
+        val lavaLinkClient = LavaLinkClient.getInstance()
+        for (conn in voiceConnections) {
+            val link = lavaLinkClient.client.getOrCreateLink(conn.guild.idLong)
+            if (conn.isConnected() && conn.currentVoiceChannel != null) {
+                usersInVoice += conn.currentVoiceChannel!!.members.size - 1
+                queuedTracks += (1 + conn.getQueuedTracks().size)
+                metricsManager.markConnectionAge(conn.getAge())
+                metricsManager.markActiveVoiceConnection(link.node.name, conn.region, conn.autoplay)
+            } else {
+                metricsManager.markIdleVoiceConnection(link.node.name, conn.region)
+            }
+        }
+        metricsManager.updateUsersInVoice(usersInVoice)
+        metricsManager.updateVoiceConnectionEntities(voiceConnections.size)
+        metricsManager.updateQueuedTracks(queuedTracks)
     }
 }
