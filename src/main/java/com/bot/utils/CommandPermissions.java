@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Role;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class CommandPermissions {
@@ -108,6 +109,12 @@ public class CommandPermissions {
             // If their in a voice channel the doesn't allow voice, then dont let them use it
             if (!commandEvent.getMember().getVoiceState().inVoiceChannel()) {
                 throw new ForbiddenCommandException("You must be in a voice channel to use a voice command");
+            }
+
+            if (Objects.equals(VinnyConfig.Companion.instance().getVoiceConfig().getDefaultSearchProvider(), "disabled")) {
+                throw new ForbiddenCommandException("Currently Vinny's voice service is under maintenance until further " +
+                        "notice. For more information see the support server. That is where " +
+                        "updates will be posted. Thank you for understanding.");
             }
         }
 
