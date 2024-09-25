@@ -110,6 +110,19 @@ class GuildVoiceConnection(val guild: Guild) {
         lastTextChannel = commandEvent.textChannel
     }
 
+    fun loadProviderTrack(toLoad: String, commandEvent: CommandEvent, providers: Queue<VoiceProvider>) {
+        val attemptingProvider = providers.poll()
+        val url = attemptingProvider.url + toLoad
+        metricsManager.markTrackLoaded()
+        println("Attempting with: $url")
+        val link = getLink()
+        if (link.state == LinkState.DISCONNECTED) {
+            joinChannel(commandEvent)
+        }
+        link.loadItem(url).subscribe(ProviderLLLoadHandler(this, commandEvent, toLoad, attemptingProvider, providers))
+        lastTextChannel = commandEvent.textChannel
+    }
+
     private fun loadAutoplayTrack(toLoad: String) {
         metricsManager.markTrackLoaded()
         val link = getLink()

@@ -81,6 +81,10 @@ class MetricsManager private constructor() {
         statsd!!.incrementCounter("voice.track.loaded")
     }
 
+    fun markProviderTrackLoadAttempt(name: String) {
+        statsd!!.incrementCounter("voice.provider.attempt", "provider:$name")
+    }
+
     fun markTrackPlayed(autoplay: Boolean, source: String) {
         statsd!!.incrementCounter("voice.track.played", "autoplay:${autoplay}", "source:$source")
     }
@@ -91,6 +95,10 @@ class MetricsManager private constructor() {
 
     fun markTrackLoadFailed() {
         statsd!!.incrementCounter("voice.track.loaded.failed")
+    }
+
+    fun markProviderFailed(name: String) {
+        statsd!!.incrementCounter("voice.provider.failed", "provider:$name")
     }
 
     fun updateCacheSize(name: String, count: Int) {
