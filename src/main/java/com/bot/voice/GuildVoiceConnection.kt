@@ -38,6 +38,7 @@ class GuildVoiceConnection(val guild: Guild) {
     var volumeLocked = false
     private var created = Instant.now()
     var region = "N/A"
+    var oauthConfig: GuildOauthConfig? = null
 
     fun setPaused(pause: Boolean) {
         lavalink.getLink(guild.idLong).getPlayer()
@@ -418,3 +419,8 @@ class GuildVoiceConnection(val guild: Guild) {
         }
     }
 }
+
+data class GuildOauthConfig(val tokenType: String,
+                            val accessToken: String,
+                            val refreshToken: String,
+                            val tokenExpires: Long)
