@@ -113,20 +113,20 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun loadTrack(toLoad: String, commandEvent: CommandEvent) {
-        metricsManager.markTrackLoaded()
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(commandEvent)
         }
         injectOauth(toLoad)
+        metricsManager.markTrackLoaded()
         link.loadItem(toLoad).subscribe(LLLoadHandler(this, commandEvent))
         lastTextChannel = commandEvent.textChannel
     }
 
     private fun loadAutoplayTrack(toLoad: String) {
-        metricsManager.markTrackLoaded()
         val link = getLink()
         injectOauth(toLoad)
+        metricsManager.markTrackLoaded()
         link.loadItem(toLoad).subscribe(AutoplayLoadHandler(this))
     }
 
@@ -157,8 +157,8 @@ class GuildVoiceConnection(val guild: Guild) {
         if (newIndex == tracks.size) {
             return
         }
-        metricsManager.markTrackLoaded()
         injectOauth(tracks[newIndex])
+        metricsManager.markTrackLoaded()
         link.loadItem(tracks[newIndex]).subscribe(
             PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, newIndex, failedCount))
     }
@@ -169,8 +169,8 @@ class GuildVoiceConnection(val guild: Guild) {
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(commandEvent)
         }
-        metricsManager.markTrackLoaded()
         injectOauth(tracks[0])
+        metricsManager.markTrackLoaded()
         link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, 0, 0))
         lastTextChannel = commandEvent.textChannel
     }
@@ -190,8 +190,8 @@ class GuildVoiceConnection(val guild: Guild) {
         if (newIndex == resumeSetup.tracks.size) {
             return
         }
-        metricsManager.markTrackLoaded()
         injectOauth(resumeSetup.tracks[newIndex].trackUrl)
+        metricsManager.markTrackLoaded()
         link.loadItem(resumeSetup.tracks[newIndex].trackUrl).subscribe(
             ResumeLLLoadHandler(this, loadingMessage, resumeSetup, newIndex, failedCount))
     }
@@ -204,10 +204,10 @@ class GuildVoiceConnection(val guild: Guild) {
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(currentVoiceChannel!!)
         }
-        metricsManager.markTrackLoaded()
         lastTextChannel!!.sendMessage("Resuming play after Vinny restart").queue()
         val loadingMessage = lastTextChannel!!.sendMessage("Loading previous queue...").complete()
         injectOauth(resumeSetup.tracks[0].trackUrl)
+        metricsManager.markTrackLoaded()
         link.loadItem(resumeSetup.tracks[0].trackUrl).subscribe(ResumeLLLoadHandler(this, loadingMessage, resumeSetup, 0, 0))
     }
 
@@ -216,8 +216,8 @@ class GuildVoiceConnection(val guild: Guild) {
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(commandEvent)
         }
-        metricsManager.markTrackLoaded()
         injectOauth(search)
+        metricsManager.markTrackLoaded()
         link.loadItem(search).subscribe(SearchLLLoadHandler(this, commandEvent, message, builder))
         lastTextChannel = commandEvent.textChannel
     }
