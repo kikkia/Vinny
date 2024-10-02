@@ -1,12 +1,18 @@
 package com.bot.voice
 
 import com.bot.db.GuildDAO
+import com.bot.db.OauthConfigDAO
+import com.bot.db.models.OauthConfig
 import com.bot.db.models.ResumeAudioGuild
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
+import com.bot.exceptions.OauthNotEnabledException
+import com.bot.exceptions.UserExposableException
 import com.bot.metrics.MetricsManager
 import com.bot.models.enums.RepeatMode
 import com.bot.utils.FormattingUtils
+import com.bot.utils.LLUtils
+import com.bot.utils.Oauth2Utils
 import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.menu.OrderedMenu.Builder
@@ -38,6 +44,8 @@ class GuildVoiceConnection(val guild: Guild) {
     var volumeLocked = false
     private var created = Instant.now()
     var region = "N/A"
+    var oauthConfig: OauthConfig? = null
+    var oauthConfigDAO = OauthConfigDAO.getInstance()
 
     fun setPaused(pause: Boolean) {
         lavalink.getLink(guild.idLong).getPlayer()
@@ -53,6 +61,8 @@ class GuildVoiceConnection(val guild: Guild) {
             ?: throw NotInVoiceException(commandEvent.client.warning + " You are not in a voice channel! Please join one to use this command.")
         try {
             joinChannel(toJoin)
+        } catch (e: UserExposableException) {
+            throw e
         } catch (e: Exception) {
             commandEvent.replyWarning("Failed to join voice channel: ${e.message}")
             cleanupPlayer()
@@ -90,6 +100,8 @@ class GuildVoiceConnection(val guild: Guild) {
             link.destroy()
         }
 
+        findOauth(channel)
+
         try {
             channel.jda.directAudioController.connect(channel)
             currentVoiceChannel = channel
@@ -106,6 +118,7 @@ class GuildVoiceConnection(val guild: Guild) {
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(commandEvent)
         }
+        injectOauth(toLoad)
         link.loadItem(toLoad).subscribe(LLLoadHandler(this, commandEvent))
         lastTextChannel = commandEvent.textChannel
     }
@@ -113,6 +126,7 @@ class GuildVoiceConnection(val guild: Guild) {
     private fun loadAutoplayTrack(toLoad: String) {
         metricsManager.markTrackLoaded()
         val link = getLink()
+        injectOauth(toLoad)
         link.loadItem(toLoad).subscribe(AutoplayLoadHandler(this))
     }
 
@@ -144,6 +158,7 @@ class GuildVoiceConnection(val guild: Guild) {
             return
         }
         metricsManager.markTrackLoaded()
+        injectOauth(tracks[newIndex])
         link.loadItem(tracks[newIndex]).subscribe(
             PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, newIndex, failedCount))
     }
@@ -155,6 +170,7 @@ class GuildVoiceConnection(val guild: Guild) {
             joinChannel(commandEvent)
         }
         metricsManager.markTrackLoaded()
+        injectOauth(tracks[0])
         link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, 0, 0))
         lastTextChannel = commandEvent.textChannel
     }
@@ -175,6 +191,7 @@ class GuildVoiceConnection(val guild: Guild) {
             return
         }
         metricsManager.markTrackLoaded()
+        injectOauth(resumeSetup.tracks[newIndex].trackUrl)
         link.loadItem(resumeSetup.tracks[newIndex].trackUrl).subscribe(
             ResumeLLLoadHandler(this, loadingMessage, resumeSetup, newIndex, failedCount))
     }
@@ -190,6 +207,7 @@ class GuildVoiceConnection(val guild: Guild) {
         metricsManager.markTrackLoaded()
         lastTextChannel!!.sendMessage("Resuming play after Vinny restart").queue()
         val loadingMessage = lastTextChannel!!.sendMessage("Loading previous queue...").complete()
+        injectOauth(resumeSetup.tracks[0].trackUrl)
         link.loadItem(resumeSetup.tracks[0].trackUrl).subscribe(ResumeLLLoadHandler(this, loadingMessage, resumeSetup, 0, 0))
     }
 
@@ -199,6 +217,7 @@ class GuildVoiceConnection(val guild: Guild) {
             joinChannel(commandEvent)
         }
         metricsManager.markTrackLoaded()
+        injectOauth(search)
         link.loadItem(search).subscribe(SearchLLLoadHandler(this, commandEvent, message, builder))
         lastTextChannel = commandEvent.textChannel
     }
@@ -307,6 +326,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
     private fun playTrack(track: QueuedAudioTrack) {
         metricsManager.markTrackPlayed(autoplay, track.track.info.sourceName)
+        injectOauth(track.track.info.uri!!)
         getLink().createOrUpdatePlayer()
             .setVolume(volume)
             .setTrack(track.track).subscribe{
@@ -330,6 +350,43 @@ class GuildVoiceConnection(val guild: Guild) {
     private fun shouldUpdateLoadingMessage(tracks: List<Any>, index: Int): Boolean {
         val updateInterval = (tracks.size / 5).coerceAtLeast(1)
         return index % updateInterval == 0 || tracks.size == index
+    }
+
+    private fun injectOauth(ident: String) {
+        if (oauthConfig != null) {
+            // Check for refresh
+            if (oauthConfig!!.needsRefresh()) {
+                Oauth2Utils.refreshAccessToken(oauthConfig!!)
+            }
+            LLUtils.injectOauth(oauthConfig!!.accessToken, ident, getLink().node)
+        } else {
+            findOauth()
+        }
+    }
+
+    private fun findOauth() {
+        if (currentVoiceChannel == null) {return}
+        findOauth(currentVoiceChannel!!)
+    }
+
+    private fun findOauth(channel: VoiceChannel) {
+        if (oauthConfig == null) {
+            //  search for a oauth config to use for anyone in channel
+            // Refresh if needed.
+            for (m in channel.members) {
+                var config = oauthConfigDAO.getOauthConfig(m.user.id)
+                if (config != null) {
+                    if (config.needsRefresh()) {
+                        config = Oauth2Utils.refreshAccessToken(config)
+                    }
+                    oauthConfig = config
+                }
+            }
+            if (oauthConfig == null) {
+                throw OauthNotEnabledException("No signed in user present. Please login with the `~login` command. " +
+                        "This is needed for Vinny to be able to use voice.")
+            }
+        }
     }
 
     fun toggleVolumeLock() : Boolean {

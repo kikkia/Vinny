@@ -197,6 +197,18 @@ class MetricsManager private constructor() {
         statsd!!.recordGaugeValue("connections.voice.tracks", count.toLong())
     }
 
+    fun markOauthGenerated(success: Boolean) {
+        statsd!!.incrementCounter("voice.oauth.generate", "success:$success")
+    }
+
+    fun markOauthComplete(success: Boolean) {
+        statsd!!.incrementCounter("voice.oauth.complete", "success:$success")
+    }
+
+    fun updateTotalOuathUsers(count: Int) {
+        statsd!!.recordGaugeValue("voice.oauth.users", count.toLong())
+    }
+
     fun updatePing(shard: Int, ping: Long) {
         val shardTag = "shard:$shard"
         statsd!!.recordGaugeValue("discord.ping", ping, shardTag)

@@ -118,6 +118,8 @@ public class ShardingManager {
                     new FastForwardCommand(),
                     new RewindCommand(),
                     new AutoplayCommand(),
+                    new LoginDeviceCommand(),
+                    new RefreshTokenCommand(),
                     //new SpeedCommand(),
 
                     // Battle Royale
