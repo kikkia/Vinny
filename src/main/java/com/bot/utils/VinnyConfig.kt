@@ -63,7 +63,8 @@ data class VoiceConfig(val nodes: List<LavalinkNode>?,
                        val autoplayToken: String?,
                        val autoplayPrefix: String?,
                        val autoplaySource: String?,
-                       val autoplaySearch: String?)
+                       val autoplaySearch: String?,
+                       val oauthConfig: OauthProperties)
 
 data class LavalinkNode(val address: String,
                         val password: String,
@@ -92,3 +93,12 @@ data class CachingConfig(val enabled: Boolean,
     val redisUser: String?,
     val redisPassword: String?,
     val redisPort: String?)
+
+data class OauthProperties(val oauthPollAddress: String,
+        val oauthGrantType: String,
+        val clientId: String,
+        val clientSecret: String,
+        val scopes: String,
+        val refreshAddress: String,
+        val device: String,
+        val codeAddress: String)

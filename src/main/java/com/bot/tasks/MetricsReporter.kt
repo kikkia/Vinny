@@ -6,6 +6,7 @@ import com.bot.caching.R34Cache
 import com.bot.caching.SubredditCache
 import com.bot.db.GuildDAO
 import com.bot.db.MembershipDAO
+import com.bot.db.OauthConfigDAO
 import com.bot.db.UserDAO
 import com.bot.metrics.MetricsManager
 import com.bot.utils.Logger
@@ -25,6 +26,7 @@ class MetricsReporter : Thread() {
     private val membershipDAO: MembershipDAO = MembershipDAO.getInstance()
     private val guildDAO = GuildDAO.getInstance()
     private val userDAO = UserDAO.getInstance()
+    private val oauthConfigDAO = OauthConfigDAO.getInstance()
     private val logger = Logger(this.javaClass.simpleName)
     private var userCount = 0
 
@@ -93,5 +95,6 @@ class MetricsReporter : Thread() {
         metricsManager.updateUsersInVoice(usersInVoice)
         metricsManager.updateVoiceConnectionEntities(voiceConnections.size)
         metricsManager.updateQueuedTracks(queuedTracks)
+        metricsManager.updateTotalOuathUsers(oauthConfigDAO.getTotalOauthConfigs())
     }
 }

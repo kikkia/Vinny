@@ -1,22 +1,29 @@
 package com.bot.tasks
 
-import com.bot.utils.Oauth2Utils
-import com.bot.voice.GuildOauthConfig
+import com.bot.db.OauthConfigDAO
+import com.bot.db.models.OauthConfig
+import com.bot.metrics.MetricsManager
+import com.bot.utils.VinnyConfig
 import com.bot.voice.GuildVoiceProvider
 import com.jagrosh.jdautilities.command.CommandEvent
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.StringEntity
+import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.impl.client.HttpClients
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
+import java.time.Instant
 
-class OauthCheckerTask(val deviceCode: String, 
-                       val interval: Long, 
+class OauthCheckerTask(private val deviceCode: String,
+                       private val interval: Long,
                        val commandEvent: CommandEvent): Thread() {
-    val client = HttpClients.createDefault()
-    val guildProvider = GuildVoiceProvider.getInstance()
+    val client: CloseableHttpClient = HttpClients.createDefault()
+    private val guildProvider = GuildVoiceProvider.getInstance()
+    private val oauthDAO = OauthConfigDAO.getInstance()
+    private val oauthProperties = VinnyConfig.instance().voiceConfig.oauthConfig
     private val log = LoggerFactory.getLogger(OauthCheckerTask::class.java)
+    private val metricsManager = MetricsManager.instance
 
 
     override fun run() {
@@ -28,7 +35,6 @@ class OauthCheckerTask(val deviceCode: String,
                         sleep(interval)
                         continue
                     }
-                    // TODO: Metrics
                     "expired_token" -> {
                         commandEvent.replyError("Linking to account failed. It looks like it's timed out. Please try again.")
                     }
@@ -40,28 +46,33 @@ class OauthCheckerTask(val deviceCode: String,
                     else -> {
                         commandEvent.replyError("An unknown error occurred while checking for signin completion.")
                         log.error("Error with Oauth2 flow: {}", response.errorMessage)
+                        // Only one that may be our fault, not timeout or deny
+                        metricsManager!!.markOauthComplete(false)
                     }
                 }
                 client.close()
                 return
             }
-            commandEvent.replySuccess("Successfully retrieved token ${response.refreshToken} --- ${response.accessToken}")
             val conn = guildProvider.getGuildVoiceConnection(commandEvent.guild)
-            conn.oauthConfig = GuildOauthConfig(response.tokenType, response.accessToken, response.refreshToken, response.tokenExpires)
+            val newConfig = OauthConfig(commandEvent.author.id, response.refreshToken, response.accessToken, response.tokenType, response.tokenExpires)
+            conn.oauthConfig = newConfig
+            oauthDAO.setOauthConfig(newConfig)
+            commandEvent.replySuccess("Confirmed the signin, everyone should thank ${commandEvent.member.effectiveName}! You can now use voice commands.")
+            metricsManager!!.markOauthComplete(true)
             client.close()
             return
         }
     }
 
-    fun poll(): OauthPollResponse {
+    private fun poll(): OauthPollResponse {
         val requestJson: String = JSONObject()
-                .put("client_id", Oauth2Utils.CLIENT_ID)
-                .put("client_secret", Oauth2Utils.CLIENT_SECRET)
+                .put("client_id", oauthProperties.clientId)
+                .put("client_secret", oauthProperties.clientSecret)
                 .put("code", deviceCode)
-                .put("grant_type", "http://oauth.net/grant_type/device/1.0")
+                .put("grant_type", oauthProperties.oauthGrantType)
                 .toString()
 
-        val request = HttpPost("https://www.youtube.com/o/oauth2/token")
+        val request = HttpPost(oauthProperties.oauthPollAddress)
         val body = StringEntity(requestJson, ContentType.APPLICATION_JSON)
         request.entity = body
         while (true) {
@@ -72,7 +83,7 @@ class OauthCheckerTask(val deviceCode: String,
                 }
             } catch (e: Exception) {
                 log.error("Unknown error in oauth poller", e)
-                return OauthPollResponse("","","",0,e.message ?: "RIP")
+                return OauthPollResponse("","","",Instant.now(),e.message ?: "RIP")
             }
         }
     }
@@ -81,19 +92,19 @@ class OauthCheckerTask(val deviceCode: String,
 data class OauthPollResponse(val tokenType: String,
         val accessToken: String,
         val refreshToken: String,
-        val tokenExpires: Long,
+        val tokenExpires: Instant,
         val errorMessage: String) {
     companion object {
         fun fromJson(json: JSONObject): OauthPollResponse {
             if (json.has("error") && !json.isNull("error")) {
-                return OauthPollResponse("","","",0, json.getString("error"))
+                return OauthPollResponse("","","",Instant.now(), json.getString("error"))
             }
             val expiresIn: Long = json.getLong("expires_in")
             return OauthPollResponse(
                     json.getString("token_type"),
                     json.getString("access_token"),
                     json.optString("refresh_token"),
-                    System.currentTimeMillis() + expiresIn * 1000 - 60000,
+                    Instant.ofEpochSecond(System.currentTimeMillis() + expiresIn * 1000 - 60000),
                     ""
             )
         }

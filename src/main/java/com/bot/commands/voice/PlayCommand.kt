@@ -41,8 +41,7 @@ class PlayCommand(private val bot: Bot) : VoiceCommand() {
             val searchPrefix = VinnyConfig.instance().voiceConfig.defaultSearchProvider ?: "scsearch:"
             url = searchPrefix.plus(commandEvent.args)
         }
-        commandEvent.reply("\u231A Loading... `[" + commandEvent.args + "]`") { _: Message? ->
-            guildVoiceConnection.loadTrack(url, commandEvent)
-        }
+        commandEvent.channel.sendMessage("\u231A Loading... `[" + commandEvent.args + "]`").complete()
+        guildVoiceConnection.loadTrack(url, commandEvent)
     }
 }

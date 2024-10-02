@@ -6,6 +6,7 @@ import com.bot.db.UserDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.InvalidInputException;
 import com.bot.exceptions.PermsOutOfSyncException;
+import com.bot.exceptions.UserExposableException;
 import com.bot.metrics.MetricsManager;
 import com.bot.tasks.CommandTaskExecutor;
 import com.bot.utils.CommandPermissions;
@@ -91,7 +92,7 @@ public abstract class BaseCommand extends Command {
                  MDC.MDCCloseable argsCloseable = MDC.putCloseable("args", commandEvent.getArgs())){
                 executeCommand(commandEvent);
             } catch (Exception e) {
-                if (e instanceof InvalidInputException) {
+                if (e instanceof UserExposableException) {
                     commandEvent.replyWarning(e.getMessage());
                     return;
                 }
