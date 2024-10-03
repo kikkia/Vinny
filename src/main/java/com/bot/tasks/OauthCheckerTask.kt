@@ -24,10 +24,16 @@ class OauthCheckerTask(private val deviceCode: String,
     private val oauthProperties = VinnyConfig.instance().voiceConfig.oauthConfig
     private val log = LoggerFactory.getLogger(OauthCheckerTask::class.java)
     private val metricsManager = MetricsManager.instance
+    private val start = Instant.now()
 
 
     override fun run() {
         while (true) {
+            // 10 min timeout
+            if (start.isBefore(Instant.now().minusSeconds(600))) {
+                commandEvent.replyError("Linking to account failed. It looks like it's timed out. Please try again.")
+                return
+            }
             val response = poll()
             if (response.errorMessage.isNotEmpty()) {
                 when(response.errorMessage) {

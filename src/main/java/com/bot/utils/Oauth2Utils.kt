@@ -44,7 +44,7 @@ class Oauth2Utils {
          fun initOauthFlow(commandEvent: CommandEvent): OauthSetupResponse {
             val response: OauthSetupResponse = fetchDeviceCode()
             // Lets get a poller going to check for the flow completion
-            OauthCheckerTask(response.deviceCode, if (response.interval == 0L) 5000 else response.interval, commandEvent).start()
+            OauthCheckerTask(response.deviceCode, if (response.interval == 0L) 10000 else response.interval, commandEvent).start()
             return response
          }
 
