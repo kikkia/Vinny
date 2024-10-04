@@ -85,6 +85,7 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
 
     override fun loadFailed(result: LoadFailed) {
         MetricsManager.instance!!.markTrackLoadFailed()
-        event.textChannel.sendMessage("Failed to load track! " + result.exception.message).queue()
+        event.textChannel.sendMessage("Failed to load track! If this keeps happening, you can try `~refresh` or " +
+                "`~login` again. Those can help." + result.exception.message).queue()
     }
 }
