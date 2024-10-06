@@ -16,7 +16,7 @@ class OauthConfig(val userId: String, val refreshToken: String, val accessToken:
                     set.getString("refresh_token"),
                     set.getString("access_token"),
                     set.getString("token_type"),
-                    Instant.ofEpochSecond(set.getLong("expiry")))
+                    Instant.ofEpochMilli(set.getLong("expiry")))
         }
     }
 }

@@ -356,7 +356,8 @@ class GuildVoiceConnection(val guild: Guild) {
         if (oauthConfig != null) {
             // Check for refresh
             if (oauthConfig!!.needsRefresh()) {
-                Oauth2Utils.refreshAccessToken(oauthConfig!!)
+                oauthConfig = Oauth2Utils.refreshAccessToken(oauthConfig!!)
+                oauthConfigDAO.setOauthConfig(oauthConfig!!)
             }
             LLUtils.injectOauth(oauthConfig!!.accessToken, ident, getLink().node)
         } else {
@@ -378,6 +379,7 @@ class GuildVoiceConnection(val guild: Guild) {
                 if (config != null) {
                     if (config.needsRefresh()) {
                         config = Oauth2Utils.refreshAccessToken(config)
+                        oauthConfigDAO.setOauthConfig(config)
                     }
                     oauthConfig = config
                 }
