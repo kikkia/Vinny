@@ -108,7 +108,7 @@ class Oauth2Utils {
                 val responseBody = response.body!!.string()
                 val responseJson = JSONObject(responseBody)
                 // Process the response JSON object
-                println("Response JSON: $responseJson")
+                // println("Response JSON: $responseJson")
                 val parsed = OauthPollResponse.fromJson(responseJson)
                 return OauthConfig(oauthConfig.userId, oauthConfig.refreshToken, parsed.accessToken, parsed.tokenType, parsed.tokenExpires)
 
