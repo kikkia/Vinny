@@ -47,6 +47,11 @@ class GuildVoiceConnection(val guild: Guild) {
     var oauthConfig: OauthConfig? = null
     var oauthConfigDAO = OauthConfigDAO.getInstance()
 
+    // Used for ignoring inject creds
+    val soundcloudRegex = Regex(
+            """https://soundcloud\.com/(?:[a-z0-9]+/)?(?:[a-z0-9]+/(?:[a-z0-9]+|sets/[a-z0-9]+))?"""
+    )
+
     fun setPaused(pause: Boolean) {
         lavalink.getLink(guild.idLong).getPlayer()
             .flatMap { it.setPaused(pause).toMono() }.subscribe{ this.isPaused = it.paused }
@@ -353,16 +358,21 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     private fun injectOauth(ident: String) {
+        if (soundcloudRegex.matches(ident)) {
+            // can skip
+            return
+        }
+
         if (oauthConfig != null) {
             // Check for refresh
             if (oauthConfig!!.needsRefresh()) {
                 oauthConfig = Oauth2Utils.refreshAccessToken(oauthConfig!!)
                 oauthConfigDAO.setOauthConfig(oauthConfig!!)
             }
-            LLUtils.injectOauth(oauthConfig!!.accessToken, ident, getLink().node)
         } else {
             findOauth()
         }
+        LLUtils.injectOauth(oauthConfig!!.accessToken, ident, getLink().node)
     }
 
     private fun findOauth() {

@@ -102,7 +102,7 @@ class Oauth2Utils {
                 if (!response.isSuccessful) {
                     val statusCode = response.code
                     println("Error: Status code $statusCode")
-                    throw OauthRefreshException("Failed to refresh oauth token. Status code: $statusCode")
+                    throw OauthRefreshException("Failed to refresh oauth token. You may need to login again, try `~login` again to fix. Status code: $statusCode")
                 }
 
                 val responseBody = response.body!!.string()
@@ -110,7 +110,7 @@ class Oauth2Utils {
                 // Process the response JSON object
                 println("Response JSON: $responseJson")
                 val parsed = OauthPollResponse.fromJson(responseJson)
-                return OauthConfig(oauthConfig.userId, parsed.refreshToken, parsed.accessToken, parsed.tokenType, parsed.tokenExpires)
+                return OauthConfig(oauthConfig.userId, oauthConfig.refreshToken, parsed.accessToken, parsed.tokenType, parsed.tokenExpires)
 
             } catch (e: Exception) {
                 println("Error: ${e.message}")
