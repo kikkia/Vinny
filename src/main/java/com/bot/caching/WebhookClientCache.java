@@ -20,9 +20,9 @@ public class WebhookClientCache {
     }
 
     private WebhookClientCache() {
-        MAX_SIZE = 1000;
-        CACHE_CHECK_INTERVAL = 36000;
-        CACHE_OBJECT_LIFETIME = 360000;
+        MAX_SIZE = 10000;
+        CACHE_CHECK_INTERVAL = 360000;
+        CACHE_OBJECT_LIFETIME = 36000000;
 
         cache = new CustomWebhookCache("webhook", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
 
