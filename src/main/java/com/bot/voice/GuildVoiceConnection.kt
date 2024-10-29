@@ -386,7 +386,7 @@ class GuildVoiceConnection(val guild: Guild) {
         if (oauthConfig != null) {
             // Check for refresh
             if (oauthConfig!!.needsRefresh()) {
-                oauthConfig = Oauth2Utils.refreshAccessToken(oauthConfig!!)
+                setOauthConfig(Oauth2Utils.refreshAccessToken(oauthConfig!!))
                 oauthConfigDAO.setOauthConfig(oauthConfig!!)
             }
         } else {
@@ -411,7 +411,7 @@ class GuildVoiceConnection(val guild: Guild) {
                         config = Oauth2Utils.refreshAccessToken(config)
                         oauthConfigDAO.setOauthConfig(config)
                     }
-                    oauthConfig = config
+                    setOauthConfig(config)
                 }
             }
             if (oauthConfig == null) {
@@ -497,6 +497,11 @@ class GuildVoiceConnection(val guild: Guild) {
         } catch (e: Exception) {
             logger.error("Guild voice: could not send message to channel", e)
         }
+    }
+
+    fun setOauthConfig(config: OauthConfig) {
+        oauthConfig = config
+        failedLoadedTracks.clear()
     }
 
     private fun sendNowPlayingUpdate() {

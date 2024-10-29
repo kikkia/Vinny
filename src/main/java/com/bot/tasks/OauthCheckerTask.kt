@@ -61,7 +61,7 @@ class OauthCheckerTask(private val deviceCode: String,
             }
             val conn = guildProvider.getGuildVoiceConnection(commandEvent.guild)
             val newConfig = OauthConfig(commandEvent.author.id, response.refreshToken, response.accessToken, response.tokenType, response.tokenExpires)
-            conn.oauthConfig = newConfig
+            conn.setOauthConfig(newConfig)
             oauthDAO.setOauthConfig(newConfig)
             commandEvent.replySuccess("Confirmed the signin, everyone should thank ${commandEvent.member.effectiveName}! You can now use voice commands.")
             metricsManager!!.markOauthComplete(true)
