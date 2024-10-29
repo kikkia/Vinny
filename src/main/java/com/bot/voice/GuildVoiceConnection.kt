@@ -19,6 +19,7 @@ import com.jagrosh.jdautilities.menu.OrderedMenu.Builder
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.LinkState
 import dev.arbjerg.lavalink.client.event.TrackEndEvent
+import dev.arbjerg.lavalink.client.player.Track
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Message
@@ -29,6 +30,7 @@ import reactor.kotlin.core.publisher.toMono
 import java.time.Instant
 import java.time.temporal.ChronoField
 import java.util.*
+import kotlin.collections.HashSet
 
 class GuildVoiceConnection(val guild: Guild) {
     val logger = Logger.getLogger(this::class.java.name)
@@ -36,6 +38,7 @@ class GuildVoiceConnection(val guild: Guild) {
     val metricsManager = MetricsManager.instance!!
     private val trackProvider = TrackProvider()
     private val autoplayQueue = LinkedList<String>()
+    private val failedLoadedTracks = HashSet<String>()
     var currentVoiceChannel: VoiceChannel? = null
     var lastTextChannel: TextChannel? = null
     private var isPaused = false
@@ -46,6 +49,7 @@ class GuildVoiceConnection(val guild: Guild) {
     var region = "N/A"
     var oauthConfig: OauthConfig? = null
     var oauthConfigDAO = OauthConfigDAO.getInstance()
+    var failedAttempt = 0
 
     // Used for ignoring inject creds
     val soundcloudRegex = Regex(
@@ -255,6 +259,22 @@ class GuildVoiceConnection(val guild: Guild) {
             }
             loadAutoplayTrack(autoplayQueue.poll())
         } else {
+            // Prevent repeating failed loads and plays
+            if (trackProvider.getRepeateMode() != RepeatMode.REPEAT_NONE) {
+                if (failedLoadedTracks.contains(next.track.info.uri)) {
+                    failedAttempt += 1
+                    if (failedAttempt >= 5) {
+                        sendMessageToChannel("Failed to load 5 tracks in a row, leaving voice. " +
+                                "Please try again, if problems persist, try logging in with another account.")
+                        cleanupPlayer()
+                        return
+                    }
+                    sendMessageToChannel("Skipping track load that I have previously failed: ${next.track.info.title}")
+                    nextTrack(skipping)
+                }
+            } else {
+                failedAttempt = 0
+            }
             playTrack(next)
         }
     }
@@ -464,6 +484,11 @@ class GuildVoiceConnection(val guild: Guild) {
                 }
             }
         }
+    }
+
+    fun markFailedLoad(failed: Track) {
+        // Mark a failed load track so we dont infinite loop autoplay it
+        failedLoadedTracks.add(failed.info.uri!!)
     }
 
     fun sendMessageToChannel(msg: String) {

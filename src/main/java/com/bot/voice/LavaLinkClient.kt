@@ -52,6 +52,8 @@ class LavaLinkClient private constructor() {
         client.on(TrackExceptionEvent::class.java).subscribe {
             try {
                 metricsManager!!.markLLTrackException(it)
+                val gConn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(it.guildId)
+                gConn!!.markFailedLoad(it.track)
                 logger.warning("TRACK EXCEPTION EVENT: ${it.exception}")
             } catch (e: Exception) {
                 logger.severe("BIG BAD: Exception in client.on track exception ${e.message}")
@@ -79,7 +81,7 @@ class LavaLinkClient private constructor() {
         return client.getOrCreateLink(guildId)
     }
 
-    fun regionGroupFromString(name: String?): IRegionFilter {
+    private fun regionGroupFromString(name: String?): IRegionFilter {
         if ((name?.lowercase() ?: "") == "eu") {
             return RegionGroup.EUROPE
         }
