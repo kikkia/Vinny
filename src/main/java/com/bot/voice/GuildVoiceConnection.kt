@@ -386,7 +386,7 @@ class GuildVoiceConnection(val guild: Guild) {
         if (oauthConfig != null) {
             // Check for refresh
             if (oauthConfig!!.needsRefresh()) {
-                setOauthConfig(Oauth2Utils.refreshAccessToken(oauthConfig!!))
+                updateOauthConfig(Oauth2Utils.refreshAccessToken(oauthConfig!!))
                 oauthConfigDAO.setOauthConfig(oauthConfig!!)
             }
         } else {
@@ -411,7 +411,7 @@ class GuildVoiceConnection(val guild: Guild) {
                         config = Oauth2Utils.refreshAccessToken(config)
                         oauthConfigDAO.setOauthConfig(config)
                     }
-                    setOauthConfig(config)
+                    updateOauthConfig(config)
                 }
             }
             if (oauthConfig == null) {
@@ -499,7 +499,7 @@ class GuildVoiceConnection(val guild: Guild) {
         }
     }
 
-    fun setOauthConfig(config: OauthConfig) {
+    fun updateOauthConfig(config: OauthConfig) {
         oauthConfig = config
         failedLoadedTracks.clear()
     }
