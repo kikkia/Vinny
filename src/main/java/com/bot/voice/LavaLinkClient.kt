@@ -51,7 +51,7 @@ class LavaLinkClient private constructor() {
         }
         client.on(TrackExceptionEvent::class.java).subscribe {
             try {
-                metricsManager!!.markLLTrackException(it)
+                metricsManager!!.markLLTrackException(it, it.node.name)
                 val gConn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(it.guildId)
                 gConn!!.markFailedLoad(it.track)
                 logger.warning("TRACK EXCEPTION EVENT: ${it.exception}")

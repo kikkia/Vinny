@@ -226,8 +226,9 @@ class MetricsManager private constructor() {
     fun markConnectedVoiceRegion(region: String) {
         statsd!!.incrementCounter("connections.voice.regional", "disc_region:$region")
     }
-    fun markConnectionAge(minutes: Long) {
-        statsd!!.recordDistributionValue("connections.voice.age", minutes)
+
+    fun markConnectionAge(minutes: Long, nodeName: String) {
+        statsd!!.recordDistributionValue("connections.voice.age", minutes, "node:${nodeName}")
     }
 
     fun markR34Request(provider: R34Provider) {
@@ -242,8 +243,8 @@ class MetricsManager private constructor() {
         statsd!!.incrementCounter("r34.response", "provider:${provider.name}", "success:$success")
     }
 
-    fun markLLTrackException(trackExceptionEvent: TrackExceptionEvent) {
-        statsd!!.incrementCounter("voice.track.exception", "message:${trackExceptionEvent.exception.message}")
+    fun markLLTrackException(trackExceptionEvent: TrackExceptionEvent, nodeName: String) {
+        statsd!!.incrementCounter("voice.track.exception", "message:${trackExceptionEvent.exception.message}", "node:${nodeName}")
     }
 
     fun updateLLStats() {

@@ -86,7 +86,7 @@ class MetricsReporter : Thread() {
             if (conn.isConnected() && conn.currentVoiceChannel != null) {
                 usersInVoice += conn.currentVoiceChannel!!.members.size - 1
                 queuedTracks += (1 + conn.getQueuedTracks().size)
-                metricsManager.markConnectionAge(conn.getAge())
+                metricsManager.markConnectionAge(conn.getAge(), link.node.name)
                 metricsManager.markActiveVoiceConnection(link.node.name, conn.region, conn.autoplay)
             } else {
                 metricsManager.markIdleVoiceConnection(link.node.name, conn.region)
