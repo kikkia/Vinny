@@ -4,6 +4,7 @@ import com.bot.exceptions.NoSuchResourceException;
 import com.bot.models.RssProvider;
 import com.bot.utils.ConstantStrings;
 import com.bot.utils.HttpUtils;
+import com.bot.utils.TwitchUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import datadog.trace.api.Trace;
@@ -58,7 +59,7 @@ public class SubscribeTwitchCommand extends CreateSubscriptionCommand {
             }
 
             try {
-                id = HttpUtils.getTwitchIdForUsername(subject);
+                id = TwitchUtils.Companion.getTwitchIdForUsername(subject);
             }  catch (NoSuchResourceException e) {
                 commandEvent.replyWarning(ConstantStrings.TWITCH_SUB_NOT_FOUND);
                 return;

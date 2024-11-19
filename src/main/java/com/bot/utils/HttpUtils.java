@@ -143,37 +143,6 @@ public class HttpUtils {
         }
     }
 
-    public static byte[] getUrlAsByteArray(String uri, String refererUrl) {
-        try (CloseableHttpClient client = HttpClients.createDefault()){
-            HttpGet httpget = new HttpGet(uri);
-            httpget.addHeader("referer", refererUrl);
-            HttpResponse response = client.execute(httpget);
-            HttpEntity entity = response.getEntity();
-            try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                entity.writeTo(baos);
-                return baos.toByteArray();
-            }
-        } catch (Exception e) {
-            logger.severe("Failed to get url as byteArray", e);
-            return null;
-        }
-    }
-
-    public static String getTwitchIdForUsername(String username) throws IOException, NoSuchResourceException {
-        String uri = "https://api.twitch.tv/kraken/users?login=" + username;
-        try (CloseableHttpClient client = HttpClients.createDefault()){
-            HttpGet httpget = new HttpGet(uri);
-            httpget.addHeader("Client-ID", Objects.requireNonNull(config.getThirdPartyConfig()).getTwitchClientId());
-            httpget.addHeader("Accept", "application/vnd.twitchtv.v5+json");
-            HttpResponse response = client.execute(httpget);
-            JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
-            if (jsonResponse.getInt("_total") == 0) {
-                throw new NoSuchResourceException("User not found");
-            }
-            return jsonResponse.getJSONArray("users").getJSONObject(0).getString("_id");
-        }
-    }
-
     public static String getYoutubeIdForChannelUrl(String url) throws IOException, NoSuchResourceException, InvalidInputException {
         boolean lookup = url.contains("https://www.youtube.com/c/");
         String token = getYTChannelIdToken();

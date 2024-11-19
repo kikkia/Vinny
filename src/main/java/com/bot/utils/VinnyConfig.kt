@@ -78,6 +78,7 @@ data class RSSConfig(val enable: Boolean,
 
 data class ThirdPartyConfig(val p90Token: String?,
                             val twitchClientId: String?,
+                            val twitchClientSecret: String?,
                             val pixivUser: String?,
                             val pixivPass: String?,
                             val sauceProxy: String?,
