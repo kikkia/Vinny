@@ -28,6 +28,7 @@ class RebootAnnounceCommand : OwnerCommand() {
                 } catch (e: Exception) {
                     logger.severe("Failed to store guild ${conn.guild.id}", e)
                     commandEvent.replyError("Failed to store for ${conn.guild}, $e")
+                    e.printStackTrace()
                 }
                 conn.lastTextChannel!!.sendMessage("Vinny is rebooting for maintenance. I saved your queue and position in the current track. I will resume when I am done updating. If you want to follow the latest updates for Vinny, join the support server with the `~support` command. Sorry for the inconvenience.").complete()
             }
