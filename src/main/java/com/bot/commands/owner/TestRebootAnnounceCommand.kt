@@ -13,6 +13,7 @@ class TestRebootAnnounceCommand : OwnerCommand() {
     }
 
     override fun executeCommand(commandEvent: CommandEvent) {
+        resumeAudioDAO.removeAll()
         val connections = GuildVoiceProvider.getInstance().getAll()
         for (conn in connections) {
             if (conn.nowPlaying() != null) {
