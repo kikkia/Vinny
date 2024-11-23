@@ -7,12 +7,14 @@ import com.bot.voice.GuildVoiceProvider
 import com.jagrosh.jdautilities.command.CommandEvent
 
 class RebootAnnounceCommand : OwnerCommand() {
-    val resumeAudioDAO = ResumeAudioDAO.getInstance()
+    private val resumeAudioDAO = ResumeAudioDAO.getInstance()
     init {
         name = "reboot"
     }
 
     override fun executeCommand(commandEvent: CommandEvent) {
+        // Just pre-emptively remove all leftovers
+        resumeAudioDAO.removeAll()
         val connections = GuildVoiceProvider.getInstance().getAll()
         for (conn in connections) {
             if (conn.nowPlaying() != null) {

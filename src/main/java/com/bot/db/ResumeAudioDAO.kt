@@ -136,4 +136,21 @@ class ResumeAudioDAO {
         }
     }
 
+    // Clears all records, only used to clear out before new generation of resume queues.
+    fun removeAll() {
+        var query = "DELETE FROM resume_audio_track"
+        write.connection.use { connection ->
+            connection.prepareStatement(query).use { statement ->
+                statement.executeUpdate()
+            }
+        }
+
+        query = "DELETE FROM resume_audio_guild"
+        write.connection.use { connection ->
+            connection.prepareStatement(query).use { statement ->
+                statement.executeUpdate()
+            }
+        }
+    }
+
 }
