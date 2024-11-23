@@ -19,6 +19,7 @@ import com.jagrosh.jdautilities.menu.OrderedMenu.Builder
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.LinkState
 import dev.arbjerg.lavalink.client.event.TrackEndEvent
+import dev.arbjerg.lavalink.client.event.TrackExceptionEvent
 import dev.arbjerg.lavalink.client.player.Track
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
@@ -211,7 +212,14 @@ class GuildVoiceConnection(val guild: Guild) {
 
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
-            joinChannel(currentVoiceChannel!!)
+            try {
+                joinChannel(currentVoiceChannel!!)
+            } catch (e: Exception) {
+                if (e is OauthNotEnabledException) {
+                    sendMessageToChannel(e.message!!)
+                    return
+                }
+            }
         }
         lastTextChannel!!.sendMessage("Resuming play after Vinny restart").queue()
         val loadingMessage = lastTextChannel!!.sendMessage("Loading previous queue...").complete()
@@ -486,9 +494,10 @@ class GuildVoiceConnection(val guild: Guild) {
         }
     }
 
-    fun markFailedLoad(failed: Track) {
+    fun markFailedLoad(failed: Track, exceptionEvent: TrackExceptionEvent) {
         // Mark a failed load track so we dont infinite loop autoplay it
         failedLoadedTracks.add(failed.info.uri!!)
+        sendMessageToChannel("Failed to load track `${failed.info.title}`. The error I received was: `${exceptionEvent.exception.message}`.")
     }
 
     fun sendMessageToChannel(msg: String) {

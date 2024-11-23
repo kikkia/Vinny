@@ -42,21 +42,24 @@ class LavaLinkClient private constructor() {
                 return@subscribe
             } else if (!event.endReason.mayStartNext) {
                 logger.warning("Received track end event, may NOT start next: ${event.endReason.name}")
+                metricsManager!!.markLLTrackMayNotStartNext(event, event.node.name)
                 return@subscribe
             }
             gConn.onTrackEnd(event)
             } catch (e: Exception) {
                 logger.severe("BIG BAD: Exception in client.on track end ${e.message}")
+                metricsManager!!.markBigBadException(e, "LLTrackEndHandler")
             }
         }
         client.on(TrackExceptionEvent::class.java).subscribe {
             try {
                 metricsManager!!.markLLTrackException(it, it.node.name)
                 val gConn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(it.guildId)
-                gConn!!.markFailedLoad(it.track)
+                gConn!!.markFailedLoad(it.track, it)
                 logger.warning("TRACK EXCEPTION EVENT: ${it.exception}")
             } catch (e: Exception) {
                 logger.severe("BIG BAD: Exception in client.on track exception ${e.message}")
+                metricsManager!!.markBigBadException(e, "LL.TrackExceptionHandler")
             }
         }
         guildClients = ConcurrentHashMap()

@@ -7,6 +7,7 @@ import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.Command
 import com.timgroup.statsd.NonBlockingStatsDClientBuilder
 import com.timgroup.statsd.StatsDClient
+import dev.arbjerg.lavalink.client.event.TrackEndEvent
 import dev.arbjerg.lavalink.client.event.TrackExceptionEvent
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
@@ -14,6 +15,7 @@ import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
+import java.lang.Exception
 
 class MetricsManager private constructor() {
     // TODO: Health checks
@@ -244,7 +246,15 @@ class MetricsManager private constructor() {
     }
 
     fun markLLTrackException(trackExceptionEvent: TrackExceptionEvent, nodeName: String) {
-        statsd!!.incrementCounter("voice.track.exception", "message:${trackExceptionEvent.exception.message}", "node:${nodeName}")
+        statsd!!.incrementCounter("voice.track.exception", "message:${trackExceptionEvent.exception.message}", "node:${nodeName}", "track:${trackExceptionEvent.track.info.uri}")
+    }
+
+    fun markLLTrackMayNotStartNext(trackEndEvent: TrackEndEvent, nodeName: String) {
+        statsd!!.incrementCounter("voice.track.maynotstart", "message:${trackEndEvent.endReason}", "node:${nodeName}", "track:${trackEndEvent.track.info.uri}")
+    }
+
+    fun markBigBadException(exception: Exception, location: String) {
+        statsd!!.incrementCounter("bigbad.exception", "message:${exception.message}", "location:${location}")
     }
 
     fun updateLLStats() {
