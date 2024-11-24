@@ -86,4 +86,18 @@ class OauthConfigDAO {
            LOGGER.log(Level.SEVERE, "Failed to set oauth config for: " + config.userId)
         }
     }
+
+    fun removeConfig(id: String) {
+        try {
+            write.connection.use { connection ->
+                val query = "DELETE FROM `user_oauth_config` WHERE id = ?"
+                connection.prepareStatement(query).use { statement ->
+                    statement.setString(1, id)
+                    statement.executeQuery()
+                }
+            }
+        } catch (e: SQLException) {
+            LOGGER.log(Level.SEVERE, "Failed to delete oauth config for: $id")
+        }
+    }
 }
