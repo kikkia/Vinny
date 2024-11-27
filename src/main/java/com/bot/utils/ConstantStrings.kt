@@ -39,6 +39,14 @@ object ConstantStrings {
             "will be posted here. " + GITHUB_SUBSCRIPTIONS_HELP
     const val TWITTER_NSFW = "Unfortunately due to twitter's content policy, twitter subscriptions are only " +
             "allowed in nsfw channels."
+    const val BLUESKY_SUB_HELLO = "Hey! Let's get started subscribing to a bluesky user. Please reply with " +
+            "the users handle. (example: @valve or valve, either works)"
+    const val BLUESKY_HANDLE_NOT_VALID = "Whoops, that doesn't look like a valid bluesky username, Please try again and" +
+            " make sure you are putting in just the username. Example: @valve"
+    const val BLUESKY_SUB_SUCCESS = "Sweet, I just setup that subscription! Every time they post, that post " +
+            "will be posted here. " + GITHUB_SUBSCRIPTIONS_HELP
+    const val BLUESKY_NSFW = "Unfortunately due to bluesky's content policy, bluesky subscriptions are only " +
+            "allowed in nsfw channels."
     const val CHAN_SUB_HELLO = "Hey! Let's get started subscribing to a 4chan board. Please reply with the " +
             "board code. (example: `biz` or `b`"
     const val CHAN_BOARD_INVALID = "Whoops, That board is invalid, Make sure you only include the " +

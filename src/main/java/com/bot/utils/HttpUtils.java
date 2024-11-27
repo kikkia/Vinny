@@ -1,5 +1,6 @@
 package com.bot.utils;
 
+import com.bot.exceptions.BlueskyException;
 import com.bot.exceptions.InvalidInputException;
 import com.bot.exceptions.NoSuchResourceException;
 import com.bot.models.MarkovModel;
@@ -7,17 +8,17 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Webhook;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.io.IOException;
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class HttpUtils {
@@ -39,13 +42,14 @@ public class HttpUtils {
     // Unauthed cookies to tag on request to allow site to parse request as if we are an unauthed browser.
     // Exposing these tokens causes no risk as they are anonymous
     private static final String YT_COMMENT_PICK_S = "PHPSESSID=em0nb7ven1rdgndgmg7oopr7ft";
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HttpUtils.class);
 
-     //  |****************************************************|
-     //  |                       4chan                        |
-     //  |****************************************************|
+    //  |****************************************************|
+    //  |                       4chan                        |
+    //  |****************************************************|
 
     public static JSONObject getRandom4chanThreadFromBoard(String board) {
-        try(CloseableHttpClient client = HttpClients.createDefault()) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
             String boardUrl = "https://a.4cdn.org/" + board + "/threads.json";
             HttpGet get = new HttpGet(boardUrl);
 
@@ -65,7 +69,7 @@ public class HttpUtils {
     }
 
     public static JSONObject getInfoForThread(long id, String board) {
-        try(CloseableHttpClient client = HttpClients.createDefault()) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
             String threadUrl = "http://a.4cdn.org/" + board + "/thread/" + id + ".json";
             HttpGet get = new HttpGet(threadUrl);
             HttpResponse response = client.execute(get);
@@ -85,7 +89,7 @@ public class HttpUtils {
         // Search is always nsfw, random can be locked down.
         url = (canNSFW || !search.isEmpty()) ? url : url + "?nsfw=0";
         String token = "key " + Objects.requireNonNull(config.getThirdPartyConfig()).getP90Token();
-        try(CloseableHttpClient client = HttpClients.createDefault()) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpGet get = new HttpGet(url);
             get.addHeader("Authorization", token);
             HttpResponse response = client.execute(get);
@@ -131,7 +135,7 @@ public class HttpUtils {
             HttpResponse response = client.execute(post);
 
             if (response.getStatusLine().getStatusCode() >= 400) {
-                try(MDC.MDCCloseable closeable = MDC.putCloseable("error_message",
+                try (MDC.MDCCloseable closeable = MDC.putCloseable("error_message",
                         IOUtils.toString(response.getEntity().getContent()))) {
                     logger.warning("Posting to discord webhook failed with code " +
                             response.getStatusLine().getStatusCode());
@@ -147,7 +151,7 @@ public class HttpUtils {
         boolean lookup = url.contains("https://www.youtube.com/c/");
         String token = getYTChannelIdToken();
         String uri = lookup ? buildYoutubeSearchUrl(url, token) : buildYoutubeLookupUri(url, token);
-        try (CloseableHttpClient client = HttpClients.createDefault()){
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpGet httpget = new HttpGet(uri);
             httpget.addHeader("referer", "https://commentpicker.com/youtube-channel-id.php");
             httpget.addHeader("User-Agent", USER_AGENT);
@@ -182,7 +186,7 @@ public class HttpUtils {
         }
         return "https://commentpicker.com/actions/youtube-channel-id.php?url=https%3A%2F%2Fwww.googleapis.com%2Fyoutube" +
                 "%2Fv3%2Fsearch%3Fpart%3Did%2Csnippet%26type%3Dchannel%26q%3D" +
-                channel.split("/")[channel.split("/").length-1] + "&token=" + token;
+                channel.split("/")[channel.split("/").length - 1] + "&token=" + token;
     }
 
     private static String buildYoutubeLookupUri(String channel, String token) throws InvalidInputException {
@@ -192,7 +196,7 @@ public class HttpUtils {
         String lookupUri = "https://commentpicker.com/actions/youtube-channel-id.php?url=https%3A%2F%2Fwww.googleapis.com" +
                 "%2Fyoutube%2Fv3%2Fchannels%3Fpart%3Did%2Csnippet%2Cstatistics%2CcontentDetails%2Cstatus";
         String idOrUsernamePrefix = channel.contains("/channel/") ? "%26id%3D" : "%26forUsername%3D";
-        return lookupUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length-1] +
+        return lookupUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length - 1] +
                 "&token=" + token;
     }
 
@@ -238,7 +242,7 @@ public class HttpUtils {
 
     private static String buildE621StaticPath(JSONObject jsonObject) {
         String hash = jsonObject.getString("md5");
-        return "https://static1.e621.net/data/" + hash.substring(0,2) + "/" + hash.substring(2,4) + "/" +
+        return "https://static1.e621.net/data/" + hash.substring(0, 2) + "/" + hash.substring(2, 4) + "/" +
                 hash + "." + jsonObject.getString("ext");
     }
 
@@ -252,11 +256,31 @@ public class HttpUtils {
             HttpResponse response = client.execute(post);
             return IOUtils.toString(response.getEntity().getContent());
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.severe("Failed to get neuralhash response", e);
             // In this case just return blank to allow image through
             return "";
+        }
+    }
+
+    public static String getBlueSkyRSS(String username) {
+        String url = "https://bluesky.kikkia.dev/user/" + username;
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet get = new HttpGet(url);
+            HttpResponse response = client.execute(get);
+
+            if (response.getStatusLine().getStatusCode() == 404) {
+                throw new BlueskyException("Profile not found, please double check the handle and try again.");
+            } else if (response.getStatusLine().getStatusCode() > 500) {
+                throw new BlueskyException("I was not able to reach bluesky. Please " +
+                        "wait a bit and try again.");
+            }
+
+            return new JSONObject(IOUtils.toString(response.getEntity().getContent())).getString("rssUrl");
+        } catch (Exception e) {
+            logger.severe("Failed to get BlueSky RSS URL: " + e.getMessage(), e);
+            throw new BlueskyException("Failed to fetch BlueSky profile, Please double check that the" +
+                    " handle is correct, or report this on the support server.");
         }
     }
 }

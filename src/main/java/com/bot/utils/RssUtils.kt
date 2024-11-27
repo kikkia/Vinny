@@ -71,6 +71,10 @@ class RssUtils {
                             val msg = "***${rssUpdate.displayName}*** just went live on twitch! ${rssUpdate.url}"
                             webhook.send(buildMessage(msg, jda))
                         }
+                        RssProvider.BLUESKY -> {
+                            val msg = "***${rssUpdate.displayName}*** just posted on bluesky: ${rssUpdate.url}"
+                            webhook.send(buildMessage(msg, jda))
+                        }
                         else -> { // other
                             logger.warning("Invalid provider for rss event: ```$rssUpdate```")
                         }
@@ -107,6 +111,12 @@ class RssUtils {
         @JvmStatic
         fun isTwitterHandleValid(handle: String) : Boolean {
             return handle.matches(Regex("^[a-zA-Z0-9_]+\$")) && handle.length < 16
+        }
+
+        @JvmStatic
+        fun isBlueSkyHandleValid(handle: String): Boolean {
+            val regex = "([a-zA-Z0-9_\\-\\.]+)$".toRegex()
+            return handle.isNotEmpty() && handle.matches(regex)
         }
     }
 }

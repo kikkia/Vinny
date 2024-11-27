@@ -186,6 +186,7 @@ public class ShardingManager {
                     new SubscriptionsCommand(waiter),
                     new SubscribeTwitchCommand(waiter),
                     new SubscribeYoutubeCommand(waiter),
+                    new SubscribeBlueskyCommand(waiter),
                     new RemoveSubscriptionCommand(),
 
                     // NSFW Commands

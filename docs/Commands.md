@@ -122,6 +122,12 @@ Clears all tracks from the queue without stopping the now playing track
 ### `autoplay`
 Enables automatically playing tracks related to the last played track when your queue runs out. (Donor required for now)
 
+### `login`
+Used to enable voice on Vinny
+
+### `logout`
+Clears all of your voice account data from Vinny
+
 ---
 ### Playlists
 Make and load custom playlists for a server or for yourself. Playlists are used to save and load a list of tracks instantly. Playlists can either be for a guild, which allows any user with permission to load them, or for yourself. Which allows you to load them and save them on any server you and Vinny are on. 
@@ -349,8 +355,8 @@ This command can be used to get all scheduled commands on either the server, the
 Vinny allows you to setup subscriptions to various other places like twitter, reddit, 4chan, etc.
 [You can find more info here](https://github.com/kikkia/Vinny/blob/master/docs/Subscriptions.md)
 
-### `subscribetwitter`
-This command is used to setup a subscription to a twitter user.
+### `subscribebluesky` or `bluesky`
+This command is used to setup a subscription to a bluesky user.
 
 ### `subscribeyt`
 Use this command to subscribe to new video notifications for a youtube channel.
