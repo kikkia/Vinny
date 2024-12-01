@@ -4,7 +4,7 @@ import com.bot.commands.MemeCommand
 import com.bot.utils.HttpUtils
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
-import net.dv8tion.jda.api.entities.PrivateChannel
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel
 
 class P90Command : MemeCommand() {
 

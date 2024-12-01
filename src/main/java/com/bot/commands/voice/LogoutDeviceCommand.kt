@@ -3,6 +3,7 @@ package com.bot.commands.voice
 import com.bot.commands.GeneralCommand
 import com.bot.db.OauthConfigDAO
 import com.jagrosh.jdautilities.command.CommandEvent
+import com.jagrosh.jdautilities.command.CooldownScope
 
 class LogoutDeviceCommand : GeneralCommand() {
     private val oauthConfigDAO = OauthConfigDAO.getInstance()

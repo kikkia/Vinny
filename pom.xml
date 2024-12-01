@@ -180,7 +180,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jvmTarget>19</jvmTarget>
+                    <jvmTarget>17</jvmTarget>
                 </configuration>
             </plugin>
             <plugin>
@@ -219,14 +219,14 @@
         <dependency>
             <groupId>pw.chew</groupId>
             <artifactId>jda-chewtils</artifactId>
-            <version>1.19.1</version>
+            <version>2.0</version>
             <scope>compile</scope>
             <type>pom</type>
         </dependency>
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.4.1_353</version>
+            <version>5.2.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.kikkia</groupId>

@@ -8,8 +8,8 @@ import com.bot.models.InternalVoiceChannel;
 import com.bot.utils.DbHelpers;
 import com.bot.utils.Logger;
 import com.zaxxer.hikari.HikariDataSource;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

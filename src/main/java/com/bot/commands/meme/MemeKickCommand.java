@@ -8,8 +8,9 @@ import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 
 import java.util.List;
@@ -32,26 +33,27 @@ public class MemeKickCommand extends MemeCommand {
     @Override
     @Trace(operationName = "executeCommand", resourceName = "Memekick")
     protected void executeCommand(CommandEvent commandEvent) {
-        if (commandEvent.getMessage().getMentionedUsers().size() == 0) {
+        if (commandEvent.getMessage().getMentions().getUsers().isEmpty()) {
             commandEvent.replyWarning("You must specify at least one user to memekick");
         }
 
-        for (Member member : commandEvent.getMessage().getMentionedMembers()) {
+        for (User user : commandEvent.getMessage().getMentions().getUsers()) {
 
-            if (member.getUser().isBot()) {
+            if (user.isBot()) {
                 commandEvent.replyWarning("I will not memekick bots");
                 continue;
             }
 
             Invite invite = commandEvent.getTextChannel().createInvite().setMaxUses(1).complete();
             try {
-                PrivateChannel channel = member.getUser().openPrivateChannel().complete();
+                PrivateChannel channel = user.openPrivateChannel().complete();
                 channel.sendMessage(invite.getUrl()).queue();
             } catch (Exception e) {
-                commandEvent.replyWarning("Will not meme kick user: " + member.getEffectiveName() + " because I cannot send " +
+                commandEvent.replyWarning("Will not meme kick user: " + user.getEffectiveName() + " because I cannot send " +
                         "them an invite to get back");
                 continue;
             }
+            Member member = commandEvent.getGuild().getMember(user);
 
             List<Role> roles = member.getRoles();
 

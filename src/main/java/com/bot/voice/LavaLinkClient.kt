@@ -69,7 +69,7 @@ class LavaLinkClient private constructor() {
         val member = event.member
         val memberVoiceState = member.voiceState
 
-        if (memberVoiceState!!.inVoiceChannel()) {
+        if (memberVoiceState!!.inAudioChannel()) {
             memberVoiceState.channel?.let { event.jda.directAudioController.connect(it) }
         }
     }

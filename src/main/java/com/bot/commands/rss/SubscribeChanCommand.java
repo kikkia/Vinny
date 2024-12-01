@@ -7,7 +7,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.sql.SQLException;
@@ -44,8 +44,8 @@ public class SubscribeChanCommand extends CreateSubscriptionCommand {
                     1, TimeUnit.MINUTES, () -> commandEvent.reply(ConstantStrings.EVENT_WAITER_TIMEOUT));
         } else {
             // One liner
-            TextChannel channel = commandEvent.getMessage().getMentionedChannels().size() > 0
-                    ? commandEvent.getMessage().getMentionedChannels().get(0) : commandEvent.getTextChannel();
+            TextChannel channel = !commandEvent.getMessage().getMentions().getChannels().isEmpty()
+                    ? (TextChannel) commandEvent.getMessage().getMentions().getChannels().get(0) : commandEvent.getTextChannel();
             Optional<ChanUtils.Board> board = Arrays.stream(commandEvent.getArgs().split(" "))
                     .filter(m -> ChanUtils.Companion.getBoard(m) != null)
                     .map(ChanUtils.Companion::getBoard)
@@ -84,7 +84,7 @@ public class SubscribeChanCommand extends CreateSubscriptionCommand {
             if (board == null) {
                 commandEvent.replyWarning(ConstantStrings.CHAN_BOARD_INVALID);
                 return;
-            } else if (board.getNsfw() && !event.getTextChannel().isNSFW()) {
+            } else if (board.getNsfw() && !event.getChannel().asTextChannel().isNSFW()) {
                 commandEvent.replyWarning(ConstantStrings.CHAN_BOARD_NSFW);
                 return;
             }

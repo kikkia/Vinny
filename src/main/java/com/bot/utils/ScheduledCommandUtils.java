@@ -11,6 +11,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.internal.JDAImpl;
 import net.dv8tion.jda.internal.entities.GuildImpl;
@@ -19,10 +20,9 @@ import net.dv8tion.jda.internal.entities.ReceivedMessage;
 import net.dv8tion.jda.internal.entities.UserImpl;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+
+import static java.lang.Long.parseLong;
 
 public class ScheduledCommandUtils {
 
@@ -34,30 +34,39 @@ public class ScheduledCommandUtils {
     }
 
     private static Message generateScheduledMessage(ScheduledCommand command, JDA jda) {
-        User user = new UserImpl(Long.parseLong(command.getAuthor()), (JDAImpl) jda);
+        User user = new UserImpl(parseLong(command.getAuthor()), (JDAImpl) jda);
+        Guild guild = jda.getGuildById(command.getGuild());
+        TextChannel channel = jda.getTextChannelById(command.getChannel());
         return new ReceivedMessage(123,
-                jda.getTextChannelById(command.getChannel()),
+                parseLong(command.getChannel()),
+                parseLong(command.getGuild()),
+                jda,
+                guild,
+                channel,
                 MessageType.DEFAULT,
                 null,
                 false,
+                0L,
+                false,
                 false,
                 null,
-                null,
-                false,
-                false,
-                command.getCommand(),
                 ConstantStrings.SCHEDULED_FLAG,
                 user,
-                new MemberImpl((GuildImpl) jda.getGuildById(command.getGuild()), user),
+                new MemberImpl((GuildImpl) guild, user),
                 null,
                 null,
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
+                null,
+                null,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
                 0,
-                null);
+                null,
+                null,
+                0);
     }
 
     public static JDA getShardForCommand(ScheduledCommand command) {

@@ -6,7 +6,6 @@ import com.bot.utils.Logger;
 import com.jagrosh.jdautilities.command.GuildSettingsManager;
 import net.dv8tion.jda.api.entities.Guild;
 
-import javax.annotation.Nullable;
 
 public class GuildPreferencesManager implements GuildSettingsManager {
     private static final Logger LOGGER = new Logger(GuildPreferencesManager.class.getName());
@@ -17,7 +16,6 @@ public class GuildPreferencesManager implements GuildSettingsManager {
         guildDAO = GuildDAO.getInstance();
     }
 
-    @Nullable
     @Override
     public GuildPreferencesProvider getSettings(Guild g) {
 

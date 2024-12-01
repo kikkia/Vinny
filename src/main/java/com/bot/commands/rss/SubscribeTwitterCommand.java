@@ -54,7 +54,7 @@ public class SubscribeTwitterCommand extends CreateSubscriptionCommand {
             if (!RssUtils.isTwitterHandleValid(subject)) {
                 commandEvent.replyWarning(ConstantStrings.TWITTER_HANDLE_NOT_VALID);
                 return;
-            } else if (!event.getTextChannel().isNSFW()) {
+            } else if (!event.getChannel().asTextChannel().isNSFW()) {
                 commandEvent.replyWarning(ConstantStrings.TWITTER_NSFW);
                 return;
             }

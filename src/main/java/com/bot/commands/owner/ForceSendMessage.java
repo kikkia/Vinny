@@ -3,7 +3,7 @@ package com.bot.commands.owner;
 import com.bot.ShardingManager;
 import com.bot.commands.OwnerCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 public class ForceSendMessage extends OwnerCommand {
     public ForceSendMessage() {

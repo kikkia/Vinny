@@ -9,7 +9,6 @@ import com.bot.models.InternalUser;
 import com.jagrosh.jdautilities.command.Command;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.internal.entities.ReceivedMessage;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class AliasUtils {
 
     public static MetricsManager metricsManager;
 
-    public static MessageReceivedEvent generateAliasedMessageReceivedEvent(Alias triggered, GuildMessageReceivedEvent event) {
+    public static MessageReceivedEvent generateAliasedMessageReceivedEvent(Alias triggered, MessageReceivedEvent event) {
         Message injectedMessage = generateInjectedMessage(triggered, event.getMessage());
         return new MessageReceivedEvent(event.getJDA(), event.getResponseNumber(), injectedMessage);
     }
@@ -27,13 +26,15 @@ public class AliasUtils {
     // Create a new message object with the command injected in for the content
     private static Message generateInjectedMessage(Alias triggered, Message message) {
         return new ReceivedMessage(message.getIdLong(),
+                message.getChannelIdLong(),
+                message.getGuildIdLong(),
+                message.getJDA(),
+                message.getGuild(),
                 message.getChannel(),
                 message.getType(),
                 message.getMessageReference(),
                 message.isWebhookMessage(),
-                message.mentionsEveryone(),
-                null,
-                null,
+                message.getApplicationIdLong(),
                 message.isTTS(),
                 message.isPinned(),
                 parseCommand(triggered.getCommand(), message, triggered),
@@ -41,14 +42,19 @@ public class AliasUtils {
                 message.getAuthor(),
                 message.getMember(),
                 message.getActivity(),
+                message.getPoll(),
                 message.getTimeEdited(),
+                message.getMentions(),
                 message.getReactions(),
                 message.getAttachments(),
                 message.getEmbeds(),
                 message.getStickers(),
-                message.getActionRows(),
+                message.getComponents(),
+                message.getMessageSnapshots(),
                 0,
-                message.getInteraction());
+                message.getInteraction(),
+                message.getStartedThread(),
+                message.getApproximatePosition());
     }
 
     // If we find %% then replace it with whatever is after the trigger.
@@ -57,7 +63,7 @@ public class AliasUtils {
     }
 
     // Checks if there is an alias to be applied for the channel, guild, user, in that order. Returns null if none.
-    public static MessageReceivedEvent getAliasMessageEvent(GuildMessageReceivedEvent event, InternalGuild guild, InternalTextChannel channel, InternalUser user) {
+    public static MessageReceivedEvent getAliasMessageEvent(MessageReceivedEvent event, InternalGuild guild, InternalTextChannel channel, InternalUser user) {
         if (metricsManager == null)
             metricsManager = MetricsManager.Companion.getInstance();
 

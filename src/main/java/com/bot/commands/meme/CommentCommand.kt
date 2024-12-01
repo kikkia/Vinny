@@ -6,11 +6,12 @@ import com.bot.models.MarkovModel
 import com.bot.utils.ConstantStrings
 import com.bot.utils.HttpUtils
 import com.jagrosh.jdautilities.command.CommandEvent
+import com.jagrosh.jdautilities.command.CooldownScope
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import java.awt.Color
 import java.util.*
 
@@ -24,7 +25,7 @@ class CommentCommand : MemeCommand() {
         this.arguments = "<@user or userID> or <#channel>"
         this.cooldownScope = CooldownScope.USER
         this.cooldown = 2
-        this.botPermissions = arrayOf(Permission.MESSAGE_HISTORY, Permission.MESSAGE_WRITE)
+        this.botPermissions = arrayOf(Permission.MESSAGE_HISTORY, Permission.MESSAGE_SEND)
         this.canSchedule = false
 
         markovCache = MarkovModelCache.getInstance()
@@ -32,7 +33,7 @@ class CommentCommand : MemeCommand() {
 
     @Trace(operationName = "executeCommand", resourceName = "Comment")
     override fun executeCommand(commandEvent: CommandEvent) {
-        val mentionedUsers = ArrayList(commandEvent.message.mentionedUsers)
+        val mentionedUsers = ArrayList(commandEvent.message.mentions.users)
 
         // In case the user is using the @ prefix, then get rid of the bot in the list.
         if (mentionedUsers.contains(commandEvent.selfMember.user)) {
@@ -41,7 +42,7 @@ class CommentCommand : MemeCommand() {
 
         val user: User?
         var markov: MarkovModel?
-        if (mentionedUsers.isEmpty() && commandEvent.message.mentionedChannels.isEmpty()) {
+        if (mentionedUsers.isEmpty() && commandEvent.message.mentions.channels.isEmpty()) {
             // Try to get the user with a userid
             if (!commandEvent.args.isEmpty()) {
                 try {
@@ -59,7 +60,7 @@ class CommentCommand : MemeCommand() {
                 commandEvent.reply(commandEvent.client.warning + " you must either mention a user or give their userId.")
                 return
             }
-        } else if (mentionedUsers.isEmpty() && !commandEvent.message.mentionedChannels.isEmpty()) {
+        } else if (mentionedUsers.isEmpty() && commandEvent.message.mentions.channels.isNotEmpty()) {
             getMarkovForChannel(commandEvent)
             return
         } else {
@@ -113,7 +114,8 @@ class CommentCommand : MemeCommand() {
     }
 
     private fun getMarkovForChannel(commandEvent: CommandEvent) {
-        val channel = commandEvent.message.mentionedChannels[0]
+        val channel = commandEvent.message.mentions.channels[0] as TextChannel
+
 
         // Placeholder for generation
         markovCache.put(channel.id, MarkovModel())

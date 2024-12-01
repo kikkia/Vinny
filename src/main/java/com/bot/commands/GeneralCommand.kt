@@ -9,7 +9,7 @@ abstract class GeneralCommand : BaseCommand() {
         this.guildOnly = true
         this.ownerCommand = false
         this.hidden = false
-        this.botPermissions = arrayOf(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_WRITE, Permission.MESSAGE_ADD_REACTION)
+        this.botPermissions = arrayOf(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_SEND, Permission.MESSAGE_ADD_REACTION)
         this.canSchedule = true
     }
 }

@@ -8,12 +8,11 @@ import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 
 public class CommandPermissions {
@@ -114,7 +113,7 @@ public class CommandPermissions {
             }
 
             // If their in a voice channel the doesn't allow voice, then dont let them use it
-            if (!commandEvent.getMember().getVoiceState().inVoiceChannel()) {
+            if (commandEvent.getMember().getVoiceState() == null || !commandEvent.getMember().getVoiceState().inAudioChannel()) {
                 throw new ForbiddenCommandException("You must be in a voice channel to use a voice command");
             }
         }

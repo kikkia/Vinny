@@ -4,7 +4,6 @@ import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
 import com.bot.db.UserDAO;
 import com.bot.exceptions.ForbiddenCommandException;
-import com.bot.exceptions.InvalidInputException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.exceptions.UserExposableException;
 import com.bot.metrics.MetricsManager;
@@ -15,8 +14,8 @@ import com.bot.utils.ScheduledCommandUtils;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import org.slf4j.MDC;
 
 import java.util.concurrent.*;

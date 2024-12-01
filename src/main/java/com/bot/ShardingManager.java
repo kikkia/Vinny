@@ -32,8 +32,8 @@ import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -231,7 +231,7 @@ public class ShardingManager {
                         config.getDiscordConfig().getToken(),
                         GUILD_MEMBERS,
                         GUILD_MESSAGES,
-                        GUILD_EMOJIS,
+                        GUILD_EXPRESSIONS,
                         GUILD_MESSAGE_REACTIONS,
                         GUILD_VOICE_STATES,
                         DIRECT_MESSAGES

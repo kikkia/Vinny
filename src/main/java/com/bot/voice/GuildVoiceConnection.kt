@@ -24,8 +24,8 @@ import dev.arbjerg.lavalink.client.player.Track
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.TextChannel
-import net.dv8tion.jda.api.entities.VoiceChannel
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
 import org.apache.log4j.Logger
 import reactor.kotlin.core.publisher.toMono
 import java.time.Instant
@@ -70,7 +70,7 @@ class GuildVoiceConnection(val guild: Guild) {
         val toJoin = commandEvent.member.voiceState?.channel
             ?: throw NotInVoiceException(commandEvent.client.warning + " You are not in a voice channel! Please join one to use this command.")
         try {
-            joinChannel(toJoin)
+            joinChannel(toJoin.asVoiceChannel())
         } catch (e: UserExposableException) {
             throw e
         } catch (e: Exception) {

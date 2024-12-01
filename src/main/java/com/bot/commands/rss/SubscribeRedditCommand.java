@@ -71,7 +71,7 @@ public class SubscribeRedditCommand extends CreateSubscriptionCommand {
             if (subreddit == null) {
                 commandEvent.replyWarning(ConstantStrings.SUBREDDIT_INVALID);
                 return;
-            } else if (subreddit.isNsfw() && !event.getTextChannel().isNSFW()) {
+            } else if (subreddit.isNsfw() && !event.getChannel().asTextChannel().isNSFW()) {
                 commandEvent.replyWarning(ConstantStrings.SUBREDDIT_NSFW);
                 return;
             }
