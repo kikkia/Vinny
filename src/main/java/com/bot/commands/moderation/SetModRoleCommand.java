@@ -59,12 +59,12 @@ public class SetModRoleCommand extends ModerationCommand {
                 commandEvent.reply("Something went wrong. Please contact the developers on the support server. " + Bot.SUPPORT_INVITE_LINK);
                 metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
             }
-            commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
+            commandEvent.reactSuccess();
             return;
         }
 
 
-        List<Role> mentionedRoles = commandEvent.getMessage().getMentionedRoles();
+        List<Role> mentionedRoles = commandEvent.getMessage().getMentions().getRoles();
         if (mentionedRoles == null || mentionedRoles.isEmpty()) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " You must specify a role.");
             return;
@@ -76,7 +76,7 @@ public class SetModRoleCommand extends ModerationCommand {
             commandEvent.reply("Something went wrong. Please contact the developers on the support server. " + Bot.SUPPORT_INVITE_LINK);
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());
         }
-        commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
+        commandEvent.reactSuccess();
 
     }
 }

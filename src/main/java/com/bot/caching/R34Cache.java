@@ -34,7 +34,7 @@ public class R34Cache {
         logger = new Logger(this.getClass().getName());
         config = VinnyConfig.Companion.instance();
         if (config.getCachingConfig() != null) {
-            redisEnabled = Boolean.TRUE.equals(config.getCachingConfig().getR34enabled());
+            redisEnabled = Boolean.TRUE.equals(config.getCachingConfig().isR34Enabled());
             if (redisEnabled) {
                 redisCache = RedisCache.Companion.getInstance();
             }

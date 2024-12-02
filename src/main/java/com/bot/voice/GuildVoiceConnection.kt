@@ -24,8 +24,9 @@ import dev.arbjerg.lavalink.client.player.Track
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.TextChannel
-import net.dv8tion.jda.api.entities.VoiceChannel
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import org.apache.log4j.Logger
 import reactor.kotlin.core.publisher.toMono
 import java.time.Instant
@@ -41,7 +42,7 @@ class GuildVoiceConnection(val guild: Guild) {
     private val autoplayQueue = LinkedList<String>()
     private val failedLoadedTracks = HashSet<String>()
     var currentVoiceChannel: VoiceChannel? = null
-    var lastTextChannel: TextChannel? = null
+    var lastTextChannel: MessageChannel? = null
     private var isPaused = false
     private var volume = GuildDAO.getInstance().getGuildById(guild.id).volume ?: 100
     var autoplay = GuildDAO.getInstance().isGuildPremium(guild.id)
@@ -70,7 +71,7 @@ class GuildVoiceConnection(val guild: Guild) {
         val toJoin = commandEvent.member.voiceState?.channel
             ?: throw NotInVoiceException(commandEvent.client.warning + " You are not in a voice channel! Please join one to use this command.")
         try {
-            joinChannel(toJoin)
+            joinChannel(toJoin.asVoiceChannel())
         } catch (e: UserExposableException) {
             throw e
         } catch (e: Exception) {
@@ -130,7 +131,7 @@ class GuildVoiceConnection(val guild: Guild) {
         injectOauth(toLoad)
         metricsManager.markTrackLoaded()
         link.loadItem(toLoad).subscribe(LLLoadHandler(this, commandEvent))
-        lastTextChannel = commandEvent.textChannel
+        lastTextChannel = commandEvent.channel
     }
 
     private fun loadAutoplayTrack(toLoad: String) {
@@ -182,7 +183,7 @@ class GuildVoiceConnection(val guild: Guild) {
         injectOauth(tracks[0])
         metricsManager.markTrackLoaded()
         link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, 0, 0))
-        lastTextChannel = commandEvent.textChannel
+        lastTextChannel = commandEvent.channel
     }
 
     fun queueResumeTrack(queuedTrack: QueuedAudioTrack?, loadingMessage: Message, resumeSetup: ResumeAudioGuild, index: Int, failedCount: Int) {
@@ -236,7 +237,7 @@ class GuildVoiceConnection(val guild: Guild) {
         injectOauth(search)
         metricsManager.markTrackLoaded()
         link.loadItem(search).subscribe(SearchLLLoadHandler(this, commandEvent, message, builder))
-        lastTextChannel = commandEvent.textChannel
+        lastTextChannel = commandEvent.channel
     }
 
 

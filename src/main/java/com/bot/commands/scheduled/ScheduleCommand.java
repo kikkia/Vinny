@@ -103,7 +103,8 @@ public class ScheduleCommand extends ModerationCommand {
                 commandEvent.replySuccess(ConstantStrings.SCHEDULED_COMMAND_SETUP_INTERVAL);
 
                 waiter.waitForEvent(MessageReceivedEvent.class,
-                        e -> e.getAuthor().equals(event.getAuthor()),
+                        e -> e.getAuthor().equals(event.getAuthor())
+                                && e.getChannel().equals(commandEvent.getChannel()),
                         new StepTwoConsumer(commandEvent, command),
                         1, TimeUnit.MINUTES, () -> commandEvent.replyWarning(ConstantStrings.EVENT_WAITER_TIMEOUT));
             }
@@ -133,7 +134,7 @@ public class ScheduleCommand extends ModerationCommand {
             ScheduledCommand scheduledCommand = new ScheduledCommand(0,
                     command,
                     event.getGuild().getId(),
-                    event.getTextChannel().getId(),
+                    event.getChannel().asTextChannel().getId(),
                     commandEvent.getAuthor().getId(),
                     interval,
                     System.currentTimeMillis());

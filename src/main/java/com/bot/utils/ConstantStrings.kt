@@ -10,9 +10,9 @@ object ConstantStrings {
     const val GITHUB_SUBSCRIPTIONS_HELP = " For more info on what you can do with subscriptions and their limitations please check out https://github.com/kikkia/Vinny/blob/master/docs/Subscriptions.md"
     const val WELCOME_MESSAGE = "Hey all! Thanks for adding me to your server! To get started you can go to https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md" +
             " to find a full list of commands. You can also run `~help` to get a less detailed list sent to you in a DM.\n\nA couple tips before we start:\n" +
-            "- You can schedule commands to run on a timer with the schedule command" +
+            "- You can schedule commands to run on a timer with the `~schedule` command" +
             ".\n- You can set custom prefixes with the `~addprefix` command.\n" +
-            "- You can subscribe to different sources like twitter users, subreddits, etc with the subscribe commands.\n- Join the support server (invite link in help message) to get the " +
+            "- You can subscribe to different sources like youtube channels, subreddits, twitch streamers, etc with the subscribe commands.\n- Join the support server `support` to get the " +
             "latest updates on new commands and suggest new ones!\n\nThanks for using Vinny!"
     const val GUILD_ALIAS_SETUP_HELLO = "Hey! Let's setup an alias for the guild! I'll walk you through the process. If you don't know what an alias is just reply with `?` and I will " +
             "point you in the right direction.\nReply with the trigger phrase. This is the phrase that will execute the alias when used anywhere in the guild I can see. Example: `gimme a meme`"

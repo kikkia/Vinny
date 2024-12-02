@@ -5,6 +5,7 @@ import com.bot.commands.NSFWCommand;
 import com.bot.exceptions.NoSuchResourceException;
 import com.bot.utils.HttpUtils;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.CooldownScope;
 
 import java.io.IOException;
 import java.util.List;

@@ -18,26 +18,22 @@ import com.bot.voice.GuildVoiceProvider;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.ShutdownEvent;
-import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
-import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
-import net.dv8tion.jda.api.events.channel.text.update.TextChannelUpdateNameEvent;
-import net.dv8tion.jda.api.events.channel.voice.VoiceChannelCreateEvent;
-import net.dv8tion.jda.api.events.channel.voice.VoiceChannelDeleteEvent;
-import net.dv8tion.jda.api.events.channel.voice.update.VoiceChannelUpdateNameEvent;
+import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
+import net.dv8tion.jda.api.events.channel.ChannelDeleteEvent;
+import net.dv8tion.jda.api.events.channel.update.ChannelUpdateNameEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -101,7 +97,14 @@ public class Bot extends ListenerAdapter {
 	}
 
 	@Override
-	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+		if (event.isFromGuild()) {
+			onGuildMessageReceived(event);
+		}
+		super.onMessageReceived(event);
+	}
+
+	public void onGuildMessageReceived(MessageReceivedEvent event) {
 		executor.execute(() -> {
 			InternalGuild guild = guildDAO.getGuildById(event.getGuild().getId());
 			if (guild == null) {
@@ -138,7 +141,6 @@ public class Bot extends ListenerAdapter {
 			}
 
 		});
-		super.onGuildMessageReceived(event);
 	}
 
 	@Override
@@ -148,13 +150,9 @@ public class Bot extends ListenerAdapter {
 	}
 
 	@Override
-	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
+	public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
 		executor.execute(() -> checkVoiceLobby(event));
-	}
-
-	@Override
-	public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-		executor.execute(() -> checkVoiceLobby(event));
+		super.onGuildVoiceUpdate(event);
 	}
 
 	@Override
@@ -163,8 +161,9 @@ public class Bot extends ListenerAdapter {
 	}
 
 	@Override
-	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+	public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
 		executor.execute(() -> membershipDAO.removeUserMembershipToGuild(event.getUser().getId(), event.getGuild().getId()));
+		super.onGuildMemberRemove(event);
 	}
 
 	@Override
@@ -227,41 +226,68 @@ public class Bot extends ListenerAdapter {
 	}
 
 	@Override
-	public void onTextChannelCreate(TextChannelCreateEvent event) {
-		executor.execute(() -> channelDAO.addTextChannel(event.getChannel()));
+	public void onChannelCreate(@NotNull ChannelCreateEvent event) {
+		if (event.isFromType(ChannelType.TEXT) && event.isFromGuild()) {
+			onTextChannelCreate(event);
+		} else if (event.isFromGuild() && event.isFromType(ChannelType.VOICE)) {
+			onVoiceChannelCreate(event);
+		}
+
+		super.onChannelCreate(event);
+	}
+
+	public void onTextChannelCreate(ChannelCreateEvent event) {
+		executor.execute(() -> channelDAO.addTextChannel(event.getChannel().asTextChannel()));
+	}
+
+	public void onVoiceChannelCreate(ChannelCreateEvent event) {
+		executor.execute(() -> channelDAO.addVoiceChannel(event.getChannel().asVoiceChannel()));
 	}
 
 	@Override
-	public void onVoiceChannelCreate(VoiceChannelCreateEvent event) {
-		executor.execute(() -> channelDAO.addVoiceChannel(event.getChannel()));
+	public void onChannelDelete(@NotNull ChannelDeleteEvent event) {
+		if (event.isFromGuild() && event.isFromType(ChannelType.TEXT)) {
+			onTextChannelDelete(event);
+		} else if (event.isFromGuild() && event.isFromType(ChannelType.VOICE)) {
+			onVoiceChannelDelete(event);
+		}
+
+		super.onChannelDelete(event);
 	}
 
-	@Override
-	public void onTextChannelDelete(TextChannelDeleteEvent event) {
+	public void onTextChannelDelete(ChannelDeleteEvent event) {
 		executor.execute(() -> {
 			try {
 				ScheduledCommandDAO.getInstance().removeAllScheduledInChannel(event.getChannel().getId());
 				RssDAO.getInstance().removeAllSubsInChannel(event.getChannel().getId());
-				channelDAO.removeTextChannel(event.getChannel());
+				channelDAO.removeTextChannel(event.getChannel().asTextChannel());
 			} catch (SQLException e) {
 				LOGGER.warning("Ran into error when removing text channel from db", e);
 			}
 		});
 	}
 
-	@Override
-	public void onVoiceChannelDelete(VoiceChannelDeleteEvent event) {
-		executor.execute(() -> channelDAO.removeVoiceChannel(event.getChannel()));
+	public void onVoiceChannelDelete(ChannelDeleteEvent event) {
+		executor.execute(() -> channelDAO.removeVoiceChannel(event.getChannel().asVoiceChannel()));
 	}
 
 	@Override
-	public void onTextChannelUpdateName(TextChannelUpdateNameEvent event) {
-		executor.execute(() -> channelDAO.addTextChannel(event.getChannel()));
+	public void onChannelUpdateName(@NotNull ChannelUpdateNameEvent event) {
+		if (event.isFromGuild() && event.isFromType(ChannelType.TEXT)) {
+			onTextChannelUpdateName(event);
+		} else if (event.isFromGuild() && event.isFromType(ChannelType.VOICE)) {
+			onVoiceChannelUpdateName(event);
+		}
+
+		super.onChannelUpdateName(event);
 	}
 
-	@Override
-	public void onVoiceChannelUpdateName(VoiceChannelUpdateNameEvent event) {
-		executor.execute(() -> channelDAO.addVoiceChannel(event.getChannel()));
+	public void onTextChannelUpdateName(ChannelUpdateNameEvent event) {
+		executor.execute(() -> channelDAO.addTextChannel(event.getChannel().asTextChannel()));
+	}
+
+	public void onVoiceChannelUpdateName(ChannelUpdateNameEvent event) {
+		executor.execute(() -> channelDAO.addVoiceChannel(event.getChannel().asVoiceChannel()));
 	}
 
 	@Override
@@ -283,7 +309,7 @@ public class Bot extends ListenerAdapter {
 				return;
 			}
 			// update our currently playing channel if there are people in there
-			conn.setCurrentVoiceChannel(event.getChannelJoined());
+			conn.setCurrentVoiceChannel(event.getChannelJoined().asVoiceChannel());
 		}
 
 		// if there are no humans left, then leave

@@ -43,7 +43,7 @@ public class AddPrefixCommand extends ModerationCommand {
         }
 
         if (guildDAO.updateGuildPrefixes(commandEvent.getGuild().getId(), prefixes)) {
-            commandEvent.getMessage().addReaction(commandEvent.getClient().getSuccess()).queue();
+            commandEvent.reactSuccess();
         } else {
             commandEvent.reply(commandEvent.getClient().getError() + " Failed to update prefixes for server. Please contact a developer on the support server if this issue persists.");
             metricsManager.markCommandFailed(this, commandEvent.getAuthor(), commandEvent.getGuild());

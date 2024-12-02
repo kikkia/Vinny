@@ -5,6 +5,7 @@ import com.bot.commands.RedditCommand;
 import com.bot.exceptions.RedditRateLimitException;
 import com.bot.exceptions.ScheduledCommandFailedException;
 import com.bot.utils.CommandCategories;
+import com.bot.utils.CommandPermissions;
 import com.bot.utils.ConstantStrings;
 import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -13,7 +14,6 @@ import net.dean.jraw.ApiException;
 import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
-import net.dv8tion.jda.api.entities.ChannelType;
 
 import java.util.logging.Level;
 
@@ -31,14 +31,9 @@ public class RandomPostCommand extends RedditCommand{
     @Override
     @Trace(operationName = "executeCommand", resourceName = "RandomReddit")
     protected void executeCommand(CommandEvent commandEvent) {
-        boolean isNSFWAllowed = true;
+        boolean isNSFWAllowed = CommandPermissions.allowNSFW(commandEvent);
         boolean postOnly = commandEvent.getArgs().contains("--post-only");
         String args = parseArgs(commandEvent.getArgs());
-
-        // TODO: Move to static helper
-        if (!commandEvent.isFromType(ChannelType.PRIVATE)) {
-            isNSFWAllowed = commandEvent.getTextChannel().isNSFW();
-        }
 
         try{
             RedditHelper.getRandomSubmissionAndSend(redditConnection,
@@ -60,7 +55,7 @@ public class RandomPostCommand extends RedditCommand{
         } catch (NetworkException e) {
             commandEvent.replyWarning("I was unable to get info the subreddit, please make sure it is correctly spelled.");
         } catch (ScheduledCommandFailedException e) {
-            logger.warning("Failed to get webhook for scheduled command " + commandEvent.getTextChannel().getId(), e);
+            logger.warning("Failed to get webhook for scheduled command " + commandEvent.getChannel().getId(), e);
             commandEvent.replyWarning(ConstantStrings.SCHEDULED_WEBHOOK_FAIL);
         } catch (RedditRateLimitException e) {
             commandEvent.reply(commandEvent.getClient().getError() + "Reddit is rate limiting Vinny, please try again later.");

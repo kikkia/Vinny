@@ -8,12 +8,11 @@ import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.models.InternalGuild;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 
 public class CommandPermissions {
@@ -38,9 +37,10 @@ public class CommandPermissions {
             return commandEvent.getAuthor().getId().equals(config.getDiscordConfig().getOwnerId());
         }
 
-        if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {
+        if (commandCategory == CommandCategories.NSFW && !CommandPermissions.allowNSFW(commandEvent)) {
             throw new ForbiddenCommandException("This channel is not marked in discord as nsfw. " +
-                    "To enable it, please go into the channel settings in discord and enable nsfw.");
+                    "To enable it, please go into the channel settings in discord and enable nsfw. " +
+                    "NOTE: NSFW not allowed in voice channels or threads.");
         }
 
         if (commandEvent.getGuild().getOwnerId().equals(commandEvent.getAuthor().getId())) {
@@ -114,11 +114,21 @@ public class CommandPermissions {
             }
 
             // If their in a voice channel the doesn't allow voice, then dont let them use it
-            if (!commandEvent.getMember().getVoiceState().inVoiceChannel()) {
+            if (commandEvent.getMember().getVoiceState() == null || !commandEvent.getMember().getVoiceState().inAudioChannel()) {
                 throw new ForbiddenCommandException("You must be in a voice channel to use a voice command");
             }
         }
 
         return true;
+    }
+
+    public static boolean allowNSFW(CommandEvent commandEvent) {
+        if (commandEvent.isFromType(ChannelType.PRIVATE)) {
+            return true;
+        } else if (commandEvent.isFromType(ChannelType.TEXT)){
+            return commandEvent.getTextChannel().isNSFW();
+        } else {
+            return false;
+        }
     }
 }

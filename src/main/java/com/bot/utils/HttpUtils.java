@@ -5,8 +5,11 @@ import com.bot.exceptions.InvalidInputException;
 import com.bot.exceptions.NoSuchResourceException;
 import com.bot.models.MarkovModel;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Webhook;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -14,7 +17,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,8 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class HttpUtils {
@@ -112,20 +113,8 @@ public class HttpUtils {
     }
 
     // TODO: Port to use a Webhook client like used for some scheduled commands
-    public static void sendCommentHook(Webhook webhook, MarkovModel model, Member member, TextChannel channel) throws Exception {
-        String message = model.getPhrase();
-        JSONObject toSend = new JSONObject();
-
-        message = message.replaceAll("@", "(at)");
-
-        if (member != null) {
-            toSend.put("username", member.getEffectiveName());
-            toSend.put("avatar_url", member.getUser().getAvatarUrl());
-        } else {
-            toSend.put("username", channel.getName());
-            toSend.put("avatar_url", channel.getGuild().getIconUrl());
-        }
-        toSend.put("content", message);
+    public static void sendCommentHook(Webhook webhook, MarkovModel model, Member member, MessageChannel channel) throws Exception {
+        JSONObject toSend = getMessage(model, member, channel);
 
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpPost post = new HttpPost(webhook.getUrl());
@@ -145,6 +134,28 @@ public class HttpUtils {
             logger.severe("Failed to send webhook for comment", e);
             throw new RuntimeException("Failed to send webhook to channel.");
         }
+    }
+
+    @NotNull
+    private static JSONObject getMessage(MarkovModel model, Member member, MessageChannel channel) {
+        String message = model.getPhrase();
+        JSONObject toSend = new JSONObject();
+
+        message = message.replaceAll("@", "(at)");
+
+        if (member != null) {
+            toSend.put("username", member.getEffectiveName());
+            toSend.put("avatar_url", member.getUser().getAvatarUrl());
+        } else {
+            toSend.put("username", channel.getName());
+            String iconUrl = channel.getJDA().getSelfUser().getAvatarUrl();
+            if (channel instanceof GuildChannel) {
+               iconUrl = ((GuildChannel) channel).getGuild().getIconUrl();
+            }
+            toSend.put("avatar_url", iconUrl);
+        }
+        toSend.put("content", message);
+        return toSend;
     }
 
     public static String getYoutubeIdForChannelUrl(String url) throws IOException, NoSuchResourceException, InvalidInputException {

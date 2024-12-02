@@ -4,6 +4,7 @@ import com.bot.Bot
 import com.bot.commands.VoiceCommand
 import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.CommandEvent
+import com.jagrosh.jdautilities.command.CooldownScope
 import datadog.trace.api.Trace
 import net.dv8tion.jda.api.entities.Message
 

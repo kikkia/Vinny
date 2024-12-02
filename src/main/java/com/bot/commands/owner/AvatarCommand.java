@@ -27,7 +27,7 @@ public class AvatarCommand extends OwnerCommand {
         try
         {
             File file = new File(attachment.getFileName());
-            attachment.downloadToFile(file);
+            attachment.getProxy().downloadToFile(file);
 
             Icon icon = Icon.from(file);
             AccountManager manager = commandEvent.getSelfUser().getManager();

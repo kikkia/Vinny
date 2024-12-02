@@ -1,7 +1,7 @@
 package com.bot.consumers;
 
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 
 import java.util.Arrays;
@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 public class ReRoleConsumer implements Consumer<GuildMemberJoinEvent> {
 
     private final List<Role> roles;
-    private final TextChannel channel;
+    private final MessageChannel channel;
 
-    public ReRoleConsumer(List<Role> roles, TextChannel channel) {
+    public ReRoleConsumer(List<Role> roles, MessageChannel channel) {
         this.roles = roles;
         this.channel = channel;
     }

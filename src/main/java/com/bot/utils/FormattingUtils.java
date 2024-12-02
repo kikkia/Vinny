@@ -190,7 +190,7 @@ public class FormattingUtils {
             if (mentionMatcher.find()) {
                 String userId = mentionMatcher.group(1);
                 // If any users match the id
-                List<User> mentionedUser = commandEvent.getMessage().getMentionedUsers().stream()
+                List<User> mentionedUser = commandEvent.getMessage().getMentions().getUsers().stream()
                         .filter(user -> user.getId().equals(userId))
                         .collect(Collectors.toList());
 
@@ -207,7 +207,7 @@ public class FormattingUtils {
             if (roleMatcher.find()) {
                 String roleId = roleMatcher.group(1);
 
-                List<Role> mentionedRole = commandEvent.getMessage().getMentionedRoles().stream()
+                List<Role> mentionedRole = commandEvent.getMessage().getMentions().getRoles().stream()
                         .filter(role -> role.getId().equals(roleId))
                         .collect(Collectors.toList());
 

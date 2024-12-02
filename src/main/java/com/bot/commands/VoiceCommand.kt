@@ -9,7 +9,7 @@ abstract class VoiceCommand : BaseCommand() {
     init {
         this.category = CommandCategories.VOICE
         this.guildOnly = true
-        this.botPermissions = arrayOf(Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.MESSAGE_WRITE, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ADD_REACTION)
+        this.botPermissions = arrayOf(Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.MESSAGE_SEND, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ADD_REACTION)
         this.canSchedule = false
     }
 }

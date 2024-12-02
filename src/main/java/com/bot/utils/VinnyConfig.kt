@@ -93,7 +93,16 @@ data class CachingConfig(val enabled: Boolean,
     val redisUrl: String?,
     val redisUser: String?,
     val redisPassword: String?,
-    val redisPort: String?)
+    val redisPort: String?) {
+
+    fun isPixivEnabled(): Boolean {
+        return enabled && pixivEnabled != false
+    }
+
+    fun isR34Enabled(): Boolean {
+        return enabled && r34enabled != false
+    }
+}
 
 data class OauthProperties(val oauthPollAddress: String,
         val oauthGrantType: String,

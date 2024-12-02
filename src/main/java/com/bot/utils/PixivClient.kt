@@ -37,7 +37,7 @@ class PixivClient private constructor() {
     init {
         // If redis enabled try to pull session from redis
         val (_, _, _, _, _, _, _, cachingConfig) = instance()
-        if (cachingConfig != null && java.lang.Boolean.TRUE == cachingConfig.pixivEnabled) {
+        if (cachingConfig != null && cachingConfig.isPixivEnabled()) {
             redisCache = getInstance()
             val cachedSess = redisCache?.getStr(REDIS_KEY)
             if (cachedSess != null) {

@@ -10,7 +10,6 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.security.spec.ECField;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -57,7 +56,7 @@ public class SubscribeBlueskyCommand extends CreateSubscriptionCommand {
             if (!RssUtils.isBlueSkyHandleValid(subject)) {
                 commandEvent.replyWarning(ConstantStrings.BLUESKY_HANDLE_NOT_VALID);
                 return;
-            } else if (!event.getTextChannel().isNSFW()) {
+            } else if (!event.getChannel().asTextChannel().isNSFW()) {
                 commandEvent.replyWarning(ConstantStrings.BLUESKY_NSFW);
                 return;
             }

@@ -4,7 +4,7 @@ import com.bot.db.ResumeAudioDAO
 import com.bot.utils.Logger
 import com.bot.voice.GuildVoiceProvider
 import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.events.ReadyEvent
+import net.dv8tion.jda.api.events.session.ReadyEvent
 import java.util.*
 
 class ResumeAudioTask(private val readyEvent: ReadyEvent) : Thread() {
