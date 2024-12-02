@@ -36,14 +36,16 @@ public class KickRouletteCommand extends MemeCommand {
     protected void executeCommand(CommandEvent commandEvent) {
         EmbedBuilder builder = getEmbedBuilder();
 
-        Message message = commandEvent.getChannel().sendMessageEmbeds(builder.build()).complete();
-        message.addReaction(commandEvent.getJDA().getEmojiById(":roulette:716160879418146827")).queue();
+        commandEvent.replyWarning("Sorry kick roulette is down for maintenance.");
 
-        waiter.waitForEvent(MessageReactionAddEvent.class,
-                e -> e.getUser().getId().equals(commandEvent.getMember().getUser().getId()) &&
-                e.getReaction().getEmoji().asCustom().getId().equals("716160879418146827"),
-                new KickConsumer(commandEvent),
-                30, TimeUnit.SECONDS, () -> commandEvent.reply("Guess you are just pussying out?"));
+//        Message message = commandEvent.getChannel().sendMessageEmbeds(builder.build()).complete();
+//        message.addReaction(commandEvent.getJDA().getEmojiById("716160879418146827")).queue();
+//
+//        waiter.waitForEvent(MessageReactionAddEvent.class,
+//                e -> e.getUser().getId().equals(commandEvent.getMember().getUser().getId()) &&
+//                e.getReaction().getEmoji().asCustom().getId().equals("716160879418146827"),
+//                new KickConsumer(commandEvent),
+//                30, TimeUnit.SECONDS, () -> commandEvent.reply("Guess you are just pussying out?"));
     }
 
     @NotNull
