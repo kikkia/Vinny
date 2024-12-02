@@ -11,7 +11,9 @@ import datadog.trace.api.Trace
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
+import net.dv8tion.jda.api.entities.channel.ChannelType
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import java.awt.Color
 import java.util.*
 
@@ -44,7 +46,7 @@ class CommentCommand : MemeCommand() {
         var markov: MarkovModel?
         if (mentionedUsers.isEmpty() && commandEvent.message.mentions.channels.isEmpty()) {
             // Try to get the user with a userid
-            if (!commandEvent.args.isEmpty()) {
+            if (commandEvent.args.isNotEmpty()) {
                 try {
                     user = commandEvent.jda.getUserById(commandEvent.args)
                     if (user == null) {
@@ -114,33 +116,32 @@ class CommentCommand : MemeCommand() {
     }
 
     private fun getMarkovForChannel(commandEvent: CommandEvent) {
-        val channel = commandEvent.message.mentions.channels[0] as TextChannel
-
-
-        // Placeholder for generation
-        markovCache.put(channel.id, MarkovModel())
+        val channel = commandEvent.message.mentions.channels[0] as MessageChannel
 
         // See if we have the model cached. If so we can skip rebuilding it.
         var markov: MarkovModel? = markovCache.get(channel.id)
 
         if (markov == null) {
+            // Placeholder for generation
+            markovCache.put(channel.id, MarkovModel())
+
             // No cached model found. Make a new one.
-            val message = commandEvent.channel.sendMessage("No cached markov model found for channel. " +
+            commandEvent.channel.sendMessage("No cached markov model found for channel. " +
                     "I am building one. This will take a little bit.").complete()
 
             markov = MarkovModel()
 
             // Fill the model with messages from a given channel
             try {
-                var msg_limit = 5000
-                if (commandEvent.selfMember.hasPermission(channel, Permission.MESSAGE_HISTORY)) {
+                var msgLimit = 5000
+                if (commandEvent.selfMember.hasPermission(channel as GuildChannel, Permission.MESSAGE_HISTORY)) {
                     for (m in channel.iterableHistory.cache(false)) {
                         // Check that message is the right author and has content.
                         if (m.contentRaw.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().size > 1)
                             markov.addPhrase(m.contentRaw)
 
                         // After 1000, break
-                        if (--msg_limit <= 0)
+                        if (--msgLimit <= 0)
                             break
                     }
                 } else {
@@ -166,7 +167,7 @@ class CommentCommand : MemeCommand() {
     }
 
     // Sends a formatted comment for a channel or a user
-    private fun sendCommentEmbed(commandEvent: CommandEvent, markovModel: MarkovModel, user: User?, channel: TextChannel?) {
+    private fun sendCommentEmbed(commandEvent: CommandEvent, markovModel: MarkovModel, user: User?, channel: MessageChannel?) {
         val builder = EmbedBuilder()
         if (user != null)
             builder.setAuthor(user.name, user.avatarUrl, user.avatarUrl)
@@ -187,8 +188,8 @@ class CommentCommand : MemeCommand() {
         commandEvent.reply(builder.build())
     }
 
-    private fun sendComment(commandEvent: CommandEvent, markovModel: MarkovModel, user: User?, channel: TextChannel?) {
-        if (commandEvent.selfMember.hasPermission(commandEvent.textChannel, Permission.MANAGE_WEBHOOKS)) {
+    private fun sendComment(commandEvent: CommandEvent, markovModel: MarkovModel, user: User?, channel: MessageChannel?) {
+        if (commandEvent.isFromType(ChannelType.TEXT) && commandEvent.selfMember.hasPermission(commandEvent.textChannel as GuildChannel, Permission.MANAGE_WEBHOOKS)) {
             val hooks = commandEvent.textChannel.retrieveWebhooks().complete()
 
             // If there are webhooks, lets send that way

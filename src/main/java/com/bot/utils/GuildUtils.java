@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 
 import java.util.List;
@@ -70,7 +71,7 @@ public class GuildUtils {
         }
     }
 
-    public static Message getLastMessageFromChannel(TextChannel channel, boolean ignoreCommandMessage) {
+    public static Message getLastMessageFromChannel(MessageChannel channel, boolean ignoreCommandMessage) {
         for (Message message : channel.getIterableHistory().cache(true)) {
             if (message.getIdLong() == channel.getLatestMessageIdLong())
                 if (ignoreCommandMessage)

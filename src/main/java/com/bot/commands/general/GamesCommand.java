@@ -71,6 +71,6 @@ public class GamesCommand extends GeneralCommand {
         List<String> gameList = FormattingUtils.getGamesPaginatedList(PAGINATOR_SIZE, gameMap);
         builder.setText("**Games being played in " + commandEvent.getGuild().getName() + "**");
         builder.setItems(gameList.toArray(new String[]{}));
-        builder.build().paginate(commandEvent.getTextChannel(), 1);
+        builder.build().paginate(commandEvent.getChannel(), 1);
     }
 }

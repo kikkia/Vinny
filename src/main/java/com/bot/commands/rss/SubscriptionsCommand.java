@@ -70,7 +70,7 @@ public class SubscriptionsCommand extends GeneralCommand {
         builder.setItems(strings.toArray(new String[]{}));
         builder.setText("Subscriptions in context");
 
-        builder.build().paginate(commandEvent.getTextChannel(), 1);
+        builder.build().paginate(commandEvent.getChannel(), 1);
     }
 }
 

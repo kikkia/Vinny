@@ -10,7 +10,6 @@ import com.jagrosh.jdautilities.menu.Paginator;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class ListSubscriptionsCommand extends GeneralCommand {
 
@@ -52,10 +51,10 @@ public class ListSubscriptionsCommand extends GeneralCommand {
             return;
         }
 
-        List<String> subs = subscriptions.stream().map(RssChannelSubscription::toCondensedString).collect(Collectors.toList());
+        List<String> subs = subscriptions.stream().map(RssChannelSubscription::toCondensedString).toList();
         builder.setItems(subs.toArray(new String[]{}));
         builder.setText("Subscriptions in channel");
 
-        builder.build().paginate(commandEvent.getTextChannel(), 1);
+        builder.build().paginate(commandEvent.getChannel(), 1);
     }
 }

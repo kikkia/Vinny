@@ -36,7 +36,7 @@ public class KickRouletteCommand extends MemeCommand {
     protected void executeCommand(CommandEvent commandEvent) {
         EmbedBuilder builder = getEmbedBuilder();
 
-        Message message = commandEvent.getTextChannel().sendMessageEmbeds(builder.build()).complete();
+        Message message = commandEvent.getChannel().sendMessageEmbeds(builder.build()).complete();
         message.addReaction(commandEvent.getJDA().getEmojiById(":roulette:716160879418146827")).queue();
 
         waiter.waitForEvent(MessageReactionAddEvent.class,
@@ -81,7 +81,7 @@ public class KickRouletteCommand extends MemeCommand {
                 commandEvent.reply(ConstantStrings.getRandomRouletteFail());
                 waiter.waitForEvent(GuildMemberJoinEvent.class,
                         e -> e.getUser().getId().equals(commandEvent.getMember().getUser().getId()),
-                        new ReRoleConsumer(commandEvent.getMember().getRoles(), commandEvent.getTextChannel()),
+                        new ReRoleConsumer(commandEvent.getMember().getRoles(), commandEvent.getChannel()),
                         1, TimeUnit.DAYS, () -> commandEvent.reply("Riperino, looks like they are dead forever"));
                 commandEvent.getMember().kick().queue();
             } else {

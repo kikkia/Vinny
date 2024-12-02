@@ -37,9 +37,10 @@ public class CommandPermissions {
             return commandEvent.getAuthor().getId().equals(config.getDiscordConfig().getOwnerId());
         }
 
-        if (commandCategory == CommandCategories.NSFW && !commandEvent.getTextChannel().isNSFW()) {
+        if (commandCategory == CommandCategories.NSFW && !CommandPermissions.allowNSFW(commandEvent)) {
             throw new ForbiddenCommandException("This channel is not marked in discord as nsfw. " +
-                    "To enable it, please go into the channel settings in discord and enable nsfw.");
+                    "To enable it, please go into the channel settings in discord and enable nsfw. " +
+                    "NOTE: NSFW not allowed in voice channels or threads.");
         }
 
         if (commandEvent.getGuild().getOwnerId().equals(commandEvent.getAuthor().getId())) {
@@ -119,5 +120,15 @@ public class CommandPermissions {
         }
 
         return true;
+    }
+
+    public static boolean allowNSFW(CommandEvent commandEvent) {
+        if (commandEvent.isFromType(ChannelType.PRIVATE)) {
+            return true;
+        } else if (commandEvent.isFromType(ChannelType.TEXT)){
+            return commandEvent.getTextChannel().isNSFW();
+        } else {
+            return false;
+        }
     }
 }

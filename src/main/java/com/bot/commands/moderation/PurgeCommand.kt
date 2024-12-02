@@ -83,7 +83,7 @@ class PurgeCommand : ModerationCommand() {
                     }
                 }
             } catch (e: Exception) {
-                logger.severe("Failed to purge some messages", e)
+                logger.severe("Failed to purge some messages, purge doesnt work on threads or voice channels yet.", e)
                 commandEvent.replyError("Failed to purge ${toDelete.size - delCount} messages. " + (if (twoWeekWarn) twoWeekWarning else ""))
                 return@async
             }

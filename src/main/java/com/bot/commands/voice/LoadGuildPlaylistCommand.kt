@@ -47,7 +47,7 @@ class LoadGuildPlaylistCommand : VoiceCommand() {
         }
 
         val conn = guildVoiceProvider.getGuildVoiceConnection(commandEvent.guild)
-        val loadingMessage = commandEvent.textChannel.sendMessage("Starting load of playlist ${playlist.name}").complete()
+        val loadingMessage = commandEvent.channel.sendMessage("Starting load of playlist ${playlist.name}").complete()
         // Queue up the tracks
         conn.queuePlaylist(playlist.getTracks()!!.map { it.url!! }.toList(), commandEvent, loadingMessage)
     }

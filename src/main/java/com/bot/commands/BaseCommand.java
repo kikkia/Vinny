@@ -53,7 +53,7 @@ public abstract class BaseCommand extends Command {
 
         metricsManager.markCommand(this, commandEvent.getAuthor(), guild, scheduled);
         if (!scheduled) {
-            commandEvent.getTextChannel().sendTyping().queue();
+            commandEvent.getChannel().sendTyping().queue();
             membershipDAO.addUserToGuild(commandEvent.getMember().getUser(), commandEvent.getGuild());
         }
 

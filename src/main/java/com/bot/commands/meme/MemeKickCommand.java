@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 
@@ -35,6 +36,11 @@ public class MemeKickCommand extends MemeCommand {
     protected void executeCommand(CommandEvent commandEvent) {
         if (commandEvent.getMessage().getMentions().getUsers().isEmpty()) {
             commandEvent.replyWarning("You must specify at least one user to memekick");
+            return;
+        }
+        if (!commandEvent.isFromType(ChannelType.TEXT)) {
+            commandEvent.replyWarning("Memekick can only be used in normal text channels.");
+            return;
         }
 
         for (User user : commandEvent.getMessage().getMentions().getUsers()) {

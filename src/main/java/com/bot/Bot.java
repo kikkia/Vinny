@@ -98,7 +98,6 @@ public class Bot extends ListenerAdapter {
 
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-		System.out.println("Received: " + event.getChannelType());
 		if ((event.isFromType(ChannelType.TEXT) || event.isFromType(ChannelType.VOICE)) && event.isFromGuild()) {
 			onGuildMessageReceived(event);
 		}
