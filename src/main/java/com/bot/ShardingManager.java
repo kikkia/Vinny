@@ -234,7 +234,8 @@ public class ShardingManager {
                         GUILD_EXPRESSIONS,
                         GUILD_MESSAGE_REACTIONS,
                         GUILD_VOICE_STATES,
-                        DIRECT_MESSAGES
+                        DIRECT_MESSAGES,
+                        MESSAGE_CONTENT
                 )
                 .setShardsTotal(numShards)
                 .setChunkingFilter(ChunkingFilter.NONE)

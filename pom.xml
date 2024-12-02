@@ -226,7 +226,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.2.1</version>
+            <version>5.1.2</version>
         </dependency>
         <dependency>
             <groupId>com.github.kikkia</groupId>
