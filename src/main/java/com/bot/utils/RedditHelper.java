@@ -132,36 +132,38 @@ public class RedditHelper {
                 }
             }
         }
-
-        // Scheduled commands generate an insane amount of traffic, lets send them to webhooks to help with global ratelimiting
-        if (ScheduledCommandUtils.isScheduled(commandEvent)) {
-            WebhookClient client = ScheduledCommandUtils.getWebhookForChannel(commandEvent);
-            if (!postOnly) {
-                client.send(buildWebhookEmbedMessageForSubmission(commandEvent, submission));
-            }
-            client.send(buildWebhookMessageForSubmission(commandEvent, submission));
-        } else {
-            // Send the embed, content will be sent separatly below
-            if (!postOnly) {
-                commandEvent.reply(buildEmbedForSubmission(submission));
-            }
-
-            String text = submission.getSelfText();
-            if (submission.isSelfPost() && text != null && !text.isEmpty()) {
-                // Since discord only allows us to send 2000 characters we need to break long posts down
-                if (text.length() > 1900) {
-                    // Split message into parts and send them all separately
-                    for (String part : FormattingUtils.splitTextIntoChunksByWords(text, 1500)) {
-                        commandEvent.reply("```" + part + "```");
-                    }
-                } else {
-                    // Its short enough so just send it
-                    commandEvent.reply("```" + text + " ```");
-                }
-            } else {
-                commandEvent.reply(submission.getUrl());
-            }
-        }
+        commandEvent.reply("https://rxddit.com/" + submission.getId());
+        // TODO: Find out if we really want this setup
+//        // Scheduled commands generate an insane amount of traffic, lets send them to webhooks to help with global ratelimiting
+//        if (ScheduledCommandUtils.isScheduled(commandEvent)) {
+//            WebhookClient client = ScheduledCommandUtils.getWebhookForChannel(commandEvent);
+//            if (!postOnly) {
+//                client.send(buildWebhookEmbedMessageForSubmission(commandEvent, submission));
+//            }
+//            client.send(buildWebhookMessageForSubmission(commandEvent, submission));
+//        } else {
+//            // Send the embed, content will be sent separatly below
+//            if (!postOnly) {
+//                commandEvent.reply(buildEmbedForSubmission(submission));
+//            }
+//
+//            String text = submission.getSelfText();
+//            if (submission.isSelfPost() && text != null && !text.isEmpty()) {
+//                // Since discord only allows us to send 2000 characters we need to break long posts down
+//                if (text.length() > 1900) {
+//                    // Split message into parts and send them all separately
+//                    for (String part : FormattingUtils.splitTextIntoChunksByWords(text, 1500)) {
+//                        commandEvent.reply("```" + part + "```");
+//                    }
+//                } else {
+//                    // Its short enough so just send it
+//                    commandEvent.reply("```" + text + " ```");
+//                }
+//            } else {
+//                commandEvent.reply(submission.getUrl());
+//            }
+//            commandEvent.reply("https://rxddit.com/" + submission.getId());
+//        }
     }
 
     private static Submission getRandomSubmission(Listing<Submission> submissions, boolean stickyAllowed) {
