@@ -49,7 +49,7 @@ public class ScheduledCommandUtils {
                 0L,
                 false,
                 false,
-                null,
+                command.getCommand(),
                 ConstantStrings.SCHEDULED_FLAG,
                 user,
                 new MemberImpl((GuildImpl) guild, user),
