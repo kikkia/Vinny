@@ -78,7 +78,7 @@ public class RedditHelper {
             return;
         }
 
-        SubredditReference subreddit = redditConnection.getClient()
+        SubredditReference subreddit = redditConnection.client
                 .subreddit(subredditName);
 
         if (!isChannelNSFW && subreddit.about().isNsfw()) {
@@ -263,7 +263,7 @@ public class RedditHelper {
 
     public static String getRandomCopyPasta(RedditConnection redditConnection) {
         String subredditName = "copypasta";
-        SubredditReference subreddit = redditConnection.getClient()
+        SubredditReference subreddit = redditConnection.client
                 .subreddit(subredditName);
 
         SubredditSort sortType = SubredditSort.TOP;

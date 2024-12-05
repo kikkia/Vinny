@@ -24,7 +24,7 @@ public class SubscribeRedditCommand extends CreateSubscriptionCommand {
         this.aliases = new String[] {"redditsubscribe", "subscribesubreddit"};
         this.botPermissions = new Permission[] {Permission.MANAGE_WEBHOOKS};
         this.waiter = waiter;
-        this.redditClient = RedditConnection.getInstance().getClient();
+        this.redditClient = RedditConnection.getInstance().client;
     }
 
     @Override
