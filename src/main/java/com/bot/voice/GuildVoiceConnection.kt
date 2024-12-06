@@ -396,7 +396,6 @@ class GuildVoiceConnection(val guild: Guild) {
             // Check for refresh
             if (oauthConfig!!.needsRefresh()) {
                 updateOauthConfig(Oauth2Utils.refreshAccessToken(oauthConfig!!))
-                oauthConfigDAO.setOauthConfig(oauthConfig!!)
             }
         } else {
             findOauth()
@@ -418,7 +417,6 @@ class GuildVoiceConnection(val guild: Guild) {
                 if (config != null) {
                     if (config.needsRefresh()) {
                         config = Oauth2Utils.refreshAccessToken(config)
-                        oauthConfigDAO.setOauthConfig(config)
                     }
                     updateOauthConfig(config)
                 }

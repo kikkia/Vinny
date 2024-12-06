@@ -1,6 +1,7 @@
 package com.bot.utils
 
 
+import com.bot.db.OauthConfigDAO
 import com.bot.db.models.OauthConfig
 import com.bot.exceptions.OauthRefreshException
 import com.bot.metrics.MetricsManager
@@ -38,7 +39,8 @@ data class OauthSetupResponse(val userCode: String,
 class Oauth2Utils {
     companion object {
         val client = OkHttpClient()
-        val oauthProperties = VinnyConfig.instance().voiceConfig.oauthConfig
+        private val oauthProperties = VinnyConfig.instance().voiceConfig.oauthConfig
+        private val oauthConfigDAO = OauthConfigDAO.getInstance()
         val metricsManager = MetricsManager.instance
 
          fun initOauthFlow(commandEvent: CommandEvent): OauthSetupResponse {
@@ -83,6 +85,7 @@ class Oauth2Utils {
             }
         }
 
+        // Refreshes token and updates state in db
         fun refreshAccessToken(oauthConfig: OauthConfig): OauthConfig {
             println("Refreshing token")
             val jsonObject = JSONObject()
@@ -110,11 +113,15 @@ class Oauth2Utils {
                 // Process the response JSON object
                 // println("Response JSON: $responseJson")
                 val parsed = OauthPollResponse.fromJson(responseJson)
-                return OauthConfig(oauthConfig.userId, oauthConfig.refreshToken, parsed.accessToken, parsed.tokenType, parsed.tokenExpires)
-
+                val toReturn = OauthConfig(oauthConfig.userId, oauthConfig.refreshToken, parsed.accessToken, parsed.tokenType, parsed.tokenExpires, true)
+                oauthConfigDAO.setOauthConfig(toReturn)
+                return toReturn
             } catch (e: Exception) {
                 println("Error: ${e.message}")
-                throw OauthRefreshException("Exception encountered during token refresh: ${e.message}")
+                // Save a failed oauth refresh
+                oauthConfig.healthy = false
+                oauthConfigDAO.setOauthConfig(oauthConfig)
+                throw OauthRefreshException("Unexpected Exception encountered during token refresh: ${e.message}")
             }
         }
     }

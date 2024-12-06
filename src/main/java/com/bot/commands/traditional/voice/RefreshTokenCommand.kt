@@ -19,7 +19,7 @@ class RefreshTokenCommand: GeneralCommand() {
             commandEvent.replyWarning("You have not signed in yet. Use the `~login` command to initially sign in.")
             return
         }
-        oauthConfigDAO.setOauthConfig(Oauth2Utils.refreshAccessToken(oauthConfig))
+        Oauth2Utils.refreshAccessToken(oauthConfig)
         commandEvent.reactSuccess()
     }
 }

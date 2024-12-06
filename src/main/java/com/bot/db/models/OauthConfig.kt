@@ -3,7 +3,12 @@ package com.bot.db.models
 import java.sql.ResultSet
 import java.time.Instant
 
-class OauthConfig(val userId: String, val refreshToken: String, val accessToken: String, val tokenType: String, val expiry: Instant) {
+class OauthConfig(val userId: String,
+                  val refreshToken: String,
+                  val accessToken: String,
+                  val tokenType: String,
+                  val expiry: Instant,
+                  var healthy: Boolean) {
 
     // If expiry is within 10 mins, we should preemptive refresh
     fun needsRefresh() : Boolean {
@@ -16,7 +21,8 @@ class OauthConfig(val userId: String, val refreshToken: String, val accessToken:
                     set.getString("refresh_token"),
                     set.getString("access_token"),
                     set.getString("token_type"),
-                    Instant.ofEpochMilli(set.getLong("expiry")))
+                    Instant.ofEpochMilli(set.getLong("expiry")),
+                    set.getBoolean("healthy"))
         }
     }
 }

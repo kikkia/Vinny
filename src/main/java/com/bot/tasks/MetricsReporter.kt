@@ -95,6 +95,10 @@ class MetricsReporter : Thread() {
         metricsManager.updateUsersInVoice(usersInVoice)
         metricsManager.updateVoiceConnectionEntities(voiceConnections.size)
         metricsManager.updateQueuedTracks(queuedTracks)
-        metricsManager.updateTotalOuathUsers(oauthConfigDAO.getTotalOauthConfigs())
+        val healthyOauth = oauthConfigDAO.getTotalOauthConfigs(true)
+        val unhealthyOauth = oauthConfigDAO.getTotalOauthConfigs(false)
+        metricsManager.updateTotalOuathUsers(healthyOauth + unhealthyOauth)
+        metricsManager.updateTotalHealthyOuathUsers(healthyOauth)
+        metricsManager.updateTotalUnhealthyOuathUsers(unhealthyOauth)
     }
 }

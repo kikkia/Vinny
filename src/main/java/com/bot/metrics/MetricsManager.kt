@@ -211,6 +211,14 @@ class MetricsManager private constructor() {
         statsd!!.recordGaugeValue("voice.oauth.users", count.toLong())
     }
 
+    fun updateTotalHealthyOuathUsers(count: Int) {
+        statsd!!.recordGaugeValue("voice.oauth.healthy", count.toLong())
+    }
+
+    fun updateTotalUnhealthyOuathUsers(count: Int) {
+        statsd!!.recordGaugeValue("voice.oauth.unhealthy", count.toLong())
+    }
+
     fun updatePing(shard: Int, ping: Long) {
         val shardTag = "shard:$shard"
         statsd!!.recordGaugeValue("discord.ping", ping, shardTag)

@@ -42,13 +42,14 @@ class OauthConfigDAO {
         return null
     }
 
-    fun getTotalOauthConfigs(): Int {
-        val query = "SELECT count(*) FROM user_oauth_config"
+    fun getTotalOauthConfigs(healthy: Boolean): Int {
+        val query = "SELECT count(*) FROM user_oauth_config WHERE `healthy` = ?"
         var connection: Connection? = null
         var statement: PreparedStatement? = null
         try {
             connection = write.connection
             statement = connection.prepareStatement(query)
+            statement.setBoolean(1, healthy)
             val set = statement.executeQuery()
             if (set.next()) {
                 return set.getInt(1)
@@ -65,13 +66,14 @@ class OauthConfigDAO {
         try {
             write.connection.use { connection ->
                 val query = """
-                    INSERT INTO `user_oauth_config` (`id`, `refresh_token`, `access_token`, `token_type`, `expiry`) 
-                    VALUES (?, ?, ?, ?, ?) 
+                    INSERT INTO `user_oauth_config` (`id`, `refresh_token`, `access_token`, `token_type`, `expiry`, `healthy`) 
+                    VALUES (?, ?, ?, ?, ?, ?) 
                         ON DUPLICATE KEY UPDATE 
                             `refresh_token` = VALUES(`refresh_token`),
                             `access_token` = VALUES(`access_token`),
                             `token_type` = VALUES(`token_type`),
-                            `expiry` = VALUES(`expiry`);
+                            `expiry` = VALUES(`expiry`),
+                            `healthy` = VALUES(`healthy`);
                     """
                 connection.prepareStatement(query).use { statement ->
                     statement.setString(1, config.userId)
@@ -79,6 +81,7 @@ class OauthConfigDAO {
                     statement.setString(3, config.accessToken)
                     statement.setString(4, config.tokenType)
                     statement.setLong(5, config.expiry.epochSecond)
+                    statement.setBoolean(6, config.healthy)
                     statement.execute()
                 }
             }
