@@ -217,12 +217,15 @@ public class ShardingManager {
                 new SetPixivSessionCommand(),
                 new ThreadDumpCommand());
 
+        commandClientBuilder.addSlashCommand(new com.bot.commands.slash.SayCommand());
+
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
         commandClientBuilder.setEmojis("\u2705", "\u2757", "\u274c");
         commandClientBuilder.setGuildSettingsManager(new GuildPreferencesManager());
         commandClientBuilder.setActivity(null);
         commandClientBuilder.setScheduleExecutor(executor);
+        commandClientBuilder.setManualUpsert(false);
         client = commandClientBuilder.build();
 
         shardManager = DefaultShardManagerBuilder

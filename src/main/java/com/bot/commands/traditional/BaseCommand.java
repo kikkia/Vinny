@@ -51,7 +51,7 @@ public abstract class BaseCommand extends Command {
         if (!commandEvent.isFromType(ChannelType.PRIVATE))
             guild = commandEvent.getGuild();
 
-        metricsManager.markCommand(this, commandEvent.getAuthor(), guild, scheduled);
+        metricsManager.markCommand(this.name, this.category.getName(), commandEvent.getAuthor(), guild, scheduled, false);
         if (!scheduled) {
             commandEvent.getChannel().sendTyping().queue();
             membershipDAO.addUserToGuild(commandEvent.getMember().getUser(), commandEvent.getGuild());
