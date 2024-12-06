@@ -119,6 +119,7 @@ public class ShardingManager {
                     new RewindCommand(),
                     new AutoplayCommand(),
                     new LoginDeviceCommand(),
+                    new LogoutDeviceCommand(),
                     new RefreshTokenCommand(),
                     //new SpeedCommand(),
 
