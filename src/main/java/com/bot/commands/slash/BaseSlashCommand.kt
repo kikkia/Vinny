@@ -5,21 +5,22 @@ import com.jagrosh.jdautilities.command.SlashCommand
 import com.jagrosh.jdautilities.command.SlashCommandEvent
 
 abstract class BaseSlashCommand : SlashCommand() {
-
-    private val metrics = MetricsManager.instance
+    protected val logger = com.bot.utils.Logger(this.javaClass.getSimpleName())
+    protected val metrics = MetricsManager.instance
 
     init {
         guildOnly = true
     }
 
     override fun execute(command: SlashCommandEvent?) {
-        metrics!!.markCommand(this.name, this.category.name, command!!.user, command.guild,
+        command!!.deferReply().queue()
+        metrics!!.markCommand(this.name, this.category.name, command.user, command.guild,
             scheduled = false,
             slash = true
         )
 
-        runCommand(command)
+        runCommand(ExtSlashCommandEvent.fromCommandEvent(command))
     }
 
-    abstract fun runCommand(command: SlashCommandEvent)
+    abstract fun runCommand(command: ExtSlashCommandEvent)
 }
