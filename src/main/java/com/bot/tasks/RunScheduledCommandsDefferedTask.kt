@@ -33,7 +33,7 @@ class RunScheduledCommandsDefferedTask : Thread() {
 
                     if (shouldRun) {
                         val jda: JDA = ScheduledCommandUtils.getShardForCommand(sCommand)
-                        val event = ScheduledCommandUtils.generateSimulatedMessageRecievedEvent(sCommand, jda)
+                        val event = ScheduledCommandUtils.generateSimulatedMessageReceivedEvent(sCommand, jda)
                         val client = ShardingManager.getInstance().commandClientImpl
                         client.onEvent(event)
 

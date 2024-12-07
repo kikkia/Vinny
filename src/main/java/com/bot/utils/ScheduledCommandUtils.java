@@ -28,7 +28,7 @@ public class ScheduledCommandUtils {
 
     public static MetricsManager metricsManager;
 
-    public static MessageReceivedEvent generateSimulatedMessageRecievedEvent(ScheduledCommand command, JDA shardJDA) {
+    public static MessageReceivedEvent generateSimulatedMessageReceivedEvent(ScheduledCommand command, JDA shardJDA) {
         Message message = generateScheduledMessage(command, shardJDA);
         return new MessageReceivedEvent(shardJDA, 1, message);
     }
