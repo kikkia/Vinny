@@ -3,7 +3,7 @@ package com.bot
 import com.bot.db.ConnectionPool
 import com.bot.messaging.RssSubscriber
 import com.bot.tasks.MetricsReporter
-import com.bot.tasks.RunScheduledCommandsDefferedTask
+import com.bot.tasks.RunScheduledCommandsDeferredTask
 import com.bot.utils.VinnyConfig.Companion.instance
 import com.bot.voice.LavaLinkClient.Companion.getInstance
 import org.flywaydb.core.Flyway
@@ -46,7 +46,7 @@ object Main {
         scheduledTaskExecutor.scheduleAtFixedRate(MetricsReporter(), 1, 2, TimeUnit.MINUTES)
 
         if (config.botConfig.enableScheduledCommands) {
-            scheduledTaskExecutor.scheduleAtFixedRate(RunScheduledCommandsDefferedTask(), 360, 9, TimeUnit.SECONDS)
+            scheduledTaskExecutor.scheduleAtFixedRate(RunScheduledCommandsDeferredTask(), 360, 9, TimeUnit.SECONDS)
         }
 
         // If nats is enabled, register subscribers

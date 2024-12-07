@@ -9,10 +9,10 @@ import com.bot.utils.ScheduledCommandUtils
 import net.dv8tion.jda.api.JDA
 import org.slf4j.MDC
 
-class RunScheduledCommandsDefferedTask : Thread() {
+class RunScheduledCommandsDeferredTask : Thread() {
 
     private val scheduledCommandDAO : ScheduledCommandDAO = ScheduledCommandDAO.getInstance()
-    private val logger : Logger = Logger(RunScheduledCommandsDefferedTask::class.java.name)
+    private val logger : Logger = Logger(RunScheduledCommandsDeferredTask::class.java.name)
     private val metrics : MetricsManager = MetricsManager.instance!!
 
     private val MAX_TO_RUN = 60
