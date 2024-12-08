@@ -5,6 +5,7 @@ import com.bot.models.enums.R34Provider
 import com.bot.utils.Logger
 import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.Command
+import com.jagrosh.jdautilities.command.SlashCommand
 import com.timgroup.statsd.NonBlockingStatsDClientBuilder
 import com.timgroup.statsd.StatsDClient
 import dev.arbjerg.lavalink.client.event.TrackEndEvent
@@ -34,16 +35,17 @@ class MetricsManager private constructor() {
         statsd = builder.build()
     }
 
-    fun markCommand(command: Command, user: User, guild: Guild?, scheduled: Boolean) {
-        val userTag = "user:" + user.id
-        val commandTag = "command:" + command.name
-        val categoryTag = "category:" + command.category.name
-        val scheduled = "scheduled:$scheduled"
+    fun markCommand(name: String, category: String, user: User, guild: Guild?, scheduled: Boolean, slash: Boolean) {
+        val userTag = "user:${user.id}"
+        val commandTag = "command:$name"
+        val categoryTag = "category:$category"
+        val scheduledTag = "scheduled:$scheduled"
+        val slashTag = "slash:$slash"
 
         // Support guild being null (use in PMs)
         val guildOrPM = guild?.id ?: "PM"
         val guildTag = "guild:$guildOrPM"
-        statsd!!.incrementCounter("command", userTag, guildTag, commandTag, categoryTag, scheduled)
+        statsd!!.incrementCounter("command", userTag, guildTag, commandTag, categoryTag, scheduledTag, slashTag)
     }
 
     fun markGuildAliasExecuted(guild: InternalGuild) {

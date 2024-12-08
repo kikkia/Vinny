@@ -16,6 +16,7 @@ object CommandCategories {
     @JvmField
     val REDDIT: Command.Category = Command.Category("reddit")
     val MEME: Command.Category = Command.Category("meme")
+    val SUBSCRIPTION: Command.Category = Command.Category("subscription")
 
     @JvmField
     val OWNER: Command.Category = Command.Category("owner")

@@ -158,6 +158,7 @@ public class HttpUtils {
         return toSend;
     }
 
+    // TODO: Migrate to YT api like the rss feed
     public static String getYoutubeIdForChannelUrl(String url) throws IOException, NoSuchResourceException, InvalidInputException {
         boolean lookup = url.contains("https://www.youtube.com/c/");
         String token = getYTChannelIdToken();
@@ -168,11 +169,13 @@ public class HttpUtils {
             httpget.addHeader("User-Agent", USER_AGENT);
             httpget.addHeader("Cookie", YT_COMMENT_PICK_S);
             HttpResponse response = client.execute(httpget);
+            String responseString = IOUtils.toString(response.getEntity().getContent());
             try {
-                JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
+                JSONObject jsonResponse = new JSONObject(responseString);
                 return lookup ? jsonResponse.getJSONArray("items").getJSONObject(0).getJSONObject("id").getString("channelId")
                         : jsonResponse.getJSONArray("items").getJSONObject(0).getString("id");
             } catch (JSONException e) {
+                logger.warning(responseString);
                 logger.severe("Failed to parse yt channel id", e);
                 throw new NoSuchResourceException("Could not find that YT channel");
             }
