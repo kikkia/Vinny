@@ -18,7 +18,8 @@ class SubscribeCommand : BaseSlashCommand() {
         this.children = arrayOf(TwitchSubscriptionSlashCommand(),
             RedditSubscriptionSlashCommand(),
             BlueskySubscriptionSlashCommand(),
-            YoutubeSubscribeSlashCommand(),
+            // TODO: Fix yt channel id parse
+            // YoutubeSubscribeSlashCommand(),
             ChanSubscriptionSlashCommand())
         this.subcommandGroup = SubcommandGroupData("to", "All platforms available for subscriptions")
         this.subcommandGroup.addSubcommands(SubcommandData("reddit", "Subscribe to a subreddit to be notified for all new posts."))
