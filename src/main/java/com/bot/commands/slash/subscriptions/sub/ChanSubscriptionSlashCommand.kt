@@ -29,7 +29,7 @@ class ChanSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             command.replyWarning(ConstantStrings.CHAN_BOARD_NSFW)
             return
         }
-        val subChannel = command.optGuildChannel("channel") ?: command.channel
+        val subChannel = getEffectiveChannel(command)
 
         try {
             rssDAO.addSubscription(

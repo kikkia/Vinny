@@ -6,10 +6,12 @@ import com.bot.db.RssDAO
 import com.bot.db.UserDAO
 import com.bot.exceptions.ChannelTypeNotSupportedException
 import com.bot.exceptions.UsageLimitException
+import com.bot.exceptions.UserPermissionsException
 import com.bot.models.UsageLevel
 import com.bot.utils.CommandCategories
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.channel.ChannelType
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 
 abstract class AddSubscriptionSlashCommand: BaseSlashCommand() {
     protected val rssDAO : RssDAO = RssDAO.getInstance()
@@ -17,7 +19,7 @@ abstract class AddSubscriptionSlashCommand: BaseSlashCommand() {
 
     init {
         this.category = CommandCategories.SUBSCRIPTION
-        this.userPermissions = arrayOf(Permission.MANAGE_SERVER)
+        this.botPermissions = arrayOf(Permission.MANAGE_WEBHOOKS)
     }
 
     override fun preExecute(command: ExtSlashCommandEvent) {
@@ -28,11 +30,10 @@ abstract class AddSubscriptionSlashCommand: BaseSlashCommand() {
                     "`~unsubscribe` command")
         }
 
-        val subChannel = command.optGuildChannel("channel") ?: command.channel
-        if (subChannel.type != ChannelType.TEXT) {
-            throw ChannelTypeNotSupportedException("Sorry, at this time subscriptions can only be made in normal text channels. " +
-                    "They cannot be made in voice channels or threads for example. Sorry for the inconvenience. If this " +
-                    "is important to you, let me know on the support server.")
+        val subChannel = getEffectiveChannel(command)
+        if (!command.member!!.hasPermission(subChannel, Permission.MANAGE_CHANNEL)) {
+            throw UserPermissionsException("You need to have the `Manage Channel` permission in ${subChannel.asMention} " +
+                    "to create a subscription in it.")
         }
     }
 
@@ -40,5 +41,16 @@ abstract class AddSubscriptionSlashCommand: BaseSlashCommand() {
         val user = userDAO.getById(command.user.id)
         val usage = user?.usageLevel() ?: UsageLevel.BASIC
         return rssDAO.getCountForAuthor(command.user.id) < usage.maxSub
+    }
+
+    protected fun getEffectiveChannel(command: ExtSlashCommandEvent): GuildMessageChannel {
+        val subChannel = command.optMessageChannel("channel") ?: command.channel.asGuildMessageChannel()
+        if (subChannel.type != ChannelType.TEXT) {
+            throw ChannelTypeNotSupportedException("Sorry, at this time subscriptions can only be made in normal text channels. " +
+                    "They cannot be made in voice channels or threads for example. Sorry for the inconvenience. If this " +
+                    "is important to you, let me know on the support server.")
+        }
+        // The above check filters out all non normal text channels, should be safe to get as guild channel now.
+        return (command.optGuildChannel("channel") ?: command.channel.asGuildMessageChannel()) as GuildMessageChannel
     }
 }

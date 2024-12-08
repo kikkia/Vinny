@@ -1,3 +1,3 @@
 package com.bot.exceptions
 
-class SubscriptionAlreadyExistsException(message: String) : Exception(message)
+class SubscriptionAlreadyExistsException(message: String) : UserVisibleException(message)

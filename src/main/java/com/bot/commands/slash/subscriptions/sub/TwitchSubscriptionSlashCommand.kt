@@ -29,7 +29,7 @@ class TwitchSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
                 subject.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[subject.split("/".toRegex())
                     .dropLastWhile { it.isEmpty() }.toTypedArray().size - 1]
         }
-        val subChannel = command.optGuildChannel("channel") ?: command.channel
+        val subChannel = getEffectiveChannel(command)
 
         try {
             id = getTwitchIdForUsername(subject)

@@ -41,7 +41,7 @@ class RedditSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             command.replyWarning(ConstantStrings.SUBREDDIT_NSFW)
             return
         }
-        val subChannel = command.optGuildChannel("channel") ?: command.channel
+        val subChannel = getEffectiveChannel(command)
 
         // TODO: Keyword handler
         try {

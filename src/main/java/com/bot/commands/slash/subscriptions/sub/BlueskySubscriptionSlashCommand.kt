@@ -28,7 +28,7 @@ class BlueskySubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             command.replyWarning(ConstantStrings.BLUESKY_NSFW)
             return
         }
-        val subChannel = command.optGuildChannel("channel") ?: command.channel
+        val subChannel = getEffectiveChannel(command)
 
         try {
             val rssUrl = HttpUtils.getBlueSkyRSS(subject)

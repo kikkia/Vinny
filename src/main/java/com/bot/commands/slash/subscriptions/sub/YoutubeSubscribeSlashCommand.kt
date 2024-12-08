@@ -23,7 +23,7 @@ class YoutubeSubscribeSlashCommand: AddSubscriptionSlashCommand() {
 
     override fun runCommand(command: ExtSlashCommandEvent) {
         val channelUrl = command.optString("youtube-url")
-        val subChannel = command.optGuildChannel("channel") ?: command.channel
+        val subChannel = getEffectiveChannel(command)
 
         try {
             val id = HttpUtils.getYoutubeIdForChannelUrl(channelUrl)
