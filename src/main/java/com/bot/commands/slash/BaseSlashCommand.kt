@@ -1,5 +1,6 @@
 package com.bot.commands.slash
 
+import com.bot.exceptions.UserVisibleException
 import com.bot.metrics.MetricsManager
 import com.jagrosh.jdautilities.command.SlashCommand
 import com.jagrosh.jdautilities.command.SlashCommandEvent
@@ -18,8 +19,24 @@ abstract class BaseSlashCommand : SlashCommand() {
             scheduled = false,
             slash = true
         )
+        val commandEvent = ExtSlashCommandEvent.fromCommandEvent(command)
+        try {
+            preExecute(commandEvent)
+            runCommand(ExtSlashCommandEvent.fromCommandEvent(command))
+            postExecute(commandEvent)
+        } catch (e: UserVisibleException) {
+            commandEvent.replyWarning(e.message!!)
+        } catch (e: Exception) {
+            logger.severe("Failed slash command", e)
+        }
+    }
 
-        runCommand(ExtSlashCommandEvent.fromCommandEvent(command))
+    open fun preExecute(command: ExtSlashCommandEvent) {
+
+    }
+
+    open fun postExecute(command: ExtSlashCommandEvent) {
+
     }
 
     abstract fun runCommand(command: ExtSlashCommandEvent)
