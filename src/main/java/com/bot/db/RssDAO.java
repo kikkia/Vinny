@@ -37,17 +37,18 @@ public class RssDAO {
         this.write = ConnectionPool.getDataSource();
     }
 
-    public void addSubscription(RssProvider provider, String subject, String channelId, String authorId, boolean nsfw) throws SQLException {
+    public void addSubscription(RssProvider provider, String subject, String channelId, String authorId, boolean nsfw, String displayName) throws SQLException {
 
         // Put subscription if does not exist
         try (Connection connection = write.getConnection()) {
-            String PUT_SUB_QUERY = "INSERT INTO `rss_subscription` (subject, provider, lastScanAttempt, lastScanComplete, nsfw) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE subject=subject;";
+            String PUT_SUB_QUERY = "INSERT INTO `rss_subscription` (subject, provider, lastScanAttempt, lastScanComplete, nsfw, display_name) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE subject=subject;";
             try (PreparedStatement statement = connection.prepareStatement(PUT_SUB_QUERY)) {
                 statement.setString(1, subject);
                 statement.setInt(2, provider.getValue());
                 statement.setLong(3, System.currentTimeMillis());
                 statement.setLong(4, System.currentTimeMillis());
                 statement.setBoolean(5, nsfw);
+                statement.setString(6, displayName);
                 statement.execute();
             }
         }
@@ -83,6 +84,10 @@ public class RssDAO {
                 statement.execute();
             }
         }
+    }
+
+    public void addSubscription(RssProvider provider, String subject, String channelId, String authorId, boolean nsfw) throws SQLException {
+        addSubscription(provider, subject, channelId, authorId, nsfw, null);
     }
 
     public RssSubscription getById(int id) throws SQLException {

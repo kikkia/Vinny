@@ -1,6 +1,7 @@
 package com.bot
 
 import com.bot.db.ConnectionPool
+import com.bot.i18n.Translator
 import com.bot.messaging.RssSubscriber
 import com.bot.tasks.MetricsReporter
 import com.bot.tasks.RunScheduledCommandsDefferedTask
@@ -34,6 +35,9 @@ object Main {
             flyway.migrate()
         }
         LOGGER.log(Level.INFO, "Flyway migrations completed")
+
+        LOGGER.log(Level.INFO, "Initializing translator")
+        Translator.getInstance()
 
         // Start the shards on this instance and therefore the bot
         val numShards = config.shardingConfig.total

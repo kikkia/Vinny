@@ -38,7 +38,8 @@ class BlueskySubscriptionSlashCommand: AddSubscriptionSlashCommand() {
                 cleanUrl(rssUrl),
                 subChannel.id,
                 command.user.id,
-                true
+                true,
+                subject
             )
         } catch (e: SQLException) {
             logger.severe("Error adding bluesky sub", e)
