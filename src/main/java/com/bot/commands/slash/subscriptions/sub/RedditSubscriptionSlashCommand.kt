@@ -3,8 +3,6 @@ package com.bot.commands.slash.subscriptions.sub
 import com.bot.RedditConnection.Companion.getInstance
 import com.bot.commands.slash.ExtSlashCommandEvent
 import com.bot.models.RssProvider
-import com.bot.utils.CommandCategories
-import com.bot.utils.ConstantStrings
 import com.bot.utils.RssUtils.Companion.isSubredditValid
 import net.dean.jraw.RedditClient
 import net.dean.jraw.models.Subreddit
@@ -26,7 +24,7 @@ class RedditSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
     override fun runCommand(command: ExtSlashCommandEvent) {
         val input = command.optString("subreddit")
         if (!isSubredditValid(input!!)) {
-            command.replyWarning("Invalid subreddit name! Please enter a valid subreddit name (e.g. dankmemes, goodanimemes, etc)")
+            command.replyWarning("SUBSCRIPTION_SUBREDDIT_INVALID_NAME")
             return
         }
         val subreddit: Subreddit? = try {
@@ -35,10 +33,10 @@ class RedditSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             null
         }
         if (subreddit == null) {
-            command.replyWarning(ConstantStrings.SUBREDDIT_INVALID)
+            command.replyWarning("SUBSCRIPTION_SUBREDDIT_INVALID")
             return
         } else if (subreddit.isNsfw && !command.channel.asTextChannel().isNSFW) {
-            command.replyWarning(ConstantStrings.SUBREDDIT_NSFW)
+            command.replyWarning("SUBSCRIPTION_SUBREDDIT_NSFW")
             return
         }
         val subChannel = getEffectiveChannel(command)
@@ -54,9 +52,9 @@ class RedditSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             )
         } catch (e: SQLException) {
             logger.severe("Error adding reddit sub", e)
-            command.replyError("Something went wrong adding the subscription, please try again.")
+            command.replyGenericError()
         }
-        command.replySuccess(ConstantStrings.SUBREDDIT_SUBSCRIBE_SUCCESS)
+        command.replySuccess("SUBSCRIPTION_SUBREDDIT_SUCCESS")
     }
 
 }

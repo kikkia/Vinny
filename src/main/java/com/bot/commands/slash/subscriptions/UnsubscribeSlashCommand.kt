@@ -30,32 +30,31 @@ class UnsubscribeSlashCommand: BaseSlashCommand() {
         val channel: InternalChannel
         try {
             subscription = rssDAO.getChannelSubById(id)
+            if (subscription == null) {
+                command.replyWarning("REMOVE_SUBSCRIPTION_NOT_FOUND")
+                return
+            }
             channel = channelDAO.getTextChannelForId(subscription.channel)
         } catch (e: SQLException) {
-            command.replyError("Failed to remove subscription")
+            command.replyError("GENERIC_COMMAND_ERROR")
             logger.severe("Failed to get sub or channel from db", e)
-            return
-        }
-        if (subscription == null) {
-            command.replyWarning("Failed to find subscription")
             return
         }
 
         if (channel.guildId != command.guild!!.id) {
-            command.replyWarning("You cannot remove this subscription unless you are in the guild it is in.")
+            command.replyWarning("REMOVE_SUBSCRIPTION_DIFF_GUILD")
             return
         }
 
         if (command.user.id != subscription.author &&
             !command.member!!.hasPermission(command.guild!!.getGuildChannelById(subscription.channel.toLong())!!, Permission.MANAGE_CHANNEL)) {
-            command.replyWarning("You cannot remove this command unless it is yours OR you have " +
-                    "the MANAGE_CHANNEL permission for the channel it is in.")
+            command.replyWarning("REMOVE_SUBSCRIPTION_PERMISSION")
             return
         }
 
         try {
             rssDAO.removeChannelSubscription(subscription)
-            command.replySuccess(translator.translate("greeting", command.userLocale.locale, command.user.name))
+            command.replySuccess("REMOVE_SUBSCRIPTION_SUCCESS")
         } catch (e: SQLException) {
             logger.severe("Failed to remove channel sub", e)
             command.replyError("Failed to remove the subscription")

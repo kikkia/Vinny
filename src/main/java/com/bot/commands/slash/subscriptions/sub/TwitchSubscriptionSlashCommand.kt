@@ -3,7 +3,6 @@ package com.bot.commands.slash.subscriptions.sub
 import com.bot.commands.slash.ExtSlashCommandEvent
 import com.bot.exceptions.NoSuchResourceException
 import com.bot.models.RssProvider
-import com.bot.utils.ConstantStrings
 import com.bot.utils.TwitchUtils.Companion.getTwitchIdForUsername
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
@@ -34,11 +33,11 @@ class TwitchSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
         try {
             id = getTwitchIdForUsername(subject)
         } catch (e: NoSuchResourceException) {
-            command.replyWarning(ConstantStrings.TWITCH_SUB_NOT_FOUND)
+            command.replyWarning("SUBSCRIPTION_TWITCH_NOT_FOUND")
             return
         } catch (e: Exception) {
             logger.severe("Failed to get user from twitch", e)
-            command.replyError("Failed to get user from twitch, please try again.")
+            command.replyGenericError()
             return
         }
 
@@ -48,6 +47,6 @@ class TwitchSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             logger.severe("Error adding twitch sub", e)
             command.replyError("Something went wrong adding the subscription, please try again.")
         }
-        command.replySuccess(ConstantStrings.TWITCH_SUB_SUCCESS)
+        command.replySuccess("SUBSCRIPTION_TWITCH_SUCCESS")
     }
 }

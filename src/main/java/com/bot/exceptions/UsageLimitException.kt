@@ -1,3 +1,3 @@
 package com.bot.exceptions
 
-class UsageLimitException(message: String) : UserVisibleException(message)
+class UsageLimitException(outputId: String, vararg args: Any) : UserVisibleException(outputId, args)

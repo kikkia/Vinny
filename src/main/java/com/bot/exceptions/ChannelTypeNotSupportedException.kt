@@ -1,3 +1,3 @@
 package com.bot.exceptions
 
-class ChannelTypeNotSupportedException(message: String): UserVisibleException(message)
+class ChannelTypeNotSupportedException(outputId: String, vararg args: Any): UserVisibleException(outputId, args)

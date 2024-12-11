@@ -27,7 +27,7 @@ class MySubscriptionsSlashCommand(waiter: EventWaiter): BaseSlashCommand() {
             val subscriptions = rssDAO.getSubscriptionsForAuthor(command.user.id)
 
             if (subscriptions.isEmpty()) {
-                command.replyWarning("You don't have any subs")
+                command.replyWarning("LIST_SUBSCRIPTION_NONE_FOUND")
                 return
             }
 
@@ -35,12 +35,11 @@ class MySubscriptionsSlashCommand(waiter: EventWaiter): BaseSlashCommand() {
                 .collect(Collectors.toList())
             builder.setItems(strings)
             builder.setText("Subscriptions for ${command.user.asMention}")
-
             builder.build().paginate(command.hook, 1)
         } catch (throwable: SQLException) {
             logger.severe("Failed to get subs", throwable)
             throwable.printStackTrace()
-            command.replyError("Something went wrong getting subs, please try again later.")
+            command.replyGenericError()
             return
         }
     }

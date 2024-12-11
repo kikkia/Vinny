@@ -37,7 +37,7 @@ class SubscriptionsSlashCommand(waiter: EventWaiter) : BaseSlashCommand() {
                 else rssDAO.getSubscriptionsForChannel(effectiveChannel.id)
 
             if (subscriptions.isEmpty()) {
-                command.replyWarning("No subscriptions found")
+                command.replyWarning("LIST_SUBSCRIPTION_NONE_FOUND")
                 return
             }
 
@@ -51,7 +51,7 @@ class SubscriptionsSlashCommand(waiter: EventWaiter) : BaseSlashCommand() {
         } catch (throwable: SQLException) {
             logger.severe("Failed to get subs", throwable)
             throwable.printStackTrace()
-            command.replyError("Something went wrong getting subs, please try again later.")
+            command.replyGenericError()
             return
         }
     }

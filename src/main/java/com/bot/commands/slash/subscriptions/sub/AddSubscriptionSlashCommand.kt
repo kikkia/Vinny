@@ -24,16 +24,12 @@ abstract class AddSubscriptionSlashCommand: BaseSlashCommand() {
 
     override fun preExecute(command: ExtSlashCommandEvent) {
         if (!canAddSubscription(command)) {
-            throw UsageLimitException("You have hit your limit of subscriptions you can make." +
-                    "To be able to make more, you can subscribe on the Vinny support server store." +
-                    " To get a support server invite use `~support`.\nYou can also remove your current subscriptions with the " +
-                    "`~unsubscribe` command")
+            throw UsageLimitException("EXCEPTION_SUBSCRIPTION_LIMIT")
         }
 
         val subChannel = getEffectiveChannel(command)
         if (!command.member!!.hasPermission(subChannel, Permission.MANAGE_CHANNEL)) {
-            throw UserPermissionsException("You need to have the `Manage Channel` permission in ${subChannel.asMention} " +
-                    "to create a subscription in it.")
+            throw UserPermissionsException("EXCEPTION_ADD_SUB_MISSING_PERMISSION", subChannel.asMention)
         }
     }
 
@@ -46,9 +42,7 @@ abstract class AddSubscriptionSlashCommand: BaseSlashCommand() {
     protected fun getEffectiveChannel(command: ExtSlashCommandEvent): GuildMessageChannel {
         val subChannel = command.optMessageChannel("channel") ?: command.channel.asGuildMessageChannel()
         if (subChannel.type != ChannelType.TEXT) {
-            throw ChannelTypeNotSupportedException("Sorry, at this time subscriptions can only be made in normal text channels. " +
-                    "They cannot be made in voice channels or threads for example. Sorry for the inconvenience. If this " +
-                    "is important to you, let me know on the support server.")
+            throw ChannelTypeNotSupportedException("SUBSCRIPTION_UNSUPPORTED_CHANNEL_TYPE")
         }
         // The above check filters out all non normal text channels, should be safe to get as guild channel now.
         return (command.optGuildChannel("channel") ?: command.channel.asGuildMessageChannel()) as GuildMessageChannel
