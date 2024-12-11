@@ -64,7 +64,7 @@ public class SubscribeBlueskyCommand extends CreateSubscriptionCommand {
             try {
                 String rssUrl = HttpUtils.getBlueSkyRSS(subject);
 
-                getRssDAO().addSubscription(RssProvider.BLUESKY, cleanUrl(rssUrl), event.getChannel().getId(), event.getAuthor().getId(), true);
+                getRssDAO().addSubscription(RssProvider.BLUESKY, cleanUrl(rssUrl), event.getChannel().getId(), event.getAuthor().getId(), true, subject);
             } catch (SQLException e) {
                 logger.severe("Error adding bluesky sub", e);
                 commandEvent.replyError("Something went wrong adding the subscription, please try again.");

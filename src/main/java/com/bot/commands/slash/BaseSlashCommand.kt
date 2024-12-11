@@ -1,6 +1,7 @@
 package com.bot.commands.slash
 
 import com.bot.exceptions.UserVisibleException
+import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.jagrosh.jdautilities.command.SlashCommand
 import com.jagrosh.jdautilities.command.SlashCommandEvent
@@ -8,6 +9,7 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent
 abstract class BaseSlashCommand : SlashCommand() {
     protected val logger = com.bot.utils.Logger(this.javaClass.getSimpleName())
     protected val metrics = MetricsManager.instance
+    protected val translator = Translator.getInstance()
 
     init {
         guildOnly = true

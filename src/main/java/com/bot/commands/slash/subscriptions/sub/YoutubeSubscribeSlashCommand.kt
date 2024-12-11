@@ -4,12 +4,12 @@ import com.bot.commands.slash.ExtSlashCommandEvent
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NoSuchResourceException
 import com.bot.models.RssProvider
-import com.bot.utils.ConstantStrings
 import com.bot.utils.HttpUtils
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import java.sql.SQLException
 
+// TODO: Fix and finish translations
 class YoutubeSubscribeSlashCommand: AddSubscriptionSlashCommand() {
 
     init {
@@ -35,7 +35,7 @@ class YoutubeSubscribeSlashCommand: AddSubscriptionSlashCommand() {
                 false
             )
         } catch (e: NoSuchResourceException) {
-            command.replyWarning(ConstantStrings.YT_SUB_NOT_FOUND)
+            command.replyWarning("SUBSCRIPTION_YT_NOT_FOUND")
             return
         } catch (e: InvalidInputException) {
             command.replyWarning(
@@ -45,7 +45,7 @@ class YoutubeSubscribeSlashCommand: AddSubscriptionSlashCommand() {
             return
         } catch (e: SQLException) {
             logger.severe("Error adding youtube sub", e)
-            command.replyError("Something went wrong adding the subscription, please try again.")
+            command.replyGenericError()
             return
         } catch (e: Exception) {
             logger.severe("Failed to get user from Youtube", e)
@@ -56,6 +56,6 @@ class YoutubeSubscribeSlashCommand: AddSubscriptionSlashCommand() {
             return
         }
 
-        command.replySuccess(ConstantStrings.YT_SUB_SUCCESS)
+        command.replySuccess("SUBSCRIPTION_YT_SUCCESS")
     }
 }

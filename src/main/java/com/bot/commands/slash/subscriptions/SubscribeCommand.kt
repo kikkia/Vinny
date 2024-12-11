@@ -6,7 +6,6 @@ import com.bot.commands.slash.subscriptions.sub.*
 import com.bot.utils.CommandCategories
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData
-import net.dv8tion.jda.internal.interactions.CommandDataImpl
 
 class SubscribeCommand : BaseSlashCommand() {
 
@@ -27,9 +26,6 @@ class SubscribeCommand : BaseSlashCommand() {
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {
-        println(command.subcommandName)
-        val commandDate: CommandDataImpl = this.buildCommandData() as CommandDataImpl
-        println(commandDate.subcommands)
-        command.reply("test").queue()
+
     }
 }

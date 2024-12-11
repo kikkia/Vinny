@@ -1,3 +1,3 @@
 package com.bot.exceptions
 
-open class UserVisibleException(message: String) : RuntimeException(message)
+open class UserVisibleException(outputId: String, vararg args: Any) : RuntimeException(outputId)

@@ -48,7 +48,7 @@ object ConstantStrings {
     const val BLUESKY_NSFW = "Unfortunately due to bluesky's content policy, bluesky subscriptions are only " +
             "allowed in nsfw channels."
     const val CHAN_SUB_HELLO = "Hey! Let's get started subscribing to a 4chan board. Please reply with the " +
-            "board code. (example: `biz` or `b`"
+            "board code. (example: `biz` or `b`)"
     const val CHAN_BOARD_INVALID = "Whoops, That board is invalid, Make sure you only include the " +
             "abbreviation (example: b or wg) Please try again."
     const val CHAN_SUB_SUCCESS = "All set up! Each new thread will be posted in this channel, when they are " +

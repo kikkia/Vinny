@@ -1,6 +1,9 @@
 package com.bot;
 
+import com.bot.commands.slash.subscriptions.MySubscriptionsSlashCommand;
 import com.bot.commands.slash.subscriptions.SubscribeCommand;
+import com.bot.commands.slash.subscriptions.SubscriptionsSlashCommand;
+import com.bot.commands.slash.subscriptions.UnsubscribeSlashCommand;
 import com.bot.commands.traditional.alias.AddGuildAliasCommand;
 import com.bot.commands.traditional.alias.AliasesCommand;
 import com.bot.commands.traditional.alias.RemoveGuildAliasCommand;
@@ -219,7 +222,10 @@ public class ShardingManager {
                 new ThreadDumpCommand(),
                 new ManualUpsertCommand());
 
-        commandClientBuilder.addSlashCommands(new SubscribeCommand());
+        commandClientBuilder.addSlashCommands(new SubscribeCommand(),
+                new SubscriptionsSlashCommand(waiter),
+                new MySubscriptionsSlashCommand(waiter),
+                new UnsubscribeSlashCommand());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
