@@ -3,9 +3,9 @@ package com.bot.commands.slash.subscriptions.sub
 import com.bot.commands.slash.BaseSlashCommand
 import com.bot.commands.slash.ExtSlashCommandEvent
 import com.bot.db.RssDAO
-import com.bot.exceptions.ChannelTypeNotSupportedException
-import com.bot.exceptions.UsageLimitException
-import com.bot.exceptions.UserPermissionsException
+import com.bot.exceptions.newstyle.ChannelTypeNotSupportedException
+import com.bot.exceptions.newstyle.UsageLimitException
+import com.bot.exceptions.newstyle.UserPermissionsException
 import com.bot.models.UsageLevel
 import com.bot.utils.CommandCategories
 import net.dv8tion.jda.api.Permission

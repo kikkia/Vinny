@@ -2,8 +2,7 @@ package com.bot.commands.slash
 
 import com.bot.db.GuildDAO
 import com.bot.db.UserDAO
-import com.bot.exceptions.UserExposableException
-import com.bot.exceptions.UserVisibleException
+import com.bot.exceptions.newstyle.UserVisibleException
 import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.jagrosh.jdautilities.command.SlashCommand
@@ -35,6 +34,7 @@ abstract class BaseSlashCommand : SlashCommand() {
             commandEvent.replyWarning(e.outputId)
         } catch (e: Exception) {
             logger.severe("Failed slash command", e)
+            commandEvent.replyGenericError()
         }
         // Update last command used timestamp for eventual stale guild purge
         guildDAO.updateLastCommandRanTime(command.guild!!.id)

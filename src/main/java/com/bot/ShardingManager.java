@@ -1,5 +1,6 @@
 package com.bot;
 
+import com.bot.commands.slash.reddit.RedditCommand;
 import com.bot.commands.slash.subscriptions.MySubscriptionsSlashCommand;
 import com.bot.commands.slash.subscriptions.SubscribeCommand;
 import com.bot.commands.slash.subscriptions.SubscriptionsSlashCommand;
@@ -225,7 +226,8 @@ public class ShardingManager {
         commandClientBuilder.addSlashCommands(new SubscribeCommand(),
                 new SubscriptionsSlashCommand(waiter),
                 new MySubscriptionsSlashCommand(waiter),
-                new UnsubscribeSlashCommand());
+                new UnsubscribeSlashCommand(),
+                new RedditCommand());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");

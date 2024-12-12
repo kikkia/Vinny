@@ -8,6 +8,7 @@ import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.bot.RedditConnection;
 import com.bot.caching.SubredditCache;
 import com.bot.exceptions.RedditRateLimitException;
+import com.bot.exceptions.newstyle.NSFWNotAllowedException;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
@@ -64,6 +65,52 @@ public class RedditHelper {
                 subredditName);
     }
 
+    public static String getRandomSubmission(SubredditSort sortType,
+                                             TimePeriod timePeriod,
+                                             String subredditName,
+                                             boolean isNsfwAllowed) throws Exception {
+
+        SubredditReference subreddit = RedditConnection.getInstance().client
+                .subreddit(subredditName);
+
+        if (subreddit.about().isNsfw() && !isNsfwAllowed) {
+            throw new NSFWNotAllowedException("NSFW_NOT_ALLOWED_EXCEPTION");
+        }
+
+        SubredditCache cache = SubredditCache.getInstance();
+        List<Listing<Submission>> submissions = cache.get(sortType + subredditName);
+
+        if (submissions == null) {
+            try {
+                if (limiter.tryAcquire(10, TimeUnit.SECONDS)) {
+                    DefaultPaginator<Submission> paginator = subreddit
+                            .posts()
+                            .limit(150)
+                            .timePeriod(timePeriod)
+                            .sorting(sortType)
+                            .build();
+
+                    submissions = paginator.accumulate(1);
+                    cache.put(sortType + subredditName, submissions);
+                } else {
+                    // Timeout, try to fetch from cache again
+                    submissions = cache.get(sortType + subredditName);
+                    if (submissions == null) {
+                        throw new RedditRateLimitException("Reddit is rate limiting Vinny");
+                    }
+                }
+            } finally {
+                limiter.release();
+            }
+        }
+
+        Listing<Submission> page = submissions.get(0); // Get the only page
+        Submission submission =  getRandomSubmission(page, false, isNsfwAllowed);// Get random child post from the page
+
+        assert submission != null;
+        return "https://rxddit.com/" + submission.getId();
+    }
+
     public static void getRandomSubmissionAndSend(RedditConnection redditConnection,
                                                   CommandEvent commandEvent,
                                                   SubredditSort sortType,
@@ -115,23 +162,8 @@ public class RedditHelper {
         }
 
         Listing<Submission> page = submissions.get(0); // Get the only page
-        Submission submission =  getRandomSubmission(page, false);// Get random child post from the page
+        Submission submission =  getRandomSubmission(page, false, isChannelNSFW);// Get random child post from the page
 
-        boolean isNsfwSubmission = submission.isNsfw();
-        if (isNsfwSubmission && !isChannelNSFW) {
-            // Submission is nsfw but sub is not. Try 10 times to find non nsfw-post
-            int tries = 0;
-            while (isNsfwSubmission) {
-                submission = getRandomSubmission(page, false);
-                isNsfwSubmission = submission.isNsfw();
-                tries++;
-                if (tries == 10) {
-                    commandEvent.reply(commandEvent.getClient().getWarning() + " I only found NSFW posts and NSFW is not enabled on this channel. " +
-                            "Please make sure that nsfw is enabled in the discord channel settings.");
-                    return;
-                }
-            }
-        }
         commandEvent.reply("https://rxddit.com/" + submission.getId());
         // TODO: Find out if we really want this setup
 //        // Scheduled commands generate an insane amount of traffic, lets send them to webhooks to help with global ratelimiting
@@ -167,6 +199,10 @@ public class RedditHelper {
     }
 
     private static Submission getRandomSubmission(Listing<Submission> submissions, boolean stickyAllowed) {
+        return getRandomSubmission(submissions, stickyAllowed, true);
+    }
+
+    private static Submission getRandomSubmission(Listing<Submission> submissions, boolean stickyAllowed, boolean nsfwAllowed) {
         if (submissions.getChildren().isEmpty()) {
             return null;
         }
@@ -178,6 +214,17 @@ public class RedditHelper {
             while (toReturn.isStickied() && tries < 10) {
                 toReturn = submissions.getChildren().get(random.nextInt(submissions.getChildren().size()));
                 tries++;
+            }
+        }
+        if (toReturn.isNsfw() && !nsfwAllowed) {
+            // Submission is nsfw but sub is not. Try 10 times to find non nsfw-post
+            int tries = 1;
+            while (toReturn.isNsfw() && tries < 10) {
+                toReturn = submissions.getChildren().get(random.nextInt(submissions.getChildren().size()));
+                tries++;
+            }
+            if (toReturn.isNsfw()) {
+                throw new NSFWNotAllowedException("NSFW_NOT_ALLOWED_EXCEPTION");
             }
         }
         return toReturn;

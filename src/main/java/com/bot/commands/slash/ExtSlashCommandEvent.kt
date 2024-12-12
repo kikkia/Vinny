@@ -22,6 +22,10 @@ class ExtSlashCommandEvent(
         replyTranslatedMessage(errorEmoji, outputId, args)
     }
 
+    fun replyToCommand(reply: String) {
+        this.hook.sendMessage(reply).queue()
+    }
+
     fun replyGenericError() {
         replyTranslatedMessage(errorEmoji, "GENERIC_COMMAND_ERROR")
     }

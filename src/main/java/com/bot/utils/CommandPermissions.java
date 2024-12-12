@@ -1,5 +1,6 @@
 package com.bot.utils;
 
+import com.bot.commands.slash.ExtSlashCommandEvent;
 import com.bot.db.ChannelDAO;
 import com.bot.db.GuildDAO;
 import com.bot.db.MembershipDAO;
@@ -123,6 +124,16 @@ public class CommandPermissions {
     }
 
     public static boolean allowNSFW(CommandEvent commandEvent) {
+        if (commandEvent.isFromType(ChannelType.PRIVATE)) {
+            return true;
+        } else if (commandEvent.isFromType(ChannelType.TEXT)){
+            return commandEvent.getTextChannel().isNSFW();
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean allowNSFW(ExtSlashCommandEvent commandEvent) {
         if (commandEvent.isFromType(ChannelType.PRIVATE)) {
             return true;
         } else if (commandEvent.isFromType(ChannelType.TEXT)){
