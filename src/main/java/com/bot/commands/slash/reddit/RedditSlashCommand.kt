@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 
-class RedditCommand : BaseSlashCommand() {
+class RedditSlashCommand : BaseSlashCommand() {
 
     private val sortOptions = listOf(
         Command.Choice("Hot", "HOT"),
