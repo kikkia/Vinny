@@ -3,7 +3,6 @@ package com.bot.commands.slash.subscriptions.sub
 import com.bot.commands.slash.BaseSlashCommand
 import com.bot.commands.slash.ExtSlashCommandEvent
 import com.bot.db.RssDAO
-import com.bot.db.UserDAO
 import com.bot.exceptions.ChannelTypeNotSupportedException
 import com.bot.exceptions.UsageLimitException
 import com.bot.exceptions.UserPermissionsException
@@ -15,7 +14,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 
 abstract class AddSubscriptionSlashCommand: BaseSlashCommand() {
     protected val rssDAO : RssDAO = RssDAO.getInstance()
-    private val userDAO = UserDAO.getInstance()
 
     init {
         this.category = CommandCategories.SUBSCRIPTION

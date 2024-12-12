@@ -1,5 +1,8 @@
 package com.bot.commands.slash
 
+import com.bot.db.GuildDAO
+import com.bot.db.UserDAO
+import com.bot.exceptions.UserExposableException
 import com.bot.exceptions.UserVisibleException
 import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
@@ -10,6 +13,8 @@ abstract class BaseSlashCommand : SlashCommand() {
     protected val logger = com.bot.utils.Logger(this.javaClass.getSimpleName())
     protected val metrics = MetricsManager.instance
     protected val translator = Translator.getInstance()
+    protected val guildDAO: GuildDAO = GuildDAO.getInstance()
+    protected val userDAO: UserDAO = UserDAO.getInstance()
 
     init {
         guildOnly = true
@@ -27,10 +32,13 @@ abstract class BaseSlashCommand : SlashCommand() {
             runCommand(ExtSlashCommandEvent.fromCommandEvent(command))
             postExecute(commandEvent)
         } catch (e: UserVisibleException) {
-            commandEvent.replyWarning(e.message!!)
+            commandEvent.replyWarning(e.outputId)
         } catch (e: Exception) {
             logger.severe("Failed slash command", e)
         }
+        // Update last command used timestamp for eventual stale guild purge
+        guildDAO.updateLastCommandRanTime(command.guild!!.id)
+        userDAO.updateLastCommandRanTime(command.user.id)
     }
 
     open fun preExecute(command: ExtSlashCommandEvent) {
