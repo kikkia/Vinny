@@ -1,6 +1,7 @@
 package com.bot.utils;
 
 
+import com.bot.i18n.Translator;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -36,6 +37,8 @@ public class GuildUtils {
 
     public static void sendWelcomeMessage(GuildJoinEvent guildJoinEvent) throws Exception {
         Logger logger = new Logger("Welcome-Message");
+        Translator.BotTranslator translator = Translator.Companion.getInstance();
+        String welcomeMessage = translator.translate("WELCOME_MESSAGE", guildJoinEvent.getGuild().getLocale().getLocale());
 
         List<TextChannel> textChannels = guildJoinEvent.getGuild().getTextChannels();
 
@@ -45,7 +48,7 @@ public class GuildUtils {
                 .collect(Collectors.toList());
 
         if (tmpList.size() > 0 && tmpList.get(0).canTalk()) {
-            tmpList.get(0).sendMessage(ConstantStrings.WELCOME_MESSAGE).queue(c -> logger.info("Sent guild welcome message to " + c.getChannel().getName()));
+            tmpList.get(0).sendMessage(welcomeMessage).queue(c -> logger.info("Sent guild welcome message to " + c.getChannel().getName()));
         } else {
             // No general channel or that we can post to, we will check for other channels we can post in
             List<TextChannel> postableChannels = textChannels.stream()
@@ -55,7 +58,7 @@ public class GuildUtils {
             if (postableChannels.size() < 1) {
                 // We cant post to any so just give up
             } else if (postableChannels.size() == 1) {
-                postableChannels.get(0).sendMessage(ConstantStrings.WELCOME_MESSAGE).queue(c -> logger.info("Sent guild welcome message to " + c.getChannel().getName()));
+                postableChannels.get(0).sendMessage(welcomeMessage).queue(c -> logger.info("Sent guild welcome message to " + c.getChannel().getName()));
             } else {
                 // We will get the highest channel.
                 TextChannel highestChannel = null;
@@ -66,7 +69,7 @@ public class GuildUtils {
                     if (highestChannel.getPosition() > channel.getPosition())
                         highestChannel = channel;
                 }
-                highestChannel.sendMessage(ConstantStrings.WELCOME_MESSAGE).queue(c -> logger.info("Sent guild welcome message to " + c.getChannel().getName()));
+                highestChannel.sendMessage(welcomeMessage).queue(c -> logger.info("Sent guild welcome message to " + c.getChannel().getName()));
             }
         }
     }
