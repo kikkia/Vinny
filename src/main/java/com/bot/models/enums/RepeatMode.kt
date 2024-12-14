@@ -1,7 +1,10 @@
 package com.bot.models.enums
 
-enum class RepeatMode(val ezName: String) {
-    REPEAT_ONE("one"),
-    REPEAT_ALL("all"),
-    REPEAT_NONE("none")
+import com.bot.utils.ConstantEmojis
+import net.dv8tion.jda.api.entities.emoji.Emoji
+
+enum class RepeatMode(val ezName: String, val emoji: Emoji) {
+    REPEAT_ONE("one", ConstantEmojis.repeatOneEmoji),
+    REPEAT_ALL("all", ConstantEmojis.repeatAllEmoji),
+    REPEAT_NONE("none", ConstantEmojis.repeatNoneEmoji)
 }

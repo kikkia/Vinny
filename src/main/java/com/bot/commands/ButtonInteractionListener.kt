@@ -1,8 +1,11 @@
 package com.bot.commands
 
+import com.bot.exceptions.newstyle.UserVisibleException
+import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.utils.R34Utils
 import com.bot.utils.RedditHelper
+import com.bot.voice.GuildVoiceProvider
 import net.dean.jraw.models.SubredditSort
 import net.dean.jraw.models.TimePeriod
 import net.dv8tion.jda.api.entities.channel.ChannelType
@@ -12,6 +15,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 class ButtonInteractionListener: ListenerAdapter() {
     val metricsManager = MetricsManager.instance
+    val translator = Translator.getInstance()
 
     override fun onButtonInteraction(event: ButtonInteractionEvent) {
         // Button Ids are used to encode metadata about how it should be handled, action-first approach
@@ -21,13 +25,36 @@ class ButtonInteractionListener: ListenerAdapter() {
         metricsManager!!.markButtonInteraction("${parsedId[0]}-${parsedId[1]}")
         when (action) {
             "refresh" -> handleRefreshButton(event)
-            "controlplayer" -> handleVoiceControl(event)
+            "voicecontrol" -> handleVoiceControl(event)
         }
         super.onButtonInteraction(event)
     }
 
     private fun handleVoiceControl(event: ButtonInteractionEvent) {
-        TODO("Not yet implemented")
+        val action = event.button.id!!.split("-")[1]
+
+        // Do all the checks needed to verify voice is active and controllable by user
+        try {
+            verifyVoice(event)
+        } catch (e: UserVisibleException) {
+            event.reply(translator.translate(e.outputId, event.userLocale.locale)).queue()
+            return
+        }
+
+        val conn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(event.guild!!.idLong)
+        if (conn == null) {
+            event.reply(translator.translate("BUTTON_VOICE_NO_SESSION", event.userLocale.locale)).queue()
+            return
+        }
+
+        when(action) {
+            "playpause" -> {conn.setPaused(!conn.getPaused())}
+            "next" -> {conn.nextTrack(true)}
+            "repeat" -> {conn.nextRepeatMode()}
+            "stop" -> {conn.cleanupPlayer()}
+            "shuffle" -> {conn.shuffleTracks()}
+        }
+        event.deferEdit().queue()
     }
 
     private fun handleRefreshButton(event: ButtonInteractionEvent) {
@@ -64,5 +91,23 @@ class ButtonInteractionListener: ListenerAdapter() {
 
     private fun allowNSFW(event: ButtonInteractionEvent): Boolean {
         return event.channel.type == ChannelType.TEXT && event.guildChannel.asTextChannel().isNSFW
+    }
+
+    private fun verifyVoice(event: ButtonInteractionEvent) {
+        // Voice buttons are fun since we need to do some checks for them
+        // Are we in voice?
+        val weAreConnected = event.guild!!.selfMember.voiceState != null && event.guild!!.selfMember.voiceState!!.inAudioChannel()
+        val theyAreConnected = event.member!!.voiceState != null && event.member!!.voiceState!!.inAudioChannel()
+        if (!weAreConnected) {
+            throw UserVisibleException("BUTTON_VOICE_NO_SESSION")
+        }
+        // Are they in the same channel?
+        val ourChannel = event.guild!!.selfMember.voiceState!!.channel!!.asVoiceChannel()
+        if (!theyAreConnected || ourChannel != event.member!!.voiceState!!.channel!!.asVoiceChannel()) {
+            throw UserVisibleException("BUTTON_VOICE_USER_NOT_IN_CHANNEL")
+        }
+
+        // Do they have perms to use voice?
+        // TODO: DJ Role
     }
 }

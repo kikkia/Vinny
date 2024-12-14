@@ -10,10 +10,7 @@ import com.bot.exceptions.OauthNotEnabledException
 import com.bot.exceptions.UserExposableException
 import com.bot.metrics.MetricsManager
 import com.bot.models.enums.RepeatMode
-import com.bot.utils.FormattingUtils
-import com.bot.utils.LLUtils
-import com.bot.utils.Oauth2Utils
-import com.bot.utils.VinnyConfig
+import com.bot.utils.*
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.menu.OrderedMenu.Builder
 import dev.arbjerg.lavalink.client.Link
@@ -27,6 +24,9 @@ import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
+import net.dv8tion.jda.api.entities.emoji.Emoji
+import net.dv8tion.jda.api.interactions.components.ItemComponent
+import net.dv8tion.jda.api.interactions.components.buttons.Button
 import org.apache.log4j.Logger
 import reactor.kotlin.core.publisher.toMono
 import java.time.Instant
@@ -43,6 +43,7 @@ class GuildVoiceConnection(val guild: Guild) {
     private val failedLoadedTracks = HashSet<String>()
     var currentVoiceChannel: VoiceChannel? = null
     var lastTextChannel: MessageChannel? = null
+    var nowPlayingMessage: Message? = null
     private var isPaused = false
     private var volume = GuildDAO.getInstance().getGuildById(guild.id).volume ?: 100
     var autoplay = GuildDAO.getInstance().isGuildPremium(guild.id)
@@ -61,6 +62,7 @@ class GuildVoiceConnection(val guild: Guild) {
     fun setPaused(pause: Boolean) {
         lavalink.getLink(guild.idLong).getPlayer()
             .flatMap { it.setPaused(pause).toMono() }.subscribe{ this.isPaused = it.paused }
+        sendNowPlayingUpdate()
     }
 
     fun getPaused() : Boolean {
@@ -309,6 +311,15 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun setRepeatMode(mode: RepeatMode) {
         trackProvider.setRepeatMode(mode)
+        sendNowPlayingUpdate()
+    }
+
+    fun nextRepeatMode() {
+        when (getRepeatMode()) {
+            RepeatMode.REPEAT_ALL -> setRepeatMode(RepeatMode.REPEAT_ONE)
+            RepeatMode.REPEAT_ONE -> setRepeatMode(RepeatMode.REPEAT_NONE)
+            RepeatMode.REPEAT_NONE -> setRepeatMode(RepeatMode.REPEAT_ALL)
+        }
     }
 
     fun getRepeatMode() : RepeatMode {
@@ -400,6 +411,8 @@ class GuildVoiceConnection(val guild: Guild) {
         } else {
             findOauth()
         }
+        getLink().node
+        oauthConfig!!.accessToken
         LLUtils.injectOauth(oauthConfig!!.accessToken, ident, getLink().node)
     }
 
@@ -517,11 +530,32 @@ class GuildVoiceConnection(val guild: Guild) {
         lastTextChannel!!.history.retrievePast(1).queue { m ->
             val lastMessage: Message = m[0]
             val embed = FormattingUtils.getAudioTrackEmbed(trackProvider.getNowPlaying(), volume, trackProvider.getRepeateMode(), autoplay)
+
             if (lastMessage.author.id == lastTextChannel!!.jda.selfUser.id) {
-                lastMessage.editMessageEmbeds(embed).queue()
+                lastMessage.editMessageEmbeds(embed).setActionRow(actionBar()).queue { this.nowPlayingMessage = it }
             } else {
-                lastTextChannel!!.sendMessageEmbeds(embed).queue()
+                // Delete our last playing message and put a new one at the bottom
+                if (this.nowPlayingMessage != null) {
+                    this.nowPlayingMessage!!.delete().queue({}, { println(it) })
+                }
+                lastTextChannel!!.sendMessageEmbeds(embed)
+                    .addActionRow(actionBar())
+                    .queue { this.nowPlayingMessage = it }
             }
         }
+    }
+
+    private fun actionBar() : MutableCollection<ItemComponent> {
+        // Paused state shows play button and vice versa
+        val playPauseEmoji = if (isPaused) ConstantEmojis.playEmoji else ConstantEmojis.pauseEmoji
+
+// Create the buttons using the emoji variables
+        val rewindButton = Button.secondary("voicecontrol-stop", ConstantEmojis.stopEmoji)
+        val playButton = Button.secondary("voicecontrol-playpause", playPauseEmoji)
+        val nextButton = Button.secondary("voicecontrol-next", ConstantEmojis.nextEmoji)
+        val shuffleButton = Button.secondary("voicecontrol-shuffle", ConstantEmojis.shuffleEmoji)
+        val repeatButton = Button.secondary("voicecontrol-repeat", getRepeatMode().emoji)
+
+        return mutableSetOf(rewindButton, playButton, nextButton, shuffleButton, repeatButton)
     }
 }

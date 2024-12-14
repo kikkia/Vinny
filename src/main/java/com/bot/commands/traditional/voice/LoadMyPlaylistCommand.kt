@@ -47,11 +47,6 @@ class LoadMyPlaylistCommand : VoiceCommand() {
             return
         }
 
-        // If not in voice, join
-        if (!commandEvent.guild.audioManager.isConnected) {
-            commandEvent.guild.audioManager.openAudioConnection(commandEvent.member.voiceState!!.channel)
-        }
-
         val conn = guildVoiceProvider.getGuildVoiceConnection(commandEvent.guild)
         val loadingMessage = commandEvent.channel.sendMessage("Starting load of playlist ${playlist.name}").complete()
         // Queue up the tracks
