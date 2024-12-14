@@ -1,5 +1,6 @@
 package com.bot;
 
+import com.bot.commands.ButtonInteractionListener;
 import com.bot.commands.slash.nsfw.R34SlashCommand;
 import com.bot.commands.slash.reddit.RedditSlashCommand;
 import com.bot.commands.slash.subscriptions.MySubscriptionsSlashCommand;
@@ -256,7 +257,7 @@ public class ShardingManager {
                 .setShards(startIndex, endIndex)
                 .setCompression(Compression.NONE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .addEventListeners(client, waiter, bot)
+                .addEventListeners(client, waiter, bot, new ButtonInteractionListener())
                 .setActivity(null)
                 .setRequestTimeoutRetry(true)
                 .setContextEnabled(true)

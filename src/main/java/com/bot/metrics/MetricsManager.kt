@@ -267,6 +267,10 @@ class MetricsManager private constructor() {
         statsd!!.incrementCounter("bigbad.exception", "message:${exception.message}", "location:${location}")
     }
 
+    fun markButtonInteraction(action: String) {
+        statsd!!.incrementCounter("button.interaction", "action:$action")
+    }
+
     fun updateLLStats() {
         for (node in config.voiceConfig.nodes!!) {
             val llUrl = node.address.replace("ws://", "")

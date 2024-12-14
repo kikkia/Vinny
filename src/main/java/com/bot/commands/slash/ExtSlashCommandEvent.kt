@@ -4,6 +4,7 @@ import com.bot.i18n.Translator
 import com.jagrosh.jdautilities.command.CommandClient
 import com.jagrosh.jdautilities.command.SlashCommandEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.components.ItemComponent
 
 class ExtSlashCommandEvent(
     event: SlashCommandInteractionEvent,
@@ -20,6 +21,10 @@ class ExtSlashCommandEvent(
 
     fun replyError(outputId: String, vararg args: Any) {
         replyTranslatedMessage(errorEmoji, outputId, args)
+    }
+
+    fun replyToCommand(reply: String, actionBar: MutableCollection<ItemComponent>) {
+        this.hook.sendMessage(reply).addActionRow(actionBar).queue()
     }
 
     fun replyToCommand(reply: String) {
