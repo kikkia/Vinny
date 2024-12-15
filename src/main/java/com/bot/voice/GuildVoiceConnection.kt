@@ -297,6 +297,7 @@ class GuildVoiceConnection(val guild: Guild) {
         currentVoiceChannel = null
         trackProvider.clearAll()
         isPaused = false
+        nowPlayingMessage?.delete()?.queue()
         GuildVoiceProvider.getInstance().remove(guild.idLong)
         GuildDAO.getInstance().recordTimeInVoice(guild.id, getAge().toInt())
     }
@@ -547,15 +548,15 @@ class GuildVoiceConnection(val guild: Guild) {
 
     private fun actionBar() : MutableCollection<ItemComponent> {
         // Paused state shows play button and vice versa
-        val playPauseEmoji = if (isPaused) ConstantEmojis.playEmoji else ConstantEmojis.pauseEmoji
+        val playPauseButton = if (isPaused) Button.success("voicecontrol-playpause", ConstantEmojis.playEmoji)
+            else Button.secondary("voicecontrol-playpause", ConstantEmojis.pauseEmoji)
 
-// Create the buttons using the emoji variables
-        val rewindButton = Button.secondary("voicecontrol-stop", ConstantEmojis.stopEmoji)
-        val playButton = Button.secondary("voicecontrol-playpause", playPauseEmoji)
-        val nextButton = Button.secondary("voicecontrol-next", ConstantEmojis.nextEmoji)
-        val shuffleButton = Button.secondary("voicecontrol-shuffle", ConstantEmojis.shuffleEmoji)
-        val repeatButton = Button.secondary("voicecontrol-repeat", getRepeatMode().emoji)
+        // Create the buttons using the emoji variables
+        val stopButton = Button.danger("voicecontrol-stop", ConstantEmojis.stopEmoji)
+        val nextButton = Button.primary("voicecontrol-next", ConstantEmojis.nextEmoji)
+        val shuffleButton = Button.primary("voicecontrol-shuffle", ConstantEmojis.shuffleEmoji)
+        val repeatButton = Button.primary("voicecontrol-repeat", getRepeatMode().emoji)
 
-        return mutableSetOf(rewindButton, playButton, nextButton, shuffleButton, repeatButton)
+        return mutableSetOf(stopButton, playPauseButton, nextButton, shuffleButton, repeatButton)
     }
 }
