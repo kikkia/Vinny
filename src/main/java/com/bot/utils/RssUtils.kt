@@ -43,7 +43,7 @@ class RssUtils {
                     when (RssProvider.getProvider(rssUpdate.provider)) {
                         RssProvider.REDDIT -> {
                             webhook.send(buildMessage("New post in ***${rssUpdate.displayName}***" +
-                                    "\nhttps://reddit.com${rssUpdate.url}", jda))
+                                    "\nhttps://rxddit.com${rssUpdate.url}", jda))
                         }
                         RssProvider.TWITTER -> {
                             val msg = if (rssUpdate.subject.startsWith("**VINNY**RT")) {
