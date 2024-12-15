@@ -18,6 +18,8 @@ import net.dean.jraw.pagination.DefaultPaginator;
 import net.dean.jraw.references.SubredditReference;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.List;
 import java.util.Random;
@@ -164,7 +166,9 @@ public class RedditHelper {
         Listing<Submission> page = submissions.get(0); // Get the only page
         Submission submission =  getRandomSubmission(page, false, isChannelNSFW);// Get random child post from the page
 
-        commandEvent.reply("https://rxddit.com/" + submission.getId());
+        String buttonId = "refresh-reddit-" + subredditName + "-" + sortType.name() + "-" + timePeriod.name();
+        Button refreshButton = Button.primary(buttonId, Emoji.fromUnicode("\uD83D\uDD04"));
+        commandEvent.getChannel().sendMessage("https://rxddit.com/" + submission.getId()).addActionRow(refreshButton).queue();
         // TODO: Find out if we really want this setup
 //        // Scheduled commands generate an insane amount of traffic, lets send them to webhooks to help with global ratelimiting
 //        if (ScheduledCommandUtils.isScheduled(commandEvent)) {

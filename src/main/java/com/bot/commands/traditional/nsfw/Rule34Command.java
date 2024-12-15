@@ -11,6 +11,8 @@ import com.bot.utils.ScheduledCommandUtils;
 import com.bot.utils.TheGreatCCPFilter;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -90,7 +92,9 @@ public class Rule34Command extends NSFWCommand {
                 commandEvent.replyWarning(e.getMessage());
             }
         } else {
-            commandEvent.reply(selected);
+            String refreshButtonId = "refresh-r34-" + args;
+            Button refresh = Button.primary(refreshButtonId, Emoji.fromUnicode("\uD83D\uDD04"));
+            commandEvent.getChannel().sendMessage(selected).addActionRow(refresh).queue();
         }
     }
 
