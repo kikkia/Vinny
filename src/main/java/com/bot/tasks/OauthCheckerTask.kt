@@ -2,6 +2,7 @@ package com.bot.tasks
 
 import com.bot.db.OauthConfigDAO
 import com.bot.db.models.OauthConfig
+import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.utils.VinnyConfig
 import com.bot.voice.GuildVoiceProvider
@@ -25,13 +26,14 @@ class OauthCheckerTask(private val deviceCode: String,
     private val log = LoggerFactory.getLogger(OauthCheckerTask::class.java)
     private val metricsManager = MetricsManager.instance
     private val start = Instant.now()
+    private val translator = Translator.getInstance()
 
 
     override fun run() {
         while (true) {
             // 10 min timeout
             if (start.isBefore(Instant.now().minusSeconds(600))) {
-                commandEvent.replyError("Linking to account failed. It looks like it's timed out. Please try again.")
+                commandEvent.replyError(translator.translate("VOICE_LOGIN_EXPIRED", commandEvent.guild.locale.locale))
                 return
             }
             val response = poll()
@@ -42,15 +44,15 @@ class OauthCheckerTask(private val deviceCode: String,
                         continue
                     }
                     "expired_token" -> {
-                        commandEvent.replyError("Linking to account failed. It looks like it's timed out. Please try again.")
+                        commandEvent.replyError(translator.translate("VOICE_LOGIN_EXPIRED", commandEvent.guild.locale.locale))
                     }
 
                     "access_denied" -> {
-                        commandEvent.replyError("Linking to account was denied. :( Please try again.")
+                        commandEvent.replyError(translator.translate("VOICE_LOGIN_DENIED", commandEvent.guild.locale.locale))
                     }
 
                     else -> {
-                        commandEvent.replyError("An unknown error occurred while checking for signin completion.")
+                        commandEvent.replyError(translator.translate("VOICE_LOGIN_GENERIC_ERROR", commandEvent.guild.locale.locale))
                         log.error("Error with Oauth2 flow: {}", response.errorMessage)
                         // Only one that may be our fault, not timeout or deny
                         metricsManager!!.markOauthComplete(false)
@@ -63,7 +65,7 @@ class OauthCheckerTask(private val deviceCode: String,
             val newConfig = OauthConfig(commandEvent.author.id, response.refreshToken, response.accessToken, response.tokenType, response.tokenExpires, true)
             conn.updateOauthConfig(newConfig)
             oauthDAO.setOauthConfig(newConfig)
-            commandEvent.replySuccess("Confirmed the signin, everyone should thank ${commandEvent.member.effectiveName}! You can now use voice commands.")
+            commandEvent.replySuccess(translator.translate("VOICE_LOGIN_COMPLETE", commandEvent.guild.locale.locale, commandEvent.member.effectiveName))
             metricsManager!!.markOauthComplete(true)
             client.close()
             return

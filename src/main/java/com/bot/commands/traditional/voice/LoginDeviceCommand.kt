@@ -19,11 +19,9 @@ class LoginDeviceCommand : GeneralCommand() {
         val oauthResponse = Oauth2Utils.initOauthFlow(commandEvent!!)
         metricsManager.markOauthGenerated(oauthResponse.successful)
         if (oauthResponse.successful) {
-            commandEvent.reply("**WARNING: DO NOT USE YOUR MAIN ACCOUNT! Use a burner account!**\nThere is no guarantee that this " +
-                    "account will not eventually be banned. It is unlikely, but not impossible. Login url and code generated successfully. \nPlease go to " +
-                    "${oauthResponse.verificationUrl}\nThen enter code `${oauthResponse.userCode}` to login. \nI will let you know when I confirm the signin.")
+            commandEvent.reply(translator.translate("VOICE_LOGIN", commandEvent.guild.locale.locale, oauthResponse.verificationUrl, oauthResponse.userCode))
         } else {
-            commandEvent.replyError("Failed to generate login link, please try again. If it keeps failing please let me know on the support server.")
+            commandEvent.replyError(translator.translate("VOICE_LOGIN_GEN_FAILED", commandEvent.guild.locale.locale))
         }
     }
 }

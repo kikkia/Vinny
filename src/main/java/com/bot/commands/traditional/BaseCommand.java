@@ -6,6 +6,7 @@ import com.bot.db.UserDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.exceptions.UserExposableException;
+import com.bot.i18n.Translator;
 import com.bot.metrics.MetricsManager;
 import com.bot.tasks.CommandTaskExecutor;
 import com.bot.utils.CommandPermissions;
@@ -29,6 +30,7 @@ public abstract class BaseCommand extends Command {
     protected ExecutorService commandExecutors;
     protected  ExecutorService scheduledCommandExecutor;
     protected ScheduledExecutorService commandCleanupScheduler;
+    protected Translator.BotTranslator translator;
 
     public boolean canSchedule;
 
@@ -41,6 +43,7 @@ public abstract class BaseCommand extends Command {
         this.commandExecutors = CommandTaskExecutor.getTaskExecutor();
         this.scheduledCommandExecutor = CommandTaskExecutor.getScheduledCommandExecutor();
         this.commandCleanupScheduler = Executors.newSingleThreadScheduledExecutor();
+        translator = Translator.Companion.getInstance();
     }
 
     @Override
