@@ -880,5 +880,26 @@
     "ru": "Произошла неизвестная ошибка при проверке завершения входа.",
     "ja": "ログイン完了を確認する際に不明なエラーが発生しました。",
     "ko": "로그인 완료를 확인하는 중에 알 수 없는 오류가 발생했습니다."
+  },
+  "SUPPORT_INVITE_LINK": {
+    "en-US": "To report bugs, suggest features, or just hang out, join the Vinny support server: https://discord.gg/XMwyzxZ",
+    "id": "Untuk melaporkan bug, menyarankan fitur, atau hanya nongkrong, bergabunglah dengan server dukungan Vinny: https://discord.gg/XMwyzxZ",
+    "da": "For at rapportere fejl, foreslå funktioner eller bare hænge ud, skal du slutte dig til Vinny-supportserveren: https://discord.gg/XMwyzxZ",
+    "de": "Um Fehler zu melden, Funktionen vorzuschlagen oder einfach nur abzuhängen, tritt dem Vinny-Support-Server bei: https://discord.gg/XMwyzxZ",
+    "es-ES": "Para reportar errores, sugerir funciones o simplemente pasar el rato, únete al servidor de soporte de Vinny: https://discord.gg/XMwyzxZ",
+    "fr": "Pour signaler des bugs, suggérer des fonctionnalités ou simplement discuter, rejoignez le serveur de support de Vinny : https://discord.gg/XMwyzxZ",
+    "it": "Per segnalare bug, suggerire funzionalità o semplicemente passare del tempo, unisciti al server di supporto Vinny: https://discord.gg/XMwyzxZ",
+    "nl": "Om bugs te melden, functies voor te stellen of gewoon te hangen, sluit je aan bij de Vinny-ondersteuningsserver: https://discord.gg/XMwyzxZ",
+    "hu": "Hibák jelentésére, funkciók javaslására vagy csak lazítani, csatlakozz a Vinny támogatói szerveréhez: https://discord.gg/XMwyzxZ",
+    "no": "For å rapportere feil, foreslå funksjoner eller bare slappe av, bli med i Vinny support-serveren: https://discord.gg/XMwyzxZ",
+    "pl": "Aby zgłaszać błędy, sugerować funkcje lub po prostu spędzać czas, dołącz do serwera wsparcia Vinny: https://discord.gg/XMwyzxZ",
+    "pt-BR": "Para relatar bugs, sugerir recursos ou apenas bater papo, entre no servidor de suporte do Vinny: https://discord.gg/XMwyzxZ",
+    "ro": "Pentru a raporta erori, a sugera funcții sau pur și simplu a socializa, alătură-te serverului de suport Vinny: https://discord.gg/XMwyzxZ",
+    "fi": "Virheiden ilmoittamiseen, ominaisuuksien ehdottamiseen tai vain jutteluun liity Vinny-tukipalvelimelle: https://discord.gg/XMwyzxZ",
+    "sv-SE": "För att rapportera buggar, föreslå funktioner eller bara hänga, gå med i Vinny-supportservern: https://discord.gg/XMwyzxZ",
+    "tr": "Hataları raporlamak, özellik önermek veya sadece takılmak için Vinny destek sunucusuna katılın: https://discord.gg/XMwyzxZ",
+    "ru": "Для сообщения об ошибках, предложений по функциям или просто общения, присоединяйтесь к серверу поддержки Vinny: https://discord.gg/XMwyzxZ",
+    "ja": "バグの報告、機能の提案、またはただのおしゃべりのために、Vinnyのサポートサーバーに参加してください: https://discord.gg/XMwyzxZ",
+    "ko": "버그를 보고하거나 기능을 제안하거나 그냥 놀기 위해 Vinny 지원 서버에 참여하세요: https://discord.gg/XMwyzxZ"
   }
 }
