@@ -1,5 +1,7 @@
 package com.bot.commands
 
+import com.bot.db.GuildDAO
+import com.bot.db.UserDAO
 import com.bot.exceptions.newstyle.UserVisibleException
 import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
@@ -16,6 +18,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter
 class ButtonInteractionListener: ListenerAdapter() {
     val metricsManager = MetricsManager.instance
     val translator = Translator.getInstance()
+    val guildDAO = GuildDAO.getInstance()
+    val userDAO = UserDAO.getInstance()
 
     override fun onButtonInteraction(event: ButtonInteractionEvent) {
         // Button Ids are used to encode metadata about how it should be handled, action-first approach
@@ -23,6 +27,10 @@ class ButtonInteractionListener: ListenerAdapter() {
         val parsedId = event.button.id!!.split("-")
         val action = parsedId.first()
         metricsManager!!.markButtonInteraction("${parsedId[0]}-${parsedId[1]}")
+
+        guildDAO.updateLastCommandRanTime(event.guild!!.id)
+        userDAO.updateLastCommandRanTime(event.user.id)
+
         when (action) {
             "refresh" -> handleRefreshButton(event)
             "voicecontrol" -> handleVoiceControl(event)
