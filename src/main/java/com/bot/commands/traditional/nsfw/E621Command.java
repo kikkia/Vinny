@@ -1,19 +1,19 @@
 package com.bot.commands.traditional.nsfw;
 
-import com.bot.caching.E621Cache;
 import com.bot.commands.traditional.NSFWCommand;
-import com.bot.exceptions.NoSuchResourceException;
-import com.bot.utils.HttpUtils;
+import com.bot.exceptions.newstyle.UserVisibleException;
+import com.bot.service.E621Service;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.CooldownScope;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
 public class E621Command extends NSFWCommand {
 
-    private final E621Cache cache;
+    private final E621Service service;
     private final Random random;
 
     public E621Command() {
@@ -21,7 +21,7 @@ public class E621Command extends NSFWCommand {
         this.canSchedule = false;
         this.cooldownScope = CooldownScope.GUILD;
         this.cooldown = 3;
-        this.cache = E621Cache.getInstance();
+        this.service = E621Service.Companion.getInstance();
         this.random = new Random();
     }
 
@@ -33,22 +33,18 @@ public class E621Command extends NSFWCommand {
         }
         String search = commandEvent.getArgs();
 
-        List<String> images = cache.get(search);
-        if (images == null) {
-            try {
-                images = HttpUtils.getE621Posts(search.replaceAll(" ", "%20"));
-            } catch (IOException e) {
-                commandEvent.replyError("Something went wrong getting the results. Please reach out" +
-                        " on the support server if this continues.");
-                return;
-            } catch (NoSuchResourceException e) {
-                commandEvent.replyWarning("No results were found for that search.");
+        try {
+            List<String> images = service.getPostsForSearch(search);
+            String selected = images.get(random.nextInt(images.size()-1));
+            String refreshButtonId = "refresh-e621-" + search;
+            Button refresh = Button.primary(refreshButtonId, Emoji.fromUnicode("\uD83D\uDD04"));
+            commandEvent.getChannel().sendMessage(selected).addActionRow(refresh).queue();
+        } catch (Exception e) {
+            if (e instanceof UserVisibleException ex) {
+                commandEvent.reply(translator.translate(ex.getOutputId(), commandEvent.getGuild().getLocale().getLocale()));
                 return;
             }
-
-            cache.put(search, images);
+            throw e;
         }
-
-        commandEvent.reply(images.get(random.nextInt(images.size()-1)));
     }
 }

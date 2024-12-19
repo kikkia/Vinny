@@ -5,9 +5,7 @@ import com.bot.exceptions.InvalidInputException;
 import com.bot.exceptions.NoSuchResourceException;
 import com.bot.models.MarkovModel;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Webhook;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.apache.commons.io.IOUtils;
@@ -212,52 +210,6 @@ public class HttpUtils {
         String idOrUsernamePrefix = channel.contains("/channel/") ? "%26id%3D" : "%26forUsername%3D";
         return lookupUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length - 1] +
                 "&token=" + token;
-    }
-
-    // TODO: Replace with client to handle ratelimiting well enough to allow scheduling
-    public static List<String> getE621Posts(String search) throws IOException, NoSuchResourceException {
-        String baseUrl = "https://e621.net/posts.json?tags=";
-        String limit = "&limit=250";
-
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet get = new HttpGet(baseUrl + search + limit);
-            HttpResponse response = client.execute(get);
-            try {
-                JSONObject jsonResponse = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
-                JSONArray posts = jsonResponse.getJSONArray("posts");
-                if (posts.length() == 0) {
-                    throw new NoSuchResourceException("No posts were found for that search");
-                }
-                ArrayList<String> images = new ArrayList<>();
-                for (int i = 0; i < posts.length(); i++) {
-                    try {
-                        images.add(posts.getJSONObject(i).getJSONObject("file").getString("url"));
-                    } catch (Exception ignored) {
-                        // Null url to image, we can generate our own with the md5 hash and file ext
-                        try {
-                            images.add(buildE621StaticPath(posts.getJSONObject(i).getJSONObject("file")));
-                        } catch (Exception ignored2) {
-                            // If that attempt fails, just skip
-                        }
-                    }
-                }
-                if (images.isEmpty())
-                    throw new NoSuchResourceException("Could not find results for tags");
-                return images;
-            } catch (JSONException e) {
-                logger.severe("Failed to parse e621 response", e);
-                throw new NoSuchResourceException("Could not find any results for tags");
-            }
-        } catch (IOException e) {
-            logger.warning("Exception getting e621 post", e);
-            throw e;
-        }
-    }
-
-    private static String buildE621StaticPath(JSONObject jsonObject) {
-        String hash = jsonObject.getString("md5");
-        return "https://static1.e621.net/data/" + hash.substring(0, 2) + "/" + hash.substring(2, 4) + "/" +
-                hash + "." + jsonObject.getString("ext");
     }
 
     public static String getHashforImage(String link) {

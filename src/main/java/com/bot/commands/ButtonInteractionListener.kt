@@ -5,6 +5,7 @@ import com.bot.db.UserDAO
 import com.bot.exceptions.newstyle.UserVisibleException
 import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
+import com.bot.service.E621Service
 import com.bot.utils.R34Utils
 import com.bot.utils.RedditHelper
 import com.bot.voice.GuildVoiceProvider
@@ -13,6 +14,7 @@ import net.dean.jraw.models.TimePeriod
 import net.dv8tion.jda.api.entities.channel.ChannelType
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import kotlin.random.Random
 
 
 class ButtonInteractionListener: ListenerAdapter() {
@@ -70,6 +72,7 @@ class ButtonInteractionListener: ListenerAdapter() {
         when (platform) {
             "reddit" -> handleRedditRefresh(event)
             "r34" -> handleR34Refresh(event)
+            "e621" -> handleE621Refresh(event)
         }
     }
 
@@ -95,6 +98,12 @@ class ButtonInteractionListener: ListenerAdapter() {
             nsfwAllowed)
 
         event.editMessage(newPost).queue()
+    }
+
+    private fun handleE621Refresh(event: ButtonInteractionEvent) {
+        val search = event.button.id!!.split("-")[2]
+        val posts = E621Service.getInstance().getPostsForSearch(search)
+        event.editMessage(posts[Random.nextInt(0, posts.size)]).queue()
     }
 
     private fun allowNSFW(event: ButtonInteractionEvent): Boolean {

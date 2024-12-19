@@ -35,6 +35,7 @@ class RebootAnnounceCommand : OwnerCommand() {
                     e.printStackTrace()
                     conn.lastTextChannel!!.sendMessage(translator.translate("REBOOT_ERROR_MESSAGE", locale)).complete()
                 }
+                // TODO: handle error on send message
                 conn.lastTextChannel!!.sendMessage(translator.translate("REBOOT_ANNOUNCE_MESSAGE", locale)).complete()
             }
         }

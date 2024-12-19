@@ -3,6 +3,7 @@ package com.bot;
 import com.bot.commands.ButtonInteractionListener;
 import com.bot.commands.slash.general.InviteSlashCommand;
 import com.bot.commands.slash.general.SupportSlashCommand;
+import com.bot.commands.slash.nsfw.E621SlashCommand;
 import com.bot.commands.slash.nsfw.R34SlashCommand;
 import com.bot.commands.slash.reddit.RedditSlashCommand;
 import com.bot.commands.slash.subscriptions.MySubscriptionsSlashCommand;
@@ -233,6 +234,7 @@ public class ShardingManager {
                 new UnsubscribeSlashCommand(),
                 new RedditSlashCommand(),
                 new R34SlashCommand(),
+                new E621SlashCommand(),
                 new SupportSlashCommand(),
                 new InviteSlashCommand());
 
