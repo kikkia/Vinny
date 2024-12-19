@@ -1,0 +1,413 @@
+{
+  "reddit": {
+    "name": {
+      "en-US": "reddit",
+      "ru": "реддит",
+      "ja": "レディット",
+      "ko": "레딧"
+    },
+    "desc": {
+      "en-US": "Gets a post from reddit for you",
+      "id": "Mendapatkan sebuah posting dari reddit untukmu",
+      "da": "Henter et indlæg fra reddit til dig",
+      "de": "Holt einen Beitrag von reddit für dich",
+      "es-ES": "Obtiene una publicación de reddit para ti",
+      "fr": "Obtenez un post de reddit pour vous",
+      "it": "Ottieni un post da reddit per te",
+      "nl": "Haalt een bericht van reddit voor je",
+      "hu": "Hoz egy posztot a reddit-ről neked",
+      "no": "Henter et innlegg fra reddit for deg",
+      "pl": "Pobiera post z reddita dla ciebie",
+      "pt-BR": "Obtém uma postagem do reddit para você",
+      "ro": "Obține un post de pe reddit pentru tine",
+      "fi": "Hakee postauksen redditistä sinulle",
+      "sv-SE": "Hämtar ett inlägg från reddit åt dig",
+      "tr": "Sizin için reddit'ten bir gönderi alır",
+      "ru": "Получает пост с reddit для вас",
+      "ja": "redditから投稿を取得します",
+      "ko": "reddit에서 게시물을 가져옵니다"
+    }
+  },
+  "r34": {
+    "name": {
+      "en-US": "r34"
+    },
+    "desc": {
+      "en-US": "Gets an r34 image for your search",
+      "id": "Mendapatkan gambar r34 untuk pencarianmu",
+      "da": "Henter et r34-billede til din søgning",
+      "de": "Holt ein r34-Bild für deine Suche",
+      "es-ES": "Obtiene una imagen r34 para tu búsqueda",
+      "fr": "Obtenez une image r34 pour votre recherche",
+      "it": "Ottieni un'immagine r34 per la tua ricerca",
+      "nl": "Haalt een r34-afbeelding voor je zoekopdracht",
+      "hu": "Hoz egy r34 képet a keresésedhez",
+      "no": "Henter et r34-bilde for søket ditt",
+      "pl": "Pobiera obrazek r34 dla twojego wyszukiwania",
+      "pt-BR": "Obtém uma imagem r34 para sua pesquisa",
+      "ro": "Obține o imagine r34 pentru căutarea ta",
+      "fi": "Hakee r34-kuvan hakemistasi varten",
+      "sv-SE": "Hämtar en r34-bild för din sökning",
+      "tr": "Aramanız için bir r34 görseli alır",
+      "ru": "Получает изображение r34 для вашего поиска",
+      "ja": "検索のためにr34画像を取得します",
+      "ko": "검색을 위한 r34 이미지를 가져옵니다"
+    }
+  },
+  "invite": {
+    "name": {
+      "en-US": "invite",
+      "id": "undang",
+      "da": "inviter",
+      "de": "einladen",
+      "es-ES": "invitar",
+      "fr": "inviter",
+      "it": "invita",
+      "nl": "uitnodigen",
+      "hu": "meghívás",
+      "no": "inviter",
+      "pl": "zaproszenie",
+      "pt-BR": "convidar",
+      "ro": "invita",
+      "fi": "kutsu",
+      "sv-SE": "bjud-in",
+      "tr": "davet-et",
+      "ru": "пригласить",
+      "ja": "招待する",
+      "ko": "초대"
+    },
+    "desc": {
+      "en-US": "Invite vinny to your server",
+      "id": "Undang vinny ke server Anda",
+      "da": "Inviter vinny til din server",
+      "de": "Lade vinny zu deinem Server ein",
+      "es-ES": "Invita a vinny a tu servidor",
+      "fr": "Inviter vinny sur votre serveur",
+      "it": "Invita vinny al tuo server",
+      "nl": "Nodig vinny uit op je server",
+      "hu": "Hívd meg vinnyt a szerveredre",
+      "no": "Inviter vinny til serveren din",
+      "pl": "Zaproś vinnya do swojego serwera",
+      "pt-BR": "Convide vinny para o seu servidor",
+      "ro": "Invită-l pe vinny pe serverul tău",
+      "fi": "Kutsu vinny palvelimellesi",
+      "sv-SE": "Bjud in vinny till din server",
+      "tr": "Vinny'i sunucunuza davet et",
+      "ru": "Пригласите винни на ваш сервер",
+      "ja": "vinnyをサーバーに招待",
+      "ko": "vinny를 서버에 초대"
+    }
+  },
+  "support": {
+    "name": {
+      "en-US": "support",
+      "id": "dukungan",
+      "da": "support",
+      "de": "unterstützung",
+      "es-ES": "soporte",
+      "fr": "soutien",
+      "it": "supporto",
+      "nl": "ondersteuning",
+      "hu": "támogatás",
+      "no": "support",
+      "pl": "wsparcie",
+      "pt-BR": "suporte",
+      "ro": "suport",
+      "fi": "tuki",
+      "sv-SE": "support",
+      "tr": "destek",
+      "ru": "поддержка",
+      "ja": "サポート",
+      "ko": "지원"
+    },
+    "desc": {
+      "en-US": "Posts an invite to the support server.",
+      "id": "Memposting undangan ke server dukungan.",
+      "da": "Sender en invitation til supportserveren.",
+      "de": "Postet eine Einladung zum Support-Server.",
+      "es-ES": "Publica una invitación al servidor de soporte.",
+      "fr": "Publie une invitation sur le serveur de support.",
+      "it": "Pubblica un invito al server di supporto.",
+      "nl": "Plaats een uitnodiging op de ondersteuningsserver.",
+      "hu": "Meghívót küld a támogatási szerverre.",
+      "no": "Legger ut en invitasjon til supportserveren.",
+      "pl": "Opublikuj zaproszenie do serwera wsparcia.",
+      "pt-BR": "Publica um convite para o servidor de suporte.",
+      "ro": "Postează o invitație pe serverul de suport.",
+      "fi": "Lähettää kutsun tukipalvelimelle.",
+      "sv-SE": "Skickar en inbjudan till supportservern.",
+      "tr": "Destek sunucusuna davet gönderir.",
+      "ru": "Отправляет приглашение на сервер поддержки.",
+      "ja": "サポートサーバーへの招待を投稿します。",
+      "ko": "지원 서버에 초대글을 게시합니다."
+    }
+  },
+  "e621": {
+    "name": {
+      "en-US": "e621"
+    },
+    "desc": {
+      "en-US": "Posts from e621 to the channel (Warning: furry)",
+      "id": "Pos dari e621 ke saluran (Peringatan: furry)",
+      "da": "Indlæg fra e621 til kanalen (Advarsel: furry)",
+      "de": "Beiträge von e621 zum Kanal (Warnung: Furry)",
+      "es-ES": "Publicaciones de e621 en el canal (Advertencia: furry)",
+      "fr": "Publications de e621 sur le canal (Avertissement : furry)",
+      "it": "Post da e621 sul canale (Attenzione: furry)",
+      "nl": "Berichten van e621 naar het kanaal (Waarschuwing: furry)",
+      "hu": "Bejegyzések az e621-ről a csatornára (Figyelem: furry)",
+      "no": "Innlegg fra e621 til kanalen (Advarsel: furry)",
+      "pl": "Posty z e621 na kanał (Ostrzeżenie: furry)",
+      "pt-BR": "Postagens do e621 no canal (Aviso: furry)",
+      "ro": "Postări de pe e621 pe canal (Atenție: furry)",
+      "fi": "Postaukset e621:stä kanavalle (Varoitus: furry)",
+      "sv-SE": "Inlägg från e621 till kanalen (Varning: furry)",
+      "tr": "e621'den kanala gönderiler (Uyarı: furry)",
+      "ru": "Посты с e621 на канал (Предупреждение: furry)",
+      "ja": "e621からの投稿 (警告: furry)",
+      "ko": "e621에서 채널로 게시물 (경고: furry)"
+    }
+  },
+  "bluesky": {
+    "name": {
+      "en-US": "bluesky"
+    },
+    "desc": {
+      "en-US": "Get notified when a user posts",
+      "id": "Dapatkan pemberitahuan saat pengguna memposting",
+      "da": "Få en notifikation, når en bruger poster",
+      "de": "Erhalte eine Benachrichtigung, wenn ein Benutzer einen Beitrag veröffentlicht",
+      "es-ES": "Recibe una notificación cuando un usuario publique",
+      "fr": "Recevez une notification lorsqu'un utilisateur publie",
+      "it": "Ricevi una notifica quando un utente pubblica",
+      "nl": "Krijg een melding wanneer een gebruiker post",
+      "hu": "Értesítést kapsz, amikor egy felhasználó posztol",
+      "no": "Få varsling når en bruker poster",
+      "pl": "Otrzymaj powiadomienie, gdy użytkownik publikuje",
+      "pt-BR": "Receba uma notificação quando um usuário postar",
+      "ro": "Primește notificări când un utilizator postează",
+      "fi": "Saat ilmoituksen, kun käyttäjä julkaisee",
+      "sv-SE": "Få en notis när en användare postar",
+      "tr": "Bir kullanıcı gönderi paylaştığında bildirim al",
+      "ru": "Получать уведомления, когда пользователь публикует",
+      "ja": "ユーザーが投稿したときに通知を受け取る",
+      "ko": "사용자가 게시물을 올릴 때 알림 받기"
+    }
+  },
+  "4chan": {
+    "name": {
+      "en-US": "4chan"
+    },
+    "desc": {
+      "en-US": "Get notified when a new thread gets posted on a 4chan board",
+      "id": "Dapatkan pemberitahuan saat thread baru diposting di papan 4chan",
+      "da": "Få en notifikation, når en ny tråd bliver postet på et 4chan-board",
+      "de": "Erhalte eine Benachrichtigung, wenn ein neuer Thread auf einem 4chan-Board gepostet wird",
+      "es-ES": "Recibe una notificación cuando se publique un nuevo hilo en un tablero de 4chan",
+      "fr": "Recevez une notification lorsqu'un nouveau fil est posté sur un tableau 4chan",
+      "it": "Ricevi una notifica quando un nuovo thread viene pubblicato su una board di 4chan",
+      "nl": "Krijg een melding wanneer een nieuw draadje wordt gepost op een 4chan-board",
+      "hu": "Értesítést kapsz, amikor egy új szálat tesznek közzé a 4chan fórumon",
+      "no": "Få varsling når en ny tråd postes på et 4chan-board",
+      "pl": "Otrzymaj powiadomienie, gdy nowy wątek zostanie opublikowany na tablicy 4chan",
+      "pt-BR": "Receba uma notificação quando um novo tópico for postado em um board do 4chan",
+      "ro": "Primește notificări când se postează un nou subiect pe un board 4chan",
+      "fi": "Saat ilmoituksen, kun uusi ketju julkaistaan 4chan-luokassa",
+      "sv-SE": "Få en notis när en ny tråd postas på ett 4chan-forum",
+      "tr": "4chan panosunda yeni bir konu açıldığında bildirim al",
+      "ru": "Получать уведомление, когда новая тема появляется на доске 4chan",
+      "ja": "4chanの掲示板に新しいスレッドが投稿されたときに通知を受け取る",
+      "ko": "4chan 게시판에 새 스레드가 게시될 때 알림 받기"
+    }
+  },
+  "subreddit": {
+    "name": {
+      "en-US": "subreddit"
+    },
+    "desc": {
+      "en-US": "Subscribe to a subreddit to get notified of new posts",
+      "id": "Berlangganan subreddit untuk mendapatkan pemberitahuan tentang postingan baru",
+      "da": "Abonner på et subreddit for at få besked om nye indlæg",
+      "de": "Abonniere ein Subreddit, um über neue Beiträge benachrichtigt zu werden",
+      "es-ES": "Suscríbete a un subreddit para recibir notificaciones de nuevas publicaciones",
+      "fr": "Abonnez-vous à un subreddit pour recevoir des notifications de nouveaux posts",
+      "it": "Iscriviti a un subreddit per ricevere notifiche di nuovi post",
+      "nl": "Abonneer je op een subreddit om meldingen van nieuwe berichten te ontvangen",
+      "hu": "Iratkozz fel egy subreddit-ra, hogy értesítést kapj új bejegyzésekről",
+      "no": "Abonner på et subreddit for å få varsler om nye innlegg",
+      "pl": "Zapisz się do subreddita, aby otrzymywać powiadomienia o nowych postach",
+      "pt-BR": "Inscreva-se em um subreddit para receber notificações de novas postagens",
+      "ro": "Abonează-te la un subreddit pentru a primi notificări despre postări noi",
+      "fi": "Tilaa subreddit saadaksesi ilmoituksia uusista julkaisuista",
+      "sv-SE": "Prenumerera på ett subreddit för att få notiser om nya inlägg",
+      "tr": "Yeni gönderiler için bir subreddit'e abone ol",
+      "ru": "Подпишитесь на сабреддит, чтобы получать уведомления о новых постах",
+      "ja": "新しい投稿の通知を受け取るためにサブレディットを購読する",
+      "ko": "새 게시물에 대한 알림을 받으려면 서브레딧을 구독하세요"
+    }
+  },
+  "twitch": {
+    "name": {
+      "en-US": "twitch"
+    },
+    "desc": {
+      "en-US": "Get notified when a streamer goes live",
+      "id": "Dapatkan pemberitahuan ketika seorang streamer siaran langsung",
+      "da": "Få en notifikation, når en streamer går live",
+      "de": "Erhalte eine Benachrichtigung, wenn ein Streamer live geht",
+      "es-ES": "Recibe una notificación cuando un streamer se ponga en vivo",
+      "fr": "Recevez une notification lorsqu'un streamer commence à diffuser en direct",
+      "it": "Ricevi una notifica quando uno streamer va in diretta",
+      "nl": "Krijg een melding wanneer een streamer live gaat",
+      "hu": "Értesítést kapsz, amikor egy streamelő élőben kezd",
+      "no": "Få varsling når en streamer går live",
+      "pl": "Otrzymaj powiadomienie, gdy streamer zacznie transmisję na żywo",
+      "pt-BR": "Receba uma notificação quando um streamer começar a transmitir ao vivo",
+      "ro": "Primește notificări când un streamer începe să transmită live",
+      "fi": "Saat ilmoituksen, kun striimaaja menee liven",
+      "sv-SE": "Få en notis när en streamer går live",
+      "tr": "Bir yayıncı yayına başladığında bildirim al",
+      "ru": "Получать уведомление, когда стример выходит в прямой эфир",
+      "ja": "配信者がライブを開始したときに通知を受け取る",
+      "ko": "스트리머가 라이브 방송을 시작할 때 알림 받기"
+    }
+  },
+  "mysubscriptions": {
+    "name": {
+      "en-US": "mysubscriptions",
+      "id": "langgananku",
+      "da": "mine-abonnementer",
+      "de": "meine-abonnements",
+      "es-ES": "mis-suscripciones",
+      "fr": "mes-abonnements",
+      "it": "i-miei-abbonamenti",
+      "nl": "mijn-abonnementen",
+      "hu": "a-feliratkozásaim",
+      "no": "mine-abonnementer",
+      "pl": "moje-subskrypcje",
+      "pt-BR": "minhas-assinaturas",
+      "ro": "abonele-mele",
+      "fi": "omiatilaukseni",
+      "sv-SE": "mina-prenumerationer",
+      "tr": "aboneliklerim",
+      "ru": "мои-подписки",
+      "ja": "私の購読",
+      "ko": "내-구독"
+    },
+    "desc": {
+      "en-US": "Lists your active subscriptions",
+      "id": "Menampilkan langganan aktif Anda",
+      "da": "Lister dine aktive abonnementer",
+      "de": "Listet deine aktiven Abonnements auf",
+      "es-ES": "Muestra tus suscripciones activas",
+      "fr": "Liste vos abonnements actifs",
+      "it": "Elenca i tuoi abbonamenti attivi",
+      "nl": "Toont je actieve abonnementen",
+      "hu": "Listázza az aktív előfizetéseidet",
+      "no": "Lister dine aktive abonnementer",
+      "pl": "Wyświetla twoje aktywne subskrypcje",
+      "pt-BR": "Lista suas assinaturas ativas",
+      "ro": "Listează abonațiile tale active",
+      "fi": "Listaa aktiiviset tilauksesi",
+      "sv-SE": "Listar dina aktiva prenumerationer",
+      "tr": "Aktif aboneliklerinizi listeler",
+      "ru": "Список ваших активных подписок",
+      "ja": "アクティブな購読を一覧表示",
+      "ko": "활성 구독 목록"
+    }
+  },
+  "subscribe": {
+    "name": {
+      "en-US": "subscribe",
+      "id": "berlangganan",
+      "da": "abonnere",
+      "de": "abonnieren",
+      "es-ES": "suscribirse",
+      "it": "iscriviti",
+      "nl": "abonneren",
+      "hu": "feliratkozás",
+      "no": "abonnere",
+      "pl": "subskrybować",
+      "pt-BR": "assinar",
+      "ro": "abonează-te",
+      "fi": "tilaa",
+      "sv-SE": "prenumerera",
+      "tr": "aboneol",
+      "ru": "подписаться",
+      "ja": "購読する",
+      "ko": "구독하다"
+    },
+    "desc": {
+      "en-US": "Subscribe to updates from a user or topic on a supported site",
+      "id": "Berlangganan pembaruan dari pengguna atau topik di situs yang didukung",
+      "da": "Abonner på opdateringer fra en bruger eller et emne på et understøttet websted",
+      "de": "Abonnieren Sie Updates von einem Benutzer oder Thema auf einer unterstützten Website",
+      "es-ES": "Suscríbete a las actualizaciones de un usuario o tema en un sitio compatible",
+      "fr": "Abonnez-vous aux mises à jour d'un utilisateur ou d'un sujet sur un site pris en charge",
+      "it": "Iscriviti agli aggiornamenti di un utente o di un argomento su un sito supportato",
+      "nl": "Abonneer je op updates van een gebruiker of onderwerp op een ondersteunde site",
+      "hu": "Iratkozzon fel egy felhasználó vagy téma frissítéseire egy támogatott webhelyen",
+      "no": "Abonner på oppdateringer fra en bruker eller emne på et støttet nettsted",
+      "pl": "Subskrybuj aktualizacje od użytkownika lub tematu na wspieranej stronie",
+      "pt-BR": "Assine as atualizações de um usuário ou tópico em um site compatível",
+      "ro": "Abonează-te la actualizări de la un utilizator sau subiect pe un site compatibil",
+      "fi": "Tilaa päivityksiä käyttäjältä tai aiheelta tuetulla sivustolla",
+      "sv-SE": "Prenumerera på uppdateringar från en användare eller ett ämne på en stödd webbplats",
+      "tr": "Bir kullanıcı veya konu ile ilgili güncellemeleri desteklenen bir siteden abone ol",
+      "ru": "Подпишитесь на обновления от пользователя или темы на поддерживаемом сайте",
+      "ja": "サポートされているサイトでユーザーやトピックからの更新を購読する",
+      "ko": "지원되는 사이트에서 사용자 또는 주제의 업데이트를 구독하다"
+    }
+  },
+  "unsubscribe": {
+    "name": {
+      "en-US": "unsubscribe",
+      "id": "berhenti-berlangganan",
+      "da": "afmeld",
+      "de": "abmelden",
+      "es-ES": "darse-de-baja",
+      "fr": "se-désabonner",
+      "nl": "afmelden",
+      "hu": "lemondás",
+      "no": "avslutte-abonnement",
+      "pl": "wypisać-się",
+      "pt-BR": "cancelar-inscrição",
+      "ro": "dezabonați-vă",
+      "fi": "peruuta-tilaus",
+      "sv-SE": "avprenumerera",
+      "tr": "abone-olmamak",
+      "ru": "отписаться",
+      "ja": "購読解除",
+      "ko": "구독취소"
+    },
+    "desc": {
+      "en-US": "Removes a subscription by id",
+      "id": "Menghapus langganan berdasarkan ID",
+      "da": "Fjerner et abonnement ved id",
+      "de": "Entfernt ein Abonnement anhand der ID",
+      "es-ES": "Elimina una suscripción por ID",
+      "fr": "Supprime une abonnement par identifiant",
+      "it": "Rimuove un abbonamento tramite ID",
+      "nl": "Verwijdert een abonnement op basis van id",
+      "hu": "Eltávolítja az előfizetést az id alapján",
+      "no": "Fjerner et abonnement etter id",
+      "pl": "Usuwa subskrypcję po id",
+      "pt-BR": "Remove uma assinatura por id",
+      "ro": "Elimină o abonare după id",
+      "fi": "Poistaa tilauksen id:n mukaan",
+      "sv-SE": "Tar bort en prenumeration baserat på id",
+      "tr": "Bir aboneliği id'ye göre kaldırır",
+      "ru": "Удаляет подписку по ID",
+      "ja": "IDによって購読を削除",
+      "ko": "ID로 구독을 제거"
+    }
+  },
+  "template": {
+    "name": {
+      "en-US": ""
+    },
+    "desc": {
+      "en-US": ""
+    }
+  }
+}

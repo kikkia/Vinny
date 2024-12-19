@@ -24,6 +24,7 @@ class E621SlashCommand: NsfwSlashCommand() {
             OptionData(OptionType.STRING, "sort", "Sort by", false, true)
         )
         this.e621Service = E621Service.getInstance()
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

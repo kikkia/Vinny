@@ -16,6 +16,7 @@ class R34SlashCommand: NsfwSlashCommand() {
         this.options = listOf(
             OptionData(OptionType.STRING, "search", "What to search for", true)
         )
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

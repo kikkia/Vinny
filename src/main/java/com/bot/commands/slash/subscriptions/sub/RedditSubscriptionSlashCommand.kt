@@ -15,10 +15,11 @@ class RedditSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
     private val redditClient: RedditClient = getInstance().client
 
     init {
-        this.name = "reddit"
+        this.name = "subreddit"
         this.help = "Subscribe to a subreddit to get notified of new posts"
         this.options = listOf(OptionData(OptionType.STRING, "subreddit", "The subreddit to subscribe to.", true),
             OptionData(OptionType.CHANNEL, "channel", "Channel to post in"))
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

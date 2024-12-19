@@ -48,6 +48,7 @@ class RedditSlashCommand : BaseSlashCommand() {
             OptionData(OptionType.STRING, "sort", "Sorting (hot, new, etc)", false, true),
             OptionData(OptionType.STRING, "period", "Time period to search", false, true)
         )
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

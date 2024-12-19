@@ -22,6 +22,7 @@ class UnsubscribeSlashCommand: BaseSlashCommand() {
         this.help = "Removes a subscription by id"
         this.category = CommandCategories.SUBSCRIPTION
         this.options = listOf(OptionData(OptionType.INTEGER, "id", "id of the sub to remove", true))
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

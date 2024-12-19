@@ -23,6 +23,7 @@ class SubscribeCommand : BaseSlashCommand() {
         this.subcommandGroup = SubcommandGroupData("to", "All platforms available for subscriptions")
         this.subcommandGroup.addSubcommands(SubcommandData("reddit", "Subscribe to a subreddit to be notified for all new posts."))
         this.subcommandGroup.addSubcommands(SubcommandData("twitch", "Subscribe to a streamer to be notified when they go live."))
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

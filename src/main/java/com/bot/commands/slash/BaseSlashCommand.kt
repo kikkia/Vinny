@@ -19,6 +19,17 @@ abstract class BaseSlashCommand : SlashCommand() {
         guildOnly = true
     }
 
+    // Atm this just handles localization due to how kotlin handles inheritance and init
+    // Just avoids doing this manually in every command for now.
+    protected fun postInit() {
+        try {
+            this.nameLocalization = translator.getCommandNameTranslations(this.name)
+            this.descriptionLocalization = translator.getCommandDescTranslations(this.name)
+        } catch (e: Exception) {
+            logger.warning("Command translations not found for ${this.name}")
+        }
+    }
+
     override fun execute(command: SlashCommandEvent?) {
         command!!.deferReply().queue()
         metrics!!.markCommand(this.name, this.category.name, command.user, command.guild,

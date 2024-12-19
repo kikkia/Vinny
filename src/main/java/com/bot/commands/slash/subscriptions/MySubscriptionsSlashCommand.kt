@@ -20,6 +20,7 @@ class MySubscriptionsSlashCommand(waiter: EventWaiter): BaseSlashCommand() {
         this.category = CommandCategories.SUBSCRIPTION
         this.builder.setEventWaiter(waiter)
         this.builder.wrapPageEnds(true)
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

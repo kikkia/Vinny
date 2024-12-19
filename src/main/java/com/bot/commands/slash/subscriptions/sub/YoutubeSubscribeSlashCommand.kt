@@ -19,6 +19,7 @@ class YoutubeSubscribeSlashCommand: AddSubscriptionSlashCommand() {
             OptionData(OptionType.STRING, "youtube-url", "The subreddit to subscribe to.", true),
             OptionData(OptionType.CHANNEL, "channel", "Channel to post in")
         )
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

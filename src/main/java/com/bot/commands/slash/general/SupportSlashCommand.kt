@@ -10,6 +10,7 @@ class SupportSlashCommand: BaseSlashCommand() {
         this.name = "support"
         this.help = "Posts an inivte to the support server."
         this.category = CommandCategories.GENERAL
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

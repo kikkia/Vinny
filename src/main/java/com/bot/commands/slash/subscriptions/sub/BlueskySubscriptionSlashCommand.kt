@@ -16,6 +16,7 @@ class BlueskySubscriptionSlashCommand: AddSubscriptionSlashCommand() {
         help = "Get notified when a user posts"
         options = listOf(OptionData(OptionType.STRING, "username", "username to follow", true),
             OptionData(OptionType.CHANNEL, "channel", "Channel to post in"))
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

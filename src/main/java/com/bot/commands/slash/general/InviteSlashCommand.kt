@@ -10,6 +10,7 @@ class InviteSlashCommand: BaseSlashCommand() {
         this.name = "invite"
         this.help = "Invite Vinny to your server."
         this.category = CommandCategories.GENERAL
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

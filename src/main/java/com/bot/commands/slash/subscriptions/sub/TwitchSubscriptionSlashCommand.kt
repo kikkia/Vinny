@@ -16,6 +16,7 @@ class TwitchSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
         help = "Get notified when a streamer goes live"
         options = listOf(OptionData(OptionType.STRING, "user-or-url", "stream url or username", true),
             OptionData(OptionType.CHANNEL, "channel", "Channel to post in"))
+        postInit()
     }
     
     override fun runCommand(command: ExtSlashCommandEvent) {

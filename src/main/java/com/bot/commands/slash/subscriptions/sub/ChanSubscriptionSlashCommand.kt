@@ -16,6 +16,7 @@ class ChanSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             OptionData(OptionType.STRING, "board", "The 4chan board to watch", true),
             OptionData(OptionType.CHANNEL, "channel", "Channel to post in")
         )
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {
