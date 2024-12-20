@@ -8,6 +8,7 @@ import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
 import com.bot.exceptions.OauthNotEnabledException
 import com.bot.exceptions.UserExposableException
+import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.models.enums.RepeatMode
 import com.bot.utils.*
@@ -21,10 +22,8 @@ import dev.arbjerg.lavalink.client.player.Track
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
-import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.interactions.components.ItemComponent
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 import org.apache.log4j.Logger
@@ -36,6 +35,7 @@ import kotlin.collections.HashSet
 
 class GuildVoiceConnection(val guild: Guild) {
     val logger = Logger.getLogger(this::class.java.name)
+    val translator = Translator.getInstance()
     val lavalink: LavaLinkClient = LavaLinkClient.getInstance()
     val metricsManager = MetricsManager.instance!!
     private val trackProvider = TrackProvider()
@@ -224,7 +224,7 @@ class GuildVoiceConnection(val guild: Guild) {
                 }
             }
         }
-        lastTextChannel!!.sendMessage("Resuming play after Vinny restart").queue()
+        lastTextChannel!!.sendMessage(translator.translate("VOICE_REBOOT_RESUME", guild.locale.locale)).queue()
         val loadingMessage = lastTextChannel!!.sendMessage("Loading previous queue...").complete()
         injectOauth(resumeSetup.tracks[0].trackUrl)
         metricsManager.markTrackLoaded()
@@ -257,7 +257,7 @@ class GuildVoiceConnection(val guild: Guild) {
         val next = trackProvider.nextTrack(skipping)
         if (next == null) {
             if (!autoplay) {
-                sendMessageToChannel("Finished playing all songs in queue.")
+                sendMessageToChannel(translator.translate("VOICE_OUT_OF_TRACKS", guild.locale.locale))
                 cleanupPlayer()
                 return
             }
@@ -275,8 +275,7 @@ class GuildVoiceConnection(val guild: Guild) {
                 if (failedLoadedTracks.contains(next.track.info.uri)) {
                     failedAttempt += 1
                     if (failedAttempt >= 5) {
-                        sendMessageToChannel("Failed to load 5 tracks in a row, leaving voice. " +
-                                "Please try again, if problems persist, try logging in with another account.")
+                        sendMessageToChannel(translator.translate("VOICE_MANY_FAILED_TRACKS", guild.locale.locale))
                         cleanupPlayer()
                         return
                     }
@@ -312,7 +311,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun setRepeatMode(mode: RepeatMode) {
         trackProvider.setRepeatMode(mode)
-        sendNowPlayingUpdate()
+        sendNowPlayingUpdate(translator.translate("VOICE_REPEAT_MODE_CHANGE", guild.locale.locale, mode.name))
     }
 
     fun nextRepeatMode() {
@@ -341,7 +340,7 @@ class GuildVoiceConnection(val guild: Guild) {
             throw NumberFormatException()
         }
         if (volumeLocked) {
-            throw InvalidInputException("Volume is currently locked. It can be unlocked by a mod with the `~lockv` command.")
+            throw InvalidInputException(translator.translate("VOICE_VOLUME_LOCKED", guild.locale.locale))
         }
         volume = newVolume
         getLink().createOrUpdatePlayer().setVolume(volume).block()
@@ -436,8 +435,7 @@ class GuildVoiceConnection(val guild: Guild) {
                 }
             }
             if (oauthConfig == null) {
-                throw OauthNotEnabledException("No signed in user present. Please login with the `~login` command. " +
-                        "This is needed for Vinny to be able to use voice.")
+                throw OauthNotEnabledException(translator.translate("VOICE_NO_OAUTH_FOUND", guild.locale.locale))
             }
         }
     }
@@ -449,6 +447,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun shuffleTracks() {
         trackProvider.shuffleQueue()
+        sendNowPlayingUpdate(translator.translate("VOICE_TRACKS_SHUFFLED", guild.locale.locale))
     }
 
     fun removeTrackAtIndex(index: Int): QueuedAudioTrack {
@@ -527,13 +526,17 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     private fun sendNowPlayingUpdate() {
+        sendNowPlayingUpdate("")
+    }
+
+    private fun sendNowPlayingUpdate(msg: String) {
         // If we sent the last message in the channel then just edit it
         lastTextChannel!!.history.retrievePast(1).queue { m ->
             val lastMessage: Message = m[0]
             val embed = FormattingUtils.getAudioTrackEmbed(trackProvider.getNowPlaying(), volume, trackProvider.getRepeateMode(), autoplay)
 
             if (lastMessage.author.id == lastTextChannel!!.jda.selfUser.id) {
-                lastMessage.editMessageEmbeds(embed).setActionRow(actionBar()).queue { this.nowPlayingMessage = it }
+                lastMessage.editMessageEmbeds(embed).setActionRow(actionBar()).setContent(msg).queue { this.nowPlayingMessage = it }
             } else {
                 // Delete our last playing message and put a new one at the bottom
                 if (this.nowPlayingMessage != null) {
@@ -541,6 +544,7 @@ class GuildVoiceConnection(val guild: Guild) {
                 }
                 lastTextChannel!!.sendMessageEmbeds(embed)
                     .addActionRow(actionBar())
+                    .addContent(msg)
                     .queue { this.nowPlayingMessage = it }
             }
         }
