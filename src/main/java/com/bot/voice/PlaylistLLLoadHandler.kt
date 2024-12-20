@@ -1,7 +1,7 @@
 package com.bot.voice
 
 import com.bot.metrics.MetricsManager
-import com.jagrosh.jdautilities.command.CommandEvent
+import com.bot.voice.control.VoiceControlEvent
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
 import dev.arbjerg.lavalink.client.player.LoadFailed
 import dev.arbjerg.lavalink.client.player.PlaylistLoaded
@@ -10,7 +10,7 @@ import dev.arbjerg.lavalink.client.player.TrackLoaded
 import net.dv8tion.jda.api.entities.Message
 import org.apache.log4j.Logger
 
-class PlaylistLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: CommandEvent,
+class PlaylistLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: VoiceControlEvent,
                             private val loadingMessage: Message, private val tracks: List<String>,
                             private val index: Int, private val failedCount: Int) : AbstractAudioLoadResultHandler() {
 
@@ -18,7 +18,7 @@ class PlaylistLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnecti
     override fun ontrackLoaded(result: TrackLoaded) {
         try {
             val track = result.track
-            val queuedTrack = QueuedAudioTrack(track, event.author.name, event.author.idLong)
+            val queuedTrack = QueuedAudioTrack(track, event.getAuthorName(), event.getAuthorIdLong())
             guildVoiceConnection.queuePlaylistTrack(queuedTrack, event, loadingMessage, tracks, index, failedCount)
             // Inner class at the end of this file
         } catch (e: Exception) {

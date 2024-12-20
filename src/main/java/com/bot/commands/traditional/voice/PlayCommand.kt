@@ -1,13 +1,13 @@
 package com.bot.commands.traditional.voice
 
-import com.bot.Bot
 import com.bot.commands.traditional.VoiceCommand
 import com.bot.utils.VinnyConfig
+import com.bot.voice.control.VoiceTextControlEvent
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.command.CooldownScope
 import datadog.trace.api.Trace
 
-class PlayCommand(private val bot: Bot) : VoiceCommand() {
+class PlayCommand: VoiceCommand() {
 
     private val urlRegex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]"
 
@@ -42,6 +42,6 @@ class PlayCommand(private val bot: Bot) : VoiceCommand() {
             url = searchPrefix.plus(commandEvent.args)
         }
         commandEvent.channel.sendMessage("\u231A Loading... `[" + commandEvent.args + "]`").complete()
-        guildVoiceConnection.loadTrack(url, commandEvent)
+        guildVoiceConnection.loadTrack(url, VoiceTextControlEvent(commandEvent))
     }
 }

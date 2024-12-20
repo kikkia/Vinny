@@ -73,7 +73,7 @@ class RedditSlashCommand : BaseSlashCommand() {
 
             val refreshButton = Button.primary("refresh-reddit-${input}-${sort.name}-${period.name}", Emoji.fromUnicode("\uD83D\uDD04"))
 
-            command.replyToCommand(post, mutableListOf(refreshButton))
+            command.replyWithActionBar(post, mutableListOf(refreshButton))
         } catch (e: NullPointerException) {
             // Subreddit not found
             command.replyWarning("SUBREDDIT_NOT_FOUND")
