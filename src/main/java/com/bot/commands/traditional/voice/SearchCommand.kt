@@ -2,6 +2,7 @@ package com.bot.commands.traditional.voice
 
 import com.bot.Bot
 import com.bot.commands.traditional.VoiceCommand
+import com.bot.voice.control.VoiceTextControlEvent
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.OrderedMenu
@@ -39,7 +40,7 @@ class SearchCommand(bot: Bot, eventWaiter: EventWaiter?) : VoiceCommand() {
         commandEvent.reply(
             "Searching for `[" + commandEvent.args + "]`"
         ) { m: Message ->
-            guildVoiceConnection.searchForTrack(search, commandEvent, m, builder)
+            guildVoiceConnection.searchForTrack(search, VoiceTextControlEvent(commandEvent), m, builder)
         }
     }
 }

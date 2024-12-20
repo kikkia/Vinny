@@ -1,6 +1,7 @@
 package com.bot;
 
 import com.bot.commands.ButtonInteractionListener;
+import com.bot.commands.SelectMenuInteractionHandler;
 import com.bot.commands.slash.general.InviteSlashCommand;
 import com.bot.commands.slash.general.SupportSlashCommand;
 import com.bot.commands.slash.nsfw.E621SlashCommand;
@@ -10,6 +11,8 @@ import com.bot.commands.slash.subscriptions.MySubscriptionsSlashCommand;
 import com.bot.commands.slash.subscriptions.SubscribeCommand;
 import com.bot.commands.slash.subscriptions.SubscriptionsSlashCommand;
 import com.bot.commands.slash.subscriptions.UnsubscribeSlashCommand;
+import com.bot.commands.slash.voice.LoadPlaylistSlashCommand;
+import com.bot.commands.slash.voice.PlaySlashCommand;
 import com.bot.commands.traditional.alias.AddGuildAliasCommand;
 import com.bot.commands.traditional.alias.AliasesCommand;
 import com.bot.commands.traditional.alias.RemoveGuildAliasCommand;
@@ -104,7 +107,7 @@ public class ShardingManager {
         if (!silentDeploy) {
             commandClientBuilder.addCommands(
                     // Voice Commands
-                    new PlayCommand(bot),
+                    new PlayCommand(),
                     new SearchCommand(bot, waiter),
                     new NowPlayingCommand(),
                     new RemoveTrackCommand(),
@@ -236,7 +239,9 @@ public class ShardingManager {
                 new R34SlashCommand(),
                 new E621SlashCommand(),
                 new SupportSlashCommand(),
-                new InviteSlashCommand());
+                new InviteSlashCommand(),
+                new PlaySlashCommand(),
+                new LoadPlaylistSlashCommand());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
@@ -263,7 +268,11 @@ public class ShardingManager {
                 .setShards(startIndex, endIndex)
                 .setCompression(Compression.NONE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .addEventListeners(client, waiter, bot, new ButtonInteractionListener())
+                .addEventListeners(client,
+                        waiter,
+                        bot,
+                        new ButtonInteractionListener(),
+                        new SelectMenuInteractionHandler())
                 .setActivity(null)
                 .setRequestTimeoutRetry(true)
                 .setContextEnabled(true)

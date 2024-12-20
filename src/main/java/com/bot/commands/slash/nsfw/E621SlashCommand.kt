@@ -5,7 +5,6 @@ import com.bot.service.E621Service
 import com.bot.utils.TheGreatCCPFilter.Companion.containsNoNoTags
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
-import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.Command.Choice
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
@@ -42,7 +41,7 @@ class E621SlashCommand: NsfwSlashCommand() {
         val selected = images[Random.nextInt(images.size - 1)]
         val refreshButtonId = "refresh-e621-$search"
         val refresh = Button.primary(refreshButtonId, Emoji.fromUnicode("\uD83D\uDD04"))
-        command.replyToCommand(selected, mutableListOf(refresh))
+        command.replyWithActionBar(selected, mutableListOf(refresh))
     }
 
     private val sortOptions = listOf(
