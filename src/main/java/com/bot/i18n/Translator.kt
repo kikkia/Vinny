@@ -1,5 +1,6 @@
 package com.bot.i18n
 
+import com.bot.metrics.MetricsManager
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -12,7 +13,10 @@ class Translator {
     class BotTranslator(private val translations: Map<String, Map<String, String>>,
                         private val commandTranslations: Map<String, Map<DiscordLocale, Pair<String, String>>>) {
 
+        private val metrics = MetricsManager.instance
+
         fun translate(messageId: String, language: String, vararg args: Any): String {
+            metrics!!.markTranslation(messageId, language)
             val message = translations[messageId]?.get(language) ?: translations[messageId]?.get("en-US")
             ?: throw IllegalArgumentException("Translation missing for messageId: $messageId in language: $language")
 

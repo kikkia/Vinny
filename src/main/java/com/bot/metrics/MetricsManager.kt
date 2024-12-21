@@ -271,6 +271,10 @@ class MetricsManager private constructor() {
         statsd!!.incrementCounter("button.interaction", "action:$action")
     }
 
+    fun markTranslation(id: String, language: String) {
+        statsd!!.incrementCounter("translation", "id:$id", "lang:$language")
+    }
+
     fun updateLLStats() {
         for (node in config.voiceConfig.nodes!!) {
             val llUrl = node.address.replace("ws://", "")
