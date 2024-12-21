@@ -11,7 +11,9 @@ import org.apache.http.client.ResponseHandler
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
+import org.json.JSONArray
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 
@@ -104,6 +106,30 @@ class R34Utils {
                 metricsManager.markR34Response(provider, false)
                 logger.warning("Failed to fetch r34 posts for source: $url", e)
                 return java.util.ArrayList()
+            }
+        }
+
+        fun getAutocomplete(input: String): List<Pair<String, String>> {
+            val client = HttpClients.createDefault()
+            val url = "https://ac.rule34.xxx/autocomplete.php?q=$input"
+
+            val request = HttpGet(url)
+            request.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Firefox/91.0")
+
+            client.execute(request).use { response ->
+                if (response.statusLine.statusCode == 200) {
+                    val responseBody = EntityUtils.toString(response.entity)
+                    val jsonArray = JSONArray(responseBody)
+
+                    return (0 until jsonArray.length()).map { index ->
+                        val jsonObject = jsonArray.getJSONObject(index)
+                        val label = jsonObject.getString("label")
+                        val value = jsonObject.getString("value")
+                        label to value
+                    }
+                } else {
+                    throw Exception("Request failed: ${response.statusLine}")
+                }
             }
         }
 
