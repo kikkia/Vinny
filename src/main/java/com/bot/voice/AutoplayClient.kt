@@ -6,17 +6,21 @@ import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.util.*
 
 class AutoplayClient {
     object VideoRequester {
         private val baseUrl = VinnyConfig.instance().voiceConfig.autoplayProvider
         private val searchUrl = VinnyConfig.instance().voiceConfig.autoplaySearch
+        private val user = VinnyConfig.instance().voiceConfig.autoplayUser
+        private val pass = VinnyConfig.instance().voiceConfig.autoplayPass
         private val httpClient = OkHttpClient()
 
         // Get a list of recommended video ids for a given video id.
         fun getRecommendedVideoIds(videoId: String): List<String> {
             val url = baseUrl + videoId
             val request = Request.Builder()
+                .addHeader("Authorization", basicAuthHeader())
                 .url(url)
                 .build()
 
@@ -58,6 +62,12 @@ class AutoplayClient {
                 videoObject.getString("videoId")
             }
             return getRecommendedVideoIds(videoId)
+        }
+
+        private fun basicAuthHeader() : String{
+            val credentials = "$user:$pass"
+            val authHeader = "Basic " + Base64.getEncoder().encodeToString(credentials.toByteArray())
+            return authHeader
         }
 
         private fun getAutoplayURI(id: String): String {

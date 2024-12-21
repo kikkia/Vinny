@@ -64,6 +64,8 @@ data class VoiceConfig(val nodes: List<LavalinkNode>?,
                        val autoplayPrefix: String?,
                        val autoplaySource: String?,
                        val autoplaySearch: String?,
+                       val autoplayUser: String?,
+                       val autoplayPass: String?,
                        val oauthConfig: OauthProperties)
 
 data class LavalinkNode(val address: String,
