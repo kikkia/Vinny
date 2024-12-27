@@ -1174,5 +1174,23 @@
     "ru": "Очередь была перемешана.",
     "ja": "キューがシャッフルされました。",
     "ko": "큐가 섞였습니다."
+  },
+  "VOICE_NO_PLAYING_TRACK": {
+    "en-US": "I am not currently playing any audio."
+  },
+  "VOICE_PLAYLIST_CREATE": {
+    "en-US": "I have successfully created the playlist"
+  },
+  "VOICE_PLAYLIST_NONE_FOUND": {
+    "en-US": "You have no playlists saved, and I found none in this guild."
+  },
+  "AUTOPLAY_REQUIRES_DONOR": {
+    "en-US": "Autoplay cannot be enabled on this server. To enable autoplay a Vinny donor can run the `~donor` command to enable donor status on this server, then autoplay can be used. You can donate to Vinny using the server subscriptions in the Vinny support server. I try to keep all of Vinny's features free, but autoplay does rely on some platforms that charge for use. The donations help cover the cost associated with hosting Vinny and features like this. Thanks for understanding. https://discord.gg/XMwyzxZ"
+  },
+  "AUTOPLAY_REQUIRES_PLAYING": {
+    "en-US": "I am not currently playing audio, I need to be playing to enable/disable autoplay."
+  },
+  "AUTOPLAY_SET": {
+    "en-US": "Autoplay set to: {0}"
   }
 }

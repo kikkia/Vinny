@@ -3,7 +3,7 @@ package com.bot.voice
 import com.bot.exceptions.MaxQueueSizeException
 import com.bot.metrics.MetricsManager
 import com.bot.utils.FormattingUtils
-import com.bot.voice.control.VoiceControlEvent
+import com.bot.commands.control.CommandControlEvent
 import com.jagrosh.jdautilities.menu.OrderedMenu
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
 import dev.arbjerg.lavalink.client.player.LoadFailed
@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.Message
 import org.apache.log4j.Logger
 import java.util.concurrent.TimeUnit
 
-class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: VoiceControlEvent,
+class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: CommandControlEvent,
                           private val message: Message, private val builder: OrderedMenu.Builder) : AbstractAudioLoadResultHandler() {
     val logger: Logger = Logger.getLogger(this::class.java.name)
     override fun ontrackLoaded(result: TrackLoaded) {

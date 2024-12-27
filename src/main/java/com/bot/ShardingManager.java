@@ -11,8 +11,7 @@ import com.bot.commands.slash.subscriptions.MySubscriptionsSlashCommand;
 import com.bot.commands.slash.subscriptions.SubscribeCommand;
 import com.bot.commands.slash.subscriptions.SubscriptionsSlashCommand;
 import com.bot.commands.slash.subscriptions.UnsubscribeSlashCommand;
-import com.bot.commands.slash.voice.LoadPlaylistSlashCommand;
-import com.bot.commands.slash.voice.PlaySlashCommand;
+import com.bot.commands.slash.voice.*;
 import com.bot.commands.traditional.alias.AddGuildAliasCommand;
 import com.bot.commands.traditional.alias.AliasesCommand;
 import com.bot.commands.traditional.alias.RemoveGuildAliasCommand;
@@ -241,7 +240,12 @@ public class ShardingManager {
                 new SupportSlashCommand(),
                 new InviteSlashCommand(),
                 new PlaySlashCommand(),
-                new LoadPlaylistSlashCommand());
+                new LoadPlaylistSlashCommand(),
+                new SavePlaylistSlashCommand(),
+                new ListPlaylistsSlashCommand(waiter),
+                new AutoplaySlashCommand(),
+                new LoginSlashCommand(),
+                new LogoutSlashCommand());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");

@@ -1,18 +1,23 @@
-package com.bot.voice.control
+package com.bot.commands.control
 
 import com.bot.commands.slash.ExtSlashCommandEvent
+import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 
-class VoiceSlashControlEvent(private val command: ExtSlashCommandEvent): VoiceControlEvent {
+class SlashControlEvent(private val command: ExtSlashCommandEvent): CommandControlEvent {
     override fun getMember(): Member {
         return command.member!!
     }
 
     override fun getChannel(): MessageChannel {
         return command.channel
+    }
+
+    override fun getGuild(): Guild {
+        return command.guild!!
     }
 
     override fun getAuthor(): User {
@@ -35,8 +40,8 @@ class VoiceSlashControlEvent(private val command: ExtSlashCommandEvent): VoiceCo
         TODO("Not yet implemented")
     }
 
-    override fun getSource(): VoiceControlSource {
-        return VoiceControlSource.SLASH
+    override fun getSource(): CommandControlSource {
+        return CommandControlSource.SLASH
     }
 
     override fun sendMessage(msg: String): Message {

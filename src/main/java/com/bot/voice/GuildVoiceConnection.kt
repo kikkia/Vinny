@@ -12,7 +12,7 @@ import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.models.enums.RepeatMode
 import com.bot.utils.*
-import com.bot.voice.control.VoiceControlEvent
+import com.bot.commands.control.CommandControlEvent
 import com.jagrosh.jdautilities.menu.OrderedMenu.Builder
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.LinkState
@@ -69,7 +69,7 @@ class GuildVoiceConnection(val guild: Guild) {
         return isPaused
     }
 
-    private fun joinChannel(controlEvent: VoiceControlEvent) {
+    private fun joinChannel(controlEvent: CommandControlEvent) {
         val toJoin = controlEvent.getMember().voiceState?.channel
             ?: throw NotInVoiceException("You are not in a voice channel! Please join one to use this command.")
         try {
@@ -125,7 +125,7 @@ class GuildVoiceConnection(val guild: Guild) {
         GuildDAO.getInstance().updateLastVoiceConnectTime(guild.id)
     }
 
-    fun loadTrack(toLoad: String, controlEvent: VoiceControlEvent) {
+    fun loadTrack(toLoad: String, controlEvent: CommandControlEvent) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(controlEvent)
@@ -153,7 +153,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     // Queue up track from playlist and then start load if there is a next track
-    fun queuePlaylistTrack(queuedTrack: QueuedAudioTrack?, controlEvent: VoiceControlEvent, loadingMessage: Message,
+    fun queuePlaylistTrack(queuedTrack: QueuedAudioTrack?, controlEvent: CommandControlEvent, loadingMessage: Message,
                            tracks: List<String>, index: Int, failedCount: Int) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
@@ -177,7 +177,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
 
-    fun queuePlaylist(tracks: List<String>, controlEvent: VoiceControlEvent, loadingMessage: Message) {
+    fun queuePlaylist(tracks: List<String>, controlEvent: CommandControlEvent, loadingMessage: Message) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(controlEvent)
@@ -231,7 +231,7 @@ class GuildVoiceConnection(val guild: Guild) {
         link.loadItem(resumeSetup.tracks[0].trackUrl).subscribe(ResumeLLLoadHandler(this, loadingMessage, resumeSetup, 0, 0))
     }
 
-    fun searchForTrack(search: String, controlEvent: VoiceControlEvent, message: Message, builder: Builder) {
+    fun searchForTrack(search: String, controlEvent: CommandControlEvent, message: Message, builder: Builder) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
             joinChannel(controlEvent)

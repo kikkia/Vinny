@@ -1,18 +1,23 @@
-package com.bot.voice.control
+package com.bot.commands.control
 
+import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
 
-class VoiceMenuSelectControlEvent(private val event: StringSelectInteractionEvent): VoiceControlEvent {
+class MenuSelectControlEvent(private val event: StringSelectInteractionEvent): CommandControlEvent {
     override fun getMember(): Member {
         return event.member!!
     }
 
     override fun getChannel(): MessageChannel {
         return event.channel
+    }
+
+    override fun getGuild(): Guild {
+        return event.guild!!
     }
 
     override fun getAuthor(): User {
@@ -35,8 +40,8 @@ class VoiceMenuSelectControlEvent(private val event: StringSelectInteractionEven
         TODO("Not yet implemented")
     }
 
-    override fun getSource(): VoiceControlSource {
-        return VoiceControlSource.MENU
+    override fun getSource(): CommandControlSource {
+        return CommandControlSource.MENU
     }
 
     override fun sendMessage(msg: String): Message {

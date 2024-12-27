@@ -14,15 +14,15 @@ class ExtSlashCommandEvent(
     private val translator = Translator.getInstance()
 
     fun replySuccess(outputId: String, vararg args: Any) {
-        replyTranslatedMessage(successEmoji, outputId, args)
+        replyTranslatedMessage(successEmoji, outputId, *args)
     }
 
     fun replyWarning(outputId: String, vararg args: Any) {
-        replyTranslatedMessage(warningEmoji, outputId, args)
+        replyTranslatedMessage(warningEmoji, outputId, *args)
     }
 
     fun replyError(outputId: String, vararg args: Any) {
-        replyTranslatedMessage(errorEmoji, outputId, args)
+        replyTranslatedMessage(errorEmoji, outputId, *args)
     }
 
     fun replyWithActionBar(reply: String, actionBar: MutableCollection<ItemComponent>) {
@@ -45,7 +45,7 @@ class ExtSlashCommandEvent(
     }
 
     private fun replyTranslatedMessage(emoji: String, outputId: String, vararg args: Any) {
-        this.hook.sendMessage(emoji + " " + translator.translate(outputId, this.userLocale.locale, args)).queue()
+        this.hook.sendMessage(emoji + " " + translator.translate(outputId, this.userLocale.locale, *args)).queue()
     }
 
     companion object {

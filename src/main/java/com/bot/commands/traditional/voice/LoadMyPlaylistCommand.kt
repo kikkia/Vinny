@@ -3,7 +3,7 @@ package com.bot.commands.traditional.voice
 import com.bot.commands.traditional.VoiceCommand
 import com.bot.db.PlaylistDAO
 import com.bot.models.Playlist
-import com.bot.voice.control.VoiceTextControlEvent
+import com.bot.commands.control.TextControlEvent
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
 import java.util.logging.Level
@@ -51,6 +51,6 @@ class LoadMyPlaylistCommand : VoiceCommand() {
         val conn = guildVoiceProvider.getGuildVoiceConnection(commandEvent.guild)
         val loadingMessage = commandEvent.channel.sendMessage("Starting load of playlist ${playlist.name}").complete()
         // Queue up the tracks
-        conn.queuePlaylist(playlist.getTracks()!!.map { it.url!! }.toList(), VoiceTextControlEvent(commandEvent), loadingMessage)
+        conn.queuePlaylist(playlist.getTracks()!!.map { it.url!! }.toList(), TextControlEvent(commandEvent), loadingMessage)
     }
 }

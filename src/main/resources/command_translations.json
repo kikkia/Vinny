@@ -402,6 +402,38 @@
       "ko": "ID로 구독을 제거"
     }
   },
+  "playlists": {
+    "name": {
+      "en-US": "playlists"
+    },
+    "desc": {
+      "en-US": "Lists all playlists you can use"
+    }
+  },
+  "play": {
+    "name": {
+      "en-US": "play"
+    },
+    "desc": {
+      "en-US": "Play a track in your voice channel"
+    }
+  },
+  "save-playlist": {
+    "name": {
+      "en-US": "save-playlist"
+    },
+    "desc": {
+      "en-US": "Saves the current queue of songs as a playlist"
+    }
+  },
+  "load-playlist": {
+    "name": {
+      "en-US": "load-playlist"
+    },
+    "desc": {
+      "en-US": "Select and play a saved playlist"
+    }
+  },
   "template": {
     "name": {
       "en-US": ""

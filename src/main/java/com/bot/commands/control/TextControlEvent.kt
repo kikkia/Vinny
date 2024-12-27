@@ -1,18 +1,23 @@
-package com.bot.voice.control
+package com.bot.commands.control
 
 import com.jagrosh.jdautilities.command.CommandEvent
+import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 
-class VoiceTextControlEvent(private val commandEvent: CommandEvent): VoiceControlEvent {
+class TextControlEvent(private val commandEvent: CommandEvent): CommandControlEvent {
     override fun getMember(): Member {
         return commandEvent.member
     }
 
     override fun getChannel(): MessageChannel {
         return commandEvent.channel
+    }
+
+    override fun getGuild(): Guild {
+        return commandEvent.guild
     }
 
     override fun getAuthor(): User {
@@ -35,8 +40,8 @@ class VoiceTextControlEvent(private val commandEvent: CommandEvent): VoiceContro
         return commandEvent.args
     }
 
-    override fun getSource(): VoiceControlSource {
-        return VoiceControlSource.TRADITIONAL
+    override fun getSource(): CommandControlSource {
+        return CommandControlSource.TRADITIONAL
     }
 
     override fun sendMessage(msg: String): Message {

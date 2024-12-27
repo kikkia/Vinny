@@ -1,19 +1,17 @@
 package com.bot.commands.slash.voice
 
-import com.bot.commands.slash.BaseSlashCommand
 import com.bot.commands.slash.ExtSlashCommandEvent
 import com.bot.db.PlaylistDAO
-import com.bot.utils.CommandCategories
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 
-class LoadPlaylistSlashCommand: BaseSlashCommand() {
+class LoadPlaylistSlashCommand: VoiceSlashCommand() {
     
     private val playlistDAO = PlaylistDAO.getInstance()
 
     init {
         this.name = "load-playlist"
         this.help = "Select and play a saved playlist"
-        this.category = CommandCategories.VOICE
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {

@@ -1,7 +1,7 @@
 package com.bot.voice
 
 import com.bot.metrics.MetricsManager
-import com.bot.voice.control.VoiceControlEvent
+import com.bot.commands.control.CommandControlEvent
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
 import dev.arbjerg.lavalink.client.player.LoadFailed
 import dev.arbjerg.lavalink.client.player.PlaylistLoaded
@@ -10,7 +10,7 @@ import dev.arbjerg.lavalink.client.player.TrackLoaded
 import net.dv8tion.jda.api.entities.Message
 import org.apache.log4j.Logger
 
-class PlaylistLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: VoiceControlEvent,
+class PlaylistLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, private val event: CommandControlEvent,
                             private val loadingMessage: Message, private val tracks: List<String>,
                             private val index: Int, private val failedCount: Int) : AbstractAudioLoadResultHandler() {
 
