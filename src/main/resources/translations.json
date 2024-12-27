@@ -1192,5 +1192,11 @@
   },
   "AUTOPLAY_SET": {
     "en-US": "Autoplay set to: {0}"
+  },
+  "VOICE_TOKEN_REFRESHED": {
+    "en-US": "Token successfully refreshed"
+  },
+  "VOICE_TOKEN_NOT_YET_SETUP": {
+    "en-US": "You have not signed in yet. Use the `~login` command to initially sign in."
   }
 }

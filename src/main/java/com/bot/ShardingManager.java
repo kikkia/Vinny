@@ -245,7 +245,8 @@ public class ShardingManager {
                 new ListPlaylistsSlashCommand(waiter),
                 new AutoplaySlashCommand(),
                 new LoginSlashCommand(),
-                new LogoutSlashCommand());
+                new LogoutSlashCommand(),
+                new RefreshTokenSlashCommand());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
