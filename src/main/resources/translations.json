@@ -1198,5 +1198,11 @@
   },
   "VOICE_TOKEN_NOT_YET_SETUP": {
     "en-US": "You have not signed in yet. Use the `~login` command to initially sign in."
+  },
+  "DEFAULT_VOLUME_UPDATE_ERROR": {
+    "en-US": "Failed to update the default volume. Please try again."
+  },
+  "DEFAULT_VOLUME_UPDATE_SUCCESS": {
+    "en-US": "Successfully set the default volume to {0}"
   }
 }
