@@ -20,7 +20,7 @@ class Translator {
             val message = translations[messageId]?.get(language) ?: translations[messageId]?.get("en-US")
             ?: throw IllegalArgumentException("Translation missing for messageId: $messageId in language: $language")
 
-            return MessageFormat.format(message, *args)
+            return MessageFormat.format(message, *args.map { it }.toTypedArray())
         }
 
         fun getCommandNameTranslations(name: String): Map<DiscordLocale, String> {

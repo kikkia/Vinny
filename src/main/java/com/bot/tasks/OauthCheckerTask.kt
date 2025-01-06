@@ -1,12 +1,12 @@
 package com.bot.tasks
 
+import com.bot.commands.control.CommandControlEvent
 import com.bot.db.OauthConfigDAO
 import com.bot.db.models.OauthConfig
 import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.utils.VinnyConfig
 import com.bot.voice.GuildVoiceProvider
-import com.jagrosh.jdautilities.command.CommandEvent
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.StringEntity
@@ -18,7 +18,7 @@ import java.time.Instant
 
 class OauthCheckerTask(private val deviceCode: String,
                        private val interval: Long,
-                       val commandEvent: CommandEvent): Thread() {
+                       val commandEvent: CommandControlEvent): Thread() {
     val client: CloseableHttpClient = HttpClients.createDefault()
     private val guildProvider = GuildVoiceProvider.getInstance()
     private val oauthDAO = OauthConfigDAO.getInstance()
@@ -33,7 +33,7 @@ class OauthCheckerTask(private val deviceCode: String,
         while (true) {
             // 10 min timeout
             if (start.isBefore(Instant.now().minusSeconds(600))) {
-                commandEvent.replyError(translator.translate("VOICE_LOGIN_EXPIRED", commandEvent.guild.locale.locale))
+                commandEvent.replyError(translator.translate("VOICE_LOGIN_EXPIRED", commandEvent.getGuild().locale.locale))
                 return
             }
             val response = poll()
@@ -44,15 +44,15 @@ class OauthCheckerTask(private val deviceCode: String,
                         continue
                     }
                     "expired_token" -> {
-                        commandEvent.replyError(translator.translate("VOICE_LOGIN_EXPIRED", commandEvent.guild.locale.locale))
+                        commandEvent.replyError(translator.translate("VOICE_LOGIN_EXPIRED", commandEvent.getGuild().locale.locale))
                     }
 
                     "access_denied" -> {
-                        commandEvent.replyError(translator.translate("VOICE_LOGIN_DENIED", commandEvent.guild.locale.locale))
+                        commandEvent.replyError(translator.translate("VOICE_LOGIN_DENIED", commandEvent.getGuild().locale.locale))
                     }
 
                     else -> {
-                        commandEvent.replyError(translator.translate("VOICE_LOGIN_GENERIC_ERROR", commandEvent.guild.locale.locale))
+                        commandEvent.replyError(translator.translate("VOICE_LOGIN_GENERIC_ERROR", commandEvent.getGuild().locale.locale))
                         log.error("Error with Oauth2 flow: {}", response.errorMessage)
                         // Only one that may be our fault, not timeout or deny
                         metricsManager!!.markOauthComplete(false)
@@ -61,11 +61,11 @@ class OauthCheckerTask(private val deviceCode: String,
                 client.close()
                 return
             }
-            val conn = guildProvider.getGuildVoiceConnection(commandEvent.guild)
-            val newConfig = OauthConfig(commandEvent.author.id, response.refreshToken, response.accessToken, response.tokenType, response.tokenExpires, true)
+            val conn = guildProvider.getGuildVoiceConnection(commandEvent.getGuild())
+            val newConfig = OauthConfig(commandEvent.getAuthorId(), response.refreshToken, response.accessToken, response.tokenType, response.tokenExpires, true)
             conn.updateOauthConfig(newConfig)
             oauthDAO.setOauthConfig(newConfig)
-            commandEvent.replySuccess(translator.translate("VOICE_LOGIN_COMPLETE", commandEvent.guild.locale.locale, commandEvent.member.effectiveName))
+            commandEvent.replySuccess(translator.translate("VOICE_LOGIN_COMPLETE", commandEvent.getGuild().locale.locale, commandEvent.getMember().effectiveName))
             metricsManager!!.markOauthComplete(true)
             client.close()
             return

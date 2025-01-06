@@ -46,4 +46,7 @@ class Playlist(id: Int, ownerID: String?, name: String?, tracks: MutableList<Aud
         tracks!!.add(track)
     }
 
+    override fun toString(): String {
+        return "Playlist: $name - ${tracks!!.size} tracks"
+    }
 }

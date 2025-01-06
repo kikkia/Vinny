@@ -29,7 +29,7 @@ class R34SlashCommand: NsfwSlashCommand() {
             return
         }
         val refreshButton = Button.primary("refresh-r34-$search", Emoji.fromUnicode("\uD83D\uDD04"))
-        command.replyToCommand(R34Utils.getPostForSearch(search), mutableListOf(refreshButton))
+        command.replyWithActionBar(R34Utils.getPostForSearch(search), mutableListOf(refreshButton))
     }
 
     override fun onAutoComplete(event: CommandAutoCompleteInteractionEvent?) {

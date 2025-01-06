@@ -1,5 +1,6 @@
 package com.bot.commands.traditional.voice
 
+import com.bot.commands.control.TextControlEvent
 import com.bot.commands.traditional.GeneralCommand
 import com.bot.utils.Oauth2Utils
 import com.jagrosh.jdautilities.command.CommandEvent
@@ -16,7 +17,7 @@ class LoginDeviceCommand : GeneralCommand() {
     }
 
     override fun executeCommand(commandEvent: CommandEvent?) {
-        val oauthResponse = Oauth2Utils.initOauthFlow(commandEvent!!)
+        val oauthResponse = Oauth2Utils.initOauthFlow(TextControlEvent(commandEvent!!))
         metricsManager.markOauthGenerated(oauthResponse.successful)
         if (oauthResponse.successful) {
             commandEvent.reply(translator.translate("VOICE_LOGIN", commandEvent.guild.locale.locale, oauthResponse.verificationUrl, oauthResponse.userCode))

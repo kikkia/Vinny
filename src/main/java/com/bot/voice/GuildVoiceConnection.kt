@@ -12,7 +12,7 @@ import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.models.enums.RepeatMode
 import com.bot.utils.*
-import com.jagrosh.jdautilities.command.CommandEvent
+import com.bot.commands.control.CommandControlEvent
 import com.jagrosh.jdautilities.menu.OrderedMenu.Builder
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.LinkState
@@ -69,15 +69,15 @@ class GuildVoiceConnection(val guild: Guild) {
         return isPaused
     }
 
-    private fun joinChannel(commandEvent: CommandEvent) {
-        val toJoin = commandEvent.member.voiceState?.channel
-            ?: throw NotInVoiceException(commandEvent.client.warning + " You are not in a voice channel! Please join one to use this command.")
+    private fun joinChannel(controlEvent: CommandControlEvent) {
+        val toJoin = controlEvent.getMember().voiceState?.channel
+            ?: throw NotInVoiceException("You are not in a voice channel! Please join one to use this command.")
         try {
             joinChannel(toJoin.asVoiceChannel())
         } catch (e: UserExposableException) {
             throw e
         } catch (e: Exception) {
-            commandEvent.replyWarning("Failed to join voice channel: ${e.message}")
+            controlEvent.replyWarning("Failed to join voice channel: ${e.message}")
             cleanupPlayer()
             throw e
         }
@@ -125,15 +125,15 @@ class GuildVoiceConnection(val guild: Guild) {
         GuildDAO.getInstance().updateLastVoiceConnectTime(guild.id)
     }
 
-    fun loadTrack(toLoad: String, commandEvent: CommandEvent) {
+    fun loadTrack(toLoad: String, controlEvent: CommandControlEvent) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
-            joinChannel(commandEvent)
+            joinChannel(controlEvent)
         }
         injectOauth(toLoad)
         metricsManager.markTrackLoaded()
-        link.loadItem(toLoad).subscribe(LLLoadHandler(this, commandEvent))
-        lastTextChannel = commandEvent.channel
+        link.loadItem(toLoad).subscribe(LLLoadHandler(this, controlEvent))
+        lastTextChannel = controlEvent.getChannel()
     }
 
     private fun loadAutoplayTrack(toLoad: String) {
@@ -153,11 +153,11 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     // Queue up track from playlist and then start load if there is a next track
-    fun queuePlaylistTrack(queuedTrack: QueuedAudioTrack?, commandEvent: CommandEvent, loadingMessage: Message,
+    fun queuePlaylistTrack(queuedTrack: QueuedAudioTrack?, controlEvent: CommandControlEvent, loadingMessage: Message,
                            tracks: List<String>, index: Int, failedCount: Int) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
-            joinChannel(commandEvent)
+            joinChannel(controlEvent)
         }
         val newIndex = index+1
         updateLoadingMessage(loadingMessage, tracks, newIndex, failedCount)
@@ -173,19 +173,19 @@ class GuildVoiceConnection(val guild: Guild) {
         injectOauth(tracks[newIndex])
         metricsManager.markTrackLoaded()
         link.loadItem(tracks[newIndex]).subscribe(
-            PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, newIndex, failedCount))
+            PlaylistLLLoadHandler(this, controlEvent, loadingMessage, tracks, newIndex, failedCount))
     }
 
 
-    fun queuePlaylist(tracks: List<String>, commandEvent: CommandEvent, loadingMessage: Message) {
+    fun queuePlaylist(tracks: List<String>, controlEvent: CommandControlEvent, loadingMessage: Message) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
-            joinChannel(commandEvent)
+            joinChannel(controlEvent)
         }
         injectOauth(tracks[0])
         metricsManager.markTrackLoaded()
-        link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, commandEvent, loadingMessage, tracks, 0, 0))
-        lastTextChannel = commandEvent.channel
+        link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, controlEvent, loadingMessage, tracks, 0, 0))
+        lastTextChannel = controlEvent.getChannel()
     }
 
     fun queueResumeTrack(queuedTrack: QueuedAudioTrack?, loadingMessage: Message, resumeSetup: ResumeAudioGuild, index: Int, failedCount: Int) {
@@ -231,15 +231,15 @@ class GuildVoiceConnection(val guild: Guild) {
         link.loadItem(resumeSetup.tracks[0].trackUrl).subscribe(ResumeLLLoadHandler(this, loadingMessage, resumeSetup, 0, 0))
     }
 
-    fun searchForTrack(search: String, commandEvent: CommandEvent, message: Message, builder: Builder) {
+    fun searchForTrack(search: String, controlEvent: CommandControlEvent, message: Message, builder: Builder) {
         val link = getLink()
         if (link.state == LinkState.DISCONNECTED) {
-            joinChannel(commandEvent)
+            joinChannel(controlEvent)
         }
         injectOauth(search)
         metricsManager.markTrackLoaded()
-        link.loadItem(search).subscribe(SearchLLLoadHandler(this, commandEvent, message, builder))
-        lastTextChannel = commandEvent.channel
+        link.loadItem(search).subscribe(SearchLLLoadHandler(this, controlEvent, message, builder))
+        lastTextChannel = controlEvent.getChannel()
     }
 
 

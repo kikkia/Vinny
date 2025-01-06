@@ -1,6 +1,7 @@
 package com.bot.utils
 
 
+import com.bot.commands.control.CommandControlEvent
 import com.bot.db.OauthConfigDAO
 import com.bot.db.models.OauthConfig
 import com.bot.exceptions.OauthRefreshException
@@ -43,7 +44,7 @@ class Oauth2Utils {
         private val oauthConfigDAO = OauthConfigDAO.getInstance()
         val metricsManager = MetricsManager.instance
 
-         fun initOauthFlow(commandEvent: CommandEvent): OauthSetupResponse {
+         fun initOauthFlow(commandEvent: CommandControlEvent): OauthSetupResponse {
             val response: OauthSetupResponse = fetchDeviceCode()
             // Lets get a poller going to check for the flow completion
             OauthCheckerTask(response.deviceCode, if (response.interval == 0L) 10000 else response.interval, commandEvent).start()

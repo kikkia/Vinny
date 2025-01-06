@@ -104,6 +104,16 @@ public class PlaylistDAO {
 		}
 	}
 
+	public Playlist getPlaylistById(String id) {
+		String query = "Select p.id, p.name, pt.position, t.url, t.title FROM playlist p LEFT JOIN playlist_track pt ON p.id = pt.playlist LEFT JOIN track t ON t.id = pt.track WHERE p.id = ?";
+		// Kind of a hack, since only one playlist should be returned by the search we just take the first.
+		try {
+			return getPlaylistsFromQuery(id, query).get(0);
+		} catch (NullPointerException | IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+
 	public boolean createPlaylistForUser(String userId, String name, List<QueuedAudioTrack> tracks) {
 		String playlistInsertQuery = "INSERT INTO playlist (user_id, name) VALUES(?,?) ON DUPLICATE KEY UPDATE name = name";
 		String trackInsertQuery = "INSERT INTO track (url, title) VALUES (?, ?) ON DUPLICATE KEY UPDATE title = title";
