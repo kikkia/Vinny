@@ -247,7 +247,9 @@ public class ShardingManager {
                 new LoginSlashCommand(),
                 new LogoutSlashCommand(),
                 new RefreshTokenSlashCommand(),
-                new DefaultVolumeSlashCommand());
+                new DefaultVolumeSlashCommand(),
+                new SeekSlashCommand(),
+                new VolumeSlashCommand());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");

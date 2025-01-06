@@ -7,7 +7,7 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter
 import com.jagrosh.jdautilities.menu.ButtonEmbedPaginator
 import java.util.stream.Collectors
 
-class ListPlaylistsSlashCommand(private val waiter: EventWaiter): VoiceSlashCommand() {
+class ListPlaylistsSlashCommand(waiter: EventWaiter): VoiceSlashCommand() {
     private val playlistDAO = PlaylistDAO.getInstance()
     val builder: ButtonEmbedPaginator.Builder = ButtonEmbedPaginator.Builder()
 

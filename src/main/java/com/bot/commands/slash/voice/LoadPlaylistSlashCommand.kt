@@ -32,6 +32,4 @@ class LoadPlaylistSlashCommand: VoiceSlashCommand() {
         }
         command.replyTranslatedWithActionBar("CHOOSE_PLAYLIST", mutableListOf(selectBuilder.build()), true)
     }
-
-
 }

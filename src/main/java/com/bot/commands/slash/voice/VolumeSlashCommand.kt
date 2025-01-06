@@ -6,24 +6,22 @@ import com.bot.voice.GuildVoiceProvider
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 
-class DefaultVolumeSlashCommand: VoiceSlashCommand(false) {
+class VolumeSlashCommand: VoiceSlashCommand() {
 
     init {
-        name = "default-volume"
-        help = "Sets the default volume for the server"
-        options = listOf(OptionData(OptionType.INTEGER, "default-volume", "The new default volume", true))
+        this.name = "volume"
+        this.help = "Sets the volume"
+        this.options = listOf(OptionData(OptionType.INTEGER, "volume", "0-200", true))
+        postInit()
     }
 
     override fun runCommand(command: ExtSlashCommandEvent) {
-        val newVolume = command.optLong("default-volume")
+        val newVolume = command.optLong("volume")
         if (newVolume > 200 || newVolume < 0) {
             throw UserVisibleException("INVALID_NEW_VOLUME")
         }
-        if (!guildDAO.updateGuildVolume(command.guild!!.id, newVolume.toInt())) {
-            command.replyError("DEFAULT_VOLUME_UPDATE_ERROR")
-            return
-        }
+
         GuildVoiceProvider.getInstance().getGuildVoiceConnection(command.guild!!.idLong)?.setVolume(newVolume.toInt())
-        command.replySuccess("DEFAULT_VOLUME_UPDATE_SUCCESS", newVolume)
+        command.replySuccess("VOLUME_SET", newVolume)
     }
 }
