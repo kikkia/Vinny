@@ -16,10 +16,10 @@ class RefreshTokenSlashCommand: VoiceSlashCommand() {
     override fun runCommand(command: ExtSlashCommandEvent) {
         val oauthConfig = oauthConfigDAO.getOauthConfig(command.user.id)
         if (oauthConfig == null) {
-            command.replyWarning("VOICE_TOKEN_NOT_YET_SETUP")
+            command.replyWarningTranslated("VOICE_TOKEN_NOT_YET_SETUP")
             return
         }
         Oauth2Utils.refreshAccessToken(oauthConfig)
-        command.replySuccess("VOICE_TOKEN_REFRESHED")
+        command.replySuccessTranslated("VOICE_TOKEN_REFRESHED")
     }
 }

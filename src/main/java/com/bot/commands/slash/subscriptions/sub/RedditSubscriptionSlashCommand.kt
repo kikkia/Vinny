@@ -25,7 +25,7 @@ class RedditSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
     override fun runCommand(command: ExtSlashCommandEvent) {
         val input = command.optString("subreddit")
         if (!isSubredditValid(input!!)) {
-            command.replyWarning("SUBSCRIPTION_SUBREDDIT_INVALID_NAME")
+            command.replyWarningTranslated("SUBSCRIPTION_SUBREDDIT_INVALID_NAME")
             return
         }
         val subreddit: Subreddit? = try {
@@ -34,10 +34,10 @@ class RedditSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             null
         }
         if (subreddit == null) {
-            command.replyWarning("SUBSCRIPTION_SUBREDDIT_INVALID")
+            command.replyWarningTranslated("SUBSCRIPTION_SUBREDDIT_INVALID")
             return
         } else if (subreddit.isNsfw && !command.channel.asTextChannel().isNSFW) {
-            command.replyWarning("SUBSCRIPTION_SUBREDDIT_NSFW")
+            command.replyWarningTranslated("SUBSCRIPTION_SUBREDDIT_NSFW")
             return
         }
         val subChannel = getEffectiveChannel(command)
@@ -55,7 +55,7 @@ class RedditSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             logger.severe("Error adding reddit sub", e)
             command.replyGenericError()
         }
-        command.replySuccess("SUBSCRIPTION_SUBREDDIT_SUCCESS")
+        command.replySuccessTranslated("SUBSCRIPTION_SUBREDDIT_SUCCESS")
     }
 
 }

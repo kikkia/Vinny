@@ -20,10 +20,10 @@ class DefaultVolumeSlashCommand: VoiceSlashCommand(false) {
             throw UserVisibleException("INVALID_NEW_VOLUME")
         }
         if (!guildDAO.updateGuildVolume(command.guild!!.id, newVolume.toInt())) {
-            command.replyError("DEFAULT_VOLUME_UPDATE_ERROR")
+            command.replyErrorTranslated("DEFAULT_VOLUME_UPDATE_ERROR")
             return
         }
         GuildVoiceProvider.getInstance().getGuildVoiceConnection(command.guild!!.idLong)?.setVolume(newVolume.toInt())
-        command.replySuccess("DEFAULT_VOLUME_UPDATE_SUCCESS", newVolume)
+        command.replySuccessTranslated("DEFAULT_VOLUME_UPDATE_SUCCESS", newVolume)
     }
 }

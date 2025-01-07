@@ -36,10 +36,10 @@ class YoutubeSubscribeSlashCommand: AddSubscriptionSlashCommand() {
                 false
             )
         } catch (e: NoSuchResourceException) {
-            command.replyWarning("SUBSCRIPTION_YT_NOT_FOUND")
+            command.replyWarningTranslated("SUBSCRIPTION_YT_NOT_FOUND")
             return
         } catch (e: InvalidInputException) {
-            command.replyWarning(
+            command.replyWarningTranslated(
                 "That link does not look right, make sure it is a link to their youtube.com" +
                         " channel page."
             )
@@ -50,13 +50,13 @@ class YoutubeSubscribeSlashCommand: AddSubscriptionSlashCommand() {
             return
         } catch (e: Exception) {
             logger.severe("Failed to get user from Youtube", e)
-            command.replyError(
+            command.replyErrorTranslated(
                 "Failed to get user from Youtube, please make sure it is a direct link to their" +
                         " channel. Please try again."
             )
             return
         }
 
-        command.replySuccess("SUBSCRIPTION_YT_SUCCESS")
+        command.replySuccessTranslated("SUBSCRIPTION_YT_SUCCESS")
     }
 }

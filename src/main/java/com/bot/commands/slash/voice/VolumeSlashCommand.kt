@@ -22,6 +22,6 @@ class VolumeSlashCommand: VoiceSlashCommand() {
         }
 
         GuildVoiceProvider.getInstance().getGuildVoiceConnection(command.guild!!.idLong)?.setVolume(newVolume.toInt())
-        command.replySuccess("VOLUME_SET", newVolume)
+        command.replySuccessTranslated("VOLUME_SET", newVolume)
     }
 }

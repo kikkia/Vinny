@@ -32,33 +32,33 @@ class UnsubscribeSlashCommand: BaseSlashCommand() {
         try {
             subscription = rssDAO.getChannelSubById(id)
             if (subscription == null) {
-                command.replyWarning("REMOVE_SUBSCRIPTION_NOT_FOUND")
+                command.replyWarningTranslated("REMOVE_SUBSCRIPTION_NOT_FOUND")
                 return
             }
             channel = channelDAO.getTextChannelForId(subscription.channel)
         } catch (e: SQLException) {
-            command.replyError("GENERIC_COMMAND_ERROR")
+            command.replyErrorTranslated("GENERIC_COMMAND_ERROR")
             logger.severe("Failed to get sub or channel from db", e)
             return
         }
 
         if (channel.guildId != command.guild!!.id) {
-            command.replyWarning("REMOVE_SUBSCRIPTION_DIFF_GUILD")
+            command.replyWarningTranslated("REMOVE_SUBSCRIPTION_DIFF_GUILD")
             return
         }
 
         if (command.user.id != subscription.author &&
             !command.member!!.hasPermission(command.guild!!.getGuildChannelById(subscription.channel.toLong())!!, Permission.MANAGE_CHANNEL)) {
-            command.replyWarning("REMOVE_SUBSCRIPTION_PERMISSION")
+            command.replyWarningTranslated("REMOVE_SUBSCRIPTION_PERMISSION")
             return
         }
 
         try {
             rssDAO.removeChannelSubscription(subscription)
-            command.replySuccess("REMOVE_SUBSCRIPTION_SUCCESS")
+            command.replySuccessTranslated("REMOVE_SUBSCRIPTION_SUCCESS")
         } catch (e: SQLException) {
             logger.severe("Failed to remove channel sub", e)
-            command.replyError("Failed to remove the subscription")
+            command.replyErrorTranslated("Failed to remove the subscription")
         }
     }
 }

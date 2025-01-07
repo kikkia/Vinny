@@ -54,7 +54,7 @@ class RedditSlashCommand : BaseSlashCommand() {
     override fun runCommand(command: ExtSlashCommandEvent) {
         val input = command.optString("subreddit")
         if (!isSubredditValid(input!!)) {
-            command.replyWarning("SUBSCRIPTION_SUBREDDIT_INVALID_NAME")
+            command.replyWarningTranslated("SUBSCRIPTION_SUBREDDIT_INVALID_NAME")
             return
         }
         val isNSFWAllowed = CommandPermissions.allowNSFW(command)
@@ -76,19 +76,19 @@ class RedditSlashCommand : BaseSlashCommand() {
             command.replyWithActionBar(post, mutableListOf(refreshButton))
         } catch (e: NullPointerException) {
             // Subreddit not found
-            command.replyWarning("SUBREDDIT_NOT_FOUND")
+            command.replyWarningTranslated("SUBREDDIT_NOT_FOUND")
         } catch (e: NoSuchSubredditException) {
-            command.replyWarning("SUBREDDIT_NOT_FOUND")
+            command.replyWarningTranslated("SUBREDDIT_NOT_FOUND")
         } catch (e: ApiException) {
             if (e.code == "403") {
-                command.replyWarning("SUBREDDIT_PRIVATE_ERROR")
+                command.replyWarningTranslated("SUBREDDIT_PRIVATE_ERROR")
             } else {
                 command.replyGenericError()
             }
         } catch (e: NetworkException) {
-            command.replyWarning("SUBREDDIT_NOT_FOUND")
+            command.replyWarningTranslated("SUBREDDIT_NOT_FOUND")
         } catch (e: RedditRateLimitException) {
-            command.replyError("REDDIT_RATE_LIMIT")
+            command.replyErrorTranslated("REDDIT_RATE_LIMIT")
         } catch (e: Exception) {
             throw e
         }

@@ -34,7 +34,7 @@ class TwitchSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
         try {
             id = getTwitchIdForUsername(subject)
         } catch (e: NoSuchResourceException) {
-            command.replyWarning("SUBSCRIPTION_TWITCH_NOT_FOUND")
+            command.replyWarningTranslated("SUBSCRIPTION_TWITCH_NOT_FOUND")
             return
         } catch (e: Exception) {
             logger.severe("Failed to get user from twitch", e)
@@ -46,8 +46,8 @@ class TwitchSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             rssDAO.addSubscription(RssProvider.TWITCH, id, subChannel.id, command.user.id, false)
         } catch (e: SQLException) {
             logger.severe("Error adding twitch sub", e)
-            command.replyError("Something went wrong adding the subscription, please try again.")
+            command.replyErrorTranslated("Something went wrong adding the subscription, please try again.")
         }
-        command.replySuccess("SUBSCRIPTION_TWITCH_SUCCESS")
+        command.replySuccessTranslated("SUBSCRIPTION_TWITCH_SUCCESS")
     }
 }

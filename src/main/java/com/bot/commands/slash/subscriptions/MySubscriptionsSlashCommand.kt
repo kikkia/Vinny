@@ -28,7 +28,7 @@ class MySubscriptionsSlashCommand(waiter: EventWaiter): BaseSlashCommand() {
             val subscriptions = rssDAO.getSubscriptionsForAuthor(command.user.id)
 
             if (subscriptions.isEmpty()) {
-                command.replyWarning("LIST_SUBSCRIPTION_NONE_FOUND")
+                command.replyWarningTranslated("LIST_SUBSCRIPTION_NONE_FOUND")
                 return
             }
 

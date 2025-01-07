@@ -18,7 +18,7 @@ class LoadPlaylistSlashCommand: VoiceSlashCommand() {
         val playlists = playlistDAO.getPlaylistsForGuild(command.guild!!.id)
         playlists.addAll(playlistDAO.getPlaylistsForUser(command.user.id))
         if (playlists.isEmpty()) {
-            command.replyWarning("NO_SAVED_PLAYLISTS_FOUND")
+            command.replyWarningTranslated("NO_SAVED_PLAYLISTS_FOUND")
             return
         }
         val selectBuilder = StringSelectMenu.create("loadplaylist-" + command.user.id)

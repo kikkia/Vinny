@@ -37,7 +37,7 @@ class SubscriptionsSlashCommand(waiter: EventWaiter) : BaseSlashCommand() {
                 else rssDAO.getSubscriptionsForChannel(effectiveChannel.id)
 
             if (subscriptions.isEmpty()) {
-                command.replyWarning("LIST_SUBSCRIPTION_NONE_FOUND")
+                command.replyWarningTranslated("LIST_SUBSCRIPTION_NONE_FOUND")
                 return
             }
 

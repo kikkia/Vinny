@@ -25,7 +25,7 @@ class R34SlashCommand: NsfwSlashCommand() {
         val search = command.optString("search")!!.replace(" ", "+");
 
         if (containsNoNoTags(search)) {
-            command.replyWarning("DISCORD_BANNED_TERMS")
+            command.replyWarningTranslated("DISCORD_BANNED_TERMS")
             return
         }
         val refreshButton = Button.primary("refresh-r34-$search", Emoji.fromUnicode("\uD83D\uDD04"))

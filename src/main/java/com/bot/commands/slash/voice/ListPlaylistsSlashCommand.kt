@@ -24,7 +24,7 @@ class ListPlaylistsSlashCommand(waiter: EventWaiter): VoiceSlashCommand() {
         playlists.addAll(playlistDAO.getPlaylistsForUser(command.user.id))
 
         if (playlists.isEmpty()) {
-            command.replyWarning("VOICE_PLAYLISTS_NONE_FOUND")
+            command.replyWarningTranslated("VOICE_PLAYLISTS_NONE_FOUND")
             return
         }
 

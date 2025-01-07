@@ -7,7 +7,6 @@ import com.bot.utils.HttpUtils
 import com.bot.utils.RssUtils.Companion.isBlueSkyHandleValid
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
-import java.sql.SQLException
 
 class BlueskySubscriptionSlashCommand: AddSubscriptionSlashCommand() {
 
@@ -22,10 +21,10 @@ class BlueskySubscriptionSlashCommand: AddSubscriptionSlashCommand() {
     override fun runCommand(command: ExtSlashCommandEvent) {
         val subject: String = command.optString("username")!!.replace("@".toRegex(), "")
         if (!isBlueSkyHandleValid(subject)) {
-            command.replyWarning("SUBSCRIPTION_BLUESKY_NOT_VALID")
+            command.replyWarningTranslated("SUBSCRIPTION_BLUESKY_NOT_VALID")
             return
         } else if (!command.channel.asTextChannel().isNSFW) {
-            command.replyWarning("SUBSCRIPTION_BLUESKY_NSFW")
+            command.replyWarningTranslated("SUBSCRIPTION_BLUESKY_NSFW")
             return
         }
         val subChannel = getEffectiveChannel(command)
@@ -46,7 +45,7 @@ class BlueskySubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             command.replyGenericError()
             return
         }
-        command.replySuccess("SUBSCRIPTION_BLUESKY_SUCCESS")
+        command.replySuccessTranslated("SUBSCRIPTION_BLUESKY_SUCCESS")
     }
 
     private fun cleanUrl(url: String?): String {

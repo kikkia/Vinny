@@ -30,7 +30,7 @@ class SavePlaylistSlashCommand: VoiceSlashCommand() {
         val trackList: MutableList<QueuedAudioTrack> = LinkedList()
 
         if (nowPlaying == null) {
-            command.replyWarning("VOICE_NO_PLAYING_TRACK")
+            command.replyWarningTranslated("VOICE_NO_PLAYING_TRACK")
             return
         }
 
@@ -42,6 +42,6 @@ class SavePlaylistSlashCommand: VoiceSlashCommand() {
         } else {
             playlistDAO.createPlaylistForUser(command.user.id, name, trackList)
         }
-        command.replySuccess("VOICE_PLAYLIST_CREATE")
+        command.replySuccessTranslated("VOICE_PLAYLIST_CREATE")
     }
 }

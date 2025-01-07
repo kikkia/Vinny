@@ -13,16 +13,28 @@ class ExtSlashCommandEvent(
 ) : SlashCommandEvent(event, client) {
     private val translator = Translator.getInstance()
 
-    fun replySuccess(outputId: String, vararg args: Any) {
+    fun replySuccessTranslated(outputId: String, vararg args: Any) {
         replyTranslatedMessage(successEmoji, outputId, *args)
     }
 
-    fun replyWarning(outputId: String, vararg args: Any) {
+    fun replyWarningTranslated(outputId: String, vararg args: Any) {
         replyTranslatedMessage(warningEmoji, outputId, *args)
     }
 
-    fun replyError(outputId: String, vararg args: Any) {
+    fun replyErrorTranslated(outputId: String, vararg args: Any) {
         replyTranslatedMessage(errorEmoji, outputId, *args)
+    }
+
+    fun replySuccess(msg: String) {
+        replyMessage(successEmoji, msg)
+    }
+
+    fun replyWarning(msg: String) {
+        replyMessage(warningEmoji, msg)
+    }
+
+    fun replyError(msg: String) {
+        replyMessage(errorEmoji, msg)
     }
 
     fun replyWithActionBar(reply: String, actionBar: MutableCollection<ItemComponent>) {
@@ -45,7 +57,11 @@ class ExtSlashCommandEvent(
     }
 
     private fun replyTranslatedMessage(emoji: String, outputId: String, vararg args: Any) {
-        this.hook.sendMessage(emoji + " " + translator.translate(outputId, this.userLocale.locale, *args)).queue()
+        this.hook.sendMessage(emoji + " " + translator.translate(outputId, this.userLocale.locale, *args)).complete()
+    }
+
+    private fun replyMessage(emoji: String, msg: String) {
+        this.hook.sendMessage("$emoji $msg").complete()
     }
 
     companion object {

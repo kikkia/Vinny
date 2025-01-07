@@ -18,9 +18,9 @@ class LoginSlashCommand: VoiceSlashCommand(false) {
         val oauthResponse = Oauth2Utils.initOauthFlow(SlashControlEvent(command))
         metrics!!.markOauthGenerated(oauthResponse.successful)
         if (oauthResponse.successful) {
-            command.replySuccess("VOICE_LOGIN", oauthResponse.verificationUrl, oauthResponse.userCode)
+            command.replySuccessTranslated("VOICE_LOGIN", oauthResponse.verificationUrl, oauthResponse.userCode)
         } else {
-            command.replyError("VOICE_LOGIN_GEN_FAILED")
+            command.replyErrorTranslated("VOICE_LOGIN_GEN_FAILED")
         }
     }
 }

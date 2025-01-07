@@ -19,11 +19,11 @@ class SeekSlashCommand: VoiceSlashCommand() {
         val seekPos = parseSeekPos(command.optString("position")!!)
 
         if (voiceConnection.nowPlaying() == null) {
-            command.replyWarning("VOICE_NO_PLAYING_TRACK")
+            command.replyWarningTranslated("VOICE_NO_PLAYING_TRACK")
             return
         }
 
         voiceConnection.seek(seekPos, voiceConnection.nowPlaying()!!)
-        command.replySuccess("VOICE_SEEK_SUCCESS", command.optString("position")!!)
+        command.replySuccessTranslated("VOICE_SEEK_SUCCESS", command.optString("position")!!)
     }
 }

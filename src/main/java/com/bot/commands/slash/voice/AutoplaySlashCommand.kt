@@ -24,6 +24,6 @@ class AutoplaySlashCommand: VoiceSlashCommand() {
         val conn = provider.getGuildVoiceConnection(command.guild!!.idLong)
                 ?: throw UserVisibleException("AUTOPLAY_REQUIRES_PLAYING")
         conn.autoplay = enable
-        command.replySuccess("AUTOPLAY_SET", enable)
+        command.replySuccessTranslated("AUTOPLAY_SET", enable)
     }
 }

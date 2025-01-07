@@ -42,7 +42,7 @@ abstract class BaseSlashCommand : SlashCommand() {
             runCommand(ExtSlashCommandEvent.fromCommandEvent(command))
             postExecute(commandEvent)
         } catch (e: UserVisibleException) {
-            commandEvent.replyWarning(e.outputId)
+            commandEvent.replyWarningTranslated(e.outputId)
         } catch (e: Exception) {
             logger.severe("Failed slash command", e)
             commandEvent.replyGenericError()

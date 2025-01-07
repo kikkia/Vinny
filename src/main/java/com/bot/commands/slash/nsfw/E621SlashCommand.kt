@@ -34,7 +34,7 @@ class E621SlashCommand: NsfwSlashCommand() {
         }
 
         if (containsNoNoTags(search)) {
-            command.replyWarning("DISCORD_BANNED_TERMS")
+            command.replyWarningTranslated("DISCORD_BANNED_TERMS")
             return
         }
         val images: List<String> = e621Service.getPostsForSearch(search)

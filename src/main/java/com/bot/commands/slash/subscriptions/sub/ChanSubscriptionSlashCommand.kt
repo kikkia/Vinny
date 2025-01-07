@@ -23,10 +23,10 @@ class ChanSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
         val subject = command.optString("board")
         val board = getBoard(subject!!)
         if (board == null) {
-            command.replyWarning("SUBSCRIPTION_CHAN_BOARD_INVALID")
+            command.replyWarningTranslated("SUBSCRIPTION_CHAN_BOARD_INVALID")
             return
         } else if (board.nsfw && !command.channel.asTextChannel().isNSFW) {
-            command.replyWarning("SUBSCRIPTION_CHAN_BOARD_NSFW")
+            command.replyWarningTranslated("SUBSCRIPTION_CHAN_BOARD_NSFW")
             return
         }
         val subChannel = getEffectiveChannel(command)
@@ -44,6 +44,6 @@ class ChanSubscriptionSlashCommand: AddSubscriptionSlashCommand() {
             command.replyGenericError()
             return
         }
-        command.replySuccess("SUBSCRIPTION_CHAN_SUCCESS")
+        command.replySuccessTranslated("SUBSCRIPTION_CHAN_SUCCESS")
     }
 }
