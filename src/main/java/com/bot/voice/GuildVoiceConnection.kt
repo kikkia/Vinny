@@ -533,7 +533,7 @@ class GuildVoiceConnection(val guild: Guild) {
         // If we sent the last message in the channel then just edit it
         lastTextChannel!!.history.retrievePast(1).queue { m ->
             val lastMessage: Message = m[0]
-            val embed = FormattingUtils.getAudioTrackEmbed(trackProvider.getNowPlaying(), volume, trackProvider.getRepeateMode(), autoplay)
+            val embed = FormattingUtils.getAudioTrackEmbed(trackProvider.getNowPlaying(), volume, trackProvider.getRepeateMode(), autoplay, getLink().node.name)
 
             if (lastMessage.author.id == lastTextChannel!!.jda.selfUser.id) {
                 lastMessage.editMessageEmbeds(embed).setActionRow(actionBar()).setContent(msg).queue { this.nowPlayingMessage = it }

@@ -80,10 +80,16 @@ class RedditSlashCommand : BaseSlashCommand() {
         } catch (e: NoSuchSubredditException) {
             command.replyWarningTranslated("SUBREDDIT_NOT_FOUND")
         } catch (e: ApiException) {
-            if (e.code == "403") {
-                command.replyWarningTranslated("SUBREDDIT_PRIVATE_ERROR")
-            } else {
-                command.replyGenericError()
+            when (e.code) {
+                "403" -> {
+                    command.replyWarningTranslated("SUBREDDIT_PRIVATE_ERROR")
+                }
+                "404" -> {
+                    command.replyWarningTranslated("SUBREDDIT_NOT_FOUND")
+                }
+                else -> {
+                    command.replyGenericError()
+                }
             }
         } catch (e: NetworkException) {
             command.replyWarningTranslated("SUBREDDIT_NOT_FOUND")

@@ -110,7 +110,8 @@ public class RedditHelper {
         Submission submission =  getRandomSubmission(page, false, isNsfwAllowed);// Get random child post from the page
 
         assert submission != null;
-        return "https://rxddit.com/" + submission.getId();
+        return submission.getUrl().contains("redgifs") ? "https://vinny-fxreddit.kikkia.workers.dev/" + submission.getId() :
+                "https://rxddit.com/" + submission.getId();
     }
 
     public static void getRandomSubmissionAndSend(RedditConnection redditConnection,
@@ -168,7 +169,10 @@ public class RedditHelper {
 
         String buttonId = "refresh-reddit-" + subredditName + "-" + sortType.name() + "-" + timePeriod.name();
         Button refreshButton = Button.primary(buttonId, Emoji.fromUnicode("\uD83D\uDD04"));
-        commandEvent.getChannel().sendMessage("https://rxddit.com/" + submission.getId()).addActionRow(refreshButton).queue();
+        assert submission != null;
+        String url = submission.getUrl().contains("redgifs") ? "https://vinny-fxreddit.kikkia.workers.dev/" + submission.getId() :
+                "https://rxddit.com/" + submission.getId();
+        commandEvent.getChannel().sendMessage(url).addActionRow(refreshButton).queue();
         // TODO: Find out if we really want this setup
 //        // Scheduled commands generate an insane amount of traffic, lets send them to webhooks to help with global ratelimiting
 //        if (ScheduledCommandUtils.isScheduled(commandEvent)) {

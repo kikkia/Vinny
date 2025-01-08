@@ -68,7 +68,7 @@ public class FormattingUtils {
         };
     }
 
-    public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume, RepeatMode repeatMode, boolean autoplay) {
+    public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume, RepeatMode repeatMode, boolean autoplay, String nodeName) {
         EmbedBuilder builder = new EmbedBuilder();
 
         Track track = queuedAudioTrack.getTrack();
@@ -80,6 +80,7 @@ public class FormattingUtils {
         builder.addField("Autoplay", "" + autoplay, false);
         builder.setFooter("Volume: " + volume, null);
         builder.addField("Repeat Mode", repeatMode.getEzName(), false);
+        builder.addField("Node:", nodeName, false);
 
         builder.setColor(getColorForTrack(track.getInfo().getUri()));
 
