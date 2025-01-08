@@ -311,6 +311,10 @@ public class Bot extends ListenerAdapter {
 			conn.setCurrentVoiceChannel(event.getChannelJoined().asVoiceChannel());
 		}
 
+		if (conn.getCurrentVoiceChannel() == null) {
+			return;
+		}
+
 		// if there are no humans left, then leave
 		int users = 0;
 		for (Member member : conn.getCurrentVoiceChannel().getMembers()) {
