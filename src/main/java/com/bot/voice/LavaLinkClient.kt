@@ -87,6 +87,8 @@ class LavaLinkClient private constructor() {
     private fun regionGroupFromString(name: String?): IRegionFilter {
         if ((name?.lowercase() ?: "") == "eu") {
             return RegionGroup.EUROPE
+        } else if ((name?.lowercase() ?: "") == "asia") {
+            return RegionGroup.ASIA
         }
         return RegionGroup.US
     }
