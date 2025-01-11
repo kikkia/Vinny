@@ -102,7 +102,7 @@ class MetricsReporter : Thread() {
         metricsManager.updateTotalUnhealthyOuathUsers(unhealthyOauth)
 
         for (node in lavaLinkClient.client.nodes) {
-            metricsManager.updateVoiceNodePentalty(node.name, node.penalties.calculateTotal())
+            metricsManager.updateVoiceNodePenalty(node.name, node.penalties.calculateTotal())
         }
     }
 }
