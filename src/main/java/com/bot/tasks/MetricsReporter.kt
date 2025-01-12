@@ -83,13 +83,13 @@ class MetricsReporter : Thread() {
         val lavaLinkClient = LavaLinkClient.getInstance()
         for (conn in voiceConnections) {
             val link = lavaLinkClient.client.getOrCreateLink(conn.guild.idLong)
-            if (conn.isConnected() && conn.currentVoiceChannel != null) {
-                usersInVoice += conn.currentVoiceChannel!!.members.size - 1
+            if (conn.isConnected() && conn.guild.selfMember.voiceState!!.channel != null) {
+                usersInVoice += conn.guild.selfMember.voiceState!!.channel!!.members.size - 1
                 queuedTracks += (1 + conn.getQueuedTracks().size)
                 metricsManager.markConnectionAge(conn.getAge(), link.node.name)
-                metricsManager.markActiveVoiceConnection(link.node.name, conn.region, conn.autoplay)
+                metricsManager.markActiveVoiceConnection(link.node.name, conn.region?.name ?: "unknown", conn.autoplay)
             } else {
-                metricsManager.markIdleVoiceConnection(link.node.name, conn.region)
+                metricsManager.markIdleVoiceConnection(link.node.name, conn.region?.name ?: "unknown")
             }
         }
         metricsManager.updateUsersInVoice(usersInVoice)
@@ -100,9 +100,5 @@ class MetricsReporter : Thread() {
         metricsManager.updateTotalOuathUsers(healthyOauth + unhealthyOauth)
         metricsManager.updateTotalHealthyOuathUsers(healthyOauth)
         metricsManager.updateTotalUnhealthyOuathUsers(unhealthyOauth)
-
-        for (node in lavaLinkClient.client.nodes) {
-            metricsManager.updateVoiceNodePenalty(node.name, node.penalties.calculateTotal())
-        }
     }
 }

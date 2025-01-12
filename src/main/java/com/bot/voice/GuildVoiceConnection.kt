@@ -18,6 +18,7 @@ import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.LinkState
 import dev.arbjerg.lavalink.client.event.TrackEndEvent
 import dev.arbjerg.lavalink.client.event.TrackExceptionEvent
+import dev.arbjerg.lavalink.client.loadbalancing.VoiceRegion
 import dev.arbjerg.lavalink.client.player.Track
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
@@ -41,7 +42,6 @@ class GuildVoiceConnection(val guild: Guild) {
     private val trackProvider = TrackProvider()
     private val autoplayQueue = LinkedList<String>()
     private val failedLoadedTracks = HashSet<String>()
-    var currentVoiceChannel: VoiceChannel? = null
     var lastTextChannel: MessageChannel? = null
     var nowPlayingMessage: Message? = null
     private var isPaused = false
@@ -49,7 +49,7 @@ class GuildVoiceConnection(val guild: Guild) {
     var autoplay = GuildDAO.getInstance().isGuildPremium(guild.id)
     var volumeLocked = false
     private var created = Instant.now()
-    var region = "N/A"
+    var region: VoiceRegion? = null
     var oauthConfig: OauthConfig? = null
     var oauthConfigDAO = OauthConfigDAO.getInstance()
     var failedAttempt = 0
@@ -69,7 +69,7 @@ class GuildVoiceConnection(val guild: Guild) {
         return isPaused
     }
 
-    private fun joinChannel(controlEvent: CommandControlEvent) {
+    fun joinChannel(controlEvent: CommandControlEvent) {
         val toJoin = controlEvent.getMember().voiceState?.channel
             ?: throw NotInVoiceException("You are not in a voice channel! Please join one to use this command.")
         try {
@@ -84,10 +84,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     private fun joinChannel(channel: VoiceChannel) {
-        if (channel.guild.selfMember.voiceState == null) {
-            throw NotInVoiceException("You are not in a voice channel! Please join one to use this command.")
-        }
-        if (channel == currentVoiceChannel && isConnected()) {
+        if (channel == channel.guild.selfMember.voiceState?.channel && isConnected()) {
             return
         }
 
@@ -107,17 +104,25 @@ class GuildVoiceConnection(val guild: Guild) {
             throw Exception("Your voice channel is full")
         }
 
-        val link = lavalink.getLink(channel.guild.idLong)
-
-        if (link.state == LinkState.CONNECTED && currentVoiceChannel?.members?.contains(channel.guild.selfMember) == false) {
-            link.destroy()
-        }
-
         findOauth(channel)
 
         try {
             channel.jda.directAudioController.connect(channel)
-            currentVoiceChannel = channel
+            var checks = 0
+            val timeout = 10
+            // This wait will slow down execution until we receive the event back from discord
+            // indicating successful connection. This will allow us to loadbalance over region.
+            // Without the region info (getLink() before we get that event back) will nullify regional loadbalancing.
+            while (true) {
+                if (checks >= timeout) {
+                    break
+                }
+                if (region != null) {
+                    break
+                }
+                checks++
+                Thread.sleep(200)
+            }
         } catch (e: Exception) {
             logger.error("Failed to join voice channel $channel", e)
             throw e
@@ -126,10 +131,9 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun loadTrack(toLoad: String, controlEvent: CommandControlEvent) {
+        joinChannel(controlEvent)
         val link = getLink()
-        if (link.state == LinkState.DISCONNECTED) {
-            joinChannel(controlEvent)
-        }
+
         injectOauth(toLoad)
         metricsManager.markTrackLoaded()
         link.loadItem(toLoad).subscribe(LLLoadHandler(this, controlEvent))
@@ -156,9 +160,7 @@ class GuildVoiceConnection(val guild: Guild) {
     fun queuePlaylistTrack(queuedTrack: QueuedAudioTrack?, controlEvent: CommandControlEvent, loadingMessage: Message,
                            tracks: List<String>, index: Int, failedCount: Int) {
         val link = getLink()
-        if (link.state == LinkState.DISCONNECTED) {
-            joinChannel(controlEvent)
-        }
+
         val newIndex = index+1
         updateLoadingMessage(loadingMessage, tracks, newIndex, failedCount)
         if (queuedTrack != null) {
@@ -178,10 +180,9 @@ class GuildVoiceConnection(val guild: Guild) {
 
 
     fun queuePlaylist(tracks: List<String>, controlEvent: CommandControlEvent, loadingMessage: Message) {
+        joinChannel(controlEvent)
         val link = getLink()
-        if (link.state == LinkState.DISCONNECTED) {
-            joinChannel(controlEvent)
-        }
+
         injectOauth(tracks[0])
         metricsManager.markTrackLoaded()
         link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, controlEvent, loadingMessage, tracks, 0, 0))
@@ -209,21 +210,20 @@ class GuildVoiceConnection(val guild: Guild) {
             ResumeLLLoadHandler(this, loadingMessage, resumeSetup, newIndex, failedCount))
     }
 
-    fun resumeAudioAfterReboot(resumeSetup: ResumeAudioGuild) {
+    fun resumeAudioAfterReboot(resumeSetup: ResumeAudioGuild, channel: VoiceChannel) {
         volume = resumeSetup.volume
         volumeLocked = resumeSetup.volumeLocked
-
-        val link = getLink()
-        if (link.state == LinkState.DISCONNECTED) {
-            try {
-                joinChannel(currentVoiceChannel!!)
-            } catch (e: Exception) {
-                if (e is OauthNotEnabledException) {
-                    sendMessageToChannel(e.message!!)
-                    return
-                }
+        try {
+            joinChannel(channel)
+        } catch (e: Exception) {
+            if (e is OauthNotEnabledException) {
+                sendMessageToChannel(e.message!!)
+                return
             }
         }
+
+        val link = getLink()
+
         lastTextChannel!!.sendMessage(translator.translate("VOICE_REBOOT_RESUME", guild.locale.locale)).queue()
         val loadingMessage = lastTextChannel!!.sendMessage("Loading previous queue...").complete()
         injectOauth(resumeSetup.tracks[0].trackUrl)
@@ -232,10 +232,9 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun searchForTrack(search: String, controlEvent: CommandControlEvent, message: Message, builder: Builder) {
+        joinChannel(controlEvent)
         val link = getLink()
-        if (link.state == LinkState.DISCONNECTED) {
-            joinChannel(controlEvent)
-        }
+
         injectOauth(search)
         metricsManager.markTrackLoaded()
         link.loadItem(search).subscribe(SearchLLLoadHandler(this, controlEvent, message, builder))
@@ -293,7 +292,6 @@ class GuildVoiceConnection(val guild: Guild) {
         val link = getLink()
         link.destroy().block()
         guild.jda.directAudioController.disconnect(guild)
-        currentVoiceChannel = null
         trackProvider.clearAll()
         isPaused = false
         nowPlayingMessage?.delete()?.queue()
@@ -366,7 +364,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     private fun getLink() : Link {
-        return lavalink.getLink(guild.idLong)
+        return lavalink.getLink(guild.idLong, region)
     }
 
     private fun playTrack(track: QueuedAudioTrack) {
@@ -417,8 +415,8 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     private fun findOauth() {
-        if (currentVoiceChannel == null) {return}
-        findOauth(currentVoiceChannel!!)
+        if (guild.selfMember.voiceState?.channel == null) {return}
+        findOauth(guild.selfMember.voiceState!!.channel!!.asVoiceChannel())
     }
 
     private fun findOauth(channel: VoiceChannel) {
@@ -562,5 +560,9 @@ class GuildVoiceConnection(val guild: Guild) {
         val repeatButton = Button.primary("voicecontrol-repeat", getRepeatMode().emoji)
 
         return mutableSetOf(stopButton, playPauseButton, nextButton, shuffleButton, repeatButton)
+    }
+
+    fun getCurrentVoiceChannel() : VoiceChannel? {
+        return guild.selfMember.voiceState!!.channel?.asVoiceChannel()
     }
 }

@@ -19,7 +19,7 @@ class TestRebootAnnounceCommand : OwnerCommand() {
             if (conn.nowPlaying() != null) {
                 try {
                     resumeAudioDAO.storeResumeGuild(conn.guild.id,
-                        conn.currentVoiceChannel!!.id,
+                        conn.guild.selfMember.voiceState!!.channel!!.id,
                         conn.lastTextChannel!!.id,
                         conn.getVolume(),
                         conn.volumeLocked,

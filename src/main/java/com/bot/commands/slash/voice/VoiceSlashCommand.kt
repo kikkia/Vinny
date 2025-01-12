@@ -1,5 +1,6 @@
 package com.bot.commands.slash.voice
 
+import com.bot.commands.control.SlashControlEvent
 import com.bot.commands.slash.BaseSlashCommand
 import com.bot.commands.slash.ExtSlashCommandEvent
 import com.bot.exceptions.newstyle.UserVisibleException
@@ -20,6 +21,7 @@ abstract class VoiceSlashCommand(val inChannelRequired: Boolean = true): BaseSla
             if (command.member!!.voiceState == null || !command.member!!.voiceState!!.inAudioChannel()) {
                 throw UserVisibleException("VOICE_NOT_IN_CHANNEL")
             }
+            provider.getGuildVoiceConnection(command.guild!!).joinChannel(SlashControlEvent(command))
         }
         super.preExecute(command)
     }

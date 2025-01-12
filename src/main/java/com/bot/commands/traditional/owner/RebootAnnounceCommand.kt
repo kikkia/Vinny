@@ -24,7 +24,7 @@ class RebootAnnounceCommand : OwnerCommand() {
                 val locale = conn.guild.locale.locale
                 try {
                     resumeAudioDAO.storeResumeGuild(conn.guild.id,
-                        conn.currentVoiceChannel!!.id,
+                        conn.guild.selfMember.voiceState!!.channel!!.id,
                         conn.lastTextChannel!!.id,
                         conn.getVolume(),
                         conn.volumeLocked,

@@ -7,6 +7,10 @@ import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.jagrosh.jdautilities.command.SlashCommand
 import com.jagrosh.jdautilities.command.SlashCommandEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 abstract class BaseSlashCommand : SlashCommand() {
     protected val logger = com.bot.utils.Logger(this.javaClass.getSimpleName())
@@ -36,17 +40,22 @@ abstract class BaseSlashCommand : SlashCommand() {
             scheduled = false,
             slash = true
         )
-        val commandEvent = ExtSlashCommandEvent.fromCommandEvent(command)
-        try {
-            preExecute(commandEvent)
-            runCommand(ExtSlashCommandEvent.fromCommandEvent(command))
-            postExecute(commandEvent)
-        } catch (e: UserVisibleException) {
-            commandEvent.replyWarningTranslated(e.outputId)
-        } catch (e: Exception) {
-            logger.severe("Failed slash command", e)
-            commandEvent.replyGenericError()
+        val scope = CoroutineScope(Dispatchers.Default)
+
+        scope.launch {
+            val commandEvent = ExtSlashCommandEvent.fromCommandEvent(command)
+            try {
+                preExecute(commandEvent)
+                runCommand(ExtSlashCommandEvent.fromCommandEvent(command))
+                postExecute(commandEvent)
+            } catch (e: UserVisibleException) {
+                commandEvent.replyWarningTranslated(e.outputId)
+            } catch (e: Exception) {
+                logger.severe("Failed slash command", e)
+                commandEvent.replyGenericError()
+            }
         }
+
         // Update last command used timestamp for eventual stale guild purge
         guildDAO.updateLastCommandRanTime(command.guild!!.id)
         userDAO.updateLastCommandRanTime(command.user.id)

@@ -307,11 +307,9 @@ public class Bot extends ListenerAdapter {
 				conn.cleanupPlayer();
 				return;
 			}
-			// update our currently playing channel if there are people in there
-			conn.setCurrentVoiceChannel(event.getChannelJoined().asVoiceChannel());
 		}
 
-		if (conn.getCurrentVoiceChannel() == null) {
+		if (conn.getGuild().getSelfMember().getVoiceState() == null || !conn.getGuild().getSelfMember().getVoiceState().inAudioChannel()) {
 			return;
 		}
 

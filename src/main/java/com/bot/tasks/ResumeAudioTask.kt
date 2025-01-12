@@ -30,12 +30,12 @@ class ResumeAudioTask(private val readyEvent: ReadyEvent) : Thread() {
                     val resumeSetup = resumeAudioDAO.getResumeGuild(guild.id)
                     val connection = guildVoiceProvider.getGuildVoiceConnection(guild)
                     connection.lastTextChannel = guild.getTextChannelById(resumeSetup.textChannelId)
-                    connection.currentVoiceChannel = guild.getVoiceChannelById(resumeSetup.voiceChannelId)
-                    if (connection.currentVoiceChannel == null || connection.lastTextChannel == null) {
+                    val channel = guild.getVoiceChannelById(resumeSetup.voiceChannelId)
+                    if (channel == null || connection.lastTextChannel == null) {
                         logger.warning("Voice or text channel not found when rebooting voice failing guild: ${guild.id}")
                         return
                     }
-                    connection.resumeAudioAfterReboot(resumeSetup)
+                    connection.resumeAudioAfterReboot(resumeSetup, channel)
                     resumeAudioDAO.deleteAllForGuildId(guild.id)
                 } catch (e: Exception) {
                     logger.severe("Failed to restart audio for guild: ${guild.id}", e)

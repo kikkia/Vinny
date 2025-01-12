@@ -1,16 +1,17 @@
 package com.bot.voice
 
 import com.bot.metrics.MetricsManager
+import dev.arbjerg.lavalink.client.loadbalancing.VoiceRegion
 import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener
 import net.dv8tion.jda.api.hooks.VoiceDispatchInterceptor
 
 class CustomJDAVoiceUpdateListener(private val jdaVoiceUpdateListener: JDAVoiceUpdateListener) : VoiceDispatchInterceptor{
     private val metricsManager = MetricsManager.instance
     private val guildVoiceProvider = GuildVoiceProvider.getInstance()
-    private val endpointRegex = "^([a-z\\-]+)[0-9]+.*:443\$".toRegex()
     override fun onVoiceServerUpdate(update: VoiceDispatchInterceptor.VoiceServerUpdate) {
-        metricsManager!!.markConnectedVoiceRegion(trimEndpoint(update.endpoint))
-        guildVoiceProvider.getGuildVoiceConnection(update.guild).region = trimEndpoint(update.endpoint)
+        val region = VoiceRegion.fromEndpoint(update.endpoint)
+        metricsManager!!.markConnectedVoiceRegion(region.name)
+        guildVoiceProvider.getGuildVoiceConnection(update.guild).region = region
         jdaVoiceUpdateListener.onVoiceServerUpdate(update)
     }
 
@@ -19,8 +20,7 @@ class CustomJDAVoiceUpdateListener(private val jdaVoiceUpdateListener: JDAVoiceU
         return jdaVoiceUpdateListener.onVoiceStateUpdate(update)
     }
 
-    private fun trimEndpoint(endpoint: String): String {
-        val match = endpointRegex.find(endpoint) ?: return "UNKNOWN"
-        return match.groupValues[1]
+    private fun fromEndpoint(endpoint: String) : VoiceRegion {
+        return VoiceRegion.fromEndpoint(endpoint)
     }
 }
