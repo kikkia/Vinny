@@ -6,7 +6,7 @@ import dev.arbjerg.lavalink.client.event.TrackExceptionEvent
 import dev.arbjerg.lavalink.client.event.TrackStartEvent
 
 class LLNodeHealthMonitor(private val node: LavalinkNode) {
-    private val windowSizeInSeconds: Long = 3600
+    private val windowSizeInSeconds: Long = 1800
     private val events = ArrayDeque<LLNodeHealthEvent>()  // This will store the events in a circular manner.
     private var attemptCount = 0
     private var failureCount = 0
@@ -27,17 +27,7 @@ class LLNodeHealthMonitor(private val node: LavalinkNode) {
         }
         val healthEvent = LLNodeHealthEvent(System.currentTimeMillis(), error)
 
-        val currentTime = System.currentTimeMillis()
-
-        // Remove outdated events (older than the window)
-        while (events.isNotEmpty() && events.first().timestamp <= currentTime - windowSizeInSeconds * 1000) {
-            val expiredEvent = events.removeFirst()
-            if (expiredEvent.error) {
-                failureCount--
-            } else {
-                attemptCount--
-            }
-        }
+        cleanOutdatedData()
 
         // Add the new event
         events.addLast(healthEvent)
@@ -50,7 +40,20 @@ class LLNodeHealthMonitor(private val node: LavalinkNode) {
 
     // Function to calculate success/failure ratio
     fun getHealth(): NodeHealth {
+        cleanOutdatedData()
         return NodeHealth.getFromErrorRate(failureCount.toDouble() / attemptCount.toDouble(), attemptCount)
+    }
+
+    private fun cleanOutdatedData() {
+        // Remove outdated events (older than the window)
+        while (events.isNotEmpty() && events.first().timestamp <= System.currentTimeMillis() - windowSizeInSeconds * 1000) {
+            val expiredEvent = events.removeFirst()
+            if (expiredEvent.error) {
+                failureCount--
+            } else {
+                attemptCount--
+            }
+        }
     }
 
     internal data class LLNodeHealthEvent(val timestamp: Long, val error: Boolean)

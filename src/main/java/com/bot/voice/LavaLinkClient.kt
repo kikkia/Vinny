@@ -8,6 +8,7 @@ import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.NodeOptions
 import dev.arbjerg.lavalink.client.event.TrackEndEvent
 import dev.arbjerg.lavalink.client.event.TrackExceptionEvent
+import dev.arbjerg.lavalink.client.event.TrackStartEvent
 import dev.arbjerg.lavalink.client.loadbalancing.IRegionFilter
 import dev.arbjerg.lavalink.client.loadbalancing.RegionGroup
 import dev.arbjerg.lavalink.client.loadbalancing.VoiceRegion
@@ -39,9 +40,12 @@ class LavaLinkClient private constructor() {
         }
         logger.info("LL Client booted")
 
+        client.on(TrackStartEvent::class.java).subscribe {
+            nodeHealth[it.node.name]?.recordEvent(it)
+        }
+
         client.on(TrackEndEvent::class.java).subscribe { event ->
             try {
-                nodeHealth[event.node.name]?.recordEvent(event)
                 val gConn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(event.guildId)
                 if (gConn == null) {
                     return@subscribe
