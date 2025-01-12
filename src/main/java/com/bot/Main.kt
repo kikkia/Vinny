@@ -3,7 +3,7 @@ package com.bot
 import com.bot.db.ConnectionPool
 import com.bot.i18n.Translator
 import com.bot.messaging.RssSubscriber
-import com.bot.tasks.MetricsReporter
+import com.bot.metrics.MetricsReporter
 import com.bot.tasks.RunScheduledCommandsDeferredTask
 import com.bot.utils.VinnyConfig.Companion.instance
 import com.bot.voice.LavaLinkClient.Companion.getInstance

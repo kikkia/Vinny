@@ -1,4 +1,4 @@
-package com.bot.tasks
+package com.bot.metrics
 
 import com.bot.ShardingManager
 import com.bot.caching.MarkovModelCache
@@ -8,7 +8,6 @@ import com.bot.db.GuildDAO
 import com.bot.db.MembershipDAO
 import com.bot.db.OauthConfigDAO
 import com.bot.db.UserDAO
-import com.bot.metrics.MetricsManager
 import com.bot.utils.Logger
 import com.bot.voice.GuildVoiceProvider
 import com.bot.voice.LavaLinkClient
