@@ -275,6 +275,10 @@ class MetricsManager private constructor() {
         statsd!!.incrementCounter("translation", "id:$id", "lang:$language")
     }
 
+    fun markLLNodeHealth(name: String, value: Int) {
+        statsd!!.recordGaugeValue("voice.node.health", value.toLong(), "node:$name")
+    }
+
     fun updateLLStats() {
         for (node in config.voiceConfig.nodes!!) {
             val llUrl = node.address.replace("ws://", "")

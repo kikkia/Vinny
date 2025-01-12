@@ -24,7 +24,7 @@ class LavaLinkClient private constructor() {
     var client: LavalinkClient
 
     private var guildClients: ConcurrentHashMap<Long, GuildVoiceConnection>
-    private val nodeHealth = HashMap<String, LLNodeHealthMonitor>()
+    val nodeHealth = HashMap<String, LLNodeHealthMonitor>()
 
     init {
         val config = VinnyConfig.instance()

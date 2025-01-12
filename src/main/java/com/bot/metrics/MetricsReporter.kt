@@ -99,5 +99,9 @@ class MetricsReporter : Thread() {
         metricsManager.updateTotalOuathUsers(healthyOauth + unhealthyOauth)
         metricsManager.updateTotalHealthyOuathUsers(healthyOauth)
         metricsManager.updateTotalUnhealthyOuathUsers(unhealthyOauth)
+
+        for (node in lavaLinkClient.nodeHealth.entries) {
+            metricsManager.markLLNodeHealth(node.key, node.value.getHealth().metricId)
+        }
     }
 }

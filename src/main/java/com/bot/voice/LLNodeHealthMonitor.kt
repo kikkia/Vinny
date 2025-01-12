@@ -56,11 +56,11 @@ class LLNodeHealthMonitor(private val node: LavalinkNode) {
     internal data class LLNodeHealthEvent(val timestamp: Long, val error: Boolean)
 }
 
-enum class NodeHealth(val min: Double, val max: Double) {
-    HEALTHY(0.0, 0.1),
-    DEGRADED(0.1, 0.35),
-    UNHEALTHY(0.35, 1.0),
-    UNKNOWN(999.9, 999.9);
+enum class NodeHealth(val min: Double, val max: Double, val metricId: Int) {
+    HEALTHY(0.0, 0.1, 1),
+    DEGRADED(0.1, 0.35, 2),
+    UNHEALTHY(0.35, 1.0, 3),
+    UNKNOWN(999.9, 999.9, 0);
 
     companion object {
         fun getFromErrorRate(errorRate: Double, attemptCount: Int): NodeHealth {
