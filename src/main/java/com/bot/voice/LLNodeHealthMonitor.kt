@@ -6,7 +6,7 @@ import dev.arbjerg.lavalink.client.event.TrackExceptionEvent
 import dev.arbjerg.lavalink.client.event.TrackStartEvent
 
 class LLNodeHealthMonitor(private val node: LavalinkNode) {
-    private val windowSizeInSeconds: Long = 1800
+    private val windowSizeInSeconds: Long = 3600
     private val events = ArrayDeque<LLNodeHealthEvent>()  // This will store the events in a circular manner.
     private var attemptCount = 0
     private var failureCount = 0
