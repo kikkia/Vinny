@@ -37,7 +37,7 @@ class SlashControlEvent(private val command: ExtSlashCommandEvent): CommandContr
     }
 
     override fun getArgs(): String {
-        TODO("Not yet implemented")
+        return ""
     }
 
     override fun getSource(): CommandControlSource {
