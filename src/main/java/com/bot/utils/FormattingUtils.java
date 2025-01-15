@@ -88,6 +88,8 @@ public class FormattingUtils {
         if (track.getInfo().getUri().contains("www.youtube.com")) {
             String videoID = track.getInfo().getUri().split("=")[1];
             builder.setThumbnail("https://img.youtube.com/vi/" + videoID + "/0.jpg");
+        } else {
+            builder.setThumbnail(track.getInfo().getArtworkUrl());
         }
 
         return builder.build();
@@ -131,6 +133,9 @@ public class FormattingUtils {
             toReturn = Color.orange;
         else if (uri.contains("twitch.tv"))
             toReturn = new Color(100, 65, 165); // Twitch purple
+        else if (uri.contains("spotify")) {
+            toReturn = new Color(30, 215, 96);
+        }
 
         return toReturn;
     }
