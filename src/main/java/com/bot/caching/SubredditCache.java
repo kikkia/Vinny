@@ -24,9 +24,9 @@ public class SubredditCache {
 
     private SubredditCache() {
         // Just doing some default values here
-        MAX_SIZE = 500;
+        MAX_SIZE = 800;
         CACHE_CHECK_INTERVAL = 300;
-        CACHE_OBJECT_LIFETIME = 600;
+        CACHE_OBJECT_LIFETIME = 1800;
 
         cache = new Cache<>("subreddit", MAX_SIZE, CACHE_OBJECT_LIFETIME, CACHE_CHECK_INTERVAL);
 
