@@ -34,6 +34,7 @@ class RebootAnnounceCommand : OwnerCommand() {
                     commandEvent.replyError("Failed to store for ${conn.guild}, $e")
                     e.printStackTrace()
                     conn.lastTextChannel!!.sendMessage(translator.translate("REBOOT_ERROR_MESSAGE", locale)).complete()
+                    continue
                 }
                 // TODO: handle error on send message
                 conn.lastTextChannel!!.sendMessage(translator.translate("REBOOT_ANNOUNCE_MESSAGE", locale)).complete()

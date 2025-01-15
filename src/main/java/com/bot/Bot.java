@@ -298,7 +298,7 @@ public class Bot extends ListenerAdapter {
 	private void checkVoiceLobby(GuildVoiceUpdateEvent event) {
 		Guild guild = event.getGuild();
 		GuildVoiceConnection conn = guildVoiceProvider.getGuildVoiceConnection(guild.getIdLong());
-		if (conn == null || event.getChannelLeft() != conn.getCurrentVoiceChannel()) {
+		if (conn == null) {
 			return;
 		}
 		if (event.getMember().equals(guild.getSelfMember())) {
@@ -310,6 +310,7 @@ public class Bot extends ListenerAdapter {
 		}
 
 		if (conn.getGuild().getSelfMember().getVoiceState() == null || !conn.getGuild().getSelfMember().getVoiceState().inAudioChannel()) {
+			conn.cleanupPlayer();
 			return;
 		}
 
