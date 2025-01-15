@@ -156,6 +156,16 @@ class GuildVoiceConnection(val guild: Guild) {
         }
     }
 
+    fun queueLoadedPlaylist(tracks: List<QueuedAudioTrack>) {
+        for (track in tracks) {
+            trackProvider.addTrack(track)
+            if (trackProvider.getNowPlaying() == track) {
+                playTrack(track)
+            }
+        }
+        lastTextChannel!!.sendMessage("Queued up ${tracks.size} tracks.").queue()
+    }
+
     // Queue up track from playlist and then start load if there is a next track
     fun queuePlaylistTrack(queuedTrack: QueuedAudioTrack?, controlEvent: CommandControlEvent, loadingMessage: Message,
                            tracks: List<String>, index: Int, failedCount: Int) {
