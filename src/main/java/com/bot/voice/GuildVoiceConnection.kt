@@ -543,7 +543,7 @@ class GuildVoiceConnection(val guild: Guild) {
             val lastMessage: Message = m[0]
             val embed = FormattingUtils.getAudioTrackEmbed(trackProvider.getNowPlaying(), volume, trackProvider.getRepeateMode(), autoplay, getLink().node.name)
 
-            if (lastMessage.author.id == lastTextChannel!!.jda.selfUser.id) {
+            if (lastMessage.author.id == lastTextChannel!!.jda.selfUser.id && lastMessage.embeds.isNotEmpty()) {
                 lastMessage.editMessageEmbeds(embed).setActionRow(actionBar()).setContent(msg).queue { this.nowPlayingMessage = it }
             } else {
                 // Delete our last playing message and put a new one at the bottom
