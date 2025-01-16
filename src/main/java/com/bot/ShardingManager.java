@@ -249,7 +249,8 @@ public class ShardingManager {
                 new RefreshTokenSlashCommand(),
                 new DefaultVolumeSlashCommand(),
                 new SeekSlashCommand(),
-                new VolumeSlashCommand());
+                new VolumeSlashCommand(),
+                new ListTracksSlashCommand(waiter));
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
