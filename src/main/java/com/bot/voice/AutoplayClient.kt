@@ -47,6 +47,7 @@ class AutoplayClient {
         fun getRecommendedVideoIdsSearch(title: String) : List<String> {
             val url = searchUrl + title
             val request = Request.Builder()
+                .addHeader("Authorization", basicAuthHeader())
                 .url(url)
                 .build()
 
