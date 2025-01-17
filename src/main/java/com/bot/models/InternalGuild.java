@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class InternalGuild {
 
@@ -73,7 +74,7 @@ public class InternalGuild {
         if (prefixes == null)
             return new ArrayList<>();
 
-        return new ArrayList<>(Arrays.asList(prefixes.split(" ")));
+        return new ArrayList<>(Arrays.stream(prefixes.split(" ")).filter(it -> !it.isBlank()).toList());
     }
 
     public GuildPreferencesProvider getGuildPreferencesProvider() {
@@ -82,7 +83,7 @@ public class InternalGuild {
             return null;
 
         // We use a space as a delimiter in the db as it is impossible for it to be uses in a prefix (as jda splits args using it)
-        return new GuildPreferencesProvider(Arrays.asList(prefixes.split(" ")), aliases, id);
+        return new GuildPreferencesProvider(getPrefixList(), aliases, id);
     }
 
     public boolean isActive() {
