@@ -870,6 +870,50 @@
       "ko": "재생 중인 트랙의 일부를 찾기"
     }
   },
+  "list-tracks": {
+    "name": {
+      "en-US": "list-tracks",
+      "id": "daftar-lagu",
+      "da": "liste-sange",
+      "de": "lieder-auflisten",
+      "es-ES": "listar-canciones",
+      "fr": "lister-pistes",
+      "it": "elenca-brani",
+      "nl": "lijst-nummers",
+      "hu": "lista-számok",
+      "no": "liste-spor",
+      "pl": "lista-utworów",
+      "pt-BR": "listar-faixas",
+      "ro": "lista-piese",
+      "fi": "listaa-kappaleet",
+      "sv-SE": "lista-spår",
+      "tr": "parça-listele",
+      "ru": "список-треков",
+      "ja": "トラック一覧",
+      "ko": "트랙-목록"
+    },
+    "desc": {
+      "en-US": "Lists all tracks in the queue",
+      "id": "Menampilkan semua lagu dalam antrean",
+      "da": "Lister alle sange i køen",
+      "de": "Listet alle Lieder in der Warteschlange auf",
+      "es-ES": "Lista todas las canciones en la cola",
+      "fr": "Liste toutes les pistes dans la file d'attente",
+      "it": "Elenca tutti i brani nella coda",
+      "nl": "Lijst alle nummers in de wachtrij",
+      "hu": "Listázza az összes számot a várólistán",
+      "no": "Lister alle spor i køen",
+      "pl": "Lista wszystkich utworów w kolejce",
+      "pt-BR": "Lista todas as faixas na fila",
+      "ro": "Listează toate piesele din coadă",
+      "fi": "Listaa kaikki kappaleet jonossa",
+      "sv-SE": "Lista alla spår i kön",
+      "tr": "Kuyruktaki tüm parçaları listele",
+      "ru": "Список всех треков в очереди",
+      "ja": "キュー内のすべてのトラックを表示",
+      "ko": "큐에 있는 모든 트랙을 나열"
+    }
+  },
   "template": {
     "name": {
       "en-US": ""
