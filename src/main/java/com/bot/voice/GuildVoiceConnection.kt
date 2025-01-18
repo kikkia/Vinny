@@ -223,6 +223,9 @@ class GuildVoiceConnection(val guild: Guild) {
     fun resumeAudioAfterReboot(resumeSetup: ResumeAudioGuild, channel: VoiceChannel) {
         volume = resumeSetup.volume
         volumeLocked = resumeSetup.volumeLocked
+        if (resumeSetup.oauth != null) {
+            oauthConfig = oauthConfigDAO.getOauthConfig(resumeSetup.oauth)
+        }
         try {
             joinChannel(channel)
         } catch (e: Exception) {

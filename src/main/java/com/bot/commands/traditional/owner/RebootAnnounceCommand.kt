@@ -3,13 +3,11 @@ package com.bot.commands.traditional.owner
 import com.bot.commands.traditional.OwnerCommand
 import com.bot.db.ResumeAudioDAO
 import com.bot.db.mappers.ResumeAudioTrackMapper
-import com.bot.i18n.Translator
 import com.bot.voice.GuildVoiceProvider
 import com.jagrosh.jdautilities.command.CommandEvent
 
 class RebootAnnounceCommand : OwnerCommand() {
     private val resumeAudioDAO = ResumeAudioDAO.getInstance()
-    private val translator = Translator.getInstance()
 
     init {
         name = "reboot"
@@ -28,6 +26,7 @@ class RebootAnnounceCommand : OwnerCommand() {
                         conn.lastTextChannel!!.id,
                         conn.getVolume(),
                         conn.volumeLocked,
+                        conn.oauthConfig?.userId,
                         ResumeAudioTrackMapper.queueToTracks(conn))
                 } catch (e: Exception) {
                     logger.severe("Failed to store guild ${conn.guild.id}", e)

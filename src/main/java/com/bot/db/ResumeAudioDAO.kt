@@ -21,8 +21,8 @@ class ResumeAudioDAO {
             }
     }
 
-    fun storeResumeGuild(guildId: String, vcId: String, tcId: String, volume: Int, volumeLock: Boolean, tracks: List<ResumeAudioTrack>) {
-        val query =  "INSERT INTO `resume_audio_guild` (`id`, `voice_channel_id`, `text_channel_id`, `volume`, `volume_locked`) VALUES (?, ?, ?, ?, ?)"
+    fun storeResumeGuild(guildId: String, vcId: String, tcId: String, volume: Int, volumeLock: Boolean, oauth: String?, tracks: List<ResumeAudioTrack>) {
+        val query =  "INSERT INTO `resume_audio_guild` (`id`, `voice_channel_id`, `text_channel_id`, `volume`, `volume_locked`, `oauth`) VALUES (?, ?, ?, ?, ?, ?)"
         write.connection.use { connection ->
             connection.prepareStatement(query).use { preparedStatement ->
                 preparedStatement.setString(1, guildId)
@@ -30,6 +30,7 @@ class ResumeAudioDAO {
                 preparedStatement.setString(3, tcId)
                 preparedStatement.setInt(4, volume)
                 preparedStatement.setBoolean(5, volumeLock)
+                preparedStatement.setString(6, oauth)
                 preparedStatement.execute()
             }
         }
@@ -98,6 +99,7 @@ class ResumeAudioDAO {
                     result.getString("text_channel_id"),
                     result.getInt("volume"),
                     result.getBoolean("volume_locked"),
+                    result.getString("oauth"),
                     tracks)
             }
         }
