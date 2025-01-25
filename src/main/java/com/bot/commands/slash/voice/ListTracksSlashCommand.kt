@@ -26,16 +26,16 @@ class ListTracksSlashCommand(waiter: EventWaiter): VoiceSlashCommand() {
         // Due to the button embed builder being crummy we cannot set items per page
         // So we can just do it ourselves
         val pages = ArrayList<String>()
-        var num = 0
-        var page = ""
+        var num = 1
+        var page = "**Now Playing:** ${conn.nowPlaying()}"
         tracks.forEach { track ->
-            if (num == 0) {
-                page += "Now Playing: ${conn.nowPlaying()}"
+            if (num == 1) {
+                page += "\n**Next:** $track"
             } else if (num % 10 == 0) {
                 pages.add(page)
-                page = "$num: $track"
+                page = "**$num:** $track"
             } else {
-                page += "\n$num: $track"
+                page += "\n**$num:** $track"
             }
             num++
         }

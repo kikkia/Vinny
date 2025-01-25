@@ -250,6 +250,8 @@ public class ShardingManager {
                 new DefaultVolumeSlashCommand(),
                 new SeekSlashCommand(),
                 new VolumeSlashCommand(),
+                new MoveTrackSlashCommand(),
+                new PlayNextSlashCommand(),
                 new ListTracksSlashCommand(waiter));
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +

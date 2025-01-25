@@ -578,4 +578,8 @@ class GuildVoiceConnection(val guild: Guild) {
     fun getCurrentVoiceChannel() : VoiceChannel? {
         return guild.selfMember.voiceState!!.channel?.asVoiceChannel()
     }
+
+    fun moveTrack(trackPos: Int, newPos: Int) {
+        trackProvider.moveTrack(trackPos, newPos)
+    }
 }

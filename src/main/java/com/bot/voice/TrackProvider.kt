@@ -1,14 +1,14 @@
 package com.bot.voice
 
 import com.bot.models.enums.RepeatMode
+import java.util.LinkedList
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class TrackProvider {
 
-    private var queue: ConcurrentLinkedQueue<QueuedAudioTrack> = ConcurrentLinkedQueue()
+    private var queue: LinkedList<QueuedAudioTrack> = LinkedList()
     private var nowPlaying: QueuedAudioTrack? = null
     private var repeatMode = RepeatMode.REPEAT_NONE
-    private var shuffled = false
 
     fun addTrack(track: QueuedAudioTrack) {
         if (nowPlaying == null) {
@@ -22,7 +22,7 @@ class TrackProvider {
         if (repeatMode == RepeatMode.REPEAT_ONE && !skipping) {
             return nowPlaying
         } else if (repeatMode == RepeatMode.REPEAT_ALL) {
-            queue.add(nowPlaying)
+            queue.add(nowPlaying!!)
         }
 
         nowPlaying = null
@@ -47,7 +47,7 @@ class TrackProvider {
     }
 
     fun shuffleQueue() {
-        queue = ConcurrentLinkedQueue(queue.shuffled())
+        queue = LinkedList(queue.shuffled())
     }
 
     fun getNowPlaying() : QueuedAudioTrack? {
@@ -59,7 +59,7 @@ class TrackProvider {
     }
 
     fun setTracks(tracks: List<QueuedAudioTrack>) {
-        queue = ConcurrentLinkedQueue(tracks)
+        queue = LinkedList(tracks)
     }
 
     fun setRepeatMode(mode: RepeatMode) {
@@ -68,5 +68,17 @@ class TrackProvider {
 
     fun getRepeateMode() : RepeatMode {
         return repeatMode
+    }
+
+    fun moveTrack(trackIndex: Int, newPos: Int) {
+        if (trackIndex < 0 || newPos < 0 || trackIndex >= queue.size) {
+            throw IllegalArgumentException("Invalid fromIndex: $trackIndex, $newPos")
+        }
+
+        val itemToMove = queue.removeAt(trackIndex)
+
+        val newIndex = if (newPos > queue.size) queue.size else newPos
+
+        queue.add(newIndex, itemToMove)
     }
 }

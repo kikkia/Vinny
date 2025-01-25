@@ -38,7 +38,7 @@ class SelectMenuInteractionHandler: ListenerAdapter() {
                     MenuSelectControlEvent(event),
                     loadingMessage
                 )
-                event.message.delete().queue()
+                event.hook.editOriginal("Loading playlist...").queue()
             } catch (e: UserVisibleException) {
                 event.hook.editOriginal(translator.translate(e.outputId, event.userLocale.locale))
             }
