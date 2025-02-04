@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 public class FormattingUtils {
 
     private static final int MIN_INTERVAL = 300000;
+    private static final String ignoreProvider = VinnyConfig.Companion.instance().getVoiceConfig().getProviderIgnore();
 
     public static ArrayList<String> splitTextIntoChunksByWords(String input, int chunkLength) {
         ArrayList<String> stringList = new ArrayList<>();
@@ -74,7 +75,11 @@ public class FormattingUtils {
         Track track = queuedAudioTrack.getTrack();
 
         builder.setTitle("Now Playing: ");
-        builder.setDescription("[" + track.getInfo().getTitle() + "](" + track.getInfo().getUri() + ")");
+        if (ignoreProvider != null && (track.getInfo().getUri() != null && track.getInfo().getUri().contains(ignoreProvider))) {
+            builder.setDescription(track.getInfo().getTitle());
+        } else {
+            builder.setDescription("[" + track.getInfo().getTitle() + "](" + track.getInfo().getUri() + ")");
+        }
         builder.addField("Duration", msToMinSec(track.getInfo().getLength()), false);
         builder.addField("Requested by", queuedAudioTrack.getRequesterName(), false);
         builder.addField("Autoplay", "" + autoplay, false);

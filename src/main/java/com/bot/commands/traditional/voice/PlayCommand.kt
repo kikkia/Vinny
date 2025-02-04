@@ -10,6 +10,7 @@ import datadog.trace.api.Trace
 class PlayCommand: VoiceCommand() {
 
     private val urlRegex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]"
+    private val voiceConfig = VinnyConfig.instance().voiceConfig
 
     init {
         name = "play"
@@ -38,7 +39,10 @@ class PlayCommand: VoiceCommand() {
         }
         var url = commandEvent.args.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
         if (!url.matches(urlRegex.toRegex())) {
-            val searchPrefix = VinnyConfig.instance().voiceConfig.defaultSearchProvider ?: "scsearch:"
+            var searchPrefix = voiceConfig.defaultSearchProvider
+            if (guildVoiceConnection.oauthConfig != null && !voiceConfig.forceDefaultSearch) {
+                searchPrefix = voiceConfig.loginSearchProvider
+            }
             url = searchPrefix.plus(commandEvent.args)
         }
         commandEvent.channel.sendMessage("\u231A Loading... `[" + commandEvent.args + "]`").complete()

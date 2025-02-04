@@ -58,7 +58,10 @@ data class ShardingConfig(val total: Int,
                           val localEnd: Int)
 
 data class VoiceConfig(val nodes: List<LavalinkNode>?,
-                       val defaultSearchProvider: String = "disabled",
+                       val defaultSearchProvider: String = "custsearch:",
+                       val loginSearchProvider: String,
+                       val loginReqRegex: String,
+                       var forceDefaultSearch: Boolean = false,
                        val autoplayProvider: String?,
                        val autoplayToken: String?,
                        val autoplayPrefix: String?,
@@ -66,6 +69,7 @@ data class VoiceConfig(val nodes: List<LavalinkNode>?,
                        val autoplaySearch: String?,
                        val autoplayUser: String?,
                        val autoplayPass: String?,
+                       val providerIgnore: String?,
                        val oauthConfig: OauthProperties)
 
 data class LavalinkNode(val address: String,

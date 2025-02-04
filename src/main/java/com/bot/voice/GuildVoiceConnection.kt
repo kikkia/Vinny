@@ -6,7 +6,7 @@ import com.bot.db.models.OauthConfig
 import com.bot.db.models.ResumeAudioGuild
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
-import com.bot.exceptions.OauthNotEnabledException
+import com.bot.exceptions.newstyle.OauthNotEnabledException
 import com.bot.exceptions.UserExposableException
 import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
@@ -53,6 +53,8 @@ class GuildVoiceConnection(val guild: Guild) {
     var oauthConfig: OauthConfig? = null
     var oauthConfigDAO = OauthConfigDAO.getInstance()
     var failedAttempt = 0
+    val loginReqRegex = Regex(VinnyConfig.instance().voiceConfig.loginReqRegex)
+    val loginReqProvider = VinnyConfig.instance().voiceConfig.loginSearchProvider
 
     // Used for ignoring inject creds
     val soundcloudRegex = Regex(
@@ -83,7 +85,7 @@ class GuildVoiceConnection(val guild: Guild) {
         }
     }
 
-    private fun joinChannel(channel: VoiceChannel) {
+    fun joinChannel(channel: VoiceChannel) {
         if (channel == channel.guild.selfMember.voiceState?.channel && isConnected()) {
             return
         }
@@ -258,7 +260,11 @@ class GuildVoiceConnection(val guild: Guild) {
     fun onTrackEnd(event: TrackEndEvent) {
         metricsManager.markTrackEnd(event.endReason.name, event.endReason.mayStartNext)
         if (event.endReason.mayStartNext) {
-            nextTrack(false)
+            try {
+                nextTrack(false)
+            } catch (u: UserExposableException) {
+                sendMessageToChannel(u.message!!)
+            }
         }
     }
 
@@ -409,7 +415,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     private fun injectOauth(ident: String) {
-        if (soundcloudRegex.matches(ident)) {
+        if (!isInjectRequired(ident)) {
             // can skip
             return
         }
@@ -420,11 +426,22 @@ class GuildVoiceConnection(val guild: Guild) {
                 updateOauthConfig(Oauth2Utils.refreshAccessToken(oauthConfig!!))
             }
         } else {
-            findOauth()
+            oauthRequired()
         }
         getLink().node
         oauthConfig!!.accessToken
         LLUtils.injectOauth(oauthConfig!!.accessToken, ident, getLink().node)
+    }
+
+    private fun isInjectRequired(ident: String): Boolean {
+        return ident.contains(loginReqProvider) || ident.matches(loginReqRegex)
+    }
+
+    private fun oauthRequired() {
+        findOauth()
+        if (oauthConfig == null) {
+            throw OauthNotEnabledException("VOICE_NO_OAUTH_FOUND")
+        }
     }
 
     private fun findOauth() {
@@ -444,9 +461,6 @@ class GuildVoiceConnection(val guild: Guild) {
                     }
                     updateOauthConfig(config)
                 }
-            }
-            if (oauthConfig == null) {
-                throw OauthNotEnabledException(translator.translate("VOICE_NO_OAUTH_FOUND", guild.locale.locale))
             }
         }
     }
