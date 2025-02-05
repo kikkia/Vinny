@@ -279,6 +279,11 @@ class MetricsManager private constructor() {
         statsd!!.recordGaugeValue("voice.node.health", value.toLong(), "node:$name")
     }
 
+    fun updateConnOauth(countWithOauth: Int, countWithoutOauth: Int) {
+        statsd!!.recordGaugeValue("connections.voice.oauth.enabled", countWithOauth.toLong())
+        statsd!!.recordGaugeValue("connections.voice.oauth.disabled", countWithoutOauth.toLong())
+    }
+
     fun updateLLStats() {
         for (node in config.voiceConfig.nodes!!) {
             val llUrl = node.address.replace("ws://", "")

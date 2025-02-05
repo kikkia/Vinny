@@ -79,6 +79,8 @@ class MetricsReporter : Thread() {
         val voiceConnections = GuildVoiceProvider.getInstance().getAll()
         var usersInVoice = 0
         var queuedTracks = 0
+        var countWithOauth = 0
+        var countWithoutOauth = 0
         val lavaLinkClient = LavaLinkClient.getInstance()
         for (conn in voiceConnections) {
             val link = lavaLinkClient.client.getOrCreateLink(conn.guild.idLong)
@@ -90,7 +92,13 @@ class MetricsReporter : Thread() {
             } else {
                 metricsManager.markIdleVoiceConnection(link.node.name, conn.region?.name ?: "unknown")
             }
+            if (conn.oauthConfig == null) {
+                countWithoutOauth++
+            } else {
+                countWithOauth++
+            }
         }
+        metricsManager.updateConnOauth(countWithOauth, countWithoutOauth)
         metricsManager.updateUsersInVoice(usersInVoice)
         metricsManager.updateVoiceConnectionEntities(voiceConnections.size)
         metricsManager.updateQueuedTracks(queuedTracks)
