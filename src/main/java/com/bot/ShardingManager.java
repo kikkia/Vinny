@@ -228,7 +228,8 @@ public class ShardingManager {
                 new BanImageCommand(),
                 new SetPixivSessionCommand(),
                 new ThreadDumpCommand(),
-                new ManualUpsertCommand());
+                new ManualUpsertCommand(),
+                new ForceDefaultSearchCommand());
 
         commandClientBuilder.addSlashCommands(new SubscribeCommand(),
                 new SubscriptionsSlashCommand(waiter),
