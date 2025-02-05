@@ -1,8 +1,10 @@
 package com.bot.commands.traditional.voice
 
+import com.bot.commands.control.SlashControlEvent
 import com.bot.commands.traditional.VoiceCommand
 import com.bot.utils.VinnyConfig
 import com.bot.commands.control.TextControlEvent
+import com.bot.exceptions.newstyle.UserVisibleException
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.command.CooldownScope
 import datadog.trace.api.Trace
@@ -24,6 +26,12 @@ class PlayCommand: VoiceCommand() {
     @Trace(operationName = "executeCommand", resourceName = "Play")
     override fun executeCommand(commandEvent: CommandEvent) {
         val guildVoiceConnection = guildVoiceProvider.getGuildVoiceConnection(commandEvent.guild)
+        // Ensure that the user is in a voice channel before using
+        if (commandEvent.member!!.voiceState == null || !commandEvent.member!!.voiceState!!.inAudioChannel()) {
+            throw UserVisibleException("VOICE_NOT_IN_CHANNEL")
+        }
+        guildVoiceConnection.joinChannel(TextControlEvent(commandEvent))
+
         if (commandEvent.args.isEmpty()) {
             if (guildVoiceConnection.getPaused()) {
                 guildVoiceConnection.setPaused(false)

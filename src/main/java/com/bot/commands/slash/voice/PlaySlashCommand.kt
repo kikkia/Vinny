@@ -28,7 +28,6 @@ class PlaySlashCommand: VoiceSlashCommand() {
         postInit()
     }
 
-    // TODO: First play can go before oauth found
     override fun runCommand(command: ExtSlashCommandEvent) {
         val guildVoiceConnection = guildVoiceProvider.getGuildVoiceConnection(command.guild!!)
 
