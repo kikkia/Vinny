@@ -307,6 +307,10 @@ public class Bot extends ListenerAdapter {
 				conn.cleanupPlayer();
 				return;
 			}
+			// If we were moving channel we need to restart the ll connections. It seems to hang.
+			if (event.getChannelLeft() != null) {
+				conn.reconnect();
+			}
 		}
 
 		if (conn.getGuild().getSelfMember().getVoiceState() == null || !conn.getGuild().getSelfMember().getVoiceState().inAudioChannel()) {

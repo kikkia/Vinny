@@ -208,8 +208,7 @@ class GuildVoiceConnection(val guild: Guild) {
         updateLoadingMessage(loadingMessage, resumeSetup.tracks, newIndex, failedCount)
         if (queuedTrack != null) {
             if (trackProvider.getNowPlaying() == null) {
-                playTrack(queuedTrack)
-                seek(resumeSetup.tracks[index].position, queuedTrack)
+                playTrack(queuedTrack) {seek(resumeSetup.tracks[index].position, queuedTrack)}
             }
             trackProvider.addTrack(queuedTrack)
         }
@@ -307,6 +306,7 @@ class GuildVoiceConnection(val guild: Guild) {
         }
     }
 
+    // TODO: Move this func call path to provider remove func.
     fun cleanupPlayer() {
         val link = getLink()
         link.destroy().block()
@@ -386,15 +386,17 @@ class GuildVoiceConnection(val guild: Guild) {
         return lavalink.getLink(guild.idLong, region)
     }
 
-    private fun playTrack(track: QueuedAudioTrack) {
+    private fun playTrack(track: QueuedAudioTrack, after: (() -> Unit)? = null) {
         metricsManager.markTrackPlayed(autoplay, track.track.info.sourceName)
         injectOauth(track.track.info.uri!!)
         getLink().createOrUpdatePlayer()
             .setVolume(volume)
-            .setTrack(track.track).subscribe{
+            .setTrack(track.track)
+            .subscribe {
                 if (lastTextChannel != null && getRepeatMode() != RepeatMode.REPEAT_ONE) {
                     sendNowPlayingUpdate()
                 }
+                after?.invoke() // Run the function if it's provided
             }
     }
 
@@ -595,5 +597,17 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun moveTrack(trackPos: Int, newPos: Int) {
         trackProvider.moveTrack(trackPos, newPos)
+    }
+
+    fun reconnect() {
+        val pos = getPosition()?: 0
+        val nowPlaying = nowPlaying()
+        getLink().destroy().block()
+        if (nowPlaying != null) {
+            playTrack(nowPlaying) { seek(pos, nowPlaying) }
+        } else {
+            // Force a getlink to be safe
+            getLink()
+        }
     }
 }

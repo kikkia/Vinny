@@ -6,9 +6,7 @@ import com.jagrosh.jdautilities.command.CommandEvent
 import dev.arbjerg.lavalink.client.LavalinkClient
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.NodeOptions
-import dev.arbjerg.lavalink.client.event.TrackEndEvent
-import dev.arbjerg.lavalink.client.event.TrackExceptionEvent
-import dev.arbjerg.lavalink.client.event.TrackStartEvent
+import dev.arbjerg.lavalink.client.event.*
 import dev.arbjerg.lavalink.client.loadbalancing.IRegionFilter
 import dev.arbjerg.lavalink.client.loadbalancing.RegionGroup
 import dev.arbjerg.lavalink.client.loadbalancing.VoiceRegion
@@ -38,7 +36,11 @@ class LavaLinkClient private constructor() {
             nodeHealth[added.name] = LLNodeHealthMonitor(added)
             logger.info("Added node ${added.name} to region ${added.regionFilter.toString()}")
         }
-        logger.info("LL Client booted")
+        logger.info("LL Client started")
+
+        client.on(ReadyEvent::class.java).subscribe {
+            logger.info("LL Client ready")
+        }
 
         client.on(TrackStartEvent::class.java).subscribe {
             nodeHealth[it.node.name]?.recordEvent(it)
