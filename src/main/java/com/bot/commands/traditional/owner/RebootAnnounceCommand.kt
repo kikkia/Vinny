@@ -35,8 +35,12 @@ class RebootAnnounceCommand : OwnerCommand() {
                     conn.lastTextChannel!!.sendMessage(translator.translate("REBOOT_ERROR_MESSAGE", locale)).complete()
                     continue
                 }
-                // TODO: handle error on send message
-                conn.lastTextChannel!!.sendMessage(translator.translate("REBOOT_ANNOUNCE_MESSAGE", locale)).complete()
+                // This shouldnt fail but if it does it is likely do to a perm change or deleted channel or smth.
+                try {
+                    conn.lastTextChannel!!.sendMessage(translator.translate("REBOOT_ANNOUNCE_MESSAGE", locale)).complete()
+                } catch (e: Exception) {
+                    logger.severe("Failed to post reboot message", e)
+                }
             }
         }
         commandEvent.reactSuccess()
