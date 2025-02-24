@@ -20,6 +20,7 @@ import dev.arbjerg.lavalink.client.event.TrackEndEvent
 import dev.arbjerg.lavalink.client.event.TrackExceptionEvent
 import dev.arbjerg.lavalink.client.loadbalancing.VoiceRegion
 import dev.arbjerg.lavalink.client.player.Track
+import dev.arbjerg.lavalink.internal.error.RestException
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Message
@@ -308,8 +309,12 @@ class GuildVoiceConnection(val guild: Guild) {
 
     // TODO: Move this func call path to provider remove func.
     fun cleanupPlayer() {
-        val link = getLink()
-        link.destroy().block()
+        try {
+            val link = getLink()
+            link.destroy().block()
+        } catch (e: RestException) {
+            // Likely session not found on LL, so skip and continue cleanup
+        }
         guild.jda.directAudioController.disconnect(guild)
         trackProvider.clearAll()
         isPaused = false
