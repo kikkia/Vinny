@@ -243,6 +243,10 @@ class MetricsManager private constructor() {
         statsd!!.recordDistributionValue("connections.voice.age", minutes, "node:${nodeName}")
     }
 
+    fun markForcedCleanupConnection() {
+        statsd!!.incrementCounter("connections.voice.cleanup")
+    }
+
     fun markR34Request(provider: R34Provider) {
         statsd!!.incrementCounter("r34.request", "provider:${provider.name}")
     }

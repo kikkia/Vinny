@@ -28,6 +28,7 @@ class MetricsReporter : Thread() {
     private val oauthConfigDAO = OauthConfigDAO.getInstance()
     private val logger = Logger(this.javaClass.simpleName)
     private var userCount = 0
+    private var lastSeenDisconnectedVoiceSessions = HashSet<Long>()
 
     override fun run() {
         try {
@@ -82,8 +83,13 @@ class MetricsReporter : Thread() {
         var countWithoutOauth = 0
         var countConnected = 0
         val lavaLinkClient = LavaLinkClient.getInstance()
+        val disconnectedSessions = HashSet<Long>()
         for (conn in voiceConnections) {
-            val link = lavaLinkClient.client.getOrCreateLink(conn.guild.idLong)
+            val link = lavaLinkClient.client.getLinkIfCached(conn.guild.idLong)
+            if (link == null) {
+                disconnectedSessions.add(conn.guild.idLong)
+                continue
+            }
             if (conn.isConnected() && conn.guild.selfMember.voiceState!!.channel != null) {
                 usersInVoice += conn.guild.selfMember.voiceState!!.channel!!.members.size - 1
                 queuedTracks += (1 + conn.getQueuedTracks().size)
@@ -97,8 +103,22 @@ class MetricsReporter : Thread() {
             }
             if (conn.isConnected()) {
                 countConnected++
+            } else {
+                disconnectedSessions.add(conn.guild.idLong)
             }
         }
+
+        // clean up disconnected sessions we have seen disconnected twice in a row
+        lastSeenDisconnectedVoiceSessions.retainAll(disconnectedSessions)
+        for (id in lastSeenDisconnectedVoiceSessions) {
+            val conn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(id)
+            if (conn != null && !conn.isConnected()) {
+                conn.cleanupPlayer()
+                metricsManager.markForcedCleanupConnection()
+            }
+        }
+        lastSeenDisconnectedVoiceSessions = disconnectedSessions
+
         metricsManager.updateConnOauth(voiceConnections.size - countWithoutOauth, countWithoutOauth)
         metricsManager.updateConnConnections(voiceConnections.size - countConnected, countConnected)
         metricsManager.updateUsersInVoice(usersInVoice)
