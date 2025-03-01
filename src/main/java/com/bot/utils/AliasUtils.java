@@ -54,7 +54,7 @@ public class AliasUtils {
                 0,
                 message.getInteraction(),
                 message.getStartedThread(),
-                message.getApproximatePosition());
+                0);
     }
 
     // If we find %% then replace it with whatever is after the trigger.
