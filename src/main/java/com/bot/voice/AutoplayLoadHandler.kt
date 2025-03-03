@@ -34,7 +34,7 @@ class AutoplayLoadHandler(private val guildVoiceConnection: GuildVoiceConnection
     }
 
     override fun loadFailed(result: LoadFailed) {
-        MetricsManager.instance!!.markTrackLoadFailed()
+        MetricsManager.instance!!.markTrackLoadFailed(result.exception.message)
         guildVoiceConnection.autoplayFail()
     }
 }

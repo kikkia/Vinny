@@ -68,7 +68,7 @@ class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection
     }
 
     override fun loadFailed(result: LoadFailed) {
-        MetricsManager.instance!!.markTrackLoadFailed()
+        MetricsManager.instance!!.markTrackLoadFailed(result.exception.message)
         event.replyError("Failed to load search! " + result.exception.message)
     }
 }

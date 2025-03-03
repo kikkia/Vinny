@@ -93,8 +93,8 @@ class MetricsManager private constructor() {
         statsd!!.incrementCounter("voice.track.ended", "eventName:$eventName", "mayStartNext:$startNext")
     }
 
-    fun markTrackLoadFailed() {
-        statsd!!.incrementCounter("voice.track.loaded.failed")
+    fun markTrackLoadFailed(message: String?) {
+        statsd!!.incrementCounter("voice.track.loaded.failed", "message:$message")
     }
 
     fun updateCacheSize(name: String, count: Int) {
