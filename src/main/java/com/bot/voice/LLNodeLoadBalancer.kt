@@ -11,11 +11,12 @@ import kotlin.math.pow
 
 class LLNodeLoadBalancer(private val client: LavalinkClient, val nodeHealth: HashMap<String, LLNodeHealthMonitor>) : ILoadBalancer {
     private val regionPenaltyProvider = VoiceRegionPenaltyProvider()
+    private val penaltyProviders = mutableListOf<IPenaltyProvider>()
     private val ALLOWED_DEVIATION = 300
 
 
     override fun addPenaltyProvider(penaltyProvider: IPenaltyProvider) {
-        // Not used but need to override to be compatible
+        penaltyProviders.add(penaltyProvider)
     }
 
     override fun removePenaltyProvider(penaltyProvider: IPenaltyProvider) {
@@ -42,8 +43,8 @@ class LLNodeLoadBalancer(private val client: LavalinkClient, val nodeHealth: Has
             // as of current impl, 0 for same, 1000 for other
             val regionScore = regionPenaltyProvider.getPenalty(node, region)
             // We treat each player as 2 points
-            val players = node.stats!!.playingPlayers
-            val frames = node.stats!!.frameStats
+            val players = node.stats?.playingPlayers
+            val frames = node.stats?.frameStats
             var deficitFramePenalty = 0
             var nullFramePenalty = 0
 
@@ -54,6 +55,11 @@ class LLNodeLoadBalancer(private val client: LavalinkClient, val nodeHealth: Has
                 deficitFramePenalty = ( 1.03f.pow(100f * (frames.deficit / 3000f)) * 600 - 600 ).toInt()
                 nullFramePenalty = ( 1.03f.pow(100f * (frames.nulled / 3000f)) * 600 - 600 ).toInt()
                 nullFramePenalty *= 2
+            }
+
+            var penaltyProviderScore = 0
+            for (penalty in penaltyProviders) {
+                penaltyProviderScore += penalty.getPenalty(node, region)
             }
 
             val health = nodeHealth[node.name]?.getHealth()
@@ -80,8 +86,8 @@ class LLNodeLoadBalancer(private val client: LavalinkClient, val nodeHealth: Has
                 }
             }
 
-            val score = if (node.available)
-                regionScore + (players * 2) + deficitFramePenalty + nullFramePenalty + healthScore
+            val score = if (node.available && players != null)
+                regionScore + (players * 2) + deficitFramePenalty + nullFramePenalty + healthScore + penaltyProviderScore
             else
                 MAX_ERROR
 
