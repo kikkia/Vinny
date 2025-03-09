@@ -1,18 +1,18 @@
 package com.bot.voice
 
+import com.bot.commands.control.CommandControlEvent
 import com.bot.db.GuildDAO
 import com.bot.db.OauthConfigDAO
 import com.bot.db.models.OauthConfig
 import com.bot.db.models.ResumeAudioGuild
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
-import com.bot.exceptions.newstyle.OauthNotEnabledException
 import com.bot.exceptions.UserExposableException
+import com.bot.exceptions.newstyle.OauthNotEnabledException
 import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.models.enums.RepeatMode
 import com.bot.utils.*
-import com.bot.commands.control.CommandControlEvent
 import com.jagrosh.jdautilities.menu.OrderedMenu.Builder
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.LinkState
@@ -29,11 +29,11 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import net.dv8tion.jda.api.interactions.components.ItemComponent
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 import org.apache.log4j.Logger
+import org.json.JSONObject
 import reactor.kotlin.core.publisher.toMono
 import java.time.Instant
 import java.time.temporal.ChronoField
 import java.util.*
-import kotlin.collections.HashSet
 
 class GuildVoiceConnection(val guild: Guild) {
     val logger = Logger.getLogger(this::class.java.name)
@@ -137,7 +137,7 @@ class GuildVoiceConnection(val guild: Guild) {
         joinChannel(controlEvent)
         val link = getLink()
 
-        injectOauth(toLoad)
+        checkOauth(toLoad)
         metricsManager.markTrackLoaded()
         link.loadItem(toLoad).subscribe(LLLoadHandler(this, controlEvent))
         lastTextChannel = controlEvent.getChannel()
@@ -145,7 +145,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
     private fun loadAutoplayTrack(toLoad: String) {
         val link = getLink()
-        injectOauth(toLoad)
+        checkOauth(toLoad)
         metricsManager.markTrackLoaded()
         link.loadItem(toLoad).subscribe(AutoplayLoadHandler(this))
     }
@@ -185,7 +185,7 @@ class GuildVoiceConnection(val guild: Guild) {
         if (newIndex == tracks.size) {
             return
         }
-        injectOauth(tracks[newIndex])
+        checkOauth(tracks[newIndex])
         metricsManager.markTrackLoaded()
         link.loadItem(tracks[newIndex]).subscribe(
             PlaylistLLLoadHandler(this, controlEvent, loadingMessage, tracks, newIndex, failedCount))
@@ -196,7 +196,7 @@ class GuildVoiceConnection(val guild: Guild) {
         joinChannel(controlEvent)
         val link = getLink()
 
-        injectOauth(tracks[0])
+        checkOauth(tracks[0])
         metricsManager.markTrackLoaded()
         link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, controlEvent, loadingMessage, tracks, 0, 0))
         lastTextChannel = controlEvent.getChannel()
@@ -216,7 +216,7 @@ class GuildVoiceConnection(val guild: Guild) {
         if (newIndex == resumeSetup.tracks.size) {
             return
         }
-        injectOauth(resumeSetup.tracks[newIndex].trackUrl)
+        checkOauth(resumeSetup.tracks[newIndex].trackUrl)
         metricsManager.markTrackLoaded()
         link.loadItem(resumeSetup.tracks[newIndex].trackUrl).subscribe(
             ResumeLLLoadHandler(this, loadingMessage, resumeSetup, newIndex, failedCount))
@@ -241,7 +241,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
         lastTextChannel!!.sendMessage(translator.translate("VOICE_REBOOT_RESUME", guild.locale.locale)).queue()
         val loadingMessage = lastTextChannel!!.sendMessage("Loading previous queue...").complete()
-        injectOauth(resumeSetup.tracks[0].trackUrl)
+        checkOauth(resumeSetup.tracks[0].trackUrl)
         metricsManager.markTrackLoaded()
         link.loadItem(resumeSetup.tracks[0].trackUrl).subscribe(ResumeLLLoadHandler(this, loadingMessage, resumeSetup, 0, 0))
     }
@@ -250,7 +250,7 @@ class GuildVoiceConnection(val guild: Guild) {
         joinChannel(controlEvent)
         val link = getLink()
 
-        injectOauth(search)
+        checkOauth(search)
         metricsManager.markTrackLoaded()
         link.loadItem(search).subscribe(SearchLLLoadHandler(this, controlEvent, message, builder))
         lastTextChannel = controlEvent.getChannel()
@@ -393,7 +393,8 @@ class GuildVoiceConnection(val guild: Guild) {
 
     private fun playTrack(track: QueuedAudioTrack, after: (() -> Unit)? = null) {
         metricsManager.markTrackPlayed(autoplay, track.track.info.sourceName)
-        injectOauth(track.track.info.uri!!)
+        checkOauth(track.track.info.uri!!)
+        track.track.setUserData(mapOf(Pair("oauth-token", oauthConfig!!.accessToken)))
         getLink().createOrUpdatePlayer()
             .setVolume(volume)
             .setTrack(track.track)
@@ -421,7 +422,7 @@ class GuildVoiceConnection(val guild: Guild) {
         return index % updateInterval == 0 || tracks.size == index
     }
 
-    private fun injectOauth(ident: String) {
+    private fun checkOauth(ident: String) {
         if (!isInjectRequired(ident)) {
             // can skip
             return
@@ -435,9 +436,15 @@ class GuildVoiceConnection(val guild: Guild) {
         } else {
             oauthRequired()
         }
+        // TODO: For now do this, but I am deprecating this method soon
         getLink().node
         oauthConfig!!.accessToken
-        LLUtils.injectOauth(oauthConfig!!.accessToken, ident, getLink().node)
+        try {
+            LLUtils.injectOauth(oauthConfig!!.accessToken, ident, getLink().node)
+        } catch (e: Exception) {
+            // For now ignore, as we are deprecating this oauth inject.
+            logger.warn(e)
+        }
     }
 
     private fun isInjectRequired(ident: String): Boolean {
