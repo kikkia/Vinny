@@ -6,6 +6,7 @@ import com.bot.db.UserDAO;
 import com.bot.exceptions.ForbiddenCommandException;
 import com.bot.exceptions.PermsOutOfSyncException;
 import com.bot.exceptions.UserExposableException;
+import com.bot.exceptions.newstyle.UserVisibleException;
 import com.bot.i18n.Translator;
 import com.bot.metrics.MetricsManager;
 import com.bot.tasks.CommandTaskExecutor;
@@ -96,6 +97,11 @@ public abstract class BaseCommand extends Command {
             } catch (Exception e) {
                 if (e instanceof UserExposableException) {
                     commandEvent.replyWarning(e.getMessage());
+                    return;
+                }
+                // New style
+                if (e instanceof UserVisibleException) {
+                    commandEvent.replyWarning(translator.translate(e.getMessage(), commandEvent.getGuild().getLocale().getLocale()));
                     return;
                 }
                 logger.severe("Exception Executing command", e);
