@@ -394,7 +394,9 @@ class GuildVoiceConnection(val guild: Guild) {
     private fun playTrack(track: QueuedAudioTrack, after: (() -> Unit)? = null) {
         metricsManager.markTrackPlayed(autoplay, track.track.info.sourceName)
         checkOauth(track.track.info.uri!!)
-        track.track.setUserData(mapOf(Pair("oauth-token", oauthConfig!!.accessToken)))
+        if (isInjectRequired(track.track.info.uri!!)) {
+            track.track.setUserData(mapOf(Pair("oauth-token", oauthConfig!!.accessToken)))
+        }
         getLink().createOrUpdatePlayer()
             .setVolume(volume)
             .setTrack(track.track)
