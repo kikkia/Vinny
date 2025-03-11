@@ -439,7 +439,6 @@ class GuildVoiceConnection(val guild: Guild) {
             oauthRequired()
         }
         // TODO: For now do this, but I am deprecating this method soon
-        getLink().node
         oauthConfig!!.accessToken
         try {
             LLUtils.injectOauth(oauthConfig!!.accessToken, ident, getLink().node)
