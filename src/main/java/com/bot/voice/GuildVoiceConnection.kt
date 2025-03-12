@@ -29,7 +29,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import net.dv8tion.jda.api.interactions.components.ItemComponent
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 import org.apache.log4j.Logger
-import org.json.JSONObject
 import reactor.kotlin.core.publisher.toMono
 import java.time.Instant
 import java.time.temporal.ChronoField
@@ -437,14 +436,6 @@ class GuildVoiceConnection(val guild: Guild) {
             }
         } else {
             oauthRequired()
-        }
-        // TODO: For now do this, but I am deprecating this method soon
-        oauthConfig!!.accessToken
-        try {
-            LLUtils.injectOauth(oauthConfig!!.accessToken, ident, getLink().node)
-        } catch (e: Exception) {
-            // For now ignore, as we are deprecating this oauth inject.
-            logger.warn(e)
         }
     }
 
