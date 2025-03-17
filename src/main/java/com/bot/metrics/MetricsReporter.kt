@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.entities.Activity
 /**
  * Thread that just reports some less active stats every 5 seconds
  */
-class MetricsReporter : Thread() {
+class MetricsReporter : Runnable {
     private val shardManager: ShardingManager = ShardingManager.getInstance()
     private val markovModelCache: MarkovModelCache = MarkovModelCache.getInstance()
     private val metricsManager: MetricsManager = MetricsManager.instance!!
