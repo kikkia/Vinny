@@ -359,7 +359,7 @@
         <dependency>
             <groupId>dev.arbjerg</groupId>
             <artifactId>lavalink-client</artifactId>
-            <version>3.2.0</version>
+            <version>492c23a61d815c60837972b0fa488dd9bdd7ce1f-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>
@@ -390,6 +390,11 @@
             <id>ll-releases</id>
             <name>Lavalink Releases</name>
             <url>https://maven.lavalink.dev/releases</url>
+        </repository>
+        <repository>
+            <id>ll-snapshots</id>
+            <name>Lavalink snapshots</name>
+            <url>https://maven.lavalink.dev/snapshots</url>
         </repository>
         <repository>
             <id>maven_central</id>
