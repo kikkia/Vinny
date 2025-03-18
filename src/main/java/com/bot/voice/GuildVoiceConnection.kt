@@ -41,7 +41,6 @@ class GuildVoiceConnection(val guild: Guild) {
     val metricsManager = MetricsManager.instance!!
     private val trackProvider = TrackProvider()
     private val autoplayQueue = LinkedList<String>()
-    private val failedLoadedTracks = HashSet<String>()
     var lastTextChannel: MessageChannel? = null
     var nowPlayingMessage: Message? = null
     private var isPaused = false
@@ -55,11 +54,6 @@ class GuildVoiceConnection(val guild: Guild) {
     var failedAttempt = 0
     val loginReqRegex = Regex(VinnyConfig.instance().voiceConfig.loginReqRegex)
     val loginReqProvider = VinnyConfig.instance().voiceConfig.loginSearchProvider
-
-    // Used for ignoring inject creds
-    val soundcloudRegex = Regex(
-            """https://soundcloud\.com/(?:[a-z0-9]+/)?(?:[a-z0-9]+/(?:[a-z0-9]+|sets/[a-z0-9]+))?"""
-    )
 
     fun setPaused(pause: Boolean) {
         lavalink.getLink(guild.idLong).getPlayer()
@@ -257,12 +251,22 @@ class GuildVoiceConnection(val guild: Guild) {
 
 
     fun onTrackEnd(event: TrackEndEvent) {
-        metricsManager.markTrackEnd(event.endReason.name, event.endReason.mayStartNext)
-        if (event.endReason.mayStartNext) {
+        val endReason = event.endReason
+        metricsManager.markTrackEnd(endReason.name, endReason.mayStartNext)
+
+        failedAttempt = if (endReason.name == "LOAD_FAILED") failedAttempt + 1 else 0
+
+        if (failedAttempt >= 5) {
+            sendMessageToChannel(translator.translate("VOICE_MANY_FAILED_TRACKS", guild.locale.locale))
+            cleanupPlayer()
+            return
+        }
+
+        if (endReason.mayStartNext) {
             try {
                 nextTrack(false)
             } catch (u: UserExposableException) {
-                sendMessageToChannel(u.message!!)
+                sendMessageToChannel(u.message ?: "Unknown error")
             }
         }
     }
@@ -287,21 +291,6 @@ class GuildVoiceConnection(val guild: Guild) {
             }
             loadAutoplayTrack(autoplayQueue.poll())
         } else {
-            // Prevent repeating failed loads and plays
-            if (trackProvider.getRepeateMode() != RepeatMode.REPEAT_NONE) {
-                if (failedLoadedTracks.contains(next.track.info.uri)) {
-                    failedAttempt += 1
-                    if (failedAttempt >= 5) {
-                        sendMessageToChannel(translator.translate("VOICE_MANY_FAILED_TRACKS", guild.locale.locale))
-                        cleanupPlayer()
-                        return
-                    }
-                    sendMessageToChannel("Skipping track load that I have previously failed: ${next.track.info.title}")
-                    nextTrack(skipping)
-                }
-            } else {
-                failedAttempt = 0
-            }
             playTrack(next)
         }
     }
@@ -538,8 +527,6 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun markFailedLoad(failed: Track, exceptionEvent: TrackExceptionEvent) {
-        // Mark a failed load track so we dont infinite loop autoplay it
-        failedLoadedTracks.add(failed.info.uri!!)
         sendMessageToChannel("Failed to load track `${failed.info.title}`. The error I received was: `${exceptionEvent.exception.message}`.")
     }
 
@@ -553,7 +540,6 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun updateOauthConfig(config: OauthConfig) {
         oauthConfig = config
-        failedLoadedTracks.clear()
     }
 
     private fun sendNowPlayingUpdate() {
