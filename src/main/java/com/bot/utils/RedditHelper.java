@@ -1,10 +1,5 @@
 package com.bot.utils;
 
-import club.minnced.discord.webhook.WebhookClient;
-import club.minnced.discord.webhook.send.WebhookEmbed;
-import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
-import club.minnced.discord.webhook.send.WebhookMessage;
-import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.bot.RedditConnection;
 import com.bot.caching.SubredditCache;
 import com.bot.exceptions.RedditRateLimitException;
@@ -16,8 +11,6 @@ import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
 import net.dean.jraw.pagination.DefaultPaginator;
 import net.dean.jraw.references.SubredditReference;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
@@ -30,24 +23,6 @@ public class RedditHelper {
 
     private static final Random random = new Random(System.currentTimeMillis());
     private static final Semaphore limiter = new Semaphore(3, true);
-    private static final String REDDIT_SNOO_ICON_URL = "http://www.doomsteaddiner.net/blog/wp-content/uploads/2015/10/reddit-logo.png";
-
-    public static void getRandomSubmissionAndSend(RedditConnection redditConnection,
-                                                  CommandEvent commandEvent,
-                                                  SubredditSort sortType,
-                                                  TimePeriod timePeriod,
-                                                  int limit,
-                                                  boolean isChannelNSFW) throws Exception {
-        String subredditName = commandEvent.getArgs();
-
-        getRandomSubmissionAndSend(redditConnection,
-                commandEvent,
-                sortType,
-                timePeriod,
-                limit,
-                isChannelNSFW,
-                subredditName);
-    }
 
     public static void getRandomSubmissionAndSend(RedditConnection redditConnection,
                                                   CommandEvent commandEvent,
@@ -81,28 +56,34 @@ public class RedditHelper {
 
         SubredditCache cache = SubredditCache.getInstance();
         List<Listing<Submission>> submissions = cache.get(sortType + subredditName);
-
+        String cacheKey = sortType + subredditName;
         if (submissions == null) {
+            boolean acquired = false;
             try {
-                if (limiter.tryAcquire(10, TimeUnit.SECONDS)) {
-                    DefaultPaginator<Submission> paginator = subreddit
-                            .posts()
-                            .limit(150)
-                            .timePeriod(timePeriod)
-                            .sorting(sortType)
-                            .build();
-
-                    submissions = paginator.accumulate(1);
-                    cache.put(sortType + subredditName, submissions);
-                } else {
-                    // Timeout, try to fetch from cache again
-                    submissions = cache.get(sortType + subredditName);
+                acquired = limiter.tryAcquire(10, TimeUnit.SECONDS);
+                if (acquired) {
+                    submissions = cache.get(cacheKey);
                     if (submissions == null) {
-                        throw new RedditRateLimitException("Reddit is rate limiting Vinny");
+                        DefaultPaginator<Submission> paginator = subreddit
+                                .posts()
+                                .limit(150)
+                                .timePeriod(timePeriod)
+                                .sorting(sortType)
+                                .build();
+
+                        submissions = paginator.accumulate(1);
+                        cache.put(cacheKey, submissions);
                     }
+                } else {
+                    throw new RedditRateLimitException("Reddit API access is currently rate-limited. Please try again later.");
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RedditRateLimitException("Request was interrupted while waiting for Reddit API access");
             } finally {
-                limiter.release();
+                if (acquired) {
+                    limiter.release();
+                }
             }
         }
 
@@ -139,28 +120,34 @@ public class RedditHelper {
 
         SubredditCache cache = SubredditCache.getInstance();
         List<Listing<Submission>> submissions = cache.get(sortType + subredditName);
-
+        String cacheKey = sortType + subredditName;
         if (submissions == null) {
+            boolean acquired = false;
             try {
-                if (limiter.tryAcquire(10, TimeUnit.SECONDS)) {
-                    DefaultPaginator<Submission> paginator = subreddit
-                            .posts()
-                            .limit(limit)
-                            .timePeriod(timePeriod)
-                            .sorting(sortType)
-                            .build();
-
-                    submissions = paginator.accumulate(1);
-                    cache.put(sortType + subredditName, submissions);
-                } else {
-                    // Timeout, try to fetch from cache again
-                    submissions = cache.get(sortType + subredditName);
+                acquired = limiter.tryAcquire(10, TimeUnit.SECONDS);
+                if (acquired) {
+                    submissions = cache.get(cacheKey);
                     if (submissions == null) {
-                        throw new RedditRateLimitException("Reddit is rate limiting Vinny");
+                        DefaultPaginator<Submission> paginator = subreddit
+                                .posts()
+                                .limit(limit)
+                                .timePeriod(timePeriod)
+                                .sorting(sortType)
+                                .build();
+
+                        submissions = paginator.accumulate(1);
+                        cache.put(cacheKey, submissions);
                     }
+                } else {
+                    throw new RedditRateLimitException("Reddit API access is currently rate-limited. Please try again later.");
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RedditRateLimitException("Request was interrupted while waiting for Reddit API access");
             } finally {
-                limiter.release();
+                if (acquired) {
+                    limiter.release();
+                }
             }
         }
 
@@ -173,37 +160,6 @@ public class RedditHelper {
         String url = submission.getUrl().contains("redgifs") ? "https://vinny-fxreddit.kikkia.workers.dev/" + submission.getId() :
                 "https://rxddit.com/" + submission.getId();
         commandEvent.getChannel().sendMessage(url).addActionRow(refreshButton).queue();
-        // TODO: Find out if we really want this setup
-//        // Scheduled commands generate an insane amount of traffic, lets send them to webhooks to help with global ratelimiting
-//        if (ScheduledCommandUtils.isScheduled(commandEvent)) {
-//            WebhookClient client = ScheduledCommandUtils.getWebhookForChannel(commandEvent);
-//            if (!postOnly) {
-//                client.send(buildWebhookEmbedMessageForSubmission(commandEvent, submission));
-//            }
-//            client.send(buildWebhookMessageForSubmission(commandEvent, submission));
-//        } else {
-//            // Send the embed, content will be sent separatly below
-//            if (!postOnly) {
-//                commandEvent.reply(buildEmbedForSubmission(submission));
-//            }
-//
-//            String text = submission.getSelfText();
-//            if (submission.isSelfPost() && text != null && !text.isEmpty()) {
-//                // Since discord only allows us to send 2000 characters we need to break long posts down
-//                if (text.length() > 1900) {
-//                    // Split message into parts and send them all separately
-//                    for (String part : FormattingUtils.splitTextIntoChunksByWords(text, 1500)) {
-//                        commandEvent.reply("```" + part + "```");
-//                    }
-//                } else {
-//                    // Its short enough so just send it
-//                    commandEvent.reply("```" + text + " ```");
-//                }
-//            } else {
-//                commandEvent.reply(submission.getUrl());
-//            }
-//            commandEvent.reply("https://rxddit.com/" + submission.getId());
-//        }
     }
 
     private static Submission getRandomSubmission(Listing<Submission> submissions, boolean stickyAllowed) {
@@ -236,84 +192,6 @@ public class RedditHelper {
             }
         }
         return toReturn;
-    }
-
-    private static MessageEmbed buildEmbedForSubmission(Submission submission) {
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setAuthor(submission.getAuthor());
-        builder.addField("Score", submission.getScore()+"", true);
-        builder.addField("Comments", submission.getCommentCount()+"", true);
-        builder.setFooter(submission.getUrl(), REDDIT_SNOO_ICON_URL);
-
-        // If the title is more than 256 characters then trim it
-        String title = submission.getTitle();
-        title = title.length() <= 256 ? title : title.substring(0, 252) + "...";
-        builder.setTitle(title);
-
-        // If there is a thumbnail and it does match a url to an image
-        if (submission.hasThumbnail() && submission.getThumbnail().matches("^[a-zA-Z0-9\\-\\.]+\\.(com|org|net|mil|edu|COM|ORG|NET|MIL|EDU)$")) {
-            builder.setImage(submission.getThumbnail());
-        }
-
-        return builder.build();
-    }
-
-    private static WebhookMessage buildWebhookEmbedMessageForSubmission(CommandEvent event, Submission submission) {
-        WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
-        // TODO: Populate author url
-        builder.setAuthor(new WebhookEmbed.EmbedAuthor(submission.getAuthor(), null, null));
-        builder.addField(new WebhookEmbed.EmbedField(true, "Score", submission.getScore()+""));
-        builder.addField(new WebhookEmbed.EmbedField(true, "Comments", submission.getCommentCount()+""));
-        builder.setFooter(new WebhookEmbed.EmbedFooter(submission.getUrl(), REDDIT_SNOO_ICON_URL));
-
-        // If the title is more than 256 characters then trim it
-        String title = submission.getTitle();
-        title = title.length() <= 256 ? title : title.substring(0, 252) + "...";
-        builder.setTitle(new WebhookEmbed.EmbedTitle(title, submission.getUrl()));
-        builder.setDescription("r/" + submission.getSubreddit());
-
-        // If there is a thumbnail and it does match a url to an image
-        if (submission.hasThumbnail() && submission.getThumbnail().matches("^[a-zA-Z0-9\\-\\.]+\\.(com|org|net|mil|edu|COM|ORG|NET|MIL|EDU)$")) {
-            builder.setImageUrl(submission.getThumbnail());
-        }
-
-        WebhookEmbed embed = builder.build();
-        WebhookMessageBuilder mBuilder = new WebhookMessageBuilder();
-        mBuilder.addEmbeds(embed);
-        mBuilder.setUsername(event.getSelfMember().getEffectiveName());
-        mBuilder.setAvatarUrl(event.getSelfUser().getAvatarUrl());
-        return mBuilder.build();
-    }
-
-    private static WebhookMessage buildWebhookMessageForSubmission(CommandEvent event, Submission submission) {
-        String message = "";
-        String text = submission.getSelfText();
-        if (submission.isSelfPost() && text != null && !text.isEmpty()) {
-            // Since discord only allows us to send 2000 characters we need to break long posts down
-            if (text.length() > 1900) {
-                // Split message into parts and send them all separately
-                for (String part : FormattingUtils.splitTextIntoChunksByWords(text, 1500)) {
-                    message = "```" + part + "```";
-                }
-            } else {
-                // Its short enough so just send it
-                message = "```" + text + " ```";
-            }
-        } else {
-            message = submission.getUrl();
-        }
-
-        WebhookMessageBuilder builder = new WebhookMessageBuilder();
-        builder.setAvatarUrl(event.getSelfUser().getAvatarUrl());
-        builder.setUsername(event.getSelfMember().getEffectiveName());
-
-        // Hotfix for some issues with this being too long somehow :thonk:
-        if (message.length() >= 2000) {
-            message = message.substring(0, 1950);
-        }
-
-        builder.setContent(message);
-        return builder.build();
     }
 
     public static String getRandomCopyPasta(RedditConnection redditConnection) {
