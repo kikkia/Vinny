@@ -13,6 +13,7 @@ import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.models.enums.RepeatMode
 import com.bot.utils.*
+import com.bot.voice.radio.*
 import com.jagrosh.jdautilities.menu.OrderedMenu.Builder
 import dev.arbjerg.lavalink.client.Link
 import dev.arbjerg.lavalink.client.LinkState
@@ -54,6 +55,7 @@ class GuildVoiceConnection(val guild: Guild) {
     var failedAttempt = 0
     val loginReqRegex = Regex(VinnyConfig.instance().voiceConfig.loginReqRegex)
     val loginReqProvider = VinnyConfig.instance().voiceConfig.loginSearchProvider
+    var radioStation: LofiRadioStation? = null
 
     fun setPaused(pause: Boolean) {
         lavalink.getLink(guild.idLong).getPlayer()
@@ -63,6 +65,35 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun getPaused() : Boolean {
         return isPaused
+    }
+
+    fun setRadio(id: String, controlEvent: CommandControlEvent) {
+        joinChannel(controlEvent)
+        lastTextChannel = controlEvent.getChannel()
+        setRadio(LofiRadioService.getStation(id)!!)
+    }
+
+    fun setRadio(station: LofiRadioStation) {
+        // Clear tracks for now, maybe we can hold them if they exist
+        trackProvider.clearAll()
+        radioStation = station
+        loadRadioTrack()
+    }
+
+    fun loadRadioTrack() {
+        val toPlay = radioStation!!.getNowPlaying()
+        getLink().loadItem("lofiradio:${radioStation!!.id}").subscribe(LLLRadioHandler(this, toPlay))
+    }
+
+    fun isRadio(): Boolean {
+        return radioStation != null
+    }
+
+    fun stopRadio() {
+        if (isRadio()) {
+            radioStation = null
+            trackProvider.clearAll()
+        }
     }
 
     fun joinChannel(controlEvent: CommandControlEvent) {
@@ -144,6 +175,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun queueTrack(track: QueuedAudioTrack) {
+        stopRadio()
         trackProvider.addTrack(track)
         if (trackProvider.getNowPlaying() == track) {
             playTrack(track)
@@ -153,6 +185,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun queueLoadedPlaylist(tracks: List<QueuedAudioTrack>) {
+        stopRadio()
         for (track in tracks) {
             trackProvider.addTrack(track)
             if (trackProvider.getNowPlaying() == track) {
@@ -169,6 +202,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
         val newIndex = index+1
         updateLoadingMessage(loadingMessage, tracks, newIndex, failedCount)
+        stopRadio()
         if (queuedTrack != null) {
             if (trackProvider.getNowPlaying() == null) {
                 playTrack(queuedTrack)
@@ -187,6 +221,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun queuePlaylist(tracks: List<String>, controlEvent: CommandControlEvent, loadingMessage: Message) {
         joinChannel(controlEvent)
+        stopRadio()
         val link = getLink()
 
         checkOauth(tracks[0])
@@ -213,6 +248,15 @@ class GuildVoiceConnection(val guild: Guild) {
         metricsManager.markTrackLoaded()
         link.loadItem(resumeSetup.tracks[newIndex].trackUrl).subscribe(
             ResumeLLLoadHandler(this, loadingMessage, resumeSetup, newIndex, failedCount))
+    }
+
+    fun queueRadioTrack(track: RadioQueuedAudioTrack) {
+        trackProvider.addTrack(track)
+        if (trackProvider.getNowPlaying() == track) {
+            playTrack(track) {seek(radioStation!!.getNowPlaying().getCurrentTime(), track)}
+        } else {
+            lastTextChannel!!.sendMessage("Queued up `${track.getTitle()}`.").queue()
+        }
     }
 
     fun resumeAudioAfterReboot(resumeSetup: ResumeAudioGuild, channel: VoiceChannel) {
@@ -277,19 +321,23 @@ class GuildVoiceConnection(val guild: Guild) {
 
         val next = trackProvider.nextTrack(skipping)
         if (next == null) {
-            if (!autoplay) {
+            if (isRadio()) {
+                loadRadioTrack()
+            } else if (autoplay) {
+                // Autoplay failed to load tracks and we have no now playing. Fail softly.
+                if (autoplayQueue.isEmpty()) {
+                    sendMessageToChannel("Sadge, autoplay failed to keep the jams going. Feel free to queue up more " +
+                            "music, and report the issue in the support server if this keeps up.")
+                    cleanupPlayer()
+                    return
+                }
+                loadAutoplayTrack(autoplayQueue.poll())
+            } else {
                 sendMessageToChannel(translator.translate("VOICE_OUT_OF_TRACKS", guild.locale.locale))
                 cleanupPlayer()
                 return
             }
-            // Autoplay failed to load tracks and we have no now playing. Fail softly.
-            if (autoplayQueue.isEmpty()) {
-                sendMessageToChannel("Sadge, autoplay failed to keep the jams going. Feel free to queue up more " +
-                        "music, and report the issue in the support server if this keeps up.")
-                cleanupPlayer()
-                return
-            }
-            loadAutoplayTrack(autoplayQueue.poll())
+
         } else {
             playTrack(next)
         }
@@ -309,6 +357,7 @@ class GuildVoiceConnection(val guild: Guild) {
         nowPlayingMessage?.delete()?.queue()
         GuildVoiceProvider.getInstance().remove(guild.idLong)
         GuildDAO.getInstance().recordTimeInVoice(guild.id, getAge().toInt())
+        stopRadio()
     }
 
     fun isConnected(): Boolean {
@@ -356,14 +405,14 @@ class GuildVoiceConnection(val guild: Guild) {
         getLink().createOrUpdatePlayer().setVolume(volume).block()
     }
 
-    fun seek(pos: Long, track: QueuedAudioTrack) {
+    fun seek(pos: Long, track: BaseAudioTrack) {
         if (pos < 0 || pos > track.track.info.length) {
             throw InvalidInputException("Cannot seek to less than 0 or longer than the current track is.")
         }
         getLink().createOrUpdatePlayer().setPosition(pos).block()
     }
 
-    fun nowPlaying() : QueuedAudioTrack? {
+    fun nowPlaying() : BaseAudioTrack? {
         return trackProvider.getNowPlaying()
     }
 
@@ -371,7 +420,7 @@ class GuildVoiceConnection(val guild: Guild) {
         return getLink().getPlayer().block()?.position
     }
 
-    fun getQueuedTracks() : List<QueuedAudioTrack> {
+    fun getQueuedTracks() : List<BaseAudioTrack> {
         return trackProvider.getQueued()
     }
 
@@ -379,7 +428,7 @@ class GuildVoiceConnection(val guild: Guild) {
         return lavalink.getLink(guild.idLong, region)
     }
 
-    private fun playTrack(track: QueuedAudioTrack, after: (() -> Unit)? = null) {
+    private fun playTrack(track: BaseAudioTrack, after: (() -> Unit)? = null) {
         metricsManager.markTrackPlayed(autoplay, track.track.info.sourceName)
         checkOauth(track.track.info.uri!!)
         if (isInjectRequired(track.track.info.uri!!)) {
@@ -470,7 +519,7 @@ class GuildVoiceConnection(val guild: Guild) {
         sendNowPlayingUpdate(translator.translate("VOICE_TRACKS_SHUFFLED", guild.locale.locale))
     }
 
-    fun removeTrackAtIndex(index: Int): QueuedAudioTrack {
+    fun removeTrackAtIndex(index: Int): BaseAudioTrack {
         val tracks = trackProvider.getQueued()
         if (index > tracks.size) {
             throw InvalidInputException("Provided track index: $index is more than the total tracks queued: ${tracks.size}")
@@ -483,7 +532,7 @@ class GuildVoiceConnection(val guild: Guild) {
         return toRemove
     }
 
-    fun removeTrackByURLOrSearch(url: String): QueuedAudioTrack? {
+    fun removeTrackByURLOrSearch(url: String): BaseAudioTrack? {
         val tracks = trackProvider.getQueued()
         val toRemove = tracks.toMutableList().firstOrNull { it.track.info.title == url || it.track.info.uri == url }
         if (toRemove != null) {
@@ -571,14 +620,19 @@ class GuildVoiceConnection(val guild: Guild) {
         // Paused state shows play button and vice versa
         val playPauseButton = if (isPaused) Button.success("voicecontrol-playpause", ConstantEmojis.playEmoji)
             else Button.secondary("voicecontrol-playpause", ConstantEmojis.pauseEmoji)
-
-        // Create the buttons using the emoji variables
         val stopButton = Button.danger("voicecontrol-stop", ConstantEmojis.stopEmoji)
-        val nextButton = Button.primary("voicecontrol-next", ConstantEmojis.nextEmoji)
-        val shuffleButton = Button.primary("voicecontrol-shuffle", ConstantEmojis.shuffleEmoji)
-        val repeatButton = Button.primary("voicecontrol-repeat", getRepeatMode().emoji)
+        val items = mutableListOf(playPauseButton, stopButton)
 
-        return mutableSetOf(stopButton, playPauseButton, nextButton, shuffleButton, repeatButton)
+        if (!isRadio()) {
+            val nextButton = Button.primary("voicecontrol-next", ConstantEmojis.nextEmoji)
+            items.add(nextButton)
+            val shuffleButton = Button.primary("voicecontrol-shuffle", ConstantEmojis.shuffleEmoji)
+            items.add(shuffleButton)
+            val repeatButton = Button.primary("voicecontrol-repeat", getRepeatMode().emoji)
+            items.add(repeatButton)
+        }
+
+        return items.toMutableList()
     }
 
     fun getCurrentVoiceChannel() : VoiceChannel? {

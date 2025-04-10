@@ -7,6 +7,8 @@ import com.bot.metrics.MetricsReporter
 import com.bot.tasks.RunScheduledCommandsDeferredTask
 import com.bot.utils.VinnyConfig.Companion.instance
 import com.bot.voice.LavaLinkClient.Companion.getInstance
+import com.bot.voice.radio.LofiRadioService
+import com.bot.voice.radio.LofiRadioStation
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.FlywayException
 import java.util.concurrent.Executors
@@ -57,6 +59,9 @@ object Main {
         if (config.rssConfig.enable) {
             RssSubscriber(config)
         }
+
+        // Populate at startup
+        LofiRadioService.radioStations
 
         getInstance()
 

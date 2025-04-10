@@ -1,6 +1,7 @@
 package com.bot.commands.traditional.voice
 
 import com.bot.commands.traditional.VoiceCommand
+import com.bot.voice.BaseAudioTrack
 import com.bot.voice.QueuedAudioTrack
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter
@@ -19,7 +20,7 @@ class ListTracksCommand(waiter: EventWaiter) : VoiceCommand() {
             return
         }
         val nowPlaying = voiceConnection.nowPlaying()
-        val tracks: List<QueuedAudioTrack> = voiceConnection.getQueuedTracks()
+        val tracks: List<BaseAudioTrack> = voiceConnection.getQueuedTracks()
         val trackNames = ArrayList<String>()
 
         if (nowPlaying == null) {

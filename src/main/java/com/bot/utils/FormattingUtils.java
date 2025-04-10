@@ -2,6 +2,7 @@ package com.bot.utils;
 
 import com.bot.exceptions.IntervalFormatException;
 import com.bot.models.enums.RepeatMode;
+import com.bot.voice.BaseAudioTrack;
 import com.bot.voice.QueuedAudioTrack;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import dev.arbjerg.lavalink.client.player.Track;
@@ -69,32 +70,30 @@ public class FormattingUtils {
         };
     }
 
-    public static MessageEmbed getAudioTrackEmbed(QueuedAudioTrack queuedAudioTrack, int volume, RepeatMode repeatMode, boolean autoplay, String nodeName) {
+    public static MessageEmbed getAudioTrackEmbed(BaseAudioTrack audioTrack, int volume, RepeatMode repeatMode, boolean autoplay, String nodeName) {
         EmbedBuilder builder = new EmbedBuilder();
 
-        Track track = queuedAudioTrack.getTrack();
-
         builder.setTitle("Now Playing: ");
-        if (ignoreProvider != null && (track.getInfo().getUri() != null && track.getInfo().getUri().contains(ignoreProvider))) {
-            builder.setDescription(track.getInfo().getTitle());
+        if (ignoreProvider != null && (audioTrack.getUri() != null && audioTrack.getUri().contains(ignoreProvider))) {
+            builder.setDescription(audioTrack.getTitle());
         } else {
-            builder.setDescription("[" + track.getInfo().getTitle() + "](" + track.getInfo().getUri() + ")");
+            builder.setDescription("[" + audioTrack.getTitle() + "](" + audioTrack.getUri() + ")");
         }
-        builder.addField("Duration", msToMinSec(track.getInfo().getLength()), false);
-        builder.addField("Requested by", queuedAudioTrack.getRequesterName(), false);
+        builder.addField("Duration", msToMinSec(audioTrack.getLength()), false);
+        builder.addField("Requested by", audioTrack.getRequesterName(), false);
         builder.addField("Autoplay", "" + autoplay, false);
         builder.setFooter("Volume: " + volume, null);
         builder.addField("Repeat Mode", repeatMode.getEzName(), false);
         builder.addField("Node:", nodeName, false);
 
-        builder.setColor(getColorForTrack(track.getInfo().getUri()));
+        builder.setColor(getColorForTrack(audioTrack.getUri()));
 
         // If youtube, get the thumbnail
-        if (track.getInfo().getUri().contains("www.youtube.com")) {
-            String videoID = track.getInfo().getUri().split("=")[1];
+        if (audioTrack.getUri().contains("www.youtube.com")) {
+            String videoID = audioTrack.getUri().split("=")[1];
             builder.setThumbnail("https://img.youtube.com/vi/" + videoID + "/0.jpg");
         } else {
-            builder.setThumbnail(track.getInfo().getArtworkUrl());
+            builder.setThumbnail(audioTrack.getArtworkUrl());
         }
 
         return builder.build();
