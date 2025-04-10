@@ -94,7 +94,7 @@ class MetricsReporter : Runnable {
                 usersInVoice += conn.guild.selfMember.voiceState!!.channel!!.members.size - 1
                 queuedTracks += (1 + conn.getQueuedTracks().size)
                 metricsManager.markConnectionAge(conn.getAge(), link.node.name)
-                metricsManager.markActiveVoiceConnection(link.node.name, conn.region?.name ?: "unknown", conn.autoplay)
+                metricsManager.markActiveVoiceConnection(link.node.name, conn.region?.name ?: "unknown", conn.autoplay, conn.isRadio())
             } else {
                 metricsManager.markIdleVoiceConnection(link.node.name, conn.region?.name ?: "unknown")
             }

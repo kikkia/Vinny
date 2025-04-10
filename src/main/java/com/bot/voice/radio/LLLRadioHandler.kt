@@ -4,7 +4,6 @@ import com.bot.voice.GuildVoiceConnection
 
 
 import com.bot.metrics.MetricsManager
-import com.bot.voice.QueuedAudioTrack
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
 import dev.arbjerg.lavalink.client.player.LoadFailed
 import dev.arbjerg.lavalink.client.player.PlaylistLoaded
@@ -34,12 +33,10 @@ class LLLRadioHandler(private val guildVoiceConnection: GuildVoiceConnection, pr
     }
 
     override fun noMatches() {
-        // TODO
     }
 
     override fun loadFailed(result: LoadFailed) {
         MetricsManager.instance!!.markTrackLoadFailed(result.exception.message)
-        // TODO
         guildVoiceConnection.sendMessageToChannel("Failed to load radio, sorry.")
         guildVoiceConnection.stopRadio()
     }
