@@ -1,5 +1,6 @@
 package com.bot.voice.radio
 
+import com.bot.utils.Logger
 import com.bot.utils.VinnyConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ object LofiRadioService {
     private val httpClient: HttpClient = HttpClient.newHttpClient()
     private val _radioStations = ConcurrentHashMap<String, LofiRadioStation>()
     val radioStations: Map<String, LofiRadioStation> = _radioStations
+    private val logger = Logger(this::class.simpleName)
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -33,7 +35,7 @@ object LofiRadioService {
         return if (response.statusCode() == 200) {
             parseStationsJson(response.body())
         } else {
-            println("Error fetching stations: ${response.statusCode()}")
+            logger.warning("Error fetching stations: ${response.statusCode()}")
             emptyList()
         }
     }
@@ -50,7 +52,7 @@ object LofiRadioService {
                 )
             }
         } catch (e: Exception) {
-            println("Error parsing stations JSON: ${e.message}")
+            logger.severe("Error parsing stations JSON: ${e.message}", e)
         }
         return stations
     }
@@ -58,8 +60,8 @@ object LofiRadioService {
     private suspend fun loadInitialStations() {
         val stations = fetchStations()
         stations.forEach { station ->
-            _radioStations[station.second] = LofiRadioStation(station.first, station.second, playlistBaseUrl!!)
-            println("Loaded station: ${station.first} (ID: ${station.second})")
+            _radioStations[station.second] = LofiRadioStation(station.first, station.second, playlistBaseUrl)
+            logger.info("Loaded station: ${station.first} (ID: ${station.second})")
         }
     }
 

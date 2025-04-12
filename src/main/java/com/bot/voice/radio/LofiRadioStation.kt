@@ -1,5 +1,6 @@
 package com.bot.voice.radio
 
+import com.bot.utils.Logger
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import java.net.URI
@@ -18,6 +19,7 @@ class LofiRadioStation(
     private val httpClient: HttpClient = HttpClient.newHttpClient(),
     private val refreshBuffer: Int = 1
 ) {
+    val logger = Logger(this::class.simpleName)
     var playlist = LinkedList<PlaylistItem>()
     private val scope = CoroutineScope(Dispatchers.Default)
     private var nextTrackJob: Job? = null
@@ -29,7 +31,7 @@ class LofiRadioStation(
 
     fun getNowPlaying(): PlaylistItem {
         if (playlist.isEmpty()) {
-            println("EMPTY PLAYLIST FETCHING NEW")
+            logger.warning("Empty playlist for station $id")
             fetchAndUpdatePlaylist()
         }
         return playlist.first
@@ -43,7 +45,7 @@ class LofiRadioStation(
         return if (response.statusCode() == 200) {
             parsePlaylistJson(response.body())
         } else {
-            println("Error fetching playlist for station ${name}: ${response.statusCode()}")
+            logger.warning("Error fetching playlist for station ${name}: ${response.statusCode()}")
             LinkedList()
         }
     }
@@ -76,7 +78,7 @@ class LofiRadioStation(
                 )
             }
         } catch (e: Exception) {
-            println("Error parsing playlist JSON for station ${name}: ${e.message}")
+            logger.severe("Error parsing playlist JSON for station ${name}: ${e.message}", e)
         }
         return playlistItems
     }
@@ -94,29 +96,22 @@ class LofiRadioStation(
                     delay(delay.milliseconds)
                     playlist.removeFirst()
                     if (playlist.size <= refreshBuffer) {
-                        //println("Only ${playlist.size} track(s) left, refetching playlist for $name")
                         fetchAndUpdatePlaylist()
                     } else if (playlist.isNotEmpty()) {
                         scheduleNextTrack()
-                        //println("Scheduled next track for $name, ${playlist.first.title}")
                     } else {
-                        //println("Playlist for $name is empty after removing track.")
                         fetchAndUpdatePlaylist()
                     }
                 }
-                //println("Scheduled first track for $name, ${playlist.first.title} to end at $currentTrackEndTime (delay: ${delay}ms)")
             } else {
                 playlist.removeFirst()
                 if (playlist.isNotEmpty()) {
                     scheduleNextTrack()
-                    //println("Scheduled next track immediately for $name, ${playlist.first.title}")
                 } else {
-                    //println("Playlist for $name was empty, fetched again.")
                     fetchAndUpdatePlaylist()
                 }
             }
         } else {
-            //println("Playlist for $name is empty, cannot schedule next track.")
             fetchAndUpdatePlaylist()
         }
     }
