@@ -5,6 +5,7 @@
     * [Voice Commands](#Voice)
         * [Controls](#Controls)
         * [Custom Playlists](#Playlists)
+        * [Lofi Radio](#Radio)
     * [Reddit Commands](#Reddit)
     * [General Commands](#General)
     * [Nsfw Commands](#Nsfw)
@@ -157,6 +158,10 @@ Saves the current track queue as a playlist that any user can use on this server
 ### `removeplaylist`
 Removes a guild or user playlist by either name or id
 * `~removeplaylist playlistName` or `~removeplaylist 5`
+
+### Radio
+Vinny now supports playing endless radio channels in voice
+* `~lofi` - Plays a random radio station, use the shuffle button, or run the command again to change the station.
 
 ## Reddit
 Reddit commands can get new, hot and top posts from any subreddit. (NOTE: NSFW posts/subreddits require the channel to have nsfw enabled.)
