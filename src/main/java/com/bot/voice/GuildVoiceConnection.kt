@@ -82,7 +82,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun loadRadioTrack() {
         val toPlay = radioStation!!.getNowPlaying()
-        getLink().loadItem("lofiradio:${radioStation!!.id}").subscribe(LLLRadioHandler(this, toPlay))
+        getLink().loadItem("${LofiRadioService.RADIO_PREFIX}${radioStation!!.id}").subscribe(LLLRadioHandler(this, toPlay))
     }
 
     fun isRadio(): Boolean {
@@ -275,6 +275,10 @@ class GuildVoiceConnection(val guild: Guild) {
         }
 
         val link = getLink()
+
+        if (resumeSetup.tracks[0].trackUrl.startsWith(LofiRadioService.RADIO_PREFIX)) {
+            radioStation = LofiRadioService.getStation(resumeSetup.tracks[0].trackUrl.replace(LofiRadioService.RADIO_PREFIX, ""))
+        }
 
         lastTextChannel!!.sendMessage(translator.translate("VOICE_REBOOT_RESUME", guild.locale.locale)).queue()
         val loadingMessage = lastTextChannel!!.sendMessage("Loading previous queue...").complete()

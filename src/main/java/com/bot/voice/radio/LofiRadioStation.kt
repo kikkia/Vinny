@@ -66,8 +66,6 @@ class LofiRadioStation(
                     PlaylistItem(
                         id = jsonObject.getInt("id").toString(),
                         slug = slug,
-                        // TODO
-                        url = "http://192.168.0.171:8000/music/$slug.mp3",
                         artists = jsonObject.getString("artists"),
                         title = jsonObject.getString("title"),
                         image = jsonObject.optString("image", null),

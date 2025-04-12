@@ -12,6 +12,7 @@ import java.net.http.HttpResponse
 import java.util.concurrent.ConcurrentHashMap
 
 object LofiRadioService {
+    const val RADIO_PREFIX = "lofiradio:"
     private val stationsUrl: String = VinnyConfig.instance().voiceConfig.radioProviderUrl
     private val playlistBaseUrl: String = VinnyConfig.instance().voiceConfig.radioStationUrl
     private val httpClient: HttpClient = HttpClient.newHttpClient()

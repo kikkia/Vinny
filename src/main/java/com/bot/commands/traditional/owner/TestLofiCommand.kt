@@ -7,7 +7,7 @@ import com.jagrosh.jdautilities.command.CommandEvent
 class TestLofiCommand : OwnerCommand() {
 
     init {
-        name = "lofi"
+        name = "testlofi"
     }
 
     override fun executeCommand(commandEvent: CommandEvent) {

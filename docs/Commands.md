@@ -161,7 +161,7 @@ Removes a guild or user playlist by either name or id
 
 ### Radio
 Vinny now supports playing endless radio channels in voice
-* `~lofi` - Plays a random radio station, use the shuffle button, or run the command again to change the station.
+* `/lofi` - Plays a random radio station, use the shuffle button, or run the command again to change the station.
 
 ## Reddit
 Reddit commands can get new, hot and top posts from any subreddit. (NOTE: NSFW posts/subreddits require the channel to have nsfw enabled.)
