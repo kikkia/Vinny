@@ -270,6 +270,10 @@ class MetricsManager private constructor() {
         statsd!!.incrementCounter("bigbad.exception", "message:${exception.message}", "location:${location}")
     }
 
+    fun markRadioError(msg: String) {
+        statsd!!.incrementCounter("voice.radio.error", "message:${msg}")
+    }
+
     fun markButtonInteraction(action: String) {
         statsd!!.incrementCounter("button.interaction", "action:$action")
     }
