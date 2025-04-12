@@ -304,6 +304,9 @@ class GuildVoiceConnection(val guild: Guild) {
             sendMessageToChannel(translator.translate("VOICE_MANY_FAILED_TRACKS", guild.locale.locale))
             cleanupPlayer()
             return
+        } else if (failedAttempt > 1 && isRadio()) { // > 1 allows for 1 retry at the failed track first just incase.
+            setRadio(LofiRadioService.randomStation())
+            return
         }
 
         if (endReason.mayStartNext) {

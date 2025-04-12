@@ -33,7 +33,7 @@ class LLLRadioHandler(private val guildVoiceConnection: GuildVoiceConnection, pr
     }
 
     override fun noMatches() {
-        MetricsManager.instance.markRadioError("NOT_FOUND")
+        MetricsManager.instance!!.markRadioError("NOT_FOUND")
         guildVoiceConnection.setRadio(LofiRadioService.randomStation())
     }
 

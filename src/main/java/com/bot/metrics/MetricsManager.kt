@@ -200,6 +200,10 @@ class MetricsManager private constructor() {
         statsd!!.recordGaugeValue("connections.voice.tracks", count.toLong())
     }
 
+    fun updateRadioPlayers(count: Int) {
+        statsd!!.recordGaugeValue("voice.radio.active", count.toLong())
+    }
+
     fun markOauthGenerated(success: Boolean) {
         statsd!!.incrementCounter("voice.oauth.generate", "success:$success")
     }

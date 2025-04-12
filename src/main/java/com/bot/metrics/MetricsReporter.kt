@@ -82,6 +82,7 @@ class MetricsReporter : Runnable {
         var queuedTracks = 0
         var countWithoutOauth = 0
         var countConnected = 0
+        var radioPlayers = 0
         val lavaLinkClient = LavaLinkClient.getInstance()
         val disconnectedSessions = HashSet<Long>()
         for (conn in voiceConnections) {
@@ -106,6 +107,9 @@ class MetricsReporter : Runnable {
             } else {
                 disconnectedSessions.add(conn.guild.idLong)
             }
+            if (conn.isRadio()) {
+                radioPlayers++
+            }
         }
 
         // clean up disconnected sessions we have seen disconnected twice in a row
@@ -129,6 +133,7 @@ class MetricsReporter : Runnable {
         metricsManager.updateTotalOuathUsers(healthyOauth + unhealthyOauth)
         metricsManager.updateTotalHealthyOuathUsers(healthyOauth)
         metricsManager.updateTotalUnhealthyOuathUsers(unhealthyOauth)
+        metricsManager.updateRadioPlayers(radioPlayers)
 
         for (node in lavaLinkClient.nodeHealth.entries) {
             metricsManager.markLLNodeHealth(node.key, node.value.getHealth().metricId)
