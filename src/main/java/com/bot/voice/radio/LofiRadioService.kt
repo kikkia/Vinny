@@ -62,6 +62,10 @@ object LofiRadioService {
         }
     }
 
+    fun randomStation(): LofiRadioStation {
+        return _radioStations.values.random()
+    }
+
     fun getStation(stationId: String): LofiRadioStation? {
         return _radioStations[stationId]
     }

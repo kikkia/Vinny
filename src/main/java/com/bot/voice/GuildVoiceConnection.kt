@@ -67,10 +67,10 @@ class GuildVoiceConnection(val guild: Guild) {
         return isPaused
     }
 
-    fun setRadio(id: String, controlEvent: CommandControlEvent) {
+    fun setRadio(controlEvent: CommandControlEvent) {
         joinChannel(controlEvent)
         lastTextChannel = controlEvent.getChannel()
-        setRadio(LofiRadioService.getStation(id)!!)
+        setRadio(LofiRadioService.randomStation())
     }
 
     fun setRadio(station: LofiRadioStation) {
@@ -430,6 +430,7 @@ class GuildVoiceConnection(val guild: Guild) {
 
     private fun playTrack(track: BaseAudioTrack, after: (() -> Unit)? = null) {
         metricsManager.markTrackPlayed(autoplay, track.track.info.sourceName)
+        logger.info(track.track.info.sourceName)
         checkOauth(track.track.info.uri!!)
         if (isInjectRequired(track.track.info.uri!!)) {
             track.track.setUserData(mapOf(Pair("oauth-token", oauthConfig!!.accessToken)))
@@ -514,9 +515,15 @@ class GuildVoiceConnection(val guild: Guild) {
         return volumeLocked
     }
 
+    // Shuffles tracks, or changes radio station if radio is on
     fun shuffleTracks() {
-        trackProvider.shuffleQueue()
-        sendNowPlayingUpdate(translator.translate("VOICE_TRACKS_SHUFFLED", guild.locale.locale))
+        if (!isRadio()) {
+            trackProvider.shuffleQueue()
+            sendNowPlayingUpdate(translator.translate("VOICE_TRACKS_SHUFFLED", guild.locale.locale))
+        } else {
+            setRadio(LofiRadioService.randomStation())
+            sendNowPlayingUpdate(translator.translate("VOICE_RADIO_CHANGED", guild.locale.locale))
+        }
     }
 
     fun removeTrackAtIndex(index: Int): BaseAudioTrack {
@@ -626,11 +633,12 @@ class GuildVoiceConnection(val guild: Guild) {
         if (!isRadio()) {
             val nextButton = Button.primary("voicecontrol-next", ConstantEmojis.nextEmoji)
             items.add(nextButton)
-            val shuffleButton = Button.primary("voicecontrol-shuffle", ConstantEmojis.shuffleEmoji)
-            items.add(shuffleButton)
             val repeatButton = Button.primary("voicecontrol-repeat", getRepeatMode().emoji)
             items.add(repeatButton)
         }
+
+        val shuffleButton = Button.primary("voicecontrol-shuffle", ConstantEmojis.shuffleEmoji)
+        items.add(shuffleButton)
 
         return items.toMutableList()
     }
