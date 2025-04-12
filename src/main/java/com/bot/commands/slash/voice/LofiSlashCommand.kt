@@ -16,5 +16,6 @@ class LofiSlashCommand: VoiceSlashCommand() {
 
     override fun runCommand(command: ExtSlashCommandEvent) {
         provider.getGuildVoiceConnection(command.guild!!).setRadio(SlashControlEvent(command))
+        command.replyToCommand("Loading new lofi station")
     }
 }

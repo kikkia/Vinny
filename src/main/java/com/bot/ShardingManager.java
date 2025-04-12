@@ -133,6 +133,7 @@ public class ShardingManager {
                     new LoginDeviceCommand(),
                     new LogoutDeviceCommand(),
                     new RefreshTokenCommand(),
+                    new LofiCommand(),
                     //new SpeedCommand(),
 
                     // Battle Royale
