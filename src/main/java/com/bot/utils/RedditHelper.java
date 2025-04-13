@@ -119,8 +119,8 @@ public class RedditHelper {
         }
 
         SubredditCache cache = SubredditCache.getInstance();
-        List<Listing<Submission>> submissions = cache.get(sortType + subredditName);
         String cacheKey = sortType + subredditName;
+        List<Listing<Submission>> submissions = cache.get(cacheKey);
         if (submissions == null) {
             boolean acquired = false;
             try {

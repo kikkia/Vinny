@@ -6,11 +6,11 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 class TrackProvider {
 
-    private var queue: LinkedList<QueuedAudioTrack> = LinkedList()
-    private var nowPlaying: QueuedAudioTrack? = null
+    private var queue: LinkedList<BaseAudioTrack> = LinkedList()
+    private var nowPlaying: BaseAudioTrack? = null
     private var repeatMode = RepeatMode.REPEAT_NONE
 
-    fun addTrack(track: QueuedAudioTrack) {
+    fun addTrack(track: BaseAudioTrack) {
         if (nowPlaying == null) {
             nowPlaying = track
         } else {
@@ -18,7 +18,7 @@ class TrackProvider {
         }
     }
 
-    fun nextTrack(skipping: Boolean) : QueuedAudioTrack? {
+    fun nextTrack(skipping: Boolean) : BaseAudioTrack? {
         if (repeatMode == RepeatMode.REPEAT_ONE && !skipping) {
             return nowPlaying
         } else if (repeatMode == RepeatMode.REPEAT_ALL) {
@@ -33,7 +33,7 @@ class TrackProvider {
         return nowPlaying
     }
 
-    fun updateNowPlaying(np: QueuedAudioTrack) {
+    fun updateNowPlaying(np: BaseAudioTrack) {
         nowPlaying = np
     }
 
@@ -50,15 +50,15 @@ class TrackProvider {
         queue = LinkedList(queue.shuffled())
     }
 
-    fun getNowPlaying() : QueuedAudioTrack? {
+    fun getNowPlaying() : BaseAudioTrack? {
         return nowPlaying
     }
 
-    fun getQueued() : List<QueuedAudioTrack> {
+    fun getQueued() : List<BaseAudioTrack> {
         return queue.toList()
     }
 
-    fun setTracks(tracks: List<QueuedAudioTrack>) {
+    fun setTracks(tracks: List<BaseAudioTrack>) {
         queue = LinkedList(tracks)
     }
 

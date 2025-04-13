@@ -176,8 +176,8 @@ class MetricsManager private constructor() {
         statsd!!.recordGaugeValue("users.count", count.toLong())
     }
 
-    fun markActiveVoiceConnection(nodeName: String, region: String, autoplay: Boolean) {
-        statsd!!.incrementCounter("connections.voice.rate.active", "node:${nodeName}", "player_region:${region}", "autoplay:${autoplay}")
+    fun markActiveVoiceConnection(nodeName: String, region: String, autoplay: Boolean, radio: Boolean) {
+        statsd!!.incrementCounter("connections.voice.rate.active", "node:${nodeName}", "player_region:${region}", "autoplay:${autoplay}", "radio:${radio}")
     }
 
     fun markIdleVoiceConnection(nodeName: String, region: String) {
@@ -192,13 +192,16 @@ class MetricsManager private constructor() {
         statsd!!.recordGaugeValue("connections.voice.idle", count, "node:${nodeName}", "node_region:$nodeRegion")
     }
 
-
     fun updateUsersInVoice(count: Int) {
         statsd!!.recordGaugeValue("connections.voice.users", count.toLong())
     }
 
     fun updateQueuedTracks(count: Int) {
         statsd!!.recordGaugeValue("connections.voice.tracks", count.toLong())
+    }
+
+    fun updateRadioPlayers(count: Int) {
+        statsd!!.recordGaugeValue("voice.radio.active", count.toLong())
     }
 
     fun markOauthGenerated(success: Boolean) {
@@ -269,6 +272,10 @@ class MetricsManager private constructor() {
 
     fun markBigBadException(exception: Exception, location: String) {
         statsd!!.incrementCounter("bigbad.exception", "message:${exception.message}", "location:${location}")
+    }
+
+    fun markRadioError(msg: String) {
+        statsd!!.incrementCounter("voice.radio.error", "message:${msg}")
     }
 
     fun markButtonInteraction(action: String) {

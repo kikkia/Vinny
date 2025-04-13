@@ -2,6 +2,7 @@ package com.bot.commands.slash.voice
 
 import com.bot.commands.slash.ExtSlashCommandEvent
 import com.bot.db.PlaylistDAO
+import com.bot.voice.BaseAudioTrack
 import com.bot.voice.QueuedAudioTrack
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
@@ -27,7 +28,7 @@ class SavePlaylistSlashCommand: VoiceSlashCommand() {
 
         val tracks = conn.getQueuedTracks()
         val nowPlaying = conn.nowPlaying()
-        val trackList: MutableList<QueuedAudioTrack> = LinkedList()
+        val trackList: MutableList<BaseAudioTrack> = LinkedList()
 
         if (nowPlaying == null) {
             command.replyWarningTranslated("VOICE_NO_PLAYING_TRACK")

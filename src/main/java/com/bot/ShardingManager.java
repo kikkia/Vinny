@@ -133,6 +133,7 @@ public class ShardingManager {
                     new LoginDeviceCommand(),
                     new LogoutDeviceCommand(),
                     new RefreshTokenCommand(),
+                    new LofiCommand(),
                     //new SpeedCommand(),
 
                     // Battle Royale
@@ -229,7 +230,8 @@ public class ShardingManager {
                 new SetPixivSessionCommand(),
                 new ThreadDumpCommand(),
                 new ManualUpsertCommand(),
-                new ForceDefaultSearchCommand());
+                new ForceDefaultSearchCommand(),
+                new TestLofiCommand());
 
         commandClientBuilder.addSlashCommands(new SubscribeCommand(),
                 new SubscriptionsSlashCommand(waiter),
@@ -253,7 +255,8 @@ public class ShardingManager {
                 new VolumeSlashCommand(),
                 new MoveTrackSlashCommand(),
                 new PlayNextSlashCommand(),
-                new ListTracksSlashCommand(waiter));
+                new ListTracksSlashCommand(waiter),
+                new LofiSlashCommand());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");

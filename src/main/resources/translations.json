@@ -1,4 +1,25 @@
 {
+  "TEMPLATE": {
+    "en-US": "",
+    "id": "",
+    "da": "",
+    "de": "",
+    "es-ES": "",
+    "fr": "",
+    "it": "",
+    "nl": "",
+    "hu": "",
+    "no": "",
+    "pl": "",
+    "pt-BR": "",
+    "ro": "",
+    "fi": "",
+    "sv-SE": "",
+    "tr": "",
+    "ru": "",
+    "ja": "",
+    "ko": ""
+  },
   "REMOVE_SUBSCRIPTION_SUCCESS": {
     "en-US": "The subscription has been removed.",
     "id": "Langganan telah dihapus.",
@@ -1510,5 +1531,26 @@
     "ru": "Вы не можете ввести отрицательное число.",
     "ja": "負の数を入力することはできません。",
     "ko": "음수를 입력할 수 없습니다."
+  },
+  "VOICE_RADIO_CHANGED": {
+    "en-US": "Changed to a new radio station",
+    "id": "Beralih ke stasiun radio baru",
+    "da": "Skiftet til en ny radiostation",
+    "de": "Zu einem neuen Radiosender gewechselt",
+    "es-ES": "Cambiado a una nueva emisora de radio",
+    "fr": "Passage à une nouvelle station de radio",
+    "it": "Passato a una nuova stazione radio",
+    "nl": "Overgeschakeld naar een nieuwe radiozender",
+    "hu": "Átváltott egy új rádióállomásra",
+    "no": "Byttet til en ny radiostasjon",
+    "pl": "Przełączono na nową stację radiową",
+    "pt-BR": "Alterado para uma nova estação de rádio",
+    "ro": "Schimbat la un nou post de radio",
+    "fi": "Vaihdettu uudelle radioasemalle",
+    "sv-SE": "Bytt till en ny radiostation",
+    "tr": "Yeni bir radyo istasyonuna geçildi",
+    "ru": "Переключено на новую радиостанцию",
+    "ja": "新しいラジオ局に切り替えました",
+    "ko": "새로운 라디오 방송국으로 변경되었습니다"
   }
 }

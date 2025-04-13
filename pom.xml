@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <kotlin.version>2.0.21</kotlin.version>
+        <kotlin.version>1.9.20</kotlin.version>
     </properties>
 
     <build>
@@ -279,6 +279,12 @@
             <groupId>com.faendir.jraw</groupId>
             <artifactId>lib</artifactId>
             <version>1.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jetbrains.kotlinx</groupId>
+                    <artifactId>kotlinx-coroutines-core-jvm</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>net.sf.trove4j</groupId>
@@ -340,6 +346,11 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-core</artifactId>
+            <version>1.7.3</version>
         </dependency>
         <dependency>
             <groupId>com.datadoghq</groupId>

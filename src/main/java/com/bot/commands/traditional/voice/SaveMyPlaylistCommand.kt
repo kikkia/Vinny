@@ -3,6 +3,7 @@ package com.bot.commands.traditional.voice
 import com.bot.Bot
 import com.bot.commands.traditional.VoiceCommand
 import com.bot.db.PlaylistDAO
+import com.bot.voice.BaseAudioTrack
 import com.bot.voice.QueuedAudioTrack
 import com.jagrosh.jdautilities.command.CommandEvent
 import datadog.trace.api.Trace
@@ -29,7 +30,7 @@ class SaveMyPlaylistCommand(private val bot: Bot) : VoiceCommand() {
 
         val tracks = conn.getQueuedTracks()
         val nowPlaying = conn.nowPlaying()
-        val trackList: MutableList<QueuedAudioTrack> = LinkedList()
+        val trackList: MutableList<BaseAudioTrack> = LinkedList()
 
         if (nowPlaying == null) {
             commandEvent.replyWarning("I am not playing any tracks.")

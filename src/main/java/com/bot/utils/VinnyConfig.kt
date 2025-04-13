@@ -70,6 +70,9 @@ data class VoiceConfig(val nodes: List<LavalinkNode>?,
                        val autoplayUser: String?,
                        val autoplayPass: String?,
                        val providerIgnore: String?,
+                       val radioProviderUrl: String,
+                       val radioStationUrl: String,
+                       val radioTrackUrl: String,
                        val oauthConfig: OauthProperties,
                        val errorWebhook: String?)
 

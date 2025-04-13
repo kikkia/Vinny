@@ -82,6 +82,7 @@ class MetricsReporter : Runnable {
         var queuedTracks = 0
         var countWithoutOauth = 0
         var countConnected = 0
+        var radioPlayers = 0
         val lavaLinkClient = LavaLinkClient.getInstance()
         val disconnectedSessions = HashSet<Long>()
         for (conn in voiceConnections) {
@@ -94,7 +95,7 @@ class MetricsReporter : Runnable {
                 usersInVoice += conn.guild.selfMember.voiceState!!.channel!!.members.size - 1
                 queuedTracks += (1 + conn.getQueuedTracks().size)
                 metricsManager.markConnectionAge(conn.getAge(), link.node.name)
-                metricsManager.markActiveVoiceConnection(link.node.name, conn.region?.name ?: "unknown", conn.autoplay)
+                metricsManager.markActiveVoiceConnection(link.node.name, conn.region?.name ?: "unknown", conn.autoplay, conn.isRadio())
             } else {
                 metricsManager.markIdleVoiceConnection(link.node.name, conn.region?.name ?: "unknown")
             }
@@ -105,6 +106,9 @@ class MetricsReporter : Runnable {
                 countConnected++
             } else {
                 disconnectedSessions.add(conn.guild.idLong)
+            }
+            if (conn.isRadio()) {
+                radioPlayers++
             }
         }
 
@@ -129,6 +133,7 @@ class MetricsReporter : Runnable {
         metricsManager.updateTotalOuathUsers(healthyOauth + unhealthyOauth)
         metricsManager.updateTotalHealthyOuathUsers(healthyOauth)
         metricsManager.updateTotalUnhealthyOuathUsers(unhealthyOauth)
+        metricsManager.updateRadioPlayers(radioPlayers)
 
         for (node in lavaLinkClient.nodeHealth.entries) {
             metricsManager.markLLNodeHealth(node.key, node.value.getHealth().metricId)
