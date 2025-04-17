@@ -58,7 +58,7 @@ data class ShardingConfig(val total: Int,
                           val localEnd: Int)
 
 data class VoiceConfig(val nodes: List<LavalinkNode>?,
-                       val defaultSearchProvider: String = "custsearch:",
+                       val defaultSearchProvider: String = "ripsearch:",
                        val loginSearchProvider: String,
                        val loginReqRegex: String,
                        var forceDefaultSearch: Boolean = false,

@@ -53,7 +53,7 @@ class PlaySlashCommand: VoiceSlashCommand() {
         val choices: List<Choice>?
 
         if (event!!.focusedOption.name == "search-provider") {
-            choices = listOf(Choice("Music", "custsearch:"),
+            choices = listOf(Choice("Music", "ripsearch:"),
                 Choice("Youtube", "ytsearch:"),
                 Choice("Soundcloud", "scsearch:"))
             event.replyChoices(choices).queue()
