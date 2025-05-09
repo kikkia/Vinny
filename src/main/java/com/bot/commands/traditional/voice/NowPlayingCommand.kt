@@ -24,26 +24,7 @@ class NowPlayingCommand : VoiceCommand() {
             if (nowPlaying == null) {
                 commandEvent.replyWarning("I am not currently playing any tracks.")
             } else {
-                val currentTrackTime = voiceConnection.getPosition()?.let { FormattingUtils.msToMinSec(it) }
-                val totalDuration = FormattingUtils.msToMinSec(nowPlaying.track.info.length)
-                val track = nowPlaying.track
-                val embedBuilder = EmbedBuilder()
-                embedBuilder.setAuthor(track.info.author)
-                embedBuilder.setDescription("[" + track.info.title + "](" + track.info.uri + ")")
-                embedBuilder.addField("Time", "$currentTrackTime / $totalDuration", false)
-                embedBuilder.addField("Stream", track.info.isStream.toString(), false)
-                embedBuilder.addField("Volume", voiceConnection.getVolume().toString(), false)
-                embedBuilder.addField("Repeat Mode", voiceConnection.getRepeatMode().ezName, false)
-                embedBuilder.addField("Server Location", voiceConnection.lavalink.getLink(voiceConnection.guild.idLong).node.name, false)
-
-                // If youtube, get the thumbnail
-                if (track.info.uri!!.contains("www.youtube.com")) {
-                    val videoID = track.info.uri!!.split("=".toRegex()).dropLastWhile { it.isEmpty() }
-                        .toTypedArray()[1]
-                    embedBuilder.setThumbnail("https://img.youtube.com/vi/$videoID/0.jpg")
-                }
-                embedBuilder.setColor(FormattingUtils.getColorForTrack(track.info.uri))
-                commandEvent.reply(embedBuilder.build())
+                commandEvent.reply(FormattingUtils.getAudioTrackEmbed(nowPlaying, voiceConnection.getVolume(), voiceConnection.getRepeatMode(), voiceConnection.autoplay, voiceConnection.getNodeName()))
             }
         }
     }
