@@ -257,7 +257,8 @@ public class ShardingManager {
                 new MoveTrackSlashCommand(),
                 new PlayNextSlashCommand(),
                 new ListTracksSlashCommand(waiter),
-                new LofiSlashCommand());
+                new LofiSlashCommand(),
+                new DeletePlaylistSlashCommand());
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
