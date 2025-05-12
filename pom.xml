@@ -370,7 +370,7 @@
         <dependency>
             <groupId>dev.arbjerg</groupId>
             <artifactId>lavalink-client</artifactId>
-            <version>492c23a61d815c60837972b0fa488dd9bdd7ce1f-SNAPSHOT</version>
+            <version>9664a0555802cceb3fe1bf9ce99e4dc15292b71d-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>
