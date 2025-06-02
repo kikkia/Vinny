@@ -368,7 +368,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun isConnected(): Boolean {
-        return getLink().state == LinkState.CONNECTED
+        return getLink().state == LinkState.CONNECTED && guild.selfMember.voiceState != null
     }
 
     fun clearQueue() {
