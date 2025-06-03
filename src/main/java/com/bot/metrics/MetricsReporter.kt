@@ -12,6 +12,7 @@ import com.bot.utils.Logger
 import com.bot.voice.GuildVoiceProvider
 import com.bot.voice.LavaLinkClient
 import net.dv8tion.jda.api.entities.Activity
+import java.lang.Exception
 
 /**
  * Thread that just reports some less active stats every 5 seconds
