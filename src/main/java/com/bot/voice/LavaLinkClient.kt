@@ -74,6 +74,22 @@ class LavaLinkClient private constructor() {
                 metricsManager!!.markBigBadException(e, "LL.TrackExceptionHandler")
             }
         }
+
+        client.on(WebSocketClosedEvent::class.java).subscribe {
+            metricsManager!!.markWebsocketClose(it.code)
+            if (it.code == 4006) {
+                var conn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(it.guildId);
+
+                try {
+                    conn?.jdaReconnect()
+                } catch (e: Exception) {
+                    conn!!.sendMessageToChannel("Something went really wrong, please contact Kikkia on the support server and include this: `${e.message}`.\nPlease try to load voice again :(")
+                    conn.cleanupPlayer()
+                    e.printStackTrace()
+                }
+            }
+        }
+
         guildClients = ConcurrentHashMap()
     }
 

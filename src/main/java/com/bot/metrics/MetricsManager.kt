@@ -5,7 +5,6 @@ import com.bot.models.enums.R34Provider
 import com.bot.utils.Logger
 import com.bot.utils.VinnyConfig
 import com.jagrosh.jdautilities.command.Command
-import com.jagrosh.jdautilities.command.SlashCommand
 import com.timgroup.statsd.NonBlockingStatsDClientBuilder
 import com.timgroup.statsd.StatsDClient
 import dev.arbjerg.lavalink.client.event.TrackEndEvent
@@ -16,7 +15,6 @@ import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.Exception
 
 class MetricsManager private constructor() {
     // TODO: Health checks
@@ -270,8 +268,12 @@ class MetricsManager private constructor() {
         statsd!!.incrementCounter("voice.track.maynotstart", "message:${trackEndEvent.endReason}", "node:${nodeName}", "track:${trackEndEvent.track.info.uri}")
     }
 
-    fun markBigBadException(exception: Exception, location: String) {
+    fun markBigBadException(exception: kotlin.Exception, location: String) {
         statsd!!.incrementCounter("bigbad.exception", "message:${exception.message}", "location:${location}")
+    }
+
+    fun markWebsocketClose(code: Int) {
+        statsd!!.incrementCounter("voice.socket.close", "code:${code}")
     }
 
     fun markRadioError(msg: String) {

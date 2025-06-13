@@ -662,6 +662,10 @@ class GuildVoiceConnection(val guild: Guild) {
         return getLink().node.name
     }
 
+    fun jdaReconnect() {
+        guild.jda.directAudioController.reconnect(guild.selfMember.voiceState!!.channel!!.asVoiceChannel())
+    }
+
     fun reconnect() {
         val pos = getPosition()?: 0
         val nowPlaying = nowPlaying()
