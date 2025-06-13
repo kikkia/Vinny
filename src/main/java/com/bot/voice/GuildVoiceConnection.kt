@@ -355,7 +355,7 @@ class GuildVoiceConnection(val guild: Guild) {
         try {
             val link = getLink()
             link.destroy().block()
-        } catch (e: RestException) {
+        } catch (e: Exception) {
             // Likely session not found on LL, so skip and continue cleanup
         }
         guild.jda.directAudioController.disconnect(guild)

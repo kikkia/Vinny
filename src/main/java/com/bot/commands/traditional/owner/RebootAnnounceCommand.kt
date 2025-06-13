@@ -5,6 +5,7 @@ import com.bot.db.ResumeAudioDAO
 import com.bot.db.mappers.ResumeAudioTrackMapper
 import com.bot.voice.GuildVoiceProvider
 import com.jagrosh.jdautilities.command.CommandEvent
+import java.lang.Exception
 
 class RebootAnnounceCommand : OwnerCommand() {
     private val resumeAudioDAO = ResumeAudioDAO.getInstance()
