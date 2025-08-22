@@ -47,7 +47,7 @@ class RunScheduledCommandsDeferredTask : Runnable {
                     }
                 } catch (e: Exception) {
                     MDC.put("commandId", "" + sCommand.id)
-                    logger.warning("Failed to run scheduled command.", e)
+                    logger.warning("Failed to run scheduled command: " + sCommand.id, e)
                     scheduledCommandDAO.recordFailure(sCommand, e.toString())
                     failedCount++
                     MDC.clear()
