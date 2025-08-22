@@ -102,7 +102,7 @@ public class Cache<V> {
             removeEntity(deleteKey);
         }
 
-        LOGGER.info(name + " Cache cleanup complete. Removed " + deleteKeys.size() + " stale objects. " + name);
+        // LOGGER.info(name + " Cache cleanup complete. Removed " + deleteKeys.size() + " stale objects. " + name);
     }
 
     protected void removeEntity(String key) {
