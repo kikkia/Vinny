@@ -95,7 +95,9 @@ data class ThirdPartyConfig(val p90Token: String?,
                             val sauceToken: String?,
                             val datadogHostname: String?,
                             val redditClientId: String?,
-                            val redditClientToken: String?)
+                            val redditClientToken: String?,
+                            val r34ApiKey: String?,
+                            val r34UserId: String?)
 
 data class CachingConfig(val enabled: Boolean,
     val pixivEnabled: Boolean?,

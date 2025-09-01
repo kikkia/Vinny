@@ -24,11 +24,12 @@ class R34Utils {
         val cache = R34Cache.getInstance()
         val metricsManager = MetricsManager.instance
         val logger = Logger(this.javaClass.getSimpleName())
+        val xxApiKey = VinnyConfig.instance().thirdPartyConfig?.r34ApiKey
+        val xxUserId = VinnyConfig.instance().thirdPartyConfig?.r34UserId
 
 
         fun getPostForSearch(query: String) : String {
             var imageUrls: MutableList<String>? = cache.get(query)
-            val selected: String
             try {
                 if (imageUrls == null) {
                     imageUrls = ArrayList()
@@ -134,7 +135,7 @@ class R34Utils {
         }
 
         private fun getXXUrl(query: String): String {
-            return "http://api.rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=$query"
+            return "http://api.rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=$query&api_key=${xxApiKey}&user_id=${xxUserId}"
         }
 
         private fun getBooruUrl(query: String): String {

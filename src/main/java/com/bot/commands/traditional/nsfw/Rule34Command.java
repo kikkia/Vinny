@@ -9,6 +9,7 @@ import com.bot.exceptions.ScheduledCommandFailedException;
 import com.bot.models.enums.R34Provider;
 import com.bot.utils.ScheduledCommandUtils;
 import com.bot.utils.TheGreatCCPFilter;
+import com.bot.utils.VinnyConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -32,6 +33,8 @@ import java.util.stream.Collectors;
 public class Rule34Command extends NSFWCommand {
     private final Random random;
     private final R34Cache cache;
+    private String xxKey;
+    private String xxUser;
 
     public Rule34Command() {
         this.name = "r34";
@@ -41,6 +44,8 @@ public class Rule34Command extends NSFWCommand {
 
         this.random = new Random(System.currentTimeMillis());
         this.cache = R34Cache.getInstance();
+        this.xxKey = VinnyConfig.Companion.instance().getThirdPartyConfig().getR34ApiKey();
+        this.xxUser = VinnyConfig.Companion.instance().getThirdPartyConfig().getR34UserId();
     }
 
     @Override
@@ -53,7 +58,7 @@ public class Rule34Command extends NSFWCommand {
         }
 
         String args = commandEvent.getArgs().replaceAll(" ", "+");
-        String r34url = "http://api.rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&tags=" + args;
+        String r34url = "http://api.rule34.xxx/index.php?page=dapi&s=post&q=index&limit=200&api_key=" + xxKey + "&user_id=" + xxUser +  "&tags=" + args;
         String booruUrl = "https://yande.re/post.xml?limit=200&tags=" + args;
         String pahealUrl = "https://rule34.paheal.net/rss/images/" + commandEvent.getArgs().replaceAll(" ", "%20") + "/1";
         List<String> imageUrls = cache.get(args);
