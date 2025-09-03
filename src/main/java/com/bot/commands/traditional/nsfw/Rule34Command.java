@@ -143,8 +143,12 @@ public class Rule34Command extends NSFWCommand {
             List<String> possibleLinks = new ArrayList<>();
 
             while (matcher.find()) {
-                // Add the second group of regex
-                possibleLinks.add(matcher.group(2));
+                // Look for mp4 and change subdomain to allow for embedding
+                String link = matcher.group(2);
+                if (link.contains(".mp4") && link.contains("api-cdn.rule34.xxx")) {
+                    link = link.replace("api-cdn.rule", "api-cdn-mp4.rule");
+                }
+                possibleLinks.add(link);
             }
 
             // Some URLs contain post tags, scan URLs for things banned on discord
