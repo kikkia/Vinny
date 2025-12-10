@@ -38,7 +38,7 @@ class LLLRadioHandler(private val guildVoiceConnection: GuildVoiceConnection, pr
     }
 
     override fun loadFailed(result: LoadFailed) {
-        MetricsManager.instance!!.markTrackLoadFailed(result.exception.message)
+        MetricsManager.instance!!.markTrackLoadFailed(result.exception.message + ":" + result.exception.cause)
         guildVoiceConnection.sendMessageToChannel("Failed to load radio, sorry.")
         guildVoiceConnection.stopRadio()
     }

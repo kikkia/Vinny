@@ -77,6 +77,7 @@ class LavaLinkClient private constructor() {
 
         client.on(WebSocketClosedEvent::class.java).subscribe {
             metricsManager!!.markWebsocketClose(it.code)
+            logger.info("SOCKET: ${it.code}")
             if (it.code == 4006) {
                 var conn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(it.guildId);
 

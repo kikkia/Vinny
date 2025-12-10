@@ -77,7 +77,7 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
     }
 
     override fun loadFailed(result: LoadFailed) {
-        MetricsManager.instance!!.markTrackLoadFailed(result.exception.message)
+        MetricsManager.instance!!.markTrackLoadFailed(result.exception.message + ":" + result.exception.cause)
         event.replyError("Failed to load track! The track or playlist may be private. If this keeps happening, you can try `~refresh` or " +
                 "`~login` again. Those can help." + result.exception.message)
     }

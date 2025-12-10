@@ -40,7 +40,7 @@ class ResumeLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection
 
     override fun loadFailed(result: LoadFailed) {
         //event.replyWarning("Track, ${tracks[index]} failed to load, but continuing to load tracks.")
-        MetricsManager.instance!!.markTrackLoadFailed(result.exception.message)
+        MetricsManager.instance!!.markTrackLoadFailed(result.exception.message + ":" + result.exception.cause)
         guildVoiceConnection.queueResumeTrack(null, loadingMessage, resumeSetup, index, failedCount+1)
     }
 }
