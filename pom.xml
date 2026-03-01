@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <kotlin.version>1.9.20</kotlin.version>
+        <kotlin.version>2.3.0</kotlin.version>
     </properties>
 
     <build>
@@ -370,7 +370,7 @@
         <dependency>
             <groupId>dev.arbjerg</groupId>
             <artifactId>lavalink-client</artifactId>
-            <version>9664a0555802cceb3fe1bf9ce99e4dc15292b71d-SNAPSHOT</version>
+            <version>3.4.0</version>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>
