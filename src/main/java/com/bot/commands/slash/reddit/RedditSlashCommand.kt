@@ -12,12 +12,13 @@ import net.dean.jraw.NoSuchSubredditException
 import net.dean.jraw.http.NetworkException
 import net.dean.jraw.models.SubredditSort
 import net.dean.jraw.models.TimePeriod
+import net.dv8tion.jda.api.components.actionrow.ActionRow
+import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
-import net.dv8tion.jda.api.interactions.components.buttons.Button
 
 class RedditSlashCommand : BaseSlashCommand() {
 
@@ -73,7 +74,7 @@ class RedditSlashCommand : BaseSlashCommand() {
 
             val refreshButton = Button.primary("refresh-reddit-${input}-${sort.name}-${period.name}", Emoji.fromUnicode("\uD83D\uDD04"))
 
-            command.replyWithActionBar(post, mutableListOf(refreshButton))
+            command.replyWithActionBar(post, ActionRow.of(refreshButton))
         } catch (e: NullPointerException) {
             // Subreddit not found
             command.replyWarningTranslated("SUBREDDIT_NOT_FOUND")

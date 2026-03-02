@@ -53,6 +53,7 @@ public class AliasUtils {
                 message.getMessageSnapshots(),
                 0,
                 message.getInteraction(),
+                message.getInteractionMetadata(),
                 message.getStartedThread(),
                 0);
     }

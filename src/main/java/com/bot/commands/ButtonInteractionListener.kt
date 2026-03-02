@@ -26,7 +26,7 @@ class ButtonInteractionListener: ListenerAdapter() {
     override fun onButtonInteraction(event: ButtonInteractionEvent) {
         // Button Ids are used to encode metadata about how it should be handled, action-first approach
         // Example: refresh-reddit-memes-hot-week
-        val parsedId = event.button.id!!.split("-")
+        val parsedId = event.button.customId!!.split("-")
         val action = parsedId.first()
         metricsManager!!.markButtonInteraction("${parsedId[0]}-${parsedId[1]}")
 
@@ -41,7 +41,7 @@ class ButtonInteractionListener: ListenerAdapter() {
     }
 
     private fun handleVoiceControl(event: ButtonInteractionEvent) {
-        val action = event.button.id!!.split("-")[1]
+        val action = event.button.customId!!.split("-")[1]
 
         // Do all the checks needed to verify voice is active and controllable by user
         try {
@@ -68,7 +68,7 @@ class ButtonInteractionListener: ListenerAdapter() {
     }
 
     private fun handleRefreshButton(event: ButtonInteractionEvent) {
-        val platform = event.button.id!!.split("-")[1]
+        val platform = event.button.customId!!.split("-")[1]
         when (platform) {
             "reddit" -> handleRedditRefresh(event)
             "r34" -> handleR34Refresh(event)
@@ -77,13 +77,13 @@ class ButtonInteractionListener: ListenerAdapter() {
     }
 
     private fun handleR34Refresh(event: ButtonInteractionEvent) {
-        val search = event.button.id!!.split("-")[2]
+        val search = event.button.customId!!.split("-")[2]
         event.editMessage(R34Utils.getPostForSearch(search)).queue()
     }
 
     // Refreshes the post in the message
     private fun handleRedditRefresh(event: ButtonInteractionEvent) {
-        val metadata = event.button.id!!.split("-")
+        val metadata = event.button.customId!!.split("-")
         val subreddit = metadata[2]
         val sort = metadata[3]
         val period = metadata[4]
@@ -101,7 +101,7 @@ class ButtonInteractionListener: ListenerAdapter() {
     }
 
     private fun handleE621Refresh(event: ButtonInteractionEvent) {
-        val search = event.button.id!!.split("-")[2]
+        val search = event.button.customId!!.split("-")[2]
         val posts = E621Service.getInstance().getPostsForSearch(search)
         event.editMessage(posts[Random.nextInt(0, posts.size)]).queue()
     }

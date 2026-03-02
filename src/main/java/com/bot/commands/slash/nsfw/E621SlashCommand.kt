@@ -3,12 +3,13 @@ package com.bot.commands.slash.nsfw
 import com.bot.commands.slash.ExtSlashCommandEvent
 import com.bot.service.E621Service
 import com.bot.utils.TheGreatCCPFilter.Companion.containsNoNoTags
+import net.dv8tion.jda.api.components.actionrow.ActionRow
+import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.Command.Choice
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
-import net.dv8tion.jda.api.interactions.components.buttons.Button
 import kotlin.random.Random
 
 class E621SlashCommand: NsfwSlashCommand() {
@@ -41,7 +42,7 @@ class E621SlashCommand: NsfwSlashCommand() {
         val selected = images[Random.nextInt(images.size - 1)]
         val refreshButtonId = "refresh-e621-$search"
         val refresh = Button.primary(refreshButtonId, Emoji.fromUnicode("\uD83D\uDD04"))
-        command.replyWithActionBar(selected, mutableListOf(refresh))
+        command.replyWithActionBar(selected, ActionRow.of(mutableListOf(refresh)))
     }
 
     private val sortOptions = listOf(

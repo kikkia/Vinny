@@ -11,8 +11,9 @@ import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
 import net.dean.jraw.pagination.DefaultPaginator;
 import net.dean.jraw.references.SubredditReference;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.List;
 import java.util.Random;
@@ -159,7 +160,7 @@ public class RedditHelper {
         assert submission != null;
         String url = submission.getUrl().contains("redgifs") ? "https://vinny-fxreddit.kikkia.workers.dev/" + submission.getId() :
                 "https://rxddit.com/" + submission.getId();
-        commandEvent.getChannel().sendMessage(url).addActionRow(refreshButton).queue();
+        commandEvent.getChannel().sendMessage(url).addComponents(ActionRow.of(refreshButton)).queue();
     }
 
     private static Submission getRandomSubmission(Listing<Submission> submissions, boolean stickyAllowed) {

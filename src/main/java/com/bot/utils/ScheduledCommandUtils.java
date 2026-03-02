@@ -66,6 +66,7 @@ public class ScheduledCommandUtils {
                 0,
                 null,
                 null,
+                null,
                 0);
     }
 

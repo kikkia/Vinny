@@ -2,7 +2,8 @@ package com.bot.commands.slash.voice
 
 import com.bot.commands.slash.ExtSlashCommandEvent
 import com.bot.db.PlaylistDAO
-import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
+import net.dv8tion.jda.api.components.actionrow.ActionRow
+import net.dv8tion.jda.api.components.selections.StringSelectMenu
 
 class LoadPlaylistSlashCommand: VoiceSlashCommand() {
     
@@ -30,6 +31,6 @@ class LoadPlaylistSlashCommand: VoiceSlashCommand() {
 
             selectBuilder.addOption(p.name!!, p.id.toString(), desc)
         }
-        command.replyTranslatedWithActionBar("CHOOSE_PLAYLIST", mutableListOf(selectBuilder.build()), true)
+        command.replyTranslatedWithActionBar("CHOOSE_PLAYLIST", ActionRow.of(selectBuilder.build()), true)
     }
 }

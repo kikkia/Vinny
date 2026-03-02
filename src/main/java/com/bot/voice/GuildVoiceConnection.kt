@@ -21,14 +21,13 @@ import dev.arbjerg.lavalink.client.event.TrackEndEvent
 import dev.arbjerg.lavalink.client.event.TrackExceptionEvent
 import dev.arbjerg.lavalink.client.loadbalancing.VoiceRegion
 import dev.arbjerg.lavalink.client.player.Track
-import dev.arbjerg.lavalink.internal.error.RestException
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.components.actionrow.ActionRow
+import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
-import net.dv8tion.jda.api.interactions.components.ItemComponent
-import net.dv8tion.jda.api.interactions.components.buttons.Button
 import org.apache.log4j.Logger
 import reactor.kotlin.core.publisher.toMono
 import java.time.Instant
@@ -616,21 +615,21 @@ class GuildVoiceConnection(val guild: Guild) {
             val embed = FormattingUtils.getAudioTrackEmbed(trackProvider.getNowPlaying(), volume, trackProvider.getRepeateMode(), autoplay, getNodeName())
 
             if (lastMessage.author.id == lastTextChannel!!.jda.selfUser.id && lastMessage.embeds.isNotEmpty()) {
-                lastMessage.editMessageEmbeds(embed).setActionRow(actionBar()).setContent(msg).queue { this.nowPlayingMessage = it }
+                lastMessage.editMessageEmbeds(embed).setComponents(actionBar()).setContent(msg).queue { this.nowPlayingMessage = it }
             } else {
                 // Delete our last playing message and put a new one at the bottom
                 if (this.nowPlayingMessage != null) {
                     this.nowPlayingMessage!!.delete().queue({}, { println(it) })
                 }
                 lastTextChannel!!.sendMessageEmbeds(embed)
-                    .addActionRow(actionBar())
+                    .addComponents(actionBar())
                     .addContent(msg)
                     .queue { this.nowPlayingMessage = it }
             }
         }
     }
 
-    private fun actionBar() : MutableCollection<ItemComponent> {
+    private fun actionBar() : ActionRow {
         // Paused state shows play button and vice versa
         val playPauseButton = if (isPaused) Button.success("voicecontrol-playpause", ConstantEmojis.playEmoji)
             else Button.secondary("voicecontrol-playpause", ConstantEmojis.pauseEmoji)
@@ -647,7 +646,7 @@ class GuildVoiceConnection(val guild: Guild) {
         val shuffleButton = Button.primary("voicecontrol-shuffle", ConstantEmojis.shuffleEmoji)
         items.add(shuffleButton)
 
-        return items.toMutableList()
+        return ActionRow.of(items.toMutableList())
     }
 
     fun getCurrentVoiceChannel() : VoiceChannel? {

@@ -5,7 +5,8 @@ import com.jagrosh.jdautilities.command.CommandClient
 import com.jagrosh.jdautilities.command.SlashCommandEvent
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import net.dv8tion.jda.api.interactions.components.ItemComponent
+import net.dv8tion.jda.api.components.MessageTopLevelComponent
+import net.dv8tion.jda.api.components.actionrow.ActionRow
 
 class ExtSlashCommandEvent(
     event: SlashCommandInteractionEvent,
@@ -37,17 +38,17 @@ class ExtSlashCommandEvent(
         replyMessage(errorEmoji, msg)
     }
 
-    fun replyWithActionBar(reply: String, actionBar: MutableCollection<ItemComponent>) {
-        this.hook.sendMessage(reply).addActionRow(actionBar).queue()
+    fun replyWithActionBar(reply: String, actionBar: ActionRow) {
+        this.hook.sendMessage(reply).setComponents(actionBar).queue()
     }
 
     fun replyToCommand(reply: String): Message {
         return this.hook.sendMessage(reply).complete()
     }
     
-    fun replyTranslatedWithActionBar(outputId: String, actionBar: MutableCollection<ItemComponent>, ephemeral: Boolean = false) {
+    fun replyTranslatedWithActionBar(outputId: String, actionBar: ActionRow, ephemeral: Boolean = false) {
         this.hook.sendMessage(translator.translate(outputId, this.userLocale.locale))
-            .setActionRow(actionBar)
+            .addComponents(actionBar)
             .setEphemeral(ephemeral)
             .queue()
     }

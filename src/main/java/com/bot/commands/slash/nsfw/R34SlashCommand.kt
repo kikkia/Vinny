@@ -3,12 +3,13 @@ package com.bot.commands.slash.nsfw
 import com.bot.commands.slash.ExtSlashCommandEvent
 import com.bot.utils.R34Utils
 import com.bot.utils.TheGreatCCPFilter.Companion.containsNoNoTags
+import net.dv8tion.jda.api.components.actionrow.ActionRow
+import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.Command.Choice
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
-import net.dv8tion.jda.api.interactions.components.buttons.Button
 
 class R34SlashCommand: NsfwSlashCommand() {
 
@@ -29,7 +30,7 @@ class R34SlashCommand: NsfwSlashCommand() {
             return
         }
         val refreshButton = Button.primary("refresh-r34-$search", Emoji.fromUnicode("\uD83D\uDD04"))
-        command.replyWithActionBar(R34Utils.getPostForSearch(search), mutableListOf(refreshButton))
+        command.replyWithActionBar(R34Utils.getPostForSearch(search), ActionRow.of(refreshButton))
     }
 
     override fun onAutoComplete(event: CommandAutoCompleteInteractionEvent?) {

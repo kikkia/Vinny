@@ -17,7 +17,7 @@ class SelectMenuInteractionHandler: ListenerAdapter() {
     // Since these menus are only created by direct commands and are one use we dont need to do so much metrics or other
     // similar stuff as in the button commands.
     override fun onStringSelectInteraction(event: StringSelectInteractionEvent) {
-        val parsedId = event.selectMenu.id!!.split("-")
+        val parsedId = event.selectMenu.customId.split("-")
         val action = parsedId.first()
 
         when (action) {
