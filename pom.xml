@@ -387,8 +387,9 @@
 
     <repositories>
         <repository>
-            <id>velocity</id>
-            <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -412,11 +413,6 @@
             <id>ll-snapshots</id>
             <name>Lavalink snapshots</name>
             <url>https://maven.lavalink.dev/snapshots</url>
-        </repository>
-        <repository>
-            <id>maven_central</id>
-            <name>Maven Central</name>
-            <url>https://repo.maven.apache.org/maven2/</url>
         </repository>
         <repository>
             <id>chew</id>
