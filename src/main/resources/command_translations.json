@@ -1010,6 +1010,22 @@
       "en-US": "Schedules a command to run automatically on a timer"
     }
   },
+  "unschedule": {
+    "name": {
+      "en-US": "unschedule"
+    },
+    "desc": {
+      "en-US": "Removes a scheduled command by id"
+    }
+  },
+  "scheduled": {
+    "name": {
+      "en-US": "scheduled"
+    },
+    "desc": {
+      "en-US": "Lists scheduled commands for you, a channel, or the server"
+    }
+  },
   "template": {
     "name": {
       "en-US": ""

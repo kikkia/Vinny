@@ -1621,5 +1621,20 @@
   },
   "SCHEDULE_SUCCESS": {
     "en-US": "The command `{0}` has been successfully scheduled in {1}. It will run every {2}."
+  },
+  "UNSCHEDULE_NOT_FOUND": {
+    "en-US": "I could not find a scheduled command with that id."
+  },
+  "UNSCHEDULE_DIFF_GUILD": {
+    "en-US": "You can only remove scheduled commands in the server you run this command in."
+  },
+  "UNSCHEDULE_PERMISSION": {
+    "en-US": "You cannot remove this scheduled command unless you created it or have the `Manage Channel` permission."
+  },
+  "UNSCHEDULE_SUCCESS": {
+    "en-US": "Successfully unscheduled `{0}` (ID `{1}`)."
+  },
+  "SCHEDULED_NONE_FOUND": {
+    "en-US": "I could not find any scheduled commands."
   }
 }

@@ -9,6 +9,8 @@ import com.bot.commands.slash.nsfw.E621SlashCommand;
 import com.bot.commands.slash.nsfw.R34SlashCommand;
 import com.bot.commands.slash.reddit.RedditSlashCommand;
 import com.bot.commands.slash.scheduled.ScheduleSlashCommand;
+import com.bot.commands.slash.scheduled.ScheduledSlashCommand;
+import com.bot.commands.slash.scheduled.UnscheduleSlashCommand;
 import com.bot.commands.slash.subscriptions.MySubscriptionsSlashCommand;
 import com.bot.commands.slash.subscriptions.SubscribeCommand;
 import com.bot.commands.slash.subscriptions.SubscriptionsSlashCommand;
@@ -262,7 +264,9 @@ public class ShardingManager {
                 new ListTracksSlashCommand(waiter),
                 new LofiSlashCommand(),
                 new DeletePlaylistSlashCommand(),
-                new ScheduleSlashCommand());
+                new ScheduleSlashCommand(),
+                new UnscheduleSlashCommand(),
+                new ScheduledSlashCommand(waiter));
 
         commandClientBuilder.setServerInvite("https://discord.gg/XMwyzxZ\nFull Command list with examples: " +
                 "https://github.com/kikkia/Vinny-Redux/blob/master/docs/Commands.md");
