@@ -1636,5 +1636,14 @@
   },
   "SCHEDULED_NONE_FOUND": {
     "en-US": "I could not find any scheduled commands."
+  },
+  "SUBSCRIPTION_YT_INVALID_URL": {
+    "en-US": "That link does not look right. Please provide a YouTube channel URL, @handle, or channel ID."
+  },
+  "SUBSCRIPTION_BOT_MISSING_PERMISSION": {
+    "en-US": "I need the `Manage Webhooks` and `Send Messages` permissions in {0} to create a subscription there."
+  },
+  "SUBSCRIPTION_INVALID_PLATFORM": {
+    "en-US": "Unsupported platform selected. Please choose one of the supported platforms from the list."
   }
 }

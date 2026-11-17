@@ -23,10 +23,11 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class HttpUtils {
@@ -38,9 +39,14 @@ public class HttpUtils {
     private static final String P90_BASE_URL = "https://p90.zone/";
     private static final String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 " +
             "(KHTML, like Gecko) Chrome/99.0.3538.77 Safari/537.36";
-    // Unauthed cookies to tag on request to allow site to parse request as if we are an unauthed browser.
-    // Exposing these tokens causes no risk as they are anonymous
-    private static final String YT_COMMENT_PICK_S = "PHPSESSID=em0nb7ven1rdgndgmg7oopr7ft";
+    private static final Pattern YT_CHANNEL_ID_PATTERN = Pattern.compile("^UC[A-Za-z0-9_-]{22}$");
+    private static final Pattern YT_CHANNEL_URL_PATTERN = Pattern.compile("https?://(?:www\\.|m\\.)?youtube\\.com/channel/(UC[A-Za-z0-9_-]{22})");
+    private static final Pattern YT_HANDLE_PATTERN = Pattern.compile("^@[A-Za-z0-9_.-]+$");
+    private static final Pattern[] YT_HTML_ID_PATTERNS = new Pattern[] {
+            Pattern.compile("<meta\\s+itemprop=\"identifier\"\\s+content=\"(UC[A-Za-z0-9_-]{22})\""),
+            Pattern.compile("<link\\s+rel=\"canonical\"\\s+href=\"https?://(?:www\\.)?youtube\\.com/channel/(UC[A-Za-z0-9_-]{22})\""),
+            Pattern.compile("\"(?:externalId|channelId|browseId)\"\\s*:\\s*\"(UC[A-Za-z0-9_-]{22})\"")
+    };
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HttpUtils.class);
 
     //  |****************************************************|
@@ -156,60 +162,68 @@ public class HttpUtils {
         return toSend;
     }
 
-    // TODO: Migrate to YT api like the rss feed
-    public static String getYoutubeIdForChannelUrl(String url) throws IOException, NoSuchResourceException, InvalidInputException {
-        boolean lookup = url.contains("https://www.youtube.com/c/");
-        String token = getYTChannelIdToken();
-        String uri = lookup ? buildYoutubeSearchUrl(url, token) : buildYoutubeLookupUri(url, token);
+    public static String getYoutubeIdForChannelUrl(String input) throws IOException, NoSuchResourceException, InvalidInputException {
+        if (input == null || input.trim().isEmpty()) {
+            throw new InvalidInputException("Not youtube url");
+        }
+
+        String trimmed = input.trim();
+        if (YT_CHANNEL_ID_PATTERN.matcher(trimmed).matches()) {
+            return trimmed;
+        }
+
+        String normalizedUrl = normalizeYoutubeUrl(trimmed);
+        Matcher directMatcher = YT_CHANNEL_URL_PATTERN.matcher(normalizedUrl);
+        if (directMatcher.find()) {
+            return directMatcher.group(1);
+        }
+
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet httpget = new HttpGet(uri);
-            httpget.addHeader("referer", "https://commentpicker.com/youtube-channel-id.php");
+            HttpGet httpget = new HttpGet(normalizedUrl);
             httpget.addHeader("User-Agent", USER_AGENT);
-            httpget.addHeader("Cookie", YT_COMMENT_PICK_S);
+            httpget.addHeader("Accept-Language", "en-US,en;q=0.9");
             HttpResponse response = client.execute(httpget);
-            String responseString = IOUtils.toString(response.getEntity().getContent());
-            try {
-                JSONObject jsonResponse = new JSONObject(responseString);
-                return lookup ? jsonResponse.getJSONArray("items").getJSONObject(0).getJSONObject("id").getString("channelId")
-                        : jsonResponse.getJSONArray("items").getJSONObject(0).getString("id");
-            } catch (JSONException e) {
-                logger.warning(responseString);
-                logger.severe("Failed to parse yt channel id", e);
+            int status = response.getStatusLine().getStatusCode();
+            if (status == 404) {
                 throw new NoSuchResourceException("Could not find that YT channel");
             }
+            if (status >= 400 || response.getEntity() == null) {
+                throw new IOException("Unexpected HTTP status " + status + " fetching YouTube channel");
+            }
+            String html = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            String channelId = extractYoutubeChannelIdFromHtml(html);
+            if (channelId == null) {
+                throw new NoSuchResourceException("Could not find that YT channel");
+            }
+            return channelId;
         }
     }
 
-    private static String getYTChannelIdToken() throws IOException {
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet httpget = new HttpGet("https://commentpicker.com/actions/token.php");
-            httpget.addHeader("referer", "https://commentpicker.com/youtube-channel-id.php");
-            httpget.addHeader("User-Agent", USER_AGENT);
-            httpget.addHeader("Cookie", YT_COMMENT_PICK_S);
-            HttpResponse response = client.execute(httpget);
-            return IOUtils.toString(response.getEntity().getContent());
+    public static String normalizeYoutubeUrl(String input) throws InvalidInputException {
+        String trimmed = input.trim();
+        if (YT_HANDLE_PATTERN.matcher(trimmed).matches()) {
+            return "https://www.youtube.com/" + trimmed;
         }
-    }
-
-    // With some channels we will need to search rather than direct lookup
-    private static String buildYoutubeSearchUrl(String channel, String token) throws InvalidInputException {
-        if (!channel.contains("https://www.youtube.com/")) {
+        String withScheme = (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+                ? trimmed
+                : "https://" + trimmed;
+        if (!withScheme.matches("^https?://(?:www\\.|m\\.)?youtube\\.com/.+$")) {
             throw new InvalidInputException("Not youtube url");
         }
-        return "https://commentpicker.com/actions/youtube-channel-id.php?url=https%3A%2F%2Fwww.googleapis.com%2Fyoutube" +
-                "%2Fv3%2Fsearch%3Fpart%3Did%2Csnippet%26type%3Dchannel%26q%3D" +
-                channel.split("/")[channel.split("/").length - 1] + "&token=" + token;
+        return withScheme;
     }
 
-    private static String buildYoutubeLookupUri(String channel, String token) throws InvalidInputException {
-        if (!channel.contains("https://www.youtube.com/")) {
-            throw new InvalidInputException("Not youtube url");
+    public static String extractYoutubeChannelIdFromHtml(String html) {
+        if (html == null || html.isEmpty()) {
+            return null;
         }
-        String lookupUri = "https://commentpicker.com/actions/youtube-channel-id.php?url=https%3A%2F%2Fwww.googleapis.com" +
-                "%2Fyoutube%2Fv3%2Fchannels%3Fpart%3Did%2Csnippet%2Cstatistics%2CcontentDetails%2Cstatus";
-        String idOrUsernamePrefix = channel.contains("/channel/") ? "%26id%3D" : "%26forUsername%3D";
-        return lookupUri + idOrUsernamePrefix + channel.split("/")[channel.split("/").length - 1] +
-                "&token=" + token;
+        for (Pattern pattern : YT_HTML_ID_PATTERNS) {
+            Matcher matcher = pattern.matcher(html);
+            if (matcher.find()) {
+                return matcher.group(1);
+            }
+        }
+        return null;
     }
 
     public static String getHashforImage(String link) {
