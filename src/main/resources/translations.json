@@ -1594,5 +1594,32 @@
     "ru": "Я не смог найти этот плейлист :/",
     "ja": "そのプレイリストが見つかりませんでした :/",
     "ko": "해당 재생 목록을 찾을 수 없었습니다 :/"
+  },
+  "SCHEDULE_MISSING_PERMISSION": {
+    "en-US": "You need to have the `Manage Channel` permission in {0} to schedule a command in it."
+  },
+  "SCHEDULE_BOT_MISSING_PERMISSION": {
+    "en-US": "I need the `Manage Webhooks` and `Send Messages` permissions in {0} to schedule a command there."
+  },
+  "SCHEDULE_LIMIT_REACHED": {
+    "en-US": "You can only make {0} scheduled commands. To be able to make more, you can subscribe on the Vinny support server (`support`), or remove current ones with `unschedule`."
+  },
+  "SCHEDULE_INVALID_COMMAND": {
+    "en-US": "That command cannot be scheduled. Please select one of the supported commands from the list."
+  },
+  "SCHEDULE_ARGS_REQUIRED": {
+    "en-US": "The `{0}` command requires arguments. Please provide a value for the `args` option."
+  },
+  "SCHEDULE_INVALID_INTERVAL": {
+    "en-US": "Failed to parse interval: `{0}`. Use format `ww:dd:hh:mm:ss` (minimum 5 minutes, e.g. `5:00` or `1:00:00`)."
+  },
+  "SCHEDULE_COMMAND_TOO_LONG": {
+    "en-US": "The scheduled command and its arguments cannot be longer than 500 characters."
+  },
+  "SCHEDULE_UNSUPPORTED_CHANNEL_TYPE": {
+    "en-US": "Scheduled commands can only be set up in normal text channels."
+  },
+  "SCHEDULE_SUCCESS": {
+    "en-US": "The command `{0}` has been successfully scheduled in {1}. It will run every {2}."
   }
 }

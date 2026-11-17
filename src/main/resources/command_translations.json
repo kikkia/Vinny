@@ -1002,6 +1002,14 @@
       "ko": "오디오 대기열에서 다음에 재생될 트랙으로 이동합니다"
     }
   },
+  "schedule": {
+    "name": {
+      "en-US": "schedule"
+    },
+    "desc": {
+      "en-US": "Schedules a command to run automatically on a timer"
+    }
+  },
   "template": {
     "name": {
       "en-US": ""
