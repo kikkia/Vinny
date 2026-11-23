@@ -19,6 +19,10 @@ class LogoutSlashCommand: VoiceSlashCommand(false) {
             return
         }
         oauthConfigDAO.removeConfig(config.userId)
+        val conn = provider.getGuildVoiceConnection(command.guild!!.idLong)
+        if (conn?.oauthConfig?.userId == config.userId) {
+            conn.oauthConfig = null
+        }
         command.replySuccess("Successfully signed out")
     }
 }

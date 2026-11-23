@@ -1,6 +1,8 @@
 package com.bot.voice
 
 import com.bot.exceptions.MaxQueueSizeException
+import com.bot.exceptions.newstyle.UserVisibleException
+import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.commands.control.CommandControlEvent
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
@@ -15,6 +17,10 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
             val queuedTrack = QueuedAudioTrack(track, event.getAuthorName(), event.getAuthorIdLong())
             guildVoiceConnection.queueTrack(queuedTrack)
             // Inner class at the end of this file
+        } catch (e: UserVisibleException) {
+            event.replyWarning(Translator.getInstance().translate(e.outputId, event.getGuild().locale.locale))
+        } catch (e: MaxQueueSizeException) {
+            event.replyWarning(e.message!!)
         } catch (e: Exception) {
             logger.error(e.message, e)
         }
@@ -55,6 +61,8 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
         try {
             val queuedTracks = tracks.map { QueuedAudioTrack(it, event.getAuthorName(), event.getAuthorIdLong()) }.toMutableList()
             guildVoiceConnection.queueLoadedPlaylist(queuedTracks)
+        } catch (e: UserVisibleException) {
+            event.replyWarning(Translator.getInstance().translate(e.outputId, event.getGuild().locale.locale))
         } catch (e: MaxQueueSizeException) {
             event.replyWarning(e.message!!)
         }
@@ -68,8 +76,14 @@ class LLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection, priv
         }
         val firstTrack = tracks[0]
 
-        val queuedTrack = QueuedAudioTrack(firstTrack, event.getAuthorName(), event.getAuthorIdLong())
-        guildVoiceConnection.queueTrack(queuedTrack)
+        try {
+            val queuedTrack = QueuedAudioTrack(firstTrack, event.getAuthorName(), event.getAuthorIdLong())
+            guildVoiceConnection.queueTrack(queuedTrack)
+        } catch (e: UserVisibleException) {
+            event.replyWarning(Translator.getInstance().translate(e.outputId, event.getGuild().locale.locale))
+        } catch (e: MaxQueueSizeException) {
+            event.replyWarning(e.message!!)
+        }
     }
 
     override fun noMatches() {

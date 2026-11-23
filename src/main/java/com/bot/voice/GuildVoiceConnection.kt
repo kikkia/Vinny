@@ -7,8 +7,10 @@ import com.bot.db.models.OauthConfig
 import com.bot.db.models.ResumeAudioGuild
 import com.bot.exceptions.InvalidInputException
 import com.bot.exceptions.NotInVoiceException
+import com.bot.exceptions.OauthRefreshException
 import com.bot.exceptions.UserExposableException
 import com.bot.exceptions.newstyle.OauthNotEnabledException
+import com.bot.exceptions.newstyle.UserVisibleException
 import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.models.enums.RepeatMode
@@ -27,6 +29,7 @@ import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import org.apache.log4j.Logger
 import reactor.kotlin.core.publisher.toMono
@@ -102,6 +105,8 @@ class GuildVoiceConnection(val guild: Guild) {
             joinChannel(toJoin.asVoiceChannel())
         } catch (e: UserExposableException) {
             throw e
+        } catch (e: UserVisibleException) {
+            throw e
         } catch (e: Exception) {
             controlEvent.replyWarning("Failed to join voice channel: ${e.message}")
             cleanupPlayer()
@@ -111,6 +116,9 @@ class GuildVoiceConnection(val guild: Guild) {
 
     fun joinChannel(channel: VoiceChannel) {
         if (channel == channel.guild.selfMember.voiceState?.channel && isConnected()) {
+            if (oauthConfig == null) {
+                findOauth(channel)
+            }
             return
         }
 
@@ -161,9 +169,9 @@ class GuildVoiceConnection(val guild: Guild) {
         val link = getLink()
 
         checkOauth(toLoad)
+        lastTextChannel = controlEvent.getChannel()
         metricsManager.markTrackLoaded()
         link.loadItem(toLoad).subscribe(LLLoadHandler(this, controlEvent))
-        lastTextChannel = controlEvent.getChannel()
     }
 
     private fun loadAutoplayTrack(toLoad: String) {
@@ -174,6 +182,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun queueTrack(track: QueuedAudioTrack) {
+        checkOauth(track.track.info.uri!!)
         stopRadio()
         trackProvider.addTrack(track)
         if (trackProvider.getNowPlaying() == track) {
@@ -184,6 +193,9 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     fun queueLoadedPlaylist(tracks: List<QueuedAudioTrack>) {
+        for (track in tracks) {
+            checkOauth(track.track.info.uri!!)
+        }
         stopRadio()
         for (track in tracks) {
             trackProvider.addTrack(track)
@@ -201,12 +213,15 @@ class GuildVoiceConnection(val guild: Guild) {
 
         val newIndex = index+1
         updateLoadingMessage(loadingMessage, tracks, newIndex, failedCount)
-        stopRadio()
         if (queuedTrack != null) {
+            checkOauth(queuedTrack.track.info.uri!!)
+            stopRadio()
             if (trackProvider.getNowPlaying() == null) {
                 playTrack(queuedTrack)
             }
             trackProvider.addTrack(queuedTrack)
+        } else {
+            stopRadio()
         }
         if (newIndex == tracks.size) {
             return
@@ -224,9 +239,9 @@ class GuildVoiceConnection(val guild: Guild) {
         val link = getLink()
 
         checkOauth(tracks[0])
+        lastTextChannel = controlEvent.getChannel()
         metricsManager.markTrackLoaded()
         link.loadItem(tracks[0]).subscribe(PlaylistLLLoadHandler(this, controlEvent, loadingMessage, tracks, 0, 0))
-        lastTextChannel = controlEvent.getChannel()
     }
 
     fun queueResumeTrack(queuedTrack: QueuedAudioTrack?, loadingMessage: Message, resumeSetup: ResumeAudioGuild, index: Int, failedCount: Int) {
@@ -268,7 +283,7 @@ class GuildVoiceConnection(val guild: Guild) {
             joinChannel(channel)
         } catch (e: Exception) {
             if (e is OauthNotEnabledException) {
-                sendMessageToChannel(e.message!!)
+                sendMessageToChannel(translator.translate(e.outputId, guild.locale.locale))
                 return
             }
         }
@@ -291,9 +306,9 @@ class GuildVoiceConnection(val guild: Guild) {
         val link = getLink()
 
         checkOauth(search)
+        lastTextChannel = controlEvent.getChannel()
         metricsManager.markTrackLoaded()
         link.loadItem(search).subscribe(SearchLLLoadHandler(this, controlEvent, message, builder))
-        lastTextChannel = controlEvent.getChannel()
     }
 
 
@@ -317,6 +332,9 @@ class GuildVoiceConnection(val guild: Guild) {
                 nextTrack(false)
             } catch (u: UserExposableException) {
                 sendMessageToChannel(u.message ?: "Unknown error")
+            } catch (u: UserVisibleException) {
+                sendMessageToChannel(translator.translate(u.outputId, guild.locale.locale))
+                cleanupPlayer()
             }
         }
     }
@@ -477,7 +495,13 @@ class GuildVoiceConnection(val guild: Guild) {
         if (oauthConfig != null) {
             // Check for refresh
             if (oauthConfig!!.needsRefresh()) {
-                updateOauthConfig(Oauth2Utils.refreshAccessToken(oauthConfig!!))
+                try {
+                    updateOauthConfig(Oauth2Utils.refreshAccessToken(oauthConfig!!))
+                } catch (e: OauthRefreshException) {
+                    logger.warn("Failed to refresh cached oauth token for user ${oauthConfig?.userId}, searching channel for another", e)
+                    oauthConfig = null
+                    oauthRequired()
+                }
             }
         } else {
             oauthRequired()
@@ -485,7 +509,7 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     private fun isInjectRequired(ident: String): Boolean {
-        return ident.contains(loginReqProvider) || ident.matches(loginReqRegex)
+        return ident.contains(loginReqProvider) || loginReqRegex.containsMatchIn(ident)
     }
 
     private fun oauthRequired() {
@@ -496,21 +520,27 @@ class GuildVoiceConnection(val guild: Guild) {
     }
 
     private fun findOauth() {
-        if (guild.selfMember.voiceState?.channel == null) {return}
-        findOauth(guild.selfMember.voiceState!!.channel!!.asVoiceChannel())
+        val channel = guild.selfMember.voiceState?.channel ?: return
+        findOauth(channel)
     }
 
-    private fun findOauth(channel: VoiceChannel) {
+    private fun findOauth(channel: AudioChannel) {
         if (oauthConfig == null) {
-            //  search for a oauth config to use for anyone in channel
-            // Refresh if needed.
+            // Search for a healthy oauth config to use for anyone in channel
+            // Refresh if needed, skipping unhealthy or failing configs.
             for (m in channel.members) {
+                if (m.user.isBot) continue
                 var config = oauthConfigDAO.getOauthConfig(m.user.id)
-                if (config != null) {
-                    if (config.needsRefresh()) {
-                        config = Oauth2Utils.refreshAccessToken(config)
+                if (config != null && config.healthy) {
+                    try {
+                        if (config.needsRefresh()) {
+                            config = Oauth2Utils.refreshAccessToken(config)
+                        }
+                        updateOauthConfig(config)
+                        return
+                    } catch (e: OauthRefreshException) {
+                        logger.warn("Failed to refresh oauth token for user ${m.user.id} in guild ${guild.id}, trying next member", e)
                     }
-                    updateOauthConfig(config)
                 }
             }
         }

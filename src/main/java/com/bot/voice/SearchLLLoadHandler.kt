@@ -1,6 +1,8 @@
 package com.bot.voice
 
 import com.bot.exceptions.MaxQueueSizeException
+import com.bot.exceptions.newstyle.UserVisibleException
+import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.utils.FormattingUtils
 import com.bot.commands.control.CommandControlEvent
@@ -23,6 +25,8 @@ class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection
             val queuedTrack = QueuedAudioTrack(track, event.getAuthorName(), event.getAuthorIdLong())
             guildVoiceConnection.queueTrack(queuedTrack)
             // Inner class at the end of this file
+        } catch (e: UserVisibleException) {
+            event.replyWarning(Translator.getInstance().translate(e.outputId, event.getGuild().locale.locale))
         } catch (e: Exception) {
             logger.error(e.message, e)
         }
@@ -47,6 +51,9 @@ class SearchLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnection
                 try {
                     val queuedAudioTrack = QueuedAudioTrack(track, event.getAuthorName(), event.getAuthorIdLong())
                     guildVoiceConnection.queueTrack(queuedAudioTrack)
+                } catch (e: UserVisibleException) {
+                    event.replyWarning(Translator.getInstance().translate(e.outputId, event.getGuild().locale.locale))
+                    return@setSelection
                 } catch (e: MaxQueueSizeException) {
                     event.replyWarning(e.message!!)
                     return@setSelection

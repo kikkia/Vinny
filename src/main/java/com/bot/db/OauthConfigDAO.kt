@@ -80,13 +80,13 @@ class OauthConfigDAO {
                     statement.setString(2, config.refreshToken)
                     statement.setString(3, config.accessToken)
                     statement.setString(4, config.tokenType)
-                    statement.setLong(5, config.expiry.epochSecond)
+                    statement.setLong(5, config.expiry.toEpochMilli())
                     statement.setBoolean(6, config.healthy)
                     statement.execute()
                 }
             }
         } catch (e: SQLException) {
-           LOGGER.log(Level.SEVERE, "Failed to set oauth config for: " + config.userId)
+           LOGGER.log(Level.SEVERE, "Failed to set oauth config for: " + config.userId, e)
         }
     }
 
@@ -96,11 +96,11 @@ class OauthConfigDAO {
                 val query = "DELETE FROM `user_oauth_config` WHERE id = ?"
                 connection.prepareStatement(query).use { statement ->
                     statement.setString(1, id)
-                    statement.executeQuery()
+                    statement.executeUpdate()
                 }
             }
         } catch (e: SQLException) {
-            LOGGER.log(Level.SEVERE, "Failed to delete oauth config for: $id")
+            LOGGER.log(Level.SEVERE, "Failed to delete oauth config for: $id", e)
         }
     }
 }

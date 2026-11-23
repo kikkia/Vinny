@@ -1,5 +1,7 @@
 package com.bot.voice
 
+import com.bot.exceptions.newstyle.UserVisibleException
+import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
 import com.bot.commands.control.CommandControlEvent
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler
@@ -21,6 +23,8 @@ class PlaylistLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnecti
             val queuedTrack = QueuedAudioTrack(track, event.getAuthorName(), event.getAuthorIdLong())
             guildVoiceConnection.queuePlaylistTrack(queuedTrack, event, loadingMessage, tracks, index, failedCount)
             // Inner class at the end of this file
+        } catch (e: UserVisibleException) {
+            event.replyWarning(Translator.getInstance().translate(e.outputId, event.getGuild().locale.locale))
         } catch (e: Exception) {
             logger.error(e.message, e)
         }
@@ -43,6 +47,10 @@ class PlaylistLLLoadHandler(private val guildVoiceConnection: GuildVoiceConnecti
     override fun loadFailed(result: LoadFailed) {
         //event.replyWarning("Track, ${tracks[index]} failed to load, but continuing to load tracks.")
         MetricsManager.instance!!.markTrackLoadFailed(result.exception.message + ":" + result.exception.cause)
-        guildVoiceConnection.queuePlaylistTrack(null, event, loadingMessage, tracks, index, failedCount+1)
+        try {
+            guildVoiceConnection.queuePlaylistTrack(null, event, loadingMessage, tracks, index, failedCount+1)
+        } catch (e: UserVisibleException) {
+            event.replyWarning(Translator.getInstance().translate(e.outputId, event.getGuild().locale.locale))
+        }
     }
 }

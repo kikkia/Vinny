@@ -2,6 +2,7 @@ package com.bot.commands.traditional.voice
 
 import com.bot.commands.traditional.GeneralCommand
 import com.bot.db.OauthConfigDAO
+import com.bot.voice.GuildVoiceProvider
 import com.jagrosh.jdautilities.command.CommandEvent
 import com.jagrosh.jdautilities.command.CooldownScope
 
@@ -23,6 +24,10 @@ class LogoutDeviceCommand : GeneralCommand() {
             return
         }
         oauthConfigDAO.removeConfig(config.userId)
+        val conn = GuildVoiceProvider.getInstance().getGuildVoiceConnection(commandEvent.guild.idLong)
+        if (conn?.oauthConfig?.userId == config.userId) {
+            conn.oauthConfig = null
+        }
         commandEvent.reactSuccess()
     }
 }

@@ -16,11 +16,12 @@ class Translator {
         private val metrics = MetricsManager.instance
 
         fun translate(messageId: String, language: String, vararg args: Any): String {
-            metrics!!.markTranslation(messageId, language)
+            metrics?.markTranslation(messageId, language)
             val message = translations[messageId]?.get(language) ?: translations[messageId]?.get("en-US")
             ?: throw IllegalArgumentException("Translation missing for messageId: $messageId in language: $language")
 
-            return MessageFormat.format(message, *args.map { it }.toTypedArray())
+            val escapedMessage = message.replace("'", "''")
+            return MessageFormat.format(escapedMessage, *args.map { it }.toTypedArray())
         }
 
         fun getCommandNameTranslations(name: String): Map<DiscordLocale, String> {

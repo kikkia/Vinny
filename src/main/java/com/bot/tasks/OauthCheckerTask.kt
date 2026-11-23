@@ -34,6 +34,7 @@ class OauthCheckerTask(private val deviceCode: String,
             // 10 min timeout
             if (start.isBefore(Instant.now().minusSeconds(600))) {
                 commandEvent.replyError(translator.translate("VOICE_LOGIN_EXPIRED", commandEvent.getGuild().locale.locale))
+                client.close()
                 return
             }
             val response = poll()
@@ -112,7 +113,7 @@ data class OauthPollResponse(val tokenType: String,
                     json.getString("token_type"),
                     json.getString("access_token"),
                     json.optString("refresh_token"),
-                    Instant.ofEpochSecond(System.currentTimeMillis() + expiresIn * 1000 - 60000),
+                    Instant.ofEpochMilli(System.currentTimeMillis() + expiresIn * 1000 - 60000),
                     ""
             )
         }

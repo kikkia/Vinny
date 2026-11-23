@@ -40,7 +40,7 @@ class SelectMenuInteractionHandler: ListenerAdapter() {
                 )
                 event.hook.editOriginal("Loading playlist...").queue()
             } catch (e: UserVisibleException) {
-                event.hook.editOriginal(translator.translate(e.outputId, event.userLocale.locale))
+                event.hook.editOriginal(translator.translate(e.outputId, event.userLocale.locale)).queue()
             }
         }
     }
