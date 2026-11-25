@@ -34,16 +34,16 @@ public class R4cCommand extends NSFWCommand {
             return;
         }
 
-        long imageNum = thread.getLong("tim");
-        String imageUrl = "http://i.4cdn.org/" + commandEvent.getArgs() + "/" + imageNum + thread.getString("ext");
+        String imageUrl = extractImageUrl(commandEvent.getArgs(), thread);
+        String ext = thread.optString("ext", "");
 
-        String title = thread.getString("name");
-        if (!thread.isNull("sub")) {
+        String title = thread.optString("name", "Anonymous");
+        if (!thread.isNull("sub") && !thread.optString("sub", "").isEmpty()) {
             title = thread.getString("sub");
         }
 
-        String body = "";
-        if (thread.has("com")) {
+        String body;
+        if (thread.has("com") && !thread.isNull("com")) {
             body = thread.getString("com");
             body = StringEscapeUtils.unescapeHtml4(body);
             body = body.replaceAll("<br>", "\n");
@@ -54,6 +54,9 @@ public class R4cCommand extends NSFWCommand {
 
         if (body.length() > 250) {
             body = body.substring(0, 250) + "...";
+        }
+        if (body.isEmpty()) {
+            body = "No comment found";
         }
 
         if (ScheduledCommandUtils.isScheduled(commandEvent)) {
@@ -67,28 +70,45 @@ public class R4cCommand extends NSFWCommand {
 
         } else {
             EmbedBuilder builder = new EmbedBuilder();
-            builder.setImage(imageUrl);
+            if (imageUrl != null) {
+                builder.setImage(imageUrl);
+            }
             builder.setAuthor(title);
-            builder.setDescription("Replies: " + thread.getInt("replies") + " Images: " + thread.getInt("images"));
+            builder.setDescription("Replies: " + thread.optInt("replies", 0) + " Images: " + thread.optInt("images", 0));
             builder.setTitle(body);
-            builder.addField("link", "[Thread](http://boards.4channel.org/" + commandEvent.getArgs() + "/thread/" + thread.getInt("no") + ")", false);
+            builder.addField("link", "[Thread](http://boards.4channel.org/" + commandEvent.getArgs() + "/thread/" + thread.optInt("no", 0) + ")", false);
             commandEvent.reply(builder.build());
 
-            if (thread.getString("ext").equals(".webm")) {
+            if (imageUrl != null && ".webm".equals(ext)) {
                 commandEvent.reply(imageUrl);
             }
         }
     }
 
+    public static String extractImageUrl(String board, JSONObject thread) {
+        if (thread == null || !thread.has("tim") || thread.isNull("tim")
+                || !thread.has("ext") || thread.isNull("ext")) {
+            return null;
+        }
+        long imageNum = thread.getLong("tim");
+        String ext = thread.getString("ext");
+        if (ext.isEmpty()) {
+            return null;
+        }
+        return "http://i.4cdn.org/" + board + "/" + imageNum + ext;
+    }
+
     private WebhookMessage buildWebhookMessage(CommandEvent commandEvent, String imageUrl, String title, JSONObject thread, String body) {
         WebhookMessageBuilder builder = new WebhookMessageBuilder();
         WebhookEmbedBuilder embedBuilder = new WebhookEmbedBuilder();
-        embedBuilder.setImageUrl(imageUrl);
+        if (imageUrl != null) {
+            embedBuilder.setImageUrl(imageUrl);
+        }
         embedBuilder.setTitle(new WebhookEmbed.EmbedTitle("/" + commandEvent.getArgs() + "/",
-                "http://boards.4channel.org/" + commandEvent.getArgs() + "/thread/" + thread.getInt("no")));
+                "http://boards.4channel.org/" + commandEvent.getArgs() + "/thread/" + thread.optInt("no", 0)));
         embedBuilder.setDescription(body);
-        embedBuilder.addField(new WebhookEmbed.EmbedField(true, "Replies", thread.getInt("replies") + ""));
-        embedBuilder.addField(new WebhookEmbed.EmbedField(true, "Images", thread.getInt("images") + ""));
+        embedBuilder.addField(new WebhookEmbed.EmbedField(true, "Replies", thread.optInt("replies", 0) + ""));
+        embedBuilder.addField(new WebhookEmbed.EmbedField(true, "Images", thread.optInt("images", 0) + ""));
         builder.addEmbeds(embedBuilder.build());
         return builder.build();
     }
