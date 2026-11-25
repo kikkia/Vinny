@@ -113,15 +113,15 @@ public class ScheduledCommandUtils {
     }
 
     public static WebhookClient getWebhookForChannel(TextChannel channel) throws ScheduledCommandFailedException {
-        if (channel.getGuild().getSelfMember().hasPermission(channel, Permission.MANAGE_WEBHOOKS)) {
+        if (channel.getGuild().getSelfMember().hasPermission(channel, Permission.VIEW_CHANNEL, Permission.MANAGE_WEBHOOKS)) {
 
             WebhookClientCache clientCache = WebhookClientCache.getInstance();
             WebhookClient client = clientCache.get(channel.getId());
             if (client == null) {
                 List<Webhook> hooks = channel.retrieveWebhooks().complete();
 
-                // If there are webhooks, lets send that way
-                Optional<Webhook> vinnyHook = hooks.stream().filter(webhook -> webhook.getName().equalsIgnoreCase("vinny")).findFirst();
+                // If there are webhooks with a usable token, lets send that way
+                Optional<Webhook> vinnyHook = findReusableVinnyWebhook(hooks);
                 if (!vinnyHook.isPresent()) {
                     vinnyHook = Optional.of(channel.createWebhook("vinny").complete());
                 }
@@ -133,6 +133,14 @@ public class ScheduledCommandUtils {
         } else {
             throw new ScheduledCommandFailedException(ConstantStrings.SCHEDULED_WEBHOOK_FAIL);
         }
+    }
+
+    public static Optional<Webhook> findReusableVinnyWebhook(List<Webhook> hooks) {
+        return hooks.stream()
+                .filter(webhook -> webhook.getName().equalsIgnoreCase("vinny")
+                        && webhook.getToken() != null
+                        && !webhook.getToken().isEmpty())
+                .findFirst();
     }
 
     public static boolean isScheduled(CommandEvent event) {

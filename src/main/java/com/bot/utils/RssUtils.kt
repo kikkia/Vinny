@@ -31,13 +31,17 @@ class RssUtils {
 
                 if (!channel.isNSFW &&
                         RssDAO.getInstance().getBySubjectAndProvider(cleanedSubject, rssUpdate.provider).nsfw) {
-                    channel.sendMessage(ConstantStrings.RSS_NSFW_DENY).queue()
+                    if (channel.canTalk()) {
+                        channel.sendMessage(ConstantStrings.RSS_NSFW_DENY).queue()
+                    }
                     return
                 }
 
-                if (!channel.guild.selfMember.hasPermission(Permission.MANAGE_WEBHOOKS)) {
-                    channel.sendMessage("WARNING: I don't have the `MANAGE_WEBHOOKS` permission. Please give me this permission " +
-                            "to allow Scheduled commands and Subscriptions to work correctly").queue()
+                if (!channel.guild.selfMember.hasPermission(channel, Permission.VIEW_CHANNEL, Permission.MANAGE_WEBHOOKS)) {
+                    if (channel.canTalk()) {
+                        channel.sendMessage("WARNING: I don't have the `MANAGE_WEBHOOKS` permission. Please give me this permission " +
+                                "to allow Scheduled commands and Subscriptions to work correctly").queue()
+                    }
                 } else {
                     val webhook = ScheduledCommandUtils.getWebhookForChannel(channel)
                     when (RssProvider.getProvider(rssUpdate.provider)) {
