@@ -20,13 +20,15 @@ class PlayNextSlashCommand: VoiceSlashCommand() {
         val conn = provider.getGuildVoiceConnection(command.guild!!.idLong)
         if (conn == null) {
             command.replyGenericError()
+            return
         }
         val trackToMove = command.optString("track")
-        val trackPos = trackToMove!!.toInt()
+        val trackPos = trackToMove?.trim()?.toIntOrNull()
+            ?: throw UserVisibleException("TRACK_MOVE_INVALID_TRACK")
 
         if (trackPos < 0) {
             throw UserVisibleException("TRACK_MOVE_NEG")
-        } else if (trackPos > conn!!.getQueuedTracks().size) {
+        } else if (trackPos >= conn.getQueuedTracks().size) {
             throw UserVisibleException("TRACK_MOVE_INVALID_TRACK")
         }
 

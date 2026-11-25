@@ -123,19 +123,19 @@ class GuildVoiceConnection(val guild: Guild) {
         }
 
         if (!channel.guild.selfMember.hasPermission(channel, Permission.VIEW_CHANNEL)) {
-            throw Exception("I do not have permissions to view that channel")
+            throw UserExposableException("I do not have permissions to view that channel")
         }
 
         if (!channel.guild.selfMember.hasPermission(channel, Permission.VOICE_CONNECT)) {
-            throw Exception("I do not have permissions to connect to that channel")
+            throw UserExposableException("I do not have permissions to connect to that channel")
         }
 
         if (!channel.guild.selfMember.hasPermission(channel, Permission.VOICE_SPEAK)) {
-            throw Exception("I do not have permissions to speak in that channel")
+            throw UserExposableException("I do not have permissions to speak in that channel")
         }
 
         if (channel.userLimit > 0 && channel.userLimit <= channel.members.size) {
-            throw Exception("Your voice channel is full")
+            throw UserExposableException("Your voice channel is full")
         }
 
         findOauth(channel)
@@ -594,7 +594,7 @@ class GuildVoiceConnection(val guild: Guild) {
         if (autoplay) {
             // Refresh if we are on the last track
             if (trackProvider.getQueued().isEmpty()) {
-                val np = trackProvider.getNowPlaying()!!
+                val np = trackProvider.getNowPlaying() ?: return
                 // If we are autoplaying, only update the queue when at the end.
                 if (!np.isAutoplay()) {
                     // If not autoplaying right now, clear the autoplay queue so we refresh it all to whats just finished.
@@ -604,15 +604,19 @@ class GuildVoiceConnection(val guild: Guild) {
                     return
                 }
 
-                if (np.track.info.sourceName.contains(VinnyConfig.instance().voiceConfig.autoplaySource ?: "NONE")) {
-                    autoplayQueue.addAll(AutoplayClient.VideoRequester.getRecommendedVideoIds(np.track.info.identifier))
-                } else if (VinnyConfig.instance().voiceConfig.autoplaySearch != null) {
-                    // If the current track is not from preferred autoplay provider, then we can do some cool search magic to
-                    // transition the preferred platform.
-                    autoplayQueue.addAll(AutoplayClient.VideoRequester.getRecommendedVideoIdsSearch(np.track.info.title))
-                } else {
-                    sendMessageToChannel("Attempted to prep auto play tracks, but autoplay is not supported for " +
-                            "that audio source at this time. Sorry, feel free to request it as a feature on our discord server.")
+                try {
+                    if (np.track.info.sourceName.contains(VinnyConfig.instance().voiceConfig.autoplaySource ?: "NONE")) {
+                        autoplayQueue.addAll(AutoplayClient.VideoRequester.getRecommendedVideoIds(np.track.info.identifier))
+                    } else if (VinnyConfig.instance().voiceConfig.autoplaySearch != null) {
+                        // If the current track is not from preferred autoplay provider, then we can do some cool search magic to
+                        // transition the preferred platform.
+                        autoplayQueue.addAll(AutoplayClient.VideoRequester.getRecommendedVideoIdsSearch(np.track.info.title))
+                    } else {
+                        sendMessageToChannel("Attempted to prep auto play tracks, but autoplay is not supported for " +
+                                "that audio source at this time. Sorry, feel free to request it as a feature on our discord server.")
+                    }
+                } catch (e: Exception) {
+                    logger.warn("Failed to refresh autoplay queue for guild ${guild.id}: ${e.message}", e)
                 }
             }
         }

@@ -53,7 +53,22 @@ class PlayCommand: VoiceCommand() {
             }
             url = searchPrefix.plus(commandEvent.args)
         }
-        commandEvent.channel.sendMessage("\u231A Loading... `[" + commandEvent.args + "]`").complete()
+        commandEvent.channel.sendMessage(formatLoadingMessage(commandEvent.args)).complete()
         guildVoiceConnection.loadTrack(url, TextControlEvent(commandEvent))
+    }
+
+    companion object {
+        private const val MAX_DISPLAY_ARGS_LENGTH = 200
+
+        @JvmStatic
+        fun formatLoadingMessage(args: String): String {
+            val singleLine = args.replace("\r", " ").replace("\n", " ").trim()
+            val display = if (singleLine.length > MAX_DISPLAY_ARGS_LENGTH) {
+                singleLine.substring(0, MAX_DISPLAY_ARGS_LENGTH) + "..."
+            } else {
+                singleLine
+            }
+            return "\u231A Loading... `[$display]`"
+        }
     }
 }

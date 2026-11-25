@@ -2,6 +2,7 @@ package com.bot.commands.slash
 
 import com.bot.db.GuildDAO
 import com.bot.db.UserDAO
+import com.bot.exceptions.UserExposableException
 import com.bot.exceptions.newstyle.UserVisibleException
 import com.bot.i18n.Translator
 import com.bot.metrics.MetricsManager
@@ -49,6 +50,8 @@ abstract class BaseSlashCommand : SlashCommand() {
                 postExecute(commandEvent)
             } catch (e: UserVisibleException) {
                 commandEvent.replyWarningTranslated(e.outputId)
+            } catch (e: UserExposableException) {
+                commandEvent.replyWarning(e.message ?: "Unable to run command.")
             } catch (e: Exception) {
                 logger.severe("Failed slash command", e)
                 commandEvent.replyGenericError()

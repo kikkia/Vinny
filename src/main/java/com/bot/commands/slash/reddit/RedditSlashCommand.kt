@@ -15,7 +15,6 @@ import net.dean.jraw.models.TimePeriod
 import net.dv8tion.jda.api.components.actionrow.ActionRow
 import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.entities.emoji.Emoji
-import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
@@ -46,8 +45,8 @@ class RedditSlashCommand : BaseSlashCommand() {
         this.category = CommandCategories.REDDIT
         this.options = listOf(
             OptionData(OptionType.STRING, "subreddit", "The subreddit to subscribe to.", true),
-            OptionData(OptionType.STRING, "sort", "Sorting (hot, new, etc)", false, true),
-            OptionData(OptionType.STRING, "period", "Time period to search", false, true)
+            OptionData(OptionType.STRING, "sort", "Sorting (hot, new, etc)", false).addChoices(sortOptions),
+            OptionData(OptionType.STRING, "period", "Time period to search", false).addChoices(timeOptions)
         )
         postInit()
     }
@@ -62,8 +61,22 @@ class RedditSlashCommand : BaseSlashCommand() {
         val sortOpt = command.optString("sort")
         val periodOpt = command.optString("period")
 
-        val sort = if (sortOpt != null) SubredditSort.valueOf(sortOpt) else SubredditSort.HOT
-        val period = if (periodOpt != null) TimePeriod.valueOf(periodOpt) else TimePeriod.WEEK
+        val sort = if (sortOpt != null) {
+            parseSort(sortOpt) ?: run {
+                command.replyWarning("Invalid sort option `$sortOpt`. Valid options: hot, best, rising, new, top, controversial.")
+                return
+            }
+        } else {
+            SubredditSort.HOT
+        }
+        val period = if (periodOpt != null) {
+            parseTimePeriod(periodOpt) ?: run {
+                command.replyWarning("Invalid time period `$periodOpt`. Valid options: hour, day, week, month, year, all.")
+                return
+            }
+        } else {
+            TimePeriod.WEEK
+        }
 
         try {
             val post = RedditHelper.getRandomSubmission(
@@ -101,16 +114,15 @@ class RedditSlashCommand : BaseSlashCommand() {
         }
     }
 
-    override fun onAutoComplete(event: CommandAutoCompleteInteractionEvent?) {
-        var choices: List<Command.Choice>? = null
-        if (event!!.focusedOption.name == "sort") {
-            choices = sortOptions
-        } else if (event.focusedOption.name == "period") {
-            choices = timeOptions
+    companion object {
+        @JvmStatic
+        fun parseSort(value: String): SubredditSort? {
+            return SubredditSort.entries.firstOrNull { it.name.equals(value.trim(), ignoreCase = true) }
         }
-        if (choices != null) {
-            event.replyChoices(choices).queue()
+
+        @JvmStatic
+        fun parseTimePeriod(value: String): TimePeriod? {
+            return TimePeriod.entries.firstOrNull { it.name.equals(value.trim(), ignoreCase = true) }
         }
-        super.onAutoComplete(event)
     }
 }
