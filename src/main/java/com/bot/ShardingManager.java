@@ -171,7 +171,6 @@ public class ShardingManager {
                     new AliasesCommand(waiter),
 
                     // Meme Commands
-                    new P90Command(),
                     new CommentCommand(),
                     new AsciiCommand(),
                     new ShitpostCommand(),

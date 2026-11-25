@@ -259,10 +259,6 @@ Generates a message based on what a user or channel has posted to discord using 
 * `~comment @kikkia` - Generates a comment for Kikkia.  
 * `~comment #general` - Generates a comment from the #general channel.  
 
-### `p90`
-Gets a webm from p90.zone. You can leave it blank to get a random webm, or add in a word after to search. Searching requires nsfw to be enabled.
-* `~p90 dank` - Gets a dank webm from P90
-
 ### `ascii`
 Generates an ascii representation of a given message.
 * `ascii ayy lmao` - Outputs ascii art of `ayy lmao`
