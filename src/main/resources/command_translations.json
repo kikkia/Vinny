@@ -1026,6 +1026,102 @@
       "en-US": "Lists scheduled commands for you, a channel, or the server"
     }
   },
+  "rule34": {
+    "name": {
+      "en-US": "rule34"
+    },
+    "desc": {
+      "en-US": "Posts rule 34 with given tags to the channel",
+      "id": "Mendapatkan gambar r34 untuk pencarianmu",
+      "da": "Henter et r34-billede til din søgning",
+      "de": "Holt ein r34-Bild für deine Suche",
+      "es-ES": "Obtiene una imagen r34 para tu búsqueda",
+      "fr": "Obtenez une image r34 pour votre recherche",
+      "it": "Ottieni un'immagine r34 per la tua ricerca",
+      "nl": "Haalt een r34-afbeelding voor je zoekopdracht",
+      "hu": "Hoz egy r34 képet a keresésedhez",
+      "no": "Henter et r34-bilde for søket ditt",
+      "pl": "Pobiera obrazek r34 dla twojego wyszukiwania",
+      "pt-BR": "Obtém uma imagem r34 para sua pesquisa",
+      "ro": "Obține o imagine r34 pentru căutarea ta",
+      "fi": "Hakee r34-kuvan hakemistasi varten",
+      "sv-SE": "Hämtar en r34-bild för din sökning",
+      "tr": "Aramanız için bir r34 görseli alır",
+      "ru": "Получает изображение r34 для вашего поиска",
+      "ja": "検索のためにr34画像を取得します",
+      "ko": "검색을 위한 r34 이미지를 가져옵니다"
+    }
+  },
+  "lofi": {
+    "name": {
+      "en-US": "lofi"
+    },
+    "desc": {
+      "en-US": "Play a lofi radio station",
+      "id": "Putar stasiun radio lofi",
+      "da": "Afspil en lofi-radiostation",
+      "de": "Spiele einen Lofi-Radiosender",
+      "es-ES": "Reproduce una estación de radio lofi",
+      "fr": "Jouer une station de radio lofi",
+      "it": "Riproduci una stazione radio lofi",
+      "nl": "Speel een lofi-radiostation af",
+      "hu": "Játssz le egy lofi rádióállomást",
+      "no": "Spill en lofi-radiostasjon",
+      "pl": "Odtwórz stację radiową lofi",
+      "pt-BR": "Toque uma estação de rádio lofi",
+      "ro": "Redă un post de radio lofi",
+      "fi": "Soita lofi-radioasemaa",
+      "sv-SE": "Spela en lofi-radiostation",
+      "tr": "Bir lofi radyo istasyonu çal",
+      "ru": "Включить лоу-фай радиостанцию",
+      "ja": "ローファイラジオ局を再生",
+      "ko": "로파이 라디오 방송 재생"
+    }
+  },
+  "delete-playlist": {
+    "name": {
+      "en-US": "delete-playlist",
+      "id": "hapus-daftar-putar",
+      "da": "slet-playliste",
+      "de": "playlist-löschen",
+      "es-ES": "eliminar-lista-reproducción",
+      "fr": "supprimer-playlist",
+      "it": "elimina-playlist",
+      "nl": "verwijder-playlist",
+      "hu": "playlist-törlése",
+      "no": "slett-spilleliste",
+      "pl": "usuń-playlistę",
+      "pt-BR": "excluir-playlist",
+      "ro": "șterge-playlist",
+      "fi": "poista-soittolista",
+      "sv-SE": "ta-bort-spellista",
+      "tr": "çalma-listesini-sil",
+      "ru": "удалить-плейлист",
+      "ja": "プレイリストを削除",
+      "ko": "재생목록-삭제"
+    },
+    "desc": {
+      "en-US": "Deletes a selected playlist",
+      "id": "Menghapus daftar putar yang dipilih",
+      "da": "Sletter en valgt playliste",
+      "de": "Löscht eine ausgewählte Playlist",
+      "es-ES": "Elimina una lista de reproducción seleccionada",
+      "fr": "Supprime une playlist sélectionnée",
+      "it": "Elimina una playlist selezionata",
+      "nl": "Verwijdert een geselecteerde playlist",
+      "hu": "Törli a kiválasztott lejátszási listát",
+      "no": "Sletter en valgt spilleliste",
+      "pl": "Usuwa wybraną playlistę",
+      "pt-BR": "Exclui uma playlist selecionada",
+      "ro": "Șterge un playlist selectat",
+      "fi": "Poistaa valitun soittolistan",
+      "sv-SE": "Tar bort en vald spellista",
+      "tr": "Seçilen bir çalma listesini siler",
+      "ru": "Удаляет выбранный плейлист",
+      "ja": "選択したプレイリストを削除",
+      "ko": "선택한 재생목록을 삭제"
+    }
+  },
   "template": {
     "name": {
       "en-US": ""
