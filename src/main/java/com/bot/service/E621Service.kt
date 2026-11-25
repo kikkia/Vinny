@@ -3,7 +3,6 @@ package com.bot.service
 import com.bot.caching.E621Cache
 import com.bot.exceptions.newstyle.UserVisibleException
 import com.bot.utils.Logger
-import org.apache.commons.io.IOUtils
 import org.apache.http.HttpResponse
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
@@ -11,25 +10,34 @@ import org.apache.http.util.EntityUtils
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class E621Service {
     private val cache = E621Cache.getInstance()
     private val logger = Logger(this.javaClass.name)
 
     fun getPostsForSearch(search: String): List<String> {
-        val formattedSearch = search.replace(" ".toRegex(), "%20")
-        val baseUrl = "https://e621.net/posts.json?tags="
-        val limit = "&limit=250"
-
         val images: List<String>? = cache.get(search)
         if (!images.isNullOrEmpty()) {
             return images
         }
         HttpClients.createDefault().use { client ->
-            val get = HttpGet(baseUrl + formattedSearch + limit)
+            val get = HttpGet(buildPostsUrl(search))
+            get.setHeader("User-Agent", USER_AGENT)
             val response: HttpResponse = client.execute(get)
+            val status = response.statusLine.statusCode
+            val responseBody = if (response.entity != null) {
+                EntityUtils.toString(response.entity, StandardCharsets.UTF_8)
+            } else {
+                ""
+            }
+            if (status !in 200..299) {
+                logger.warning("e621 returned HTTP $status for search")
+                throw UserVisibleException("GENERIC_COMMAND_ERROR")
+            }
             try {
-                val jsonResponse = JSONObject(IOUtils.toString(response.entity.content))
+                val jsonResponse = JSONObject(responseBody)
                 val posts = jsonResponse.getJSONArray("posts")
                 if (posts.length() == 0) {
                     throw UserVisibleException("E621_NONE_FOUND")
@@ -58,27 +66,26 @@ class E621Service {
     }
 
     fun getAutocomplete(query: String): List<String> {
-        val url = "https://e621.net/tags/autocomplete.json?search[name_matches]=$query&expiry=7"
+        val request = HttpGet(buildAutocompleteUrl(query))
+        request.setHeader("User-Agent", USER_AGENT)
 
-        val client = HttpClients.createDefault()
+        HttpClients.createDefault().use { client ->
+            client.execute(request).use { response ->
+                if (response.statusLine.statusCode == 200) {
+                    val responseBody = EntityUtils.toString(response.entity, StandardCharsets.UTF_8)
 
-        val request = HttpGet(url)
+                    val jsonArray = JSONArray(responseBody)
+                    val tagNames = mutableListOf<String>()
+                    for (i in 0 until jsonArray.length()) {
+                        val jsonObject = jsonArray.getJSONObject(i)
+                        val name = jsonObject.getString("name")
+                        tagNames.add(name)
+                    }
 
-        client.execute(request).use { response ->
-            if (response.statusLine.statusCode == 200) {
-                val responseBody = EntityUtils.toString(response.entity)
-
-                val jsonArray = JSONArray(responseBody)
-                val tagNames = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    val jsonObject = jsonArray.getJSONObject(i)
-                    val name = jsonObject.getString("name")
-                    tagNames.add(name)
+                    return tagNames
+                } else {
+                    throw Exception("Request failed with status code: ${response.statusLine.statusCode}")
                 }
-
-                return tagNames
-            } else {
-                throw Exception("Request failed with status code: ${response.statusLine.statusCode}")
             }
         }
     }
@@ -91,6 +98,20 @@ class E621Service {
     }
 
     companion object {
+        const val USER_AGENT = "VinnyDiscordBot/1.0 (by kikkia)"
+
+        @JvmStatic
+        fun buildPostsUrl(search: String): String {
+            val encodedSearch = URLEncoder.encode(search.trim(), StandardCharsets.UTF_8.name())
+            return "https://e621.net/posts.json?tags=$encodedSearch&limit=250"
+        }
+
+        @JvmStatic
+        fun buildAutocompleteUrl(query: String): String {
+            val encodedQuery = URLEncoder.encode(query.trim(), StandardCharsets.UTF_8.name())
+            return "https://e621.net/tags/autocomplete.json?search%5Bname_matches%5D=$encodedQuery&expiry=7"
+        }
+
         private var instance: E621Service? = null
         fun getInstance(): E621Service {
             if (instance == null) {
