@@ -11,6 +11,7 @@ import com.bot.utils.RedditHelper;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import datadog.trace.api.Trace;
 import net.dean.jraw.ApiException;
+import net.dean.jraw.NoSuchSubredditException;
 import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
@@ -43,7 +44,7 @@ public class NewPostCommand extends RedditCommand {
                     isNSFWAllowed,
                     postOnly,
                     args);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | NoSuchSubredditException e) {
             commandEvent.replyWarning("I could not find that subreddit, please make sure it is public, and spelled correctly.");
         } catch (ApiException e) {
             if (e.getCode().equals("403")) {

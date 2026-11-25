@@ -5,6 +5,10 @@ import com.bot.caching.SubredditCache;
 import com.bot.exceptions.RedditRateLimitException;
 import com.bot.exceptions.newstyle.NSFWNotAllowedException;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dean.jraw.Endpoint;
+import net.dean.jraw.NoSuchSubredditException;
+import net.dean.jraw.RedditClient;
+import net.dean.jraw.http.HttpResponse;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.SubredditSort;
@@ -14,6 +18,8 @@ import net.dean.jraw.references.SubredditReference;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Random;
@@ -48,10 +54,10 @@ public class RedditHelper {
                                              String subredditName,
                                              boolean isNsfwAllowed) throws Exception {
 
-        SubredditReference subreddit = RedditConnection.getInstance().client
-                .subreddit(subredditName);
+        RedditClient client = RedditConnection.getInstance().client;
+        SubredditReference subreddit = client.subreddit(subredditName);
 
-        if (subreddit.about().isNsfw() && !isNsfwAllowed) {
+        if (!isNsfwAllowed && isSubredditNsfw(client, subredditName)) {
             throw new NSFWNotAllowedException("NSFW_NOT_ALLOWED_EXCEPTION");
         }
 
@@ -113,7 +119,7 @@ public class RedditHelper {
         SubredditReference subreddit = redditConnection.client
                 .subreddit(subredditName);
 
-        if (!isChannelNSFW && subreddit.about().isNsfw()) {
+        if (!isChannelNSFW && isSubredditNsfw(redditConnection.client, subredditName)) {
             commandEvent.reply(commandEvent.getClient().getWarning() + " NSFW subreddit detected and NSFW is not enabled on this channel. " +
                     "Please make sure that nsfw is enabled in the discord channel settings");
             return;
@@ -219,5 +225,28 @@ public class RedditHelper {
         Listing<Submission> page = submissions.get(0); // Get the only page
         Submission submission =  getRandomSubmission(page, false);// Get random child post from the page
         return submission.getSelfText();
+    }
+
+    private static boolean isSubredditNsfw(RedditClient client, String subredditName) {
+        HttpResponse response = client.request(
+                client.requestStub().endpoint(Endpoint.GET_SUBREDDIT_ABOUT, subredditName).build()
+        );
+        return parseSubredditNsfwFromAboutJson(subredditName, response.getBody());
+    }
+
+    public static boolean parseSubredditNsfwFromAboutJson(String subredditName, String body) {
+        try {
+            JSONObject root = new JSONObject(body);
+            if (!"t5".equals(root.optString("kind"))) {
+                throw new NoSuchSubredditException(subredditName, null);
+            }
+            JSONObject data = root.optJSONObject("data");
+            if (data == null) {
+                throw new NoSuchSubredditException(subredditName, null);
+            }
+            return data.optBoolean("over18", false);
+        } catch (JSONException e) {
+            throw new NoSuchSubredditException(subredditName, e);
+        }
     }
 }
