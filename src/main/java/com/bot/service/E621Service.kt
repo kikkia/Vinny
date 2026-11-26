@@ -37,27 +37,11 @@ class E621Service {
                 throw UserVisibleException("GENERIC_COMMAND_ERROR")
             }
             try {
-                val jsonResponse = JSONObject(responseBody)
-                val posts = jsonResponse.getJSONArray("posts")
-                if (posts.length() == 0) {
-                    throw UserVisibleException("E621_NONE_FOUND")
-                }
-                val fetchedImages = ArrayList<String>()
-                for (i in 0..<posts.length()) {
-                    try {
-                        fetchedImages.add(posts.getJSONObject(i).getJSONObject("file").getString("url"))
-                    } catch (ignored: Exception) {
-                        // Null url to image, we can generate our own with the md5 hash and file ext
-                        try {
-                            fetchedImages.add(buildE621StaticPath(posts.getJSONObject(i).getJSONObject("file")))
-                        } catch (ignored2: Exception) {
-                            // If that attempt fails, just skip
-                        }
-                    }
-                }
-                if (fetchedImages.isEmpty()) throw UserVisibleException("E621_NONE_FOUND")
+                val fetchedImages = parsePostsFromResponse(responseBody)
                 cache.put(search, fetchedImages)
                 return fetchedImages
+            } catch (e: UserVisibleException) {
+                throw e
             } catch (e: JSONException) {
                 logger.severe("Failed to parse e621 response", e)
                 throw UserVisibleException("GENERIC_COMMAND_ERROR")
@@ -91,18 +75,15 @@ class E621Service {
     }
 
 
-    private fun buildE621StaticPath(jsonObject: JSONObject): String {
-        val hash = jsonObject.getString("md5")
-        return "https://static1.e621.net/data/" + hash.substring(0, 2) + "/" + hash.substring(2, 4) + "/" +
-                hash + "." + jsonObject.getString("ext")
-    }
-
     companion object {
         const val USER_AGENT = "VinnyDiscordBot/1.0 (by kikkia)"
 
         @JvmStatic
         fun buildPostsUrl(search: String): String {
-            val encodedSearch = URLEncoder.encode(search.trim(), StandardCharsets.UTF_8.name())
+            val encodedSearch = search.trim()
+                .split(Regex("[\\s+]+"))
+                .filter { it.isNotEmpty() }
+                .joinToString("+") { URLEncoder.encode(it, StandardCharsets.UTF_8.name()) }
             return "https://e621.net/posts.json?tags=$encodedSearch&limit=250"
         }
 
@@ -110,6 +91,63 @@ class E621Service {
         fun buildAutocompleteUrl(query: String): String {
             val encodedQuery = URLEncoder.encode(query.trim(), StandardCharsets.UTF_8.name())
             return "https://e621.net/tags/autocomplete.json?search%5Bname_matches%5D=$encodedQuery&expiry=7"
+        }
+
+        @JvmStatic
+        fun parsePostsFromResponse(responseBody: String): List<String> {
+            val trimmed = responseBody.trim()
+            val posts: JSONArray = when {
+                trimmed.startsWith("[") -> JSONArray(trimmed)
+                trimmed.startsWith("{") -> JSONObject(trimmed).getJSONArray("posts")
+                else -> throw JSONException("Unexpected e621 response format")
+            }
+            if (posts.length() == 0) {
+                throw UserVisibleException("E621_NONE_FOUND")
+            }
+            val fetchedImages = ArrayList<String>()
+            for (i in 0 until posts.length()) {
+                val post = posts.optJSONObject(i) ?: continue
+                extractPostImageUrl(post)?.let { fetchedImages.add(it) }
+            }
+            if (fetchedImages.isEmpty()) {
+                throw UserVisibleException("E621_NONE_FOUND")
+            }
+            return fetchedImages
+        }
+
+        private fun extractPostImageUrl(post: JSONObject): String? {
+            // Current e621 schema: files.original.url / files.meta.{md5, ext}
+            val files = post.optJSONObject("files")
+            if (files != null) {
+                val originalUrl = files.optJSONObject("original")?.optString("url", "")
+                if (!originalUrl.isNullOrBlank() && originalUrl != "null") {
+                    return originalUrl
+                }
+                val meta = files.optJSONObject("meta")
+                if (meta != null) {
+                    buildStaticPathOrNull(meta)?.let { return it }
+                }
+            }
+
+            // Legacy e621 schema fallback: file.url / file.{md5, ext}
+            val file = post.optJSONObject("file")
+            if (file != null) {
+                val legacyUrl = file.optString("url", "")
+                if (legacyUrl.isNotBlank() && legacyUrl != "null") {
+                    return legacyUrl
+                }
+                return buildStaticPathOrNull(file)
+            }
+            return null
+        }
+
+        private fun buildStaticPathOrNull(jsonObject: JSONObject): String? {
+            val hash = jsonObject.optString("md5", "")
+            val ext = jsonObject.optString("ext", "")
+            if (hash.length < 4 || ext.isBlank()) {
+                return null
+            }
+            return "https://static1.e621.net/data/${hash.substring(0, 2)}/${hash.substring(2, 4)}/$hash.$ext"
         }
 
         private var instance: E621Service? = null

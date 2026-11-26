@@ -39,7 +39,7 @@ class E621SlashCommand: NsfwSlashCommand() {
             return
         }
         val images: List<String> = e621Service.getPostsForSearch(search)
-        val selected = images[Random.nextInt(images.size - 1)]
+        val selected = images[Random.nextInt(images.size)]
         val refreshButtonId = "refresh-e621-$search"
         val refresh = Button.primary(refreshButtonId, Emoji.fromUnicode("\uD83D\uDD04"))
         command.replyWithActionBar(selected, ActionRow.of(mutableListOf(refresh)))
